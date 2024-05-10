@@ -11,6 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastru
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2e", "e2e", "{CBE41622-8180-451F-8851-DF4A3AAD9109}"
+	ProjectSection(SolutionItems) = preProject
+		e2e\README.MD = e2e\README.MD
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{76487C8D-D42F-4B23-B4DE-174EF20F1D34}"
 	ProjectSection(SolutionItems) = preProject
@@ -18,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{76487C8D-D42
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.API", "api\Hippo.Booking.API\Hippo.Booking.API.csproj", "{FEB5FB1C-A3F9-4608-8A02-D2DD3F15EB03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Application", "api\Hippo.Booking.Application\Hippo.Booking.Application.csproj", "{CD9C2B01-CD22-4F2E-851A-67B2FA2E3F82}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.E2ETests", "e2e\Hippo.Booking.E2ETests\Hippo.Booking.E2ETests.csproj", "{C1650E77-0926-44AB-9287-F5C7580D0A26}"
 EndProject
@@ -29,12 +34,17 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{FEB5FB1C-A3F9-4608-8A02-D2DD3F15EB03} = {408CE74C-C140-4EC0-9A94-77078D6E38E3}
 		{C1650E77-0926-44AB-9287-F5C7580D0A26} = {CBE41622-8180-451F-8851-DF4A3AAD9109}
+		{CD9C2B01-CD22-4F2E-851A-67B2FA2E3F82} = {408CE74C-C140-4EC0-9A94-77078D6E38E3}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FEB5FB1C-A3F9-4608-8A02-D2DD3F15EB03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FEB5FB1C-A3F9-4608-8A02-D2DD3F15EB03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEB5FB1C-A3F9-4608-8A02-D2DD3F15EB03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEB5FB1C-A3F9-4608-8A02-D2DD3F15EB03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD9C2B01-CD22-4F2E-851A-67B2FA2E3F82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD9C2B01-CD22-4F2E-851A-67B2FA2E3F82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD9C2B01-CD22-4F2E-851A-67B2FA2E3F82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD9C2B01-CD22-4F2E-851A-67B2FA2E3F82}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C1650E77-0926-44AB-9287-F5C7580D0A26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C1650E77-0926-44AB-9287-F5C7580D0A26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1650E77-0926-44AB-9287-F5C7580D0A26}.Release|Any CPU.ActiveCfg = Release|Any CPU
