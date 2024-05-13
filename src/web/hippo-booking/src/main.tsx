@@ -5,23 +5,33 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import './index.css'
+import './index.scss'
 import { Parking, DeskBooking } from './imports.tsx'
+import ErrorPage from './pages/error/Error.tsx';
+import Home from './pages/home/Home.tsx';
 
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "/",
+        element: <Suspense fallback={<div>Loading...</div>}><Home /></Suspense>,
+      },
+      {
+        path: "/desk",
+        element: <Suspense fallback={<div>Loading...</div>}><DeskBooking /></Suspense>,
+      },
+      {
+        path: "parking",
+        element: <Suspense fallback={<div>Loading...</div>}><Parking /></Suspense>
+      }
+    ]
   },
-  {
-    path: "/desk",
-    element: <DeskBooking />,
-  },
-  {
-    path: "parking",
-    element: <Suspense fallback={<div>Loading...</div>}><Parking /></Suspense>
-  }
+  
 ]);
 
 const root = document.getElementById("root");
