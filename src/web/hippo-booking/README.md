@@ -1,4 +1,7 @@
-# React + TypeScript + Vite
+# React + TypeScript + Vite + Yarn@V4
+
+## Yarn V4
+This project uses Yarn V4 with node_modules. Currently there is a bug in typescript where imports are not linked so we cannot use pnp
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
