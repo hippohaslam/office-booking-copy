@@ -1,14 +1,12 @@
-using Hippo.Booking.Application;
-
 namespace Hippo.Booking.API.Endpoints;
 
-public sealed class HealthEndpoints() : EndpointBase("health")
+public sealed class HealthEndpoints() : EndpointBase("health", "Health Check")
 {
-    public override void MapEndpoints(RouteGroupBuilder builder)
+    public override void MapEndpoints(RouteGroupBuilder group)
     {
-        builder.MapGet("/", async (http) =>
+        group.MapGet("", async (HttpContext http, CancellationToken ct) =>
         {
-            await http.Response.WriteAsync("Healthy");
+            await http.Response.WriteAsync("Healthy", cancellationToken: ct);
         });
     }
 }

@@ -17,7 +17,7 @@ var app = builder.Build();
 new SiteEndpoints().Map(app);
 new HealthEndpoints().Map(app);
 
-app.MapGet("/", () => "Hello World!");
+// app.MapGet("/", () => "Hello World!");
 
 if (app.Environment.IsDevelopment())
 {
