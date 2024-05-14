@@ -1,3 +1,4 @@
+using FluentValidation;
 using Hippo.Booking.API.Endpoints;
 using Hippo.Booking.Application;
 using Hippo.Booking.Application.Commands;
@@ -11,6 +12,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMediator, Mediator>();
 
 builder.Services.AddScoped<IHandler<CreateSiteRequest>, SiteCommands>();
+
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(IMediator));
 
 var app = builder.Build();
 
