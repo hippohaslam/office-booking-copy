@@ -12,7 +12,7 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
         }
         
         var grouping = app.MapGroup(routePath)
-            .WithTags(routePath);
+            .WithTags(swaggerGroupName);
         
         MapEndpoints(grouping);
     }

@@ -3,7 +3,7 @@ using Hippo.Booking.Application.Models;
 
 namespace Hippo.Booking.API.Endpoints;
 
-public sealed class SiteEndpoints() : EndpointBase("sites", "Sites")
+public class SiteEndpoints() : EndpointBase("sites", "Sites")
 {
     public override void MapEndpoints(RouteGroupBuilder builder)
     {

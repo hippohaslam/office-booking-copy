@@ -1,6 +1,6 @@
 namespace Hippo.Booking.API.Endpoints;
 
-public sealed class HealthEndpoints() : EndpointBase("health", "Health Check")
+public class HealthEndpoints() : EndpointBase("health", "Health Check")
 {
     public override void MapEndpoints(RouteGroupBuilder group)
     {
