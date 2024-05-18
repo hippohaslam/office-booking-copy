@@ -1,0 +1,94 @@
+name: Main CI
+
+on:
+  push:
+    branches: [ "main", "feat/ci-test" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+        
+  build-backend:
+    name: 'Build Back End API'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build API
+        run: dotnet build --no-restore
+
+      - name: Run Unit Tests
+        run: |
+          dotnet test api/tests/**/**.Tests.csproj --no-build --verbosity normal
+          
+  build-frontend:
+    name: 'Build Front End App'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+          
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+          dir: ./src/web/hippo-booking
+
+      - name: Build production bundle
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build
+          dir: ./src/web/hippo-booking
+          
+      - name: Test the app
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: ci-test
+          dir: ./src/web/hippo-booking
+    
+
+  package:
+    name: 'Package API In Docker'
+    if: github.event_name != 'pull_request'
+    needs: [build-backend, build-frontend]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build Back End API Docker Image
+      run: |
+        docker build . -t ghcr.io/harryy94/test-booking-api:${{ github.sha }} -f api/Hippo.Booking.API/Dockerfile
+      
+    - uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Push Back End API Docker Image
+      run: docker push ghcr.io/harryy94/test-booking-api:${{ github.sha }}
+

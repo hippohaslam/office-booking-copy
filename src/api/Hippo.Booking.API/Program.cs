@@ -20,12 +20,9 @@ var app = builder.Build();
 new SiteEndpoints().Map(app);
 new HealthEndpoints().Map(app);
 
-// app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => TypedResults.Redirect("/swagger/index.html"));
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();
