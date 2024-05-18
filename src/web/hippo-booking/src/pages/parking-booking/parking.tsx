@@ -1,5 +1,7 @@
 const Parking = () => {
-  return <div>Parking booking!</div>;
+  return <div>
+      <h1>Book parking</h1>
+    </div>
 }
 
 export default Parking;
