@@ -1,4 +1,5 @@
-﻿using Pulumi.Azure.AppService;
+﻿using Pulumi;
+using Pulumi.Azure.AppService;
 using Pulumi.Azure.AppService.Inputs;
 using Pulumi.Azure.Core;
 
@@ -8,30 +9,34 @@ return await Pulumi.Deployment.RunAsync(() =>
 
     string WithStackName(string name) => $"{name}-{stackName}";
     
-    var rg = new ResourceGroup("booking-rg", new ResourceGroupArgs
+    var config = new Config();
+    
+    var rg = new ResourceGroup("hippo-booking-rg", new ResourceGroupArgs
     {
-        Name = WithStackName("booking-rg"),
+        Name = WithStackName("hippo-booking-rg"),
         Location = "West Europe"
     });
     
-    var backEndAppServicePlan = new ServicePlan("booking-back-end-plan", new ServicePlanArgs
+    var backEndAppServicePlan = new ServicePlan("hippo-booking-back-end-plan", new ServicePlanArgs
     {
-        Name = WithStackName("booking-asp"),
+        Name = WithStackName("hippo-booking-asp"),
         ResourceGroupName = rg.Name,
         Location = rg.Location,
         SkuName = "B1",
         OsType = "Linux"
     });
     
-    var backEndAppService = new LinuxWebApp("booking-app-service", new LinuxWebAppArgs
+    var backEndAppService = new LinuxWebApp("hippo-booking-app-service", new LinuxWebAppArgs
     {
-        Name = WithStackName("booking-app-service"),
+        Name = WithStackName("hippo-booking-app-service"),
         ResourceGroupName = rg.Name,
         Location = rg.Location,
         ServicePlanId = backEndAppServicePlan.Id,
         AppSettings =
         {
-            { "WEBSITE_RUN_FROM_PACKAGE", "1" }
+            { "DOCKER_REGISTRY_SERVER_URL", "ghcr.io" },
+            { "DOCKER_REGISTRY_SERVER_USERNAME" , config.Require("DockerUsername")},
+            { "DOCKER_REGISTRY_SERVER_PASSWORD", config.RequireSecret("DockerPassword")}
         },
         SiteConfig = new LinuxWebAppSiteConfigArgs
         {
@@ -39,9 +44,9 @@ return await Pulumi.Deployment.RunAsync(() =>
         }
     });
     
-    var frontEnd = new StaticWebApp("booking-static-web", new StaticWebAppArgs
+    var frontEnd = new StaticWebApp("hippo-booking-static-web", new StaticWebAppArgs
     {
-        Name = WithStackName("booking-static-web"),
+        Name = WithStackName("hippo-booking-static-web"),
         ResourceGroupName = rg.Name,
         Location = rg.Location,
         SkuTier = "Free"

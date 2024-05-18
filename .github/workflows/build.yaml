@@ -79,9 +79,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      
+    - name: Lowercase the repo name and username
+      run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+      
     - name: Build Back End API Docker Image
       run: |
-        docker build . -t ghcr.io/harryy94/test-booking-api:${{ github.sha }} -f api/Hippo.Booking.API/Dockerfile
+        docker build . -t ghcr.io/${{ env.REPO }}:${{ github.sha }} -f api/Hippo.Booking.API/Dockerfile
       
     - uses: docker/login-action@v1
       with:
@@ -90,5 +94,28 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Push Back End API Docker Image
-      run: docker push ghcr.io/harryy94/test-booking-api:${{ github.sha }}
+      run: docker push ghcr.io/${{ env.REPO }}:${{ github.sha }}
+      
+  deploy:
+    name: Deploy API
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    needs: package
+    environment:
+      name: 'Development'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
+    steps:
+      - name: Lowercase the repo name and username
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ vars.DEV_AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.DEV_AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
 
