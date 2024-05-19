@@ -3,6 +3,18 @@
 ## Yarn V4
 This project uses Yarn V4 with node_modules. Currently there is a bug in typescript where imports are not linked so we cannot use pnp
 
+## Upgrading packages.
+
+We recommend to keep the local packages up to date with minor versions as frequency as possible.
+Major versions should be checked and updated when possible. All this to ensure security updates.
+
+A good tool to use in ncu:
+- Install with `npm install -g npm-check-updates`
+- run with `ncu` to see possible updates. Then use `ncu -u` to update package.json file. The yarn install to complete.
+- Finally test and smoke test the app. 
+
+## App
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
