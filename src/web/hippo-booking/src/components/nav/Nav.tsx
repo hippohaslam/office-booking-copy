@@ -6,17 +6,17 @@ const Nav = () => {
     return (
        <div className="nav-container">
          <div className="nav-container-logo">
-          <Link to="/">
+          <Link to="">
           <img src={HippoSvg} alt="Hippo Logo" />
           </Link>
          </div>
          <nav>
         <ul>
           <li>
-            <Link to="/desk">Desks</Link>
+            <Link to="desk">Desks</Link>
           </li>
           <li>
-            <Link to="/parking">Parking</Link>
+            <Link to="parking">Parking</Link>
           </li>
         </ul>
       </nav>
