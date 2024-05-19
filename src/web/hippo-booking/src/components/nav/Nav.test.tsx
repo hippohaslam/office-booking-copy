@@ -1,8 +1,9 @@
+import { BrowserRouter } from 'react-router-dom';
 import Nav from './Nav';
 import {render, screen} from '@testing-library/react';
 
 test('Navigation has links', async () => {
-	render(<Nav />);
+	render(<BrowserRouter><Nav /></BrowserRouter>);
 
 	// Check that "Parking" is a link
 	const parkingLink = screen.getByRole('link', { name: /Parking/i });
