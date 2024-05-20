@@ -17,5 +17,5 @@ public class Config
 #endif
         .Build();
     
-    public static string BaseUrl => Instance.GetValue<string>("Urls:BaseUrl");
+    public static string BaseUrl => Instance.GetValue<string>("Urls:BaseUrl") ?? string.Empty;
 }

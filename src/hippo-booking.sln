@@ -32,6 +32,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3AE229C3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Application.Tests", "api\tests\Hippo.Booking.Application.Tests\Hippo.Booking.Application.Tests.csproj", "{057533F6-A6A7-480E-A7C3-E072FABCC4C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Core", "api\Hippo.Booking.Core\Hippo.Booking.Core.csproj", "{AFE460BE-8ACB-4DCF-BB16-AAA340424946}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Core.Tests", "api\tests\Hippo.Booking.Core.Tests\Hippo.Booking.Core.Tests.csproj", "{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +48,8 @@ Global
 		{9CF82090-029C-4756-8D73-39E2F74CA08E} = {5EDF1DC4-2F2D-4855-A0CE-6A4E5E58627A}
 		{3AE229C3-B75B-4A60-81D7-9116CB55501C} = {408CE74C-C140-4EC0-9A94-77078D6E38E3}
 		{057533F6-A6A7-480E-A7C3-E072FABCC4C1} = {3AE229C3-B75B-4A60-81D7-9116CB55501C}
+		{AFE460BE-8ACB-4DCF-BB16-AAA340424946} = {408CE74C-C140-4EC0-9A94-77078D6E38E3}
+		{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA} = {3AE229C3-B75B-4A60-81D7-9116CB55501C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FEB5FB1C-A3F9-4608-8A02-D2DD3F15EB03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -66,5 +72,13 @@ Global
 		{057533F6-A6A7-480E-A7C3-E072FABCC4C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{057533F6-A6A7-480E-A7C3-E072FABCC4C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{057533F6-A6A7-480E-A7C3-E072FABCC4C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFE460BE-8ACB-4DCF-BB16-AAA340424946}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE460BE-8ACB-4DCF-BB16-AAA340424946}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFE460BE-8ACB-4DCF-BB16-AAA340424946}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE460BE-8ACB-4DCF-BB16-AAA340424946}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
