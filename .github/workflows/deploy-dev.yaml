@@ -25,9 +25,11 @@ jobs:
       - name: Build API
         run: dotnet build --no-restore
 
-      - name: Run Unit Tests
-        run: |
-          dotnet test api/tests/**/**.Tests.csproj --no-build --verbosity normal
+      - name: Run Application Unit Tests
+        run: dotnet test api/tests/Hippo.Booking.Application.Tests.csproj --no-build --verbosity normal
+
+      - name: Run Core Unit Tests
+        run: dotnet test api/tests/Hippo.Booking.Core.Tests.csproj --no-build --verbosity normal
           
   build-frontend:
     name: 'Build Front End App'
