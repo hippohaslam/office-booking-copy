@@ -1,0 +1,18 @@
+.floorplan__container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+
+.floorplan__editor {
+    width: 100%;
+
+    .floorplan__editor-canvas {
+        border: 1px solid #000;
+    }
+}
+
+.floorplan__desk-list {
+    width: 100%;
+}

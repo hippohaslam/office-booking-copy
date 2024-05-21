@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import './index.scss'
-import { Parking, DeskBooking } from './imports.tsx'
+import { Parking, DeskBooking, FloorplanEditor } from './imports.tsx'
 import ErrorPage from './pages/error/Error.tsx';
 import Home from './pages/home/Home.tsx';
 
@@ -28,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "parking",
         element: <Suspense fallback={<div>Loading...</div>}><Parking /></Suspense>
+      },
+      {
+        path: "floorplan",
+        element: <Suspense fallback={<div>Loading editor...</div>}><FloorplanEditor /></Suspense>
       }
     ]
   },

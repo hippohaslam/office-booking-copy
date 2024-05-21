@@ -18,6 +18,9 @@ const Nav = () => {
           <li>
             <Link to="parking">Parking</Link>
           </li>
+          <li>
+            <Link to="floorplan">floorplan</Link>
+          </li>
         </ul>
       </nav>
        </div>
