@@ -8,4 +8,6 @@ public class BookableObject
     
     public int OfficeId { get; set; }
     public Office Office { get; set; } = null!;
+    
+    public List<Booking> Bookings { get; set; } = new();
 }
