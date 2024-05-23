@@ -36,6 +36,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Core", "api\H
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Core.Tests", "api\tests\Hippo.Booking.Core.Tests\Hippo.Booking.Core.Tests.csproj", "{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{A7C5220D-837C-409A-9444-1CCB2DE323D9}"
+	ProjectSection(SolutionItems) = preProject
+		infrastructure\docker\README.MD = infrastructure\docker\README.MD
+		infrastructure\docker\docker-compose.yml = infrastructure\docker\docker-compose.yml
+		infrastructure\docker\docker-compose-services.yml = infrastructure\docker\docker-compose-services.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +57,7 @@ Global
 		{057533F6-A6A7-480E-A7C3-E072FABCC4C1} = {3AE229C3-B75B-4A60-81D7-9116CB55501C}
 		{AFE460BE-8ACB-4DCF-BB16-AAA340424946} = {408CE74C-C140-4EC0-9A94-77078D6E38E3}
 		{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA} = {3AE229C3-B75B-4A60-81D7-9116CB55501C}
+		{A7C5220D-837C-409A-9444-1CCB2DE323D9} = {5EDF1DC4-2F2D-4855-A0CE-6A4E5E58627A}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FEB5FB1C-A3F9-4608-8A02-D2DD3F15EB03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

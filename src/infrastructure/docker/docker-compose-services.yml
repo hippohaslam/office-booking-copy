@@ -1,0 +1,14 @@
+version: '3'
+name: 'hippo-booking'
+services:
+  booking-api:
+    build:
+        context: ../../
+        dockerfile: api/Hippo.Booking.API/Dockerfile
+    depends_on:
+      - postgres
+    ports:
+        - "5210:8080"
+    environment:
+        ASPNETCORE_ENVIRONMENT: Development
+        ConnectionStrings__PostgresConnection: Host=postgres;Port=5432;Database=hippo-booking;Username=postgres;Password=postgres
