@@ -65,3 +65,18 @@ jobs:
         with:
           cmd: ci-test
           dir: ./src/web/hippo-booking
+          
+  e2e-tests:
+    name: 'Run End-to-End Tests'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run Docker Compose
+        run: docker compose -f infrastructure/docker/docker-compose.yml -f infrastructure/docker/docker-compose-services.yml up -d
+        
+      - name: Run E2E Tests
+        run: dotnet test e2e/**/Hippo.Booking.E2ETests.csproj --verbosity normal
