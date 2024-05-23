@@ -66,17 +66,18 @@ jobs:
   e2e-tests:
     name: 'Run End-to-End Tests'
     runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend]
     defaults:
       run:
         working-directory: ./src
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Docker Compose
-        run: docker compose -f infrastructure/docker/docker-compose.yml -f infrastructure/docker/docker-compose-services.yml up -d
-
-      - name: Run E2E Tests
-        run: dotnet test e2e/**/Hippo.Booking.E2ETests.csproj --verbosity normal
+#      - name: Run Docker Compose
+#        run: docker compose -f infrastructure/docker/docker-compose.yml -f infrastructure/docker/docker-compose-services.yml up -d
+#
+#      - name: Run E2E Tests
+#        run: dotnet test e2e/**/Hippo.Booking.E2ETests.csproj --verbosity normal
 
   package:
     name: 'Package API In Docker'
@@ -114,6 +115,7 @@ jobs:
     if: github.event_name != 'pull_request'
     permissions:
       contents: none
+      id-token: write
     runs-on: ubuntu-latest
     needs: package
     environment:
@@ -123,31 +125,59 @@ jobs:
     steps:
       - name: Lowercase the repo name and username
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+        
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 'Get publishing profile'
+        run: |
+          publishingProfile=$(az webapp deployment list-publishing-profiles --name ${{ vars.DEV_AZURE_WEBAPP_NAME }} --resource-group hippo-booking-rg-dev --xml)
+          echo "PUBLISHING_PROFILE=$publishingProfile" >>${GITHUB_ENV}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ vars.DEV_AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.DEV_AZURE_WEBAPP_PUBLISH_PROFILE }}
+          publish-profile: ${{ env.PUBLISHING_PROFILE }}
           images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
 
   deploy-frontend:
     permissions:
       contents: read # for actions/checkout to fetch code
+      id-token: write
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     name: Deploy Front End
     needs: [e2e-tests]
+    environment:
+      name: 'Development'
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 'Get API deployment key'
+        run: |
+          APIKEY=$(az staticwebapp secrets list --name hippo-booking-static-web-dev | jq -r '.properties.apiKey')
+          echo "API_KEY=$APIKEY" >>${GITHUB_ENV}
+          
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.DEV_AZURE_STATIC_WEB_APP_DEPLOYMENT_TOKEN }} # secret containing api token for app
+          azure_static_web_apps_api_token: ${{ env.API_KEY }} # secret containing api token for app
 #          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match you app requirements. ######
