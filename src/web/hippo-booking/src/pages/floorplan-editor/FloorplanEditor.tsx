@@ -20,11 +20,11 @@ const lotsOfDesks = [
 { id: generateUniqueId(), name: 'Desk 3' },
 ]
 
-
 // TODO: How to draw lines
 
 const FloorplanEditor = () => {
-    const [desks, setDesks] = useState<Desk[]>(lotsOfDesks);
+    // @ts-ignore
+  const [desks, setDesks] = useState<Desk[]>(lotsOfDesks);
 
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
@@ -109,6 +109,7 @@ const FloorplanEditor = () => {
     }
   }
 
+  // @ts-ignore
   const drawLines = (canvas: fabric.Canvas, points: fabric.Point[]) => {
     if (points.length < 2) return;
     for (let i = 0; i < points.length - 1; i++) {
