@@ -35,10 +35,10 @@ jobs:
     name: 'Build Front End App'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set Node.js 20.x
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20.x
           
@@ -70,7 +70,7 @@ jobs:
       run:
         working-directory: ./src
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Run Docker Compose
         run: docker compose -f infrastructure/docker/docker-compose.yml -f infrastructure/docker/docker-compose-services.yml up -d
