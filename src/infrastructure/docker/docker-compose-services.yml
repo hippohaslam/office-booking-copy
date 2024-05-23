@@ -1,6 +1,12 @@
 version: '3'
 name: 'hippo-booking'
 services:
+  booking-web:
+    build:
+        context: ../../web/hippo-booking
+        dockerfile: Dockerfile
+    ports:
+        - "5173:5173"
   booking-api:
     build:
         context: ../../

@@ -8,5 +8,9 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: ["test/vitest.setup.ts"]
+  },
+  server: {
+    host: "0.0.0.0",
+    port: 5173
   }
 })
