@@ -67,6 +67,7 @@ jobs:
           dir: ./src/web/hippo-booking
           
       - name: Run Cypress Tests
+        working-directory: ./src/web/hippo-booking
         run: |
           npx cypress run --component
           
