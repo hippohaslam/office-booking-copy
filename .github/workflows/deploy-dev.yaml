@@ -62,6 +62,10 @@ jobs:
         with:
           cmd: ci-test
           dir: ./src/web/hippo-booking
+          
+      - name: Run Cypress Tests
+        run: |
+          npx cypress run --component
     
   e2e-tests:
     name: 'Run End-to-End Tests'

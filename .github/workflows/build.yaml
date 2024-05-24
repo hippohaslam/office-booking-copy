@@ -66,6 +66,10 @@ jobs:
           cmd: ci-test
           dir: ./src/web/hippo-booking
           
+      - name: Run Cypress Tests
+        run: |
+          npx cypress run --component
+          
 #  azure-test:
 #    runs-on: ubuntu-latest
 #    permissions:
