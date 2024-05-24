@@ -31,6 +31,8 @@ const FloorplanEditor = () => {
 
   // Just for testing
   const [canvasJson, setCanvasJson] = useState<string | null>(null);
+
+  const [editMode, setEditMode] = useState<boolean>(false)
   
 
   useEffect(() => {
@@ -122,16 +124,30 @@ const FloorplanEditor = () => {
     }
   };
 
+  const toggleEditMode = () => {
+    if (fabricCanvasRef.current) {
+      fabricCanvasRef.current.selection = !editMode;
+      fabricCanvasRef.current.forEachObject(function (o) {
+        o.selectable = !editMode;
+      });
+    }
+
+    setEditMode(!editMode)
+  }
+
   return (
     <div>
       <h1>Home</h1>
       <div className="floorplan__container">
         <div className="floorplan__editor">
           <h2>Editor</h2>
-          <button type="button" onClick={addCircle}>
+          <button type="button" onClick={toggleEditMode}>
+            Edit mode: {editMode.toString()}
+          </button>
+          <button type="button" onClick={addCircle} disabled={!editMode}>
             Add circle
           </button>
-          <button type="button" onClick={addSquare}>
+          <button type="button" onClick={addSquare} disabled={!editMode}>
             Add square
           </button>
           <button type="button" onClick={saveCanvas}>
@@ -141,12 +157,12 @@ const FloorplanEditor = () => {
             Load canvas
           </button>
           <div className="floorplan__editor-canvas">
-            <canvas width="300" height="300" ref={canvasElRef} />
+            <canvas width="300" height="300" ref={canvasElRef}/>
           </div>
         </div>
         <div className="floorplan__desk-list">
           <h2>Desk list</h2>
-            <ul>
+          <ul>
                 {desks.map((desk) => (
                 <li key={desk.id}>
                     {desk.name}
