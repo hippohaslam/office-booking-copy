@@ -16,10 +16,13 @@
     <ItemGroup>
       <ProjectReference Include="..\Hippo.Booking.Application\Hippo.Booking.Application.csproj" />
       <ProjectReference Include="..\Hippo.Booking.Core\Hippo.Booking.Core.csproj" />
+      <ProjectReference Include="..\Hippo.Booking.Infrastructure.EF\Hippo.Booking.Infrastructure.EF.csproj" />
+      <ProjectReference Include="..\Hippo.Booking.Infrastructure\Hippo.Booking.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.5" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 

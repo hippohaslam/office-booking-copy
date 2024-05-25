@@ -43,6 +43,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{A7C522
 		infrastructure\docker\docker-compose-services.yml = infrastructure\docker\docker-compose-services.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Infrastructure", "api\Hippo.Booking.Infrastructure\Hippo.Booking.Infrastructure.csproj", "{6F0C2DF4-A417-402A-B185-B3D2EEB4669D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Infrastructure.EF", "api\Hippo.Booking.Infrastructure.EF\Hippo.Booking.Infrastructure.EF.csproj", "{85986BED-48EE-467E-AADE-FAEDB0AC204B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +62,8 @@ Global
 		{AFE460BE-8ACB-4DCF-BB16-AAA340424946} = {408CE74C-C140-4EC0-9A94-77078D6E38E3}
 		{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA} = {3AE229C3-B75B-4A60-81D7-9116CB55501C}
 		{A7C5220D-837C-409A-9444-1CCB2DE323D9} = {5EDF1DC4-2F2D-4855-A0CE-6A4E5E58627A}
+		{6F0C2DF4-A417-402A-B185-B3D2EEB4669D} = {408CE74C-C140-4EC0-9A94-77078D6E38E3}
+		{85986BED-48EE-467E-AADE-FAEDB0AC204B} = {408CE74C-C140-4EC0-9A94-77078D6E38E3}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FEB5FB1C-A3F9-4608-8A02-D2DD3F15EB03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -88,5 +94,13 @@ Global
 		{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7213EA45-CE6D-4267-B747-DD2F2DEEA3EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F0C2DF4-A417-402A-B185-B3D2EEB4669D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F0C2DF4-A417-402A-B185-B3D2EEB4669D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F0C2DF4-A417-402A-B185-B3D2EEB4669D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F0C2DF4-A417-402A-B185-B3D2EEB4669D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85986BED-48EE-467E-AADE-FAEDB0AC204B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85986BED-48EE-467E-AADE-FAEDB0AC204B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85986BED-48EE-467E-AADE-FAEDB0AC204B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85986BED-48EE-467E-AADE-FAEDB0AC204B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

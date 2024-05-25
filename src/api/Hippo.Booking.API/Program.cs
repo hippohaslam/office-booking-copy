@@ -1,8 +1,12 @@
 using FluentValidation;
 using Hippo.Booking.API.Endpoints;
+using Hippo.Booking.API.StartupTasks;
 using Hippo.Booking.Application;
 using Hippo.Booking.Application.Commands;
 using Hippo.Booking.Application.Models;
+using Hippo.Booking.Infrastructure.EF;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +18,21 @@ builder.Services.AddScoped<IMediator, Mediator>();
 builder.Services.AddScoped<IHandler<CreateSiteRequest>, SiteCommands>();
 
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(IMediator));
+
+builder.Services.AddDbContext<HippoBookingDbContext>(
+    optionsBuilder =>
+    {
+        optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("HippoBookingDbContext"));
+
+        if (builder.Environment.IsDevelopment())
+        {
+            optionsBuilder.ConfigureWarnings(x => x.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
+        }
+    });
+
+builder.Services.AddHostedService<StartupTaskExecutor>();
+
+builder.Services.AddStartupTask<EnsureCreatedStartupTask>();
 
 var app = builder.Build();
 

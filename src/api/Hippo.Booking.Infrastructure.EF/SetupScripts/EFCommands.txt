@@ -1,0 +1,5 @@
+dotnet ef migrations add Initial --project ./api/Hippo.Booking.Infrastructure.EF --startup-project ./api/ClubManager.API
+
+dotnet ef migrations remove --project ./api/Hippo.Booking.Infrastructure.EF --startup-project ./api/Hippo.Booking.API
+
+dotnet ef database update --project ./api/Hippo.Booking.Infrastructure.EF --startup-project ./api/Hippo.Booking.API

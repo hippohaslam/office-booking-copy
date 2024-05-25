@@ -1,6 +1,6 @@
 namespace Hippo.Booking.Core.Entities;
 
-public class BookableObject
+public class BookableObject : BaseEntity<int>
 {
     public string Name { get; set; } = string.Empty;
     
