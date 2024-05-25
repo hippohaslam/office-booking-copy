@@ -2,7 +2,7 @@
 using Pulumi.Azure.AppService;
 using Pulumi.Azure.AppService.Inputs;
 using Pulumi.Azure.Core;
-using Pulumi.Azure.Sql;
+using Pulumi.Azure.MSSql;
 using Pulumi.Random;
 
 return await Pulumi.Deployment.RunAsync(() =>
@@ -16,14 +16,14 @@ return await Pulumi.Deployment.RunAsync(() =>
     var rg = new ResourceGroup("hippo-booking-rg", new ResourceGroupArgs
     {
         Name = WithStackName("hippo-booking-rg"),
-        Location = "West Europe"
+        Location = "UK South"
     });
     
     var frontEnd = new StaticWebApp("hippo-booking-static-web", new StaticWebAppArgs
     {
         Name = WithStackName("hippo-booking-static-web"),
         ResourceGroupName = rg.Name,
-        Location = rg.Location,
+        Location = "West Europe",
         SkuTier = "Free"
     });
     
@@ -33,7 +33,7 @@ return await Pulumi.Deployment.RunAsync(() =>
         Special = true
     });
     
-    var sqlServer = new SqlServer("hippo-booking-sql-server", new SqlServerArgs
+    var sqlServer = new Server("hippo-booking-sql-server", new ServerArgs
     {
         Name = WithStackName("hippo-booking-sql-server"),
         ResourceGroupName = rg.Name,
@@ -45,11 +45,9 @@ return await Pulumi.Deployment.RunAsync(() =>
     
     var sqlDatabase = new Database("hippo-booking-sql-database", new DatabaseArgs
     {
-        Name = WithStackName("hippo-booking-sql-database"),
-        ResourceGroupName = rg.Name,
-        Location = rg.Location,
-        ServerName = sqlServer.Name,
-        RequestedServiceObjectiveName = "S0"
+        Name = WithStackName("hippo-booking-db"),
+        ServerId = sqlServer.Id,
+        SkuName = "S0"
     });
     
     var backEndAppServicePlan = new ServicePlan("hippo-booking-back-end-plan", new ServicePlanArgs
@@ -61,12 +59,12 @@ return await Pulumi.Deployment.RunAsync(() =>
         OsType = "Linux"
     });
 
-    var connectionString = Output.Tuple(sqlServer.Name, sqlDatabase.Name, sqlServer.AdministratorLoginPassword)
+    var connectionString = Output.Tuple(sqlServer.Name, sqlDatabase.Name, sqlServer.AdministratorLogin, sqlServer.AdministratorLoginPassword)
         .Apply(t =>
         {
-            var (serverName, databaseName, password) = t;
+            var (serverName, databaseName, login, password) = t;
             return
-                $"Server=tcp:{serverName}.database.windows.net;initial catalog={databaseName};user ID={sqlServer.AdministratorLogin};password={password};Min Pool Size=0;Max Pool Size=30;Persist Security Info=True;";
+                $"Server=tcp:{serverName}.database.windows.net;initial catalog={databaseName};user ID={login};password={password};Min Pool Size=0;Max Pool Size=30;Persist Security Info=True;";
         });
     
     var backEndAppService = new LinuxWebApp("hippo-booking-app-service", new LinuxWebAppArgs
