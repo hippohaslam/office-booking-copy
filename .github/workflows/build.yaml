@@ -71,20 +71,43 @@ jobs:
         run: |
           npx cypress run --component
           
-#  azure-test:
+#  pulumi-test:
 #    runs-on: ubuntu-latest
 #    permissions:
+#      contents: read
 #      id-token: write
 #    environment:
 #      name: 'Development'
+#    defaults:
+#      run:
+#        working-directory: ./src/infrastructure/Hippo.Booking.Deploy.Azure
 #    steps:
+#      - uses: actions/checkout@v4
+#        
 #      - name: 'Az CLI login'
 #        uses: azure/login@v1
 #        with:
 #          client-id: ${{ secrets.AZURE_CLIENT_ID }}
 #          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
 #          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-#
+#          
+#      - name: 'Pulumi Install'
+#        uses: pulumi/actions@v5
+#          
+#      - name: 'Set Pulumi Secret Environment Variable'
+#        run: |
+#          PULUMI_CONFIG_PASSPHRASE=${{ secrets.PULUMI_SECRET_DEV }}
+#          echo "PULUMI_CONFIG_PASSPHRASE=${PULUMI_CONFIG_PASSPHRASE}" >>${GITHUB_ENV}
+#          
+#      - name: 'Pulumi Login'
+#        run: pulumi login "${{ secrets.PULUMI_AZURE_STATE_URL }}"
+#        
+#      - name: 'Pulumi Refresh'
+#        run: pulumi refresh --stack dev --yes
+#        
+#      - name: 'Pulumi Up'
+#        run: pulumi up --stack dev --yes
+#         
 #      - name: 'Run Azure CLI commands'
 #        run: |
 #          APIKEY=$(az staticwebapp secrets list --name hippo-booking-static-web-dev | jq -r '.properties.apiKey')
