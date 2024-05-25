@@ -42,6 +42,14 @@ return await Pulumi.Deployment.RunAsync(() =>
         AdministratorLogin = "hippobookingadmin",
         AdministratorLoginPassword = randomDbPassword.Result
     });
+
+    var sqlFirewallRule = new FirewallRule("hippo-booking-sql-firewall-rule-azure-services", new FirewallRuleArgs
+    {
+        EndIpAddress = "0.0.0.0",
+        Name = "AllowAllWindowsAzureIps",
+        ServerId = sqlServer.Id,
+        StartIpAddress = "0.0.0.0",
+    });
     
     var sqlDatabase = new Database("hippo-booking-sql-database", new DatabaseArgs
     {
