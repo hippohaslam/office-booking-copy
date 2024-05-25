@@ -39,7 +39,7 @@ return await Pulumi.Deployment.RunAsync(() =>
         ResourceGroupName = rg.Name,
         Location = rg.Location,
         Version = "12.0",
-        AdministratorLogin = "admin",
+        AdministratorLogin = "hippobookingadmin",
         AdministratorLoginPassword = randomDbPassword.Result
     });
     
