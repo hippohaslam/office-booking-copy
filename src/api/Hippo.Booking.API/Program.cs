@@ -2,8 +2,7 @@ using FluentValidation;
 using Hippo.Booking.API.Endpoints;
 using Hippo.Booking.API.StartupTasks;
 using Hippo.Booking.Application;
-using Hippo.Booking.Application.Commands;
-using Hippo.Booking.Application.Models;
+using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -12,10 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddScoped<IMediator, Mediator>();
-
-builder.Services.AddScoped<IHandler<CreateSiteRequest>, SiteCommands>();
 
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(IMediator));
 
@@ -30,13 +25,17 @@ builder.Services.AddDbContext<HippoBookingDbContext>(
         }
     });
 
+builder.Services.AddScoped<IDataContext, HippoBookingDbContext>();
+
 builder.Services.AddHostedService<StartupTaskExecutor>();
 
 builder.Services.AddStartupTask<EnsureCreatedStartupTask>();
 
+builder.Services.AddHippoBookingApplication();
+
 var app = builder.Build();
 
-new SiteEndpoints().Map(app);
+new OfficeEndpoints().Map(app);
 new HealthEndpoints().Map(app);
 
 app.MapGet("/", () => TypedResults.Redirect("/swagger/index.html"));

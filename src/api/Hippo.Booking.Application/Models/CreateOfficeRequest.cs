@@ -2,14 +2,14 @@ using FluentValidation;
 
 namespace Hippo.Booking.Application.Models;
 
-public class CreateSiteRequest
+public class CreateOfficeRequest
 {
     public string Name { get; set; } = string.Empty;
 }
 
-public class CreateSiteRequestValidator : AbstractValidator<CreateSiteRequest>
+public class CreateOfficeRequestValidator : AbstractValidator<CreateOfficeRequest>
 {
-    public CreateSiteRequestValidator()
+    public CreateOfficeRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty();
     }

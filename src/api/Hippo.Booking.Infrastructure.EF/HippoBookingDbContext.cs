@@ -26,7 +26,12 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
 
         return query;
     }
-    
+
+    public Task Save()
+    {
+        return SaveChangesAsync();
+    }
+
     public DbSet<User>? Users { get; set; }
     
     public DbSet<BookableObject>? BookableObjects { get; set; }

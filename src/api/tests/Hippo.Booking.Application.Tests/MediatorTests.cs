@@ -16,6 +16,7 @@ public class MediatorTests
         services
             .AddHippoBookingApplication()
             .AddScoped<IHandler<TestRequest>, TestHandler>()
+            .AddScoped<IHandler<TestRequest, int>, TestHandler>()
             .AddScoped<IValidator<TestRequest>, TestRequestValidator>();
 
         var serviceProvider = services.BuildServiceProvider();
@@ -34,6 +35,19 @@ public class MediatorTests
         await _mediator.Execute(request);
         
         request.HandlerRun.Should().BeTrue();
+    }
+    
+    [Test]
+    public async Task MediatorResolvesTestRequestHandlerWithResponse()
+    {
+        var request = new TestRequest
+        {
+            TestProperty = "Test"
+        };
+        
+        var response = await _mediator.Execute<TestRequest, int>(request);
+        
+        response.Should().Be(5);
     }
     
     [Test]
@@ -63,12 +77,17 @@ public class MediatorTests
         public string TestProperty { get; set; } = string.Empty;
     }
     
-    class TestHandler : IHandler<TestRequest>
+    class TestHandler : IHandler<TestRequest>, IHandler<TestRequest, int>
     {
-        public Task Handle(TestRequest request)
+        Task IHandler<TestRequest>.Handle(TestRequest request)
         {
             request.HandlerRun = true;
             return Task.CompletedTask;
+        }
+
+        Task<int> IHandler<TestRequest, int>.Handle(TestRequest request)
+        {
+            return Task.FromResult(5);
         }
     }
 
