@@ -48,11 +48,15 @@ public static class MediatorEndpointExtensions
     }
     
     private static Delegate Handle<TRequest>() =>
-        async Task<Results<NoContent, ValidationProblem>> (IMediator mediator, [FromBody] TRequest request, CancellationToken ct) =>
+        async Task<Results<NoContent, BadRequest<string>, ValidationProblem>> (IMediator mediator, [FromBody] TRequest request, CancellationToken ct) =>
         {
             try
             {
                 await mediator.Execute(request);
+            }
+            catch (ClientException ex)
+            {
+                return TypedResults.BadRequest(ex.Message);
             }
             catch (ValidationException ex)
             {
@@ -67,12 +71,16 @@ public static class MediatorEndpointExtensions
         };
     
     private static Delegate Handle<TRequest, TResponse>() =>
-        async Task<Results<Ok<TResponse>, ValidationProblem>> (IMediator mediator, [FromBody] TRequest request, CancellationToken ct) =>
+        async Task<Results<Ok<TResponse>, BadRequest<string>, ValidationProblem>> (IMediator mediator, [FromBody] TRequest request, CancellationToken ct) =>
         {
             try
             {
                 var response = await mediator.Execute<TRequest, TResponse>(request);
                 return TypedResults.Ok(response);
+            }
+            catch (ClientException ex)
+            {
+                return TypedResults.BadRequest(ex.Message);
             }
             catch (ValidationException ex)
             {
