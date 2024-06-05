@@ -4,33 +4,27 @@ import { v4 as uuidv4 } from 'uuid';
 
 import './FloorplanEditor.scss';
 
-interface Desk {
-  id: string;
-  name: string;
-  floorplanId?:string;
-}
-
 const generateUniqueId = () => {
   return uuidv4();
 };
 
-const lotsOfDesks = [
-  { id: generateUniqueId(), name: 'Desk 1' },
-  { id: generateUniqueId(), name: 'Desk 2' },
-  { id: generateUniqueId(), name: 'Desk 3' },
+const assignableObjects: Array<AssignableObject> = [
+  { id: generateUniqueId(), name: 'Desk 1', floorplanObjectId: undefined },
+  { id: generateUniqueId(), name: 'Desk 2', floorplanObjectId: undefined },
+  { id: generateUniqueId(), name: 'Desk 3', floorplanObjectId: undefined },
 ]
 
 // TODO: How to draw lines
+// TODO: Fetch desks from API
 
 const FloorplanEditor = () => {
   // @ts-ignore
-  const [desks, setDesks] = useState<Desk[]>(lotsOfDesks);
-  const [selectedDesk, setSelectedDesk] = useState<string | null>(null);
+  const [desks, setDesks] = useState<Array<AssignableObject>>(assignableObjects);
+  const [selectedObject, setSelectedObject] = useState<string | null>(null);
 
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
 
-  // Just for testing
   const [canvasJson, setCanvasJson] = useState<string | null>(null);
 
   const [editMode, setEditMode] = useState<boolean>(true)
@@ -51,18 +45,18 @@ const FloorplanEditor = () => {
       fabricCanvas.on('mouse:down', (e) => {
         const selectedObject = e.target as CustomFabricObject;
         if (selectedObject) {
+          // TODO: Only certain shapes we want to be classed as an assignable object (desk)
           console.log('Object ID:', selectedObject.id);
-          setSelectedDesk(selectedObject.id ?? null);
+          setSelectedObject(selectedObject.id ?? null);
           // Perform other operations as needed
         } else {
-          setSelectedDesk(null)
+          setSelectedObject(null)
         }
 
       });
 
       fabricCanvas.on('mouse:wheel', function(opt) {
         if (opt.e.altKey === true) {
-
           var delta = opt.e.deltaY;
           var zoom = fabricCanvas.getZoom();
           zoom *= 0.999 ** delta;
@@ -88,11 +82,13 @@ const FloorplanEditor = () => {
     if (fabricCanvasRef.current) {
       const circle = new CustomCircle({
         radius: 50,
-        fill: 'red',
         width: 50,
         height: 50,
         left: 100,
         top: 100,
+        fill: "white",
+        stroke: 'black',
+        strokeWidth: 2,
         id: generateUniqueId(),
       });
       fabricCanvasRef.current.add(circle);
@@ -103,11 +99,13 @@ const FloorplanEditor = () => {
   const addSquare = () => {
     if (fabricCanvasRef.current) {
       const square = new CustomRect({
-        fill: 'green',
         width: 50,
         height: 50,
         left: 150,
         top: 150,
+        fill: "white",
+        stroke: 'black',
+        strokeWidth: 2,
         id: generateUniqueId(),
       });
       fabricCanvasRef.current.add(square);
@@ -118,7 +116,6 @@ const FloorplanEditor = () => {
   const saveCanvas = () => {
     if (fabricCanvasRef.current) {
       const json = fabricCanvasRef.current.toJSON(['id']);
-      console.log(json);
       setCanvasJson(JSON.stringify(json));
     }
   }
@@ -156,26 +153,26 @@ const FloorplanEditor = () => {
   }
 
   const assignDesk = (deskId: string) => {
-    if (selectedDesk) {
-      console.log('selected desk', selectedDesk);
+    if (selectedObject) {
+      console.log('selected desk', selectedObject);
       const nextDesks = desks.map(desk => {
         if(desk.id === deskId) {
-          desk.floorplanId = selectedDesk;
+          desk.floorplanObjectId = selectedObject;
         }
         return desk;
       })
+      console.log('next desks', nextDesks)
       setDesks(nextDesks);
-
     }
   }
 
 
   const unassignDesk = (deskId: string) => {
-    if (selectedDesk) {
-      console.log('selected desk', selectedDesk);
+    if (selectedObject) {
+      console.log('selected desk', selectedObject);
       const nextDesks = desks.map(desk => {
         if(desk.id === deskId) {
-          desk.floorplanId = undefined;
+          desk.floorplanObjectId = undefined;
         }
         return desk;
       })
@@ -209,16 +206,16 @@ const FloorplanEditor = () => {
           </div>
         </div>
         <div className="floorplan__desk-list">
-          <h2>Desk list</h2>
+          <h2>Bookable objects list</h2>
           <ul>
             {desks.map((desk) => (
               <li key={desk.id}>
                 {desk.name}
-                {/* small italic text to show id */}
                 <br />
-                <button type="button" onClick={() => assignDesk(desk.id)} disabled={!selectedDesk}>Assign desk</button>
-                <button type="button" onClick={() => unassignDesk(desk.id)} disabled={!selectedDesk}>Unassign desk</button>
-                <small style={{ fontStyle: 'italic' }}>{desk.floorplanId ?? "No assigned location"}</small>
+                <button type="button" onClick={() => assignDesk(desk.id)} disabled={!selectedObject}>Assign desk</button>
+                <button type="button" onClick={() => unassignDesk(desk.id)} disabled={desk.floorplanObjectId === undefined}>Unassign desk</button>
+                <br />
+                <small style={{ fontStyle: 'italic' }}>{desk.floorplanObjectId ?? "No assigned location"}</small>
               </li>
             ))}
           </ul>
