@@ -6,6 +6,8 @@ public class BookableObject : BaseEntity<int>
     
     public string Description { get; set; } = string.Empty;
     
+    public string FloorplanObjectId { get; set; } = string.Empty;
+    
     public int OfficeId { get; set; }
     public Office Office { get; set; } = null!;
     

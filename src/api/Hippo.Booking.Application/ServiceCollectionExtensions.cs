@@ -10,10 +10,11 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddHippoBookingApplication(this IServiceCollection services)
     {
-        services.AddScoped<IMediator, Mediator>();
+        services.AddScoped<ICreateOfficeCommmand, OfficeCommands>();
+        services.AddScoped<IUpdateOfficeCommand, OfficeCommands>();
         
-        services.AddScoped<IHandler<CreateOfficeRequest, int>, OfficeCommands>();
         services.AddScoped<IValidator<CreateOfficeRequest>, CreateOfficeRequestValidator>();
+        services.AddScoped<IValidator<UpdateOfficeRequest>, UpdateOfficeRequestValidator>();
 
         services.AddScoped<IOfficeQueries, OfficeQueries>();
         

@@ -1,4 +1,4 @@
-using Hippo.Booking.API.Extensions;
+using Hippo.Booking.Application.Commands;
 using Hippo.Booking.Application.Models;
 using Hippo.Booking.Application.Queries.Offices;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -21,6 +21,14 @@ public class OfficeEndpoints() : EndpointBase("office", "Offices")
                 : TypedResults.Ok(office);
         });
         
-        builder.MapPostMediator<CreateOfficeRequest, int>("");
+        builder.MapPost("", async (ICreateOfficeCommmand command, CreateOfficeRequest request) =>
+        {
+            return await HandleResponse(async () => await command.Handle(request));
+        });
+        
+        builder.MapPut("{id:int}", async (int id, IUpdateOfficeCommand command, UpdateOfficeRequest request) =>
+        {
+            return await HandleResponse(async () => await command.Handle(id, request));
+        });
     }
 }

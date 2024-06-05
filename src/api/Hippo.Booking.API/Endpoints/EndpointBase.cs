@@ -1,4 +1,6 @@
+using FluentValidation;
 using Hippo.Booking.Application;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hippo.Booking.API.Endpoints;
 
@@ -15,6 +17,48 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
             .WithTags(swaggerGroupName);
         
         MapEndpoints(grouping);
+    }
+    
+    public async Task<Results<Ok<TResponse>, BadRequest<string>, ValidationProblem>> HandleResponse<TResponse>(Func<Task<TResponse>> handle)
+    {
+        try
+        {
+            var response = await handle();
+            return TypedResults.Ok(response);
+        }
+        catch (ClientException ex)
+        {
+            return TypedResults.BadRequest(ex.Message);
+        }
+        catch (ValidationException ex)
+        {
+            var errors = ex.Errors
+                .GroupBy(x => x.PropertyName)
+                .ToDictionary(k => k.Key, v => v.Select(x => x.ErrorMessage).ToArray());
+                
+            return TypedResults.ValidationProblem(errors);
+        }
+    }
+
+    public async Task<Results<NoContent, BadRequest<string>, ValidationProblem>> HandleResponse(Func<Task> handle)
+    {
+        try
+        {
+            await handle.Invoke();
+            return TypedResults.NoContent();
+        }
+        catch (ClientException ex)
+        {
+            return TypedResults.BadRequest(ex.Message);
+        }
+        catch (ValidationException ex)
+        {
+            var errors = ex.Errors
+                .GroupBy(x => x.PropertyName)
+                .ToDictionary(k => k.Key, v => v.Select(x => x.ErrorMessage).ToArray());
+                
+            return TypedResults.ValidationProblem(errors);
+        }
     }
     
     public abstract void MapEndpoints(RouteGroupBuilder builder);

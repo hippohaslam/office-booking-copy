@@ -28,12 +28,19 @@ public class OfficeQueries(IDataContext dataContext) : IOfficeQueries
     public Task<OfficeQueryResponse?> GetOfficeById(int id)
     {
         return dataContext.Query<Office>(x => x.WithNoTracking())
+            .Include(i => i.BookableObjects)
             .Where(x => x.Id == id)
             .Select(x => new OfficeQueryResponse
             {
                 Id = x.Id,
                 Name = x.Name,
-                FloorPlanJson = x.FloorPlanJson
+                FloorPlanJson = x.FloorPlanJson,
+                BookableObjects = x.BookableObjects.Select(y => new OfficeQueryResponse.BookableObject
+                {
+                    Id = y.Id,
+                    Name = y.Name,
+                    FloorPlanObjectId = y.FloorplanObjectId
+                }).ToList()
             })
             .SingleOrDefaultAsync();
     }

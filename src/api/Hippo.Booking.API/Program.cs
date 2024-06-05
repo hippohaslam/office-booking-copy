@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddValidatorsFromAssemblyContaining(typeof(IMediator));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(ClientException));
 
 builder.Services.AddDbContext<HippoBookingDbContext>(
     optionsBuilder =>
