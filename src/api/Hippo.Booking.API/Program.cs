@@ -9,6 +9,17 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5173")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -38,6 +49,10 @@ var app = builder.Build();
 new OfficeEndpoints().Map(app);
 new HealthEndpoints().Map(app);
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("AllowLocalhost");
+}
 app.MapGet("/", () => TypedResults.Redirect("/swagger/index.html"));
 
 app.UseSwagger();

@@ -1,3 +1,5 @@
+using Hippo.Booking.Application.Models;
+
 namespace Hippo.Booking.Application.Queries.Offices;
 
 public class OfficeQueryResponse
@@ -8,14 +10,7 @@ public class OfficeQueryResponse
     
     public string FloorPlanJson { get; set; } = string.Empty;
 
-    public List<BookableObject> BookableObjects { get; set; } = new();
+    public List<BookableObjectDto> BookableObjects { get; set; } = new();
 
-    public class BookableObject
-    {
-        public int Id { get; set; }
-
-        public string Name { get; set; } = string.Empty;
-
-        public string FloorPlanObjectId { get; set; } = string.Empty;
-    }
+    
 }

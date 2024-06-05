@@ -1,6 +1,6 @@
 
-interface AssignableObject {
-  id: string;
+interface BookableObject {
+  id: number;
   name: string;
   floorplanObjectId?:string;
 }

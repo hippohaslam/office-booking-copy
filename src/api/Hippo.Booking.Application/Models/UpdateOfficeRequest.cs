@@ -7,6 +7,9 @@ public class UpdateOfficeRequest
     public string Name { get; set; } = string.Empty;
     
     public string FloorPlanJson { get; set; } = string.Empty;
+    
+    public List<BookableObjectDto> BookableObjects { get; set; } = new();
+    
 }
 
 public class UpdateOfficeRequestValidator : AbstractValidator<UpdateOfficeRequest>

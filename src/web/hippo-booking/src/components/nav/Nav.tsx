@@ -18,9 +18,9 @@ const Nav = () => {
           <li>
             <Link to="parking">Parking</Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="floorplan">floorplan</Link>
-          </li>
+          </li> */}
         </ul>
       </nav>
        </div>

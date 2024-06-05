@@ -1,3 +1,4 @@
+using Hippo.Booking.Application.Models;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,7 @@ public class OfficeQueries(IDataContext dataContext) : IOfficeQueries
                 Id = x.Id,
                 Name = x.Name,
                 FloorPlanJson = x.FloorPlanJson,
-                BookableObjects = x.BookableObjects.Select(y => new OfficeQueryResponse.BookableObject
+                BookableObjects = x.BookableObjects.Select(y => new BookableObjectDto
                 {
                     Id = y.Id,
                     Name = y.Name,
