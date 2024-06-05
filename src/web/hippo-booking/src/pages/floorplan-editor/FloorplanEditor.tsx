@@ -25,7 +25,7 @@ const FloorplanEditor = () => {
   const [office, setOffice] = useState<Office>();
   const [postOffice, setPostOffice] = useState<Office | undefined>();
   const {data: officeData, isLoading: officeLoading, error: officeError } = useFetch<Office>(`https://localhost:7249/office/${officeId}`);
-  const {success: updateSuccess} = useFetch<Office>(`https://localhost:7249/office/${officeId}`, 'PUT', undefined, postOffice);
+  const {success: updateSuccess, error: updateError} = useFetch<Office>(`https://localhost:7249/office/${officeId}`, 'PUT', undefined, postOffice);
   
   const [selectedObject, setSelectedObject] = useState<string | null>(null);
 
@@ -215,7 +215,7 @@ const FloorplanEditor = () => {
   return (
     <div>
       <h1>{!office || officeLoading ? "Office loading..." : office.name}</h1>
-      {officeError && <ErrorBanner />}
+      {(officeError || updateError) && <ErrorBanner />}
       <div>
         <h2>Office details</h2>
       </div>
