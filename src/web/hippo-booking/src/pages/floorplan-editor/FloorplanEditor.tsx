@@ -7,7 +7,7 @@ import './FloorplanEditor.scss';
 interface Desk {
   id: string;
   name: string;
-  floorplanId?: string;
+  floorplanId?:string;
 }
 
 const generateUniqueId = () => {
@@ -25,6 +25,7 @@ const lotsOfDesks = [
 const FloorplanEditor = () => {
   // @ts-ignore
   const [desks, setDesks] = useState<Desk[]>(lotsOfDesks);
+  const [selectedDesk, setSelectedDesk] = useState<string | null>(null);
 
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
@@ -51,20 +52,28 @@ const FloorplanEditor = () => {
         const selectedObject = e.target as CustomFabricObject;
         if (selectedObject) {
           console.log('Object ID:', selectedObject.id);
+          setSelectedDesk(selectedObject.id ?? null);
           // Perform other operations as needed
+        } else {
+          setSelectedDesk(null)
         }
+
       });
 
       fabricCanvas.on('mouse:wheel', function(opt) {
-        var delta = opt.e.deltaY;
-        var zoom = fabricCanvas.getZoom();
-        zoom *= 0.999 ** delta;
-        if (zoom > 20) zoom = 20;
-        if (zoom < 0.01) zoom = 0.01;
-        fabricCanvas.setZoom(zoom);
-        opt.e.preventDefault();
-        opt.e.stopPropagation();
+        if (opt.e.altKey === true) {
+
+          var delta = opt.e.deltaY;
+          var zoom = fabricCanvas.getZoom();
+          zoom *= 0.999 ** delta;
+          if (zoom > 20) zoom = 20;
+          if (zoom < 0.01) zoom = 0.01;
+          fabricCanvas.setZoom(zoom);
+          opt.e.preventDefault();
+          opt.e.stopPropagation();
+        }
       })
+
     }
 
     // Cleanup function to dispose the canvas when component unmounts
@@ -146,6 +155,34 @@ const FloorplanEditor = () => {
     setEditMode(!editMode)
   }
 
+  const assignDesk = (deskId: string) => {
+    if (selectedDesk) {
+      console.log('selected desk', selectedDesk);
+      const nextDesks = desks.map(desk => {
+        if(desk.id === deskId) {
+          desk.floorplanId = selectedDesk;
+        }
+        return desk;
+      })
+      setDesks(nextDesks);
+
+    }
+  }
+
+
+  const unassignDesk = (deskId: string) => {
+    if (selectedDesk) {
+      console.log('selected desk', selectedDesk);
+      const nextDesks = desks.map(desk => {
+        if(desk.id === deskId) {
+          desk.floorplanId = undefined;
+        }
+        return desk;
+      })
+      setDesks(nextDesks);
+    }
+  }
+
   return (
     <div>
       <h1>Floorplan editor</h1>
@@ -179,6 +216,8 @@ const FloorplanEditor = () => {
                 {desk.name}
                 {/* small italic text to show id */}
                 <br />
+                <button type="button" onClick={() => assignDesk(desk.id)} disabled={!selectedDesk}>Assign desk</button>
+                <button type="button" onClick={() => unassignDesk(desk.id)} disabled={!selectedDesk}>Unassign desk</button>
                 <small style={{ fontStyle: 'italic' }}>{desk.floorplanId ?? "No assigned location"}</small>
               </li>
             ))}
