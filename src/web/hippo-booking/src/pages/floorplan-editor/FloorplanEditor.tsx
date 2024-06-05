@@ -11,19 +11,19 @@ interface Desk {
 }
 
 const generateUniqueId = () => {
-    return uuidv4();
+  return uuidv4();
 };
 
 const lotsOfDesks = [
-{ id: generateUniqueId(), name: 'Desk 1' },
-{ id: generateUniqueId(), name: 'Desk 2' },
-{ id: generateUniqueId(), name: 'Desk 3' },
+  { id: generateUniqueId(), name: 'Desk 1' },
+  { id: generateUniqueId(), name: 'Desk 2' },
+  { id: generateUniqueId(), name: 'Desk 3' },
 ]
 
 // TODO: How to draw lines
 
 const FloorplanEditor = () => {
-    // @ts-ignore
+  // @ts-ignore
   const [desks, setDesks] = useState<Desk[]>(lotsOfDesks);
 
   const canvasElRef = useRef<HTMLCanvasElement>(null);
@@ -32,15 +32,15 @@ const FloorplanEditor = () => {
   // Just for testing
   const [canvasJson, setCanvasJson] = useState<string | null>(null);
 
-  const [editMode, setEditMode] = useState<boolean>(false)
-  
+  const [editMode, setEditMode] = useState<boolean>(true)
+
 
   useEffect(() => {
     if (canvasElRef.current) {
       const fabricCanvas = new fabric.Canvas(canvasElRef.current, {
         backgroundColor: '#F0F8FF',
-        width: 500,
-        height: 500,
+        width: 800,
+        height: 600,
       });
       fabricCanvasRef.current = fabricCanvas;
 
@@ -50,10 +50,21 @@ const FloorplanEditor = () => {
       fabricCanvas.on('mouse:down', (e) => {
         const selectedObject = e.target as CustomFabricObject;
         if (selectedObject) {
-          console.log('Object ID:', selectedObject.id); 
+          console.log('Object ID:', selectedObject.id);
           // Perform other operations as needed
         }
       });
+
+      fabricCanvas.on('mouse:wheel', function(opt) {
+        var delta = opt.e.deltaY;
+        var zoom = fabricCanvas.getZoom();
+        zoom *= 0.999 ** delta;
+        if (zoom > 20) zoom = 20;
+        if (zoom < 0.01) zoom = 0.01;
+        fabricCanvas.setZoom(zoom);
+        opt.e.preventDefault();
+        opt.e.stopPropagation();
+      })
     }
 
     // Cleanup function to dispose the canvas when component unmounts
@@ -76,7 +87,7 @@ const FloorplanEditor = () => {
         id: generateUniqueId(),
       });
       fabricCanvasRef.current.add(circle);
-      fabricCanvasRef.current.renderAll(); 
+      fabricCanvasRef.current.renderAll();
     }
   };
 
@@ -86,8 +97,8 @@ const FloorplanEditor = () => {
         fill: 'green',
         width: 50,
         height: 50,
-        left: 150, 
-        top: 150, 
+        left: 150,
+        top: 150,
         id: generateUniqueId(),
       });
       fabricCanvasRef.current.add(square);
@@ -97,9 +108,9 @@ const FloorplanEditor = () => {
 
   const saveCanvas = () => {
     if (fabricCanvasRef.current) {
-      const json = fabricCanvasRef.current.toJSON();
+      const json = fabricCanvasRef.current.toJSON(['id']);
       console.log(json);
-        setCanvasJson(JSON.stringify(json));
+      setCanvasJson(JSON.stringify(json));
     }
   }
 
@@ -127,7 +138,7 @@ const FloorplanEditor = () => {
   const toggleEditMode = () => {
     if (fabricCanvasRef.current) {
       fabricCanvasRef.current.selection = !editMode;
-      fabricCanvasRef.current.forEachObject(function (o) {
+      fabricCanvasRef.current.forEachObject(function(o) {
         o.selectable = !editMode;
       });
     }
@@ -137,7 +148,7 @@ const FloorplanEditor = () => {
 
   return (
     <div>
-      <h1>Home</h1>
+      <h1>Floorplan editor</h1>
       <div className="floorplan__container">
         <div className="floorplan__editor">
           <h2>Editor</h2>
@@ -157,21 +168,21 @@ const FloorplanEditor = () => {
             Load canvas
           </button>
           <div className="floorplan__editor-canvas">
-            <canvas width="300" height="300" ref={canvasElRef}/>
+            <canvas width="800" height="600" ref={canvasElRef} />
           </div>
         </div>
         <div className="floorplan__desk-list">
           <h2>Desk list</h2>
           <ul>
-                {desks.map((desk) => (
-                <li key={desk.id}>
-                    {desk.name}
-                    {/* small italic text to show id */}
-                    <br />
-                    <small style={{ fontStyle: 'italic' }}>{desk.floorplanId ?? "No assigned location"}</small>
-                </li>
-                ))}
-            </ul>
+            {desks.map((desk) => (
+              <li key={desk.id}>
+                {desk.name}
+                {/* small italic text to show id */}
+                <br />
+                <small style={{ fontStyle: 'italic' }}>{desk.floorplanId ?? "No assigned location"}</small>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
@@ -181,10 +192,10 @@ const FloorplanEditor = () => {
 export default FloorplanEditor;
 
 interface CustomFabricObject extends fabric.Object {
-    id?: string;
-  }
+  id?: string;
+}
 
-  // Extend the fabric.Rect class to include an id property
+// Extend the fabric.Rect class to include an id property
 class CustomRect extends fabric.Rect {
   id: string;
 
@@ -193,13 +204,13 @@ class CustomRect extends fabric.Rect {
     this.id = options.id;
   }
 }
-  
+
 // Extend the fabric.Circle class to include an id property
 class CustomCircle extends fabric.Circle {
-    id: string;
+  id: string;
 
-    constructor(options: fabric.ICircleOptions & { id: string }) {
-        super(options);
-        this.id = options.id;
-    }
+  constructor(options: fabric.ICircleOptions & { id: string }) {
+    super(options);
+    this.id = options.id;
+  }
 }
