@@ -21,9 +21,13 @@ public class OfficeEndpoints() : EndpointBase("office", "Offices")
                 : TypedResults.Ok(office);
         });
         
-        builder.MapPost("", async (ICreateOfficeCommmand command, CreateOfficeRequest request) =>
+        builder.MapPost("", async Task<Results<Created, BadRequest<string>, ValidationProblem>> (ICreateOfficeCommmand command, CreateOfficeRequest request) =>
         {
-            return await HandleResponse(async () => await command.Handle(request));
+            var resp = await HandleCreatedResponse(
+                async () => await command.Handle(request),
+                value => $"office/{value}");
+
+            return resp;
         });
         
         builder.MapPut("{id:int}", async (int id, IUpdateOfficeCommand command, UpdateOfficeRequest request) =>

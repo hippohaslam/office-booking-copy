@@ -19,7 +19,22 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
         MapEndpoints(grouping);
     }
     
-    public async Task<Results<Ok<TResponse>, BadRequest<string>, ValidationProblem>> HandleResponse<TResponse>(Func<Task<TResponse>> handle)
+    protected async Task<Results<Created, BadRequest<string>, ValidationProblem>> HandleCreatedResponse<TResponse>(
+        Func<Task<TResponse>> handle,
+        Func<TResponse, string> createdUrl)
+    {
+        var response = await HandleResponse(handle);
+        
+        return response.Result switch
+        {
+            Ok<TResponse> ok => TypedResults.Created($"/{createdUrl(ok.Value!)}"),
+            BadRequest<string> badRequest => badRequest,
+            ValidationProblem validationProblem => validationProblem,
+            _ => throw new InvalidOperationException()
+        };
+    }
+    
+    protected async Task<Results<Ok<TResponse>, BadRequest<string>, ValidationProblem>> HandleResponse<TResponse>(Func<Task<TResponse>> handle)
     {
         try
         {
@@ -40,7 +55,7 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
         }
     }
 
-    public async Task<Results<NoContent, BadRequest<string>, ValidationProblem>> HandleResponse(Func<Task> handle)
+    protected async Task<Results<NoContent, BadRequest<string>, ValidationProblem>> HandleResponse(Func<Task> handle)
     {
         try
         {
