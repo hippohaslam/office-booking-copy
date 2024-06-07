@@ -4,6 +4,12 @@ interface CustomFabricObject extends fabric.Object {
     id?: string;
 }
 
+interface ExtendedCanvas extends fabric.Canvas {
+    isDragging?: boolean;
+    lastPosX?: number;
+    lastPosY?: number;
+  }
+
 // Extend the fabric.Rect class to include an id property
 class CustomRect extends fabric.Rect {
     id: string;
@@ -25,4 +31,4 @@ class CustomCircle extends fabric.Circle {
 }
 
 export { CustomRect, CustomCircle };
-export type { CustomFabricObject };
+export type { CustomFabricObject, ExtendedCanvas };

@@ -3,7 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import useFetch from "../../hooks/useFetchData";
-import { CustomCircle, CustomFabricObject, CustomRect } from "../../shared/fabric/CustomObjects";
+import {
+  CustomCircle,
+  CustomFabricObject,
+  CustomRect,
+  ExtendedCanvas,
+} from "../../shared/fabric/CustomObjects";
 import "./FloorplanEditor.scss";
 
 const generateUniqueId = () => {
@@ -22,9 +27,18 @@ const FloorplanEditor = () => {
   let { officeId } = useParams();
   const [office, setOffice] = useState<Office>();
   const [postOffice, setPostOffice] = useState<Office | undefined>();
-  const {data: officeData, isLoading: officeLoading, error: officeError } = useFetch<Office>(`${baseUrl}/office/${officeId}`);
-  const {success: updateSuccess, error: updateError} = useFetch<Office>(`${baseUrl}/office/${officeId}`, 'PUT', undefined, postOffice);
-  
+  const {
+    data: officeData,
+    isLoading: officeLoading,
+    error: officeError,
+  } = useFetch<Office>(`${baseUrl}/office/${officeId}`);
+  const { success: updateSuccess, error: updateError } = useFetch<Office>(
+    `${baseUrl}/office/${officeId}`,
+    "PUT",
+    undefined,
+    postOffice
+  );
+
   const [selectedObject, setSelectedObject] = useState<string | null>(null);
 
   const canvasElRef = useRef<HTMLCanvasElement>(null);
@@ -34,16 +48,16 @@ const FloorplanEditor = () => {
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
 
   useEffect(() => {
-    if(officeData) {
+    if (officeData) {
       officeData.bookableObjects = assignableObjects;
       setOffice(officeData);
 
       if (canvasElRef.current) {
         const fabricCanvas = loadCanvas(officeData?.floorPlanJson ?? "");
-  
+
         // Make canvas interactive
         fabricCanvas.selection = true;
-  
+
         fabricCanvas.on("mouse:down", (e) => {
           const selectedObject = e.target as CustomFabricObject;
           if (selectedObject) {
@@ -55,23 +69,12 @@ const FloorplanEditor = () => {
             setSelectedObject(null);
           }
         });
-  
+
         // Zoom ability: Taken from the fabric docs
-        fabricCanvas.on("mouse:wheel", function (opt) {
-          if (opt.e.altKey === true) {
-            var delta = opt.e.deltaY;
-            var zoom = fabricCanvas.getZoom();
-            zoom *= 0.999 ** delta;
-            if (zoom > 20) zoom = 20;
-            if (zoom < 0.01) zoom = 0.01;
-            fabricCanvas.setZoom(zoom);
-            opt.e.preventDefault();
-            opt.e.stopPropagation();
-          }
-        });
+        initializeCanvasZoom(fabricCanvas);
+        initializeCanvasDragging(fabricCanvas);
       }
     }
-    
 
     // Cleanup function to dispose the canvas when component unmounts
     return () => {
@@ -116,7 +119,7 @@ const FloorplanEditor = () => {
   };
 
   const loadCanvas = (canvasJson: string) => {
-    if(canvasJson === "") {
+    if (canvasJson === "") {
       const canvas = new fabric.Canvas(canvasElRef.current, {
         backgroundColor: "#F0F8FF",
         width: 800,
@@ -125,9 +128,12 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current = canvas;
       return canvas;
     } else {
-      const canvas =  new fabric.Canvas(canvasElRef.current).loadFromJSON(canvasJson, () => {
-        fabricCanvasRef.current?.renderAll();
-      });
+      const canvas = new fabric.Canvas(canvasElRef.current).loadFromJSON(
+        canvasJson,
+        () => {
+          fabricCanvasRef.current?.renderAll();
+        }
+      );
       fabricCanvasRef.current = canvas;
       return canvas;
     }
@@ -146,10 +152,11 @@ const FloorplanEditor = () => {
 
   const toggleFreeDraw = () => {
     if (fabricCanvasRef.current) {
-      fabricCanvasRef.current.isDrawingMode = !fabricCanvasRef.current.isDrawingMode;
+      fabricCanvasRef.current.isDrawingMode =
+        !fabricCanvasRef.current.isDrawingMode;
     }
     setFreeDrawMode(!freeDrawMode);
-  }
+  };
 
   const assignDesk = (deskId: number) => {
     if (selectedObject && office) {
@@ -183,18 +190,17 @@ const FloorplanEditor = () => {
       };
       // use useFetch for API call
       setPostOffice(nextOffice);
-
     }
   };
 
   const removeObject = () => {
     if (fabricCanvasRef.current) {
       let activeObject = fabricCanvasRef.current.getActiveObject();
-      if(activeObject){
+      if (activeObject) {
         fabricCanvasRef.current.remove(activeObject);
       }
     }
-  }
+  };
 
   const handleLineDraw = () => {
     if (fabricCanvasRef.current) {
@@ -207,9 +213,9 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current.add(line);
       fabricCanvasRef.current.renderAll();
     }
-  }
+  };
 
-  const hasErrors =  officeError || updateError;
+  const hasErrors = officeError || updateError;
 
   // RENDERS
   // Must always have a canvas element, adding conditional logic to hide the canvas if the office is not loaded will break the fabric.js canvas
@@ -220,16 +226,21 @@ const FloorplanEditor = () => {
       <div>
         <h2>Update office details</h2>
         <label htmlFor="office-name">Office name: </label>
-        <input id="office-name" type="text" value={office?.name || ""} onChange={(e) => {
-          setOffice((prev) => {
-            if(prev){
-              return {
-                ...prev,
-                name: e.target.value
+        <input
+          id="office-name"
+          type="text"
+          value={office?.name || ""}
+          onChange={(e) => {
+            setOffice((prev) => {
+              if (prev) {
+                return {
+                  ...prev,
+                  name: e.target.value,
+                };
               }
-            }
-          } )
-        }} />
+            });
+          }}
+        />
       </div>
       <h2>Update floorplan</h2>
       <div className="floorplan__container">
@@ -249,11 +260,11 @@ const FloorplanEditor = () => {
           <button type="button" onClick={toggleFreeDraw} disabled={!editMode}>
             Free draw mode: {freeDrawMode.toString()}
           </button>
-          
+
           <button type="button" onClick={removeObject} disabled={!editMode}>
             Remove object
           </button>
-          
+
           <div className="floorplan__editor-canvas">
             <canvas width="800" height="600" ref={canvasElRef} />
           </div>
@@ -289,8 +300,8 @@ const FloorplanEditor = () => {
         </div>
       </div>
       <button type="button" onClick={saveOffice}>
-            Save office
-          </button>
+        Save office
+      </button>
     </div>
   );
 };
@@ -304,4 +315,55 @@ const ErrorBanner = () => {
       <h1>Error</h1>
     </div>
   );
+};
+
+const initializeCanvasZoom = (canvas: fabric.Canvas) => {
+  canvas.on('mouse:wheel', function(opt) {
+    var delta = opt.e.deltaY;
+    var zoom = canvas.getZoom();
+    zoom *= 0.999 ** delta;
+    if (zoom > 20) zoom = 20;
+    if (zoom < 0.01) zoom = 0.01;
+    canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+    opt.e.preventDefault();
+    opt.e.stopPropagation();
+  });
+};
+
+const initializeCanvasDragging = (canvas: fabric.Canvas) => {
+  canvas.on("mouse:down", function (this: ExtendedCanvas, opt) {
+    var evt = opt.e;
+    if (evt.altKey === true) {
+      this.isDragging = true;
+      this.selection = false;
+      this.lastPosX = evt.clientX;
+      this.lastPosY = evt.clientY;
+    }
+  });
+  canvas.on("mouse:move", function (this: ExtendedCanvas, opt) {
+    if (
+      this.isDragging &&
+      this.lastPosX !== undefined &&
+      this.lastPosY !== undefined
+    ) {
+      var e = opt.e;
+      var vpt = this.viewportTransform;
+      if (vpt !== undefined) {
+        vpt[4] += e.clientX - this.lastPosX;
+        vpt[5] += e.clientY - this.lastPosY;
+        this.requestRenderAll();
+        this.lastPosX = e.clientX;
+        this.lastPosY = e.clientY;
+      }
+    }
+  });
+  canvas.on("mouse:up", function (this: ExtendedCanvas, opt) {
+    // on mouse up we want to recalculate new interaction
+    // for all objects, so we call setViewportTransform
+    if (this.viewportTransform) {
+      this.setViewportTransform(this.viewportTransform);
+      this.isDragging = false;
+      this.selection = true;
+    }
+  });
 };
