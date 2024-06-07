@@ -2,9 +2,9 @@ import { fabric } from "fabric";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-
-import "./FloorplanEditor.scss";
 import useFetch from "../../hooks/useFetchData";
+import { CustomCircle, CustomFabricObject, CustomRect } from "../../shared/fabric/CustomObjects";
+import "./FloorplanEditor.scss";
 
 const generateUniqueId = () => {
   return uuidv4();
@@ -16,9 +16,6 @@ const assignableObjects: Array<BookableObject> = [
   { id: 2, name: "Desk 2", floorplanObjectId: undefined },
   { id: 3, name: "Desk 3", floorplanObjectId: undefined },
 ];
-
-// TODO: How to draw lines
-// TODO: Fetch desks from API
 
 const FloorplanEditor = () => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -34,17 +31,10 @@ const FloorplanEditor = () => {
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
 
   const [editMode, setEditMode] = useState<boolean>(true);
+  const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
 
   useEffect(() => {
-    if(updateSuccess) {
-      console.log('office updated')
-    }
-  } , [updateSuccess])
-
-  useEffect(() => {
-    
     if(officeData) {
-      console.log('office data loading')
       officeData.bookableObjects = assignableObjects;
       setOffice(officeData);
 
@@ -57,7 +47,7 @@ const FloorplanEditor = () => {
         fabricCanvas.on("mouse:down", (e) => {
           const selectedObject = e.target as CustomFabricObject;
           if (selectedObject) {
-            // TODO: Only certain shapes we want to be classed as an assignable object (desk)
+            // TODO: Only certain shapes we want to be classed as an assignable object (cirle, square, etc.)
             console.log("Object ID:", selectedObject.id);
             setSelectedObject(selectedObject.id ?? null);
             // Perform other operations as needed
@@ -66,7 +56,7 @@ const FloorplanEditor = () => {
           }
         });
   
-        // Taken from the fabric docs
+        // Zoom ability: Taken from the fabric docs
         fabricCanvas.on("mouse:wheel", function (opt) {
           if (opt.e.altKey === true) {
             var delta = opt.e.deltaY;
@@ -85,7 +75,6 @@ const FloorplanEditor = () => {
 
     // Cleanup function to dispose the canvas when component unmounts
     return () => {
-      console.log('cleaning up')
       fabricCanvasRef.current?.dispose();
       fabricCanvasRef.current = null;
     };
@@ -93,7 +82,6 @@ const FloorplanEditor = () => {
 
   const addCircle = () => {
     if (fabricCanvasRef.current) {
-      console.log("Adding circle");
       const circle = new CustomCircle({
         radius: 50,
         width: 50,
@@ -172,6 +160,13 @@ const FloorplanEditor = () => {
     setEditMode(!editMode);
   };
 
+  const toggleFreeDraw = () => {
+    if (fabricCanvasRef.current) {
+      fabricCanvasRef.current.isDrawingMode = !fabricCanvasRef.current.isDrawingMode;
+    }
+    setFreeDrawMode(!freeDrawMode);
+  }
+
   const assignDesk = (deskId: number) => {
     if (selectedObject && office) {
       console.log("selected desk", selectedObject);
@@ -211,6 +206,15 @@ const FloorplanEditor = () => {
     }
   };
 
+  const removeObject = () => {
+    if (fabricCanvasRef.current) {
+      let ob = fabricCanvasRef.current.getActiveObject();
+      if(ob){
+        fabricCanvasRef.current.remove(ob);
+      }
+    }
+  }
+
   const hasErrors =  officeError || updateError;
 
   // RENDERS
@@ -222,7 +226,7 @@ const FloorplanEditor = () => {
       <div>
         <h2>Update office details</h2>
         <label htmlFor="office-name">Office name: </label>
-        <input id="office-name" type="text" value={office?.name} onChange={(e) => {
+        <input id="office-name" type="text" value={office?.name || ""} onChange={(e) => {
           setOffice((prev) => {
             if(prev){
               return {
@@ -244,6 +248,12 @@ const FloorplanEditor = () => {
           </button>
           <button type="button" onClick={addSquare} disabled={!editMode}>
             Add square
+          </button>
+          <button type="button" onClick={toggleFreeDraw} disabled={!editMode}>
+            Free draw mode: {freeDrawMode.toString()}
+          </button>
+          <button type="button" onClick={removeObject} disabled={!editMode}>
+            Remove object
           </button>
           
           <div className="floorplan__editor-canvas">
@@ -297,27 +307,3 @@ const ErrorBanner = () => {
     </div>
   );
 };
-
-interface CustomFabricObject extends fabric.Object {
-  id?: string;
-}
-
-// Extend the fabric.Rect class to include an id property
-class CustomRect extends fabric.Rect {
-  id: string;
-
-  constructor(options: fabric.IRectOptions & { id: string }) {
-    super(options);
-    this.id = options.id;
-  }
-}
-
-// Extend the fabric.Circle class to include an id property
-class CustomCircle extends fabric.Circle {
-  id: string;
-
-  constructor(options: fabric.ICircleOptions & { id: string }) {
-    super(options);
-    this.id = options.id;
-  }
-}
