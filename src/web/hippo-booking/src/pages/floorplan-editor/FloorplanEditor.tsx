@@ -21,11 +21,12 @@ const assignableObjects: Array<BookableObject> = [
 // TODO: Fetch desks from API
 
 const FloorplanEditor = () => {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
   let { officeId } = useParams();
   const [office, setOffice] = useState<Office>();
   const [postOffice, setPostOffice] = useState<Office | undefined>();
-  const {data: officeData, isLoading: officeLoading, error: officeError } = useFetch<Office>(`https://localhost:7249/office/${officeId}`);
-  const {success: updateSuccess, error: updateError} = useFetch<Office>(`https://localhost:7249/office/${officeId}`, 'PUT', undefined, postOffice);
+  const {data: officeData, isLoading: officeLoading, error: officeError } = useFetch<Office>(`${baseUrl}/office/${officeId}`);
+  const {success: updateSuccess, error: updateError} = useFetch<Office>(`${baseUrl}/office/${officeId}`, 'PUT', undefined, postOffice);
   
   const [selectedObject, setSelectedObject] = useState<string | null>(null);
 
@@ -210,16 +211,29 @@ const FloorplanEditor = () => {
     }
   };
 
+  const hasErrors =  officeError || updateError;
+
   // RENDERS
   // Must always have a canvas element, adding conditional logic to hide the canvas if the office is not loaded will break the fabric.js canvas
   return (
     <div>
-      <h1>{!office || officeLoading ? "Office loading..." : office.name}</h1>
-      {(officeError || updateError) && <ErrorBanner />}
+      <h1>{!office && officeLoading ? "Office loading..." : office?.name}</h1>
+      {hasErrors && <ErrorBanner />}
       <div>
-        <h2>Office details</h2>
+        <h2>Update office details</h2>
+        <label htmlFor="office-name">Office name: </label>
+        <input id="office-name" type="text" value={office?.name} onChange={(e) => {
+          setOffice((prev) => {
+            if(prev){
+              return {
+                ...prev,
+                name: e.target.value
+              }
+            }
+          } )
+        }} />
       </div>
-      <h2>Desk assignment</h2>
+      <h2>Update floorplan</h2>
       <div className="floorplan__container">
         <div className="floorplan__editor">
           <button type="button" onClick={toggleEditMode}>
@@ -231,9 +245,7 @@ const FloorplanEditor = () => {
           <button type="button" onClick={addSquare} disabled={!editMode}>
             Add square
           </button>
-          <button type="button" onClick={saveOffice}>
-            Save office
-          </button>
+          
           <div className="floorplan__editor-canvas">
             <canvas width="800" height="600" ref={canvasElRef} />
           </div>
@@ -268,6 +280,9 @@ const FloorplanEditor = () => {
           </ul>
         </div>
       </div>
+      <button type="button" onClick={saveOffice}>
+            Save office
+          </button>
     </div>
   );
 };
