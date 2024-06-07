@@ -133,22 +133,6 @@ const FloorplanEditor = () => {
     }
   };
 
-  // @ts-ignore
-  const drawLines = (canvas: fabric.Canvas, points: fabric.Point[]) => {
-    if (points.length < 2) return;
-    for (let i = 0; i < points.length - 1; i++) {
-      const line = new fabric.Line(
-        [points[i].x, points[i].y, points[i + 1].x, points[i + 1].y],
-        {
-          stroke: "black",
-          strokeWidth: 2,
-          selectable: false,
-        }
-      );
-      canvas.add(line);
-    }
-  };
-
   const toggleEditMode = () => {
     if (fabricCanvasRef.current) {
       fabricCanvasRef.current.selection = !editMode;
@@ -169,21 +153,18 @@ const FloorplanEditor = () => {
 
   const assignDesk = (deskId: number) => {
     if (selectedObject && office) {
-      console.log("selected desk", selectedObject);
       const nextDesks = office.bookableObjects.map((desk) => {
         if (desk.id === deskId) {
           desk.floorplanObjectId = selectedObject;
         }
         return desk;
       });
-      console.log("next desks", nextDesks);
       setOffice({ ...office, bookableObjects: nextDesks });
     }
   };
 
   const unassignDesk = (deskId: number) => {
     if (selectedObject && office) {
-      console.log("selected desk", selectedObject);
       const nextDesks = office.bookableObjects.map((desk) => {
         if (desk.id === deskId) {
           desk.floorplanObjectId = undefined;
@@ -208,10 +189,23 @@ const FloorplanEditor = () => {
 
   const removeObject = () => {
     if (fabricCanvasRef.current) {
-      let ob = fabricCanvasRef.current.getActiveObject();
-      if(ob){
-        fabricCanvasRef.current.remove(ob);
+      let activeObject = fabricCanvasRef.current.getActiveObject();
+      if(activeObject){
+        fabricCanvasRef.current.remove(activeObject);
       }
+    }
+  }
+
+  const handleLineDraw = () => {
+    if (fabricCanvasRef.current) {
+      var line = new fabric.Line([100, 800, 100, 600], {
+        left: 170,
+        top: 150,
+        stroke: "black",
+        strokeWidth: 2,
+      });
+      fabricCanvasRef.current.add(line);
+      fabricCanvasRef.current.renderAll();
     }
   }
 
@@ -249,9 +243,13 @@ const FloorplanEditor = () => {
           <button type="button" onClick={addSquare} disabled={!editMode}>
             Add square
           </button>
+          <button type="button" onClick={handleLineDraw} disabled={!editMode}>
+            Add line
+          </button>
           <button type="button" onClick={toggleFreeDraw} disabled={!editMode}>
             Free draw mode: {freeDrawMode.toString()}
           </button>
+          
           <button type="button" onClick={removeObject} disabled={!editMode}>
             Remove object
           </button>
