@@ -24,7 +24,7 @@ const assignableObjects: Array<BookableObject> = [
 
 const FloorplanEditor = () => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  let { officeId } = useParams();
+  const { officeId } = useParams();
   const [office, setOffice] = useState<Office>();
   const [postOffice, setPostOffice] = useState<Office | undefined>();
   const {
@@ -32,12 +32,7 @@ const FloorplanEditor = () => {
     isLoading: officeLoading,
     error: officeError,
   } = useFetch<Office>(`${baseUrl}/office/${officeId}`);
-  const { success: updateSuccess, error: updateError } = useFetch<Office>(
-    `${baseUrl}/office/${officeId}`,
-    "PUT",
-    undefined,
-    postOffice
-  );
+  const { success: updateSuccess, error: updateError } = useFetch<Office>(`${baseUrl}/office/${officeId}`,"PUT", undefined, postOffice);
 
   const [selectedObject, setSelectedObject] = useState<string | null>(null);
 
@@ -195,7 +190,7 @@ const FloorplanEditor = () => {
 
   const removeObject = () => {
     if (fabricCanvasRef.current) {
-      let activeObject = fabricCanvasRef.current.getActiveObject();
+      const activeObject = fabricCanvasRef.current.getActiveObject();
       if (activeObject) {
         fabricCanvasRef.current.remove(activeObject);
       }
@@ -204,7 +199,7 @@ const FloorplanEditor = () => {
 
   const handleLineDraw = () => {
     if (fabricCanvasRef.current) {
-      var line = new fabric.Line([100, 800, 100, 600], {
+      const line = new fabric.Line([100, 800, 100, 600], {
         left: 170,
         top: 150,
         stroke: "black",
@@ -223,6 +218,7 @@ const FloorplanEditor = () => {
     <div>
       <h1>{!office && officeLoading ? "Office loading..." : office?.name}</h1>
       {hasErrors && <ErrorBanner />}
+      {updateSuccess && <SuccessBanner />}
       <div>
         <h2>Update office details</h2>
         <label htmlFor="office-name">Office name: </label>
@@ -317,10 +313,18 @@ const ErrorBanner = () => {
   );
 };
 
+const SuccessBanner = () => {
+  return (
+    <div>
+      <h1>Success</h1>
+    </div>
+  );
+}
+
 const initializeCanvasZoom = (canvas: fabric.Canvas) => {
   canvas.on('mouse:wheel', function(opt) {
-    var delta = opt.e.deltaY;
-    var zoom = canvas.getZoom();
+    const delta = opt.e.deltaY;
+    let zoom = canvas.getZoom();
     zoom *= 0.999 ** delta;
     if (zoom > 20) zoom = 20;
     if (zoom < 0.01) zoom = 0.01;
@@ -332,7 +336,7 @@ const initializeCanvasZoom = (canvas: fabric.Canvas) => {
 
 const initializeCanvasDragging = (canvas: fabric.Canvas) => {
   canvas.on("mouse:down", function (this: ExtendedCanvas, opt) {
-    var evt = opt.e;
+    const evt = opt.e;
     if (evt.altKey === true) {
       this.isDragging = true;
       this.selection = false;
@@ -346,8 +350,8 @@ const initializeCanvasDragging = (canvas: fabric.Canvas) => {
       this.lastPosX !== undefined &&
       this.lastPosY !== undefined
     ) {
-      var e = opt.e;
-      var vpt = this.viewportTransform;
+      const e = opt.e;
+      const vpt = this.viewportTransform;
       if (vpt !== undefined) {
         vpt[4] += e.clientX - this.lastPosX;
         vpt[5] += e.clientY - this.lastPosY;
@@ -357,7 +361,7 @@ const initializeCanvasDragging = (canvas: fabric.Canvas) => {
       }
     }
   });
-  canvas.on("mouse:up", function (this: ExtendedCanvas, opt) {
+  canvas.on("mouse:up", function (this: ExtendedCanvas) {
     // on mouse up we want to recalculate new interaction
     // for all objects, so we call setViewportTransform
     if (this.viewportTransform) {
