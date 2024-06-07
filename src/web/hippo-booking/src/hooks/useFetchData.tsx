@@ -5,6 +5,7 @@ interface FetchState<T> {
   isLoading: boolean;
   error: Error | null;
   success: boolean;
+  resetUpdateSuccess: () => void;
 }
 
 // This will likely need more work to handle more complex API calls
@@ -41,6 +42,8 @@ const useFetch = <T,>(url: string, method = 'GET', initialData?: T, postData?: T
           const data = await response.json();
           setData(data);
         }
+        
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         setError(error);
         setSuccess(false);
@@ -50,9 +53,11 @@ const useFetch = <T,>(url: string, method = 'GET', initialData?: T, postData?: T
     };
 
     fetchData();
-  }, [url, postData]);
+  }, [url, postData, method]);
 
-  return { data, isLoading, error, success };
+  const resetUpdateSuccess = () => setSuccess(false);
+
+  return { data, isLoading, error, success, resetUpdateSuccess };
 };
 
 export default useFetch;

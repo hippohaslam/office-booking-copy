@@ -7,8 +7,10 @@ import {
   CustomCircle,
   CustomFabricObject,
   CustomRect,
-  ExtendedCanvas,
 } from "../../shared/fabric/CustomObjects";
+import { ErrorBanner, SuccessBanner } from "../../components/banners/Banners";
+import { initializeCanvasZoom, initializeCanvasDragging } from "../../shared/fabric/Canvas";
+
 import "./FloorplanEditor.scss";
 
 const generateUniqueId = () => {
@@ -65,7 +67,6 @@ const FloorplanEditor = () => {
           }
         });
 
-        // Zoom ability: Taken from the fabric docs
         initializeCanvasZoom(fabricCanvas);
         initializeCanvasDragging(fabricCanvas);
       }
@@ -185,6 +186,9 @@ const FloorplanEditor = () => {
       };
       // use useFetch for API call
       setPostOffice(nextOffice);
+
+      // scroll window top;
+      window.scrollTo(0, 0);
     }
   };
 
@@ -218,9 +222,8 @@ const FloorplanEditor = () => {
     <div>
       <h1>{!office && officeLoading ? "Office loading..." : office?.name}</h1>
       {hasErrors && <ErrorBanner />}
-      {updateSuccess && <SuccessBanner />}
+      {updateSuccess && <SuccessBanner text="Saved successfully" />}
       <div>
-        <h2>Update office details</h2>
         <label htmlFor="office-name">Office name: </label>
         <input
           id="office-name"
@@ -238,7 +241,7 @@ const FloorplanEditor = () => {
           }}
         />
       </div>
-      <h2>Update floorplan</h2>
+      <br />  
       <div className="floorplan__container">
         <div className="floorplan__editor">
           <button type="button" onClick={toggleEditMode}>
@@ -303,71 +306,3 @@ const FloorplanEditor = () => {
 };
 
 export default FloorplanEditor;
-
-// Move this
-const ErrorBanner = () => {
-  return (
-    <div>
-      <h1>Error</h1>
-    </div>
-  );
-};
-
-const SuccessBanner = () => {
-  return (
-    <div>
-      <h1>Success</h1>
-    </div>
-  );
-}
-
-const initializeCanvasZoom = (canvas: fabric.Canvas) => {
-  canvas.on('mouse:wheel', function(opt) {
-    const delta = opt.e.deltaY;
-    let zoom = canvas.getZoom();
-    zoom *= 0.999 ** delta;
-    if (zoom > 20) zoom = 20;
-    if (zoom < 0.01) zoom = 0.01;
-    canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
-    opt.e.preventDefault();
-    opt.e.stopPropagation();
-  });
-};
-
-const initializeCanvasDragging = (canvas: fabric.Canvas) => {
-  canvas.on("mouse:down", function (this: ExtendedCanvas, opt) {
-    const evt = opt.e;
-    if (evt.altKey === true) {
-      this.isDragging = true;
-      this.selection = false;
-      this.lastPosX = evt.clientX;
-      this.lastPosY = evt.clientY;
-    }
-  });
-  canvas.on("mouse:move", function (this: ExtendedCanvas, opt) {
-    if (
-      this.isDragging &&
-      this.lastPosX !== undefined &&
-      this.lastPosY !== undefined
-    ) {
-      const e = opt.e;
-      const vpt = this.viewportTransform;
-      if (vpt !== undefined) {
-        vpt[4] += e.clientX - this.lastPosX;
-        vpt[5] += e.clientY - this.lastPosY;
-        this.requestRenderAll();
-        this.lastPosX = e.clientX;
-        this.lastPosY = e.clientY;
-      }
-    }
-  });
-  canvas.on("mouse:up", function (this: ExtendedCanvas) {
-    // on mouse up we want to recalculate new interaction
-    // for all objects, so we call setViewportTransform
-    if (this.viewportTransform) {
-      this.setViewportTransform(this.viewportTransform);
-      this.isDragging = false;
-      this.selection = true;
-    }
-  });
-};
