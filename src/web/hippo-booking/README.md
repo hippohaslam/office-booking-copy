@@ -44,3 +44,12 @@ export default {
 - Optionally add `plugin:@typescri[build.yaml](..%2F..%2F..%2F.github%2Fworkflows%2Fbuild.yaml)
 [deploy-dev.yaml](..%2F..%2F..%2F.github%2Fworkflows%2Fdeploy-dev.yaml)pt-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+## Tests
+
+We are using vitest and react testing library to unit and integration tests the front end.
+
+We also use msw to mock API calls so for simpler and more robust testing.
+
+For Canvas we need to follow `https://www.npmjs.com/package/canvas` install instructions before doing a  `yarn install` otherwise the test runner cannot read the browser canvas.
+This would also be the case for CI/CD pipelines.
