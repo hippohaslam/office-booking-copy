@@ -1,10 +1,8 @@
 using FluentValidation;
-using Hippo.Booking.Application.Models;
-using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hippo.Booking.Application.Commands;
+namespace Hippo.Booking.Application.Commands.Office;
 
 public class OfficeCommands(
     IDataContext dataContext,
@@ -18,7 +16,7 @@ public class OfficeCommands(
         await createOfficeRequestValidator.ValidateAndThrowAsync(request);
         
         var isExistingOffice = await dataContext
-            .Query<Office>(x => x.WithNoTracking())
+            .Query<Core.Entities.Office>(x => x.WithNoTracking())
             .AnyAsync(x => x.Name == request.Name);
 
         if (isExistingOffice)
@@ -26,12 +24,12 @@ public class OfficeCommands(
             throw new ClientException("Office already exists");
         }
 
-        var office = new Office
+        var office = new Core.Entities.Office
         {
             Name = request.Name
         };
 
-        dataContext.Set<Office>().Add(office);
+        dataContext.Set<Core.Entities.Office>().Add(office);
 
         await dataContext.Save();
 
@@ -42,7 +40,7 @@ public class OfficeCommands(
     {
         await updateOfficeRequestValidator.ValidateAndThrowAsync(request);
         
-        var office = await dataContext.Query<Office>()
+        var office = await dataContext.Query<Core.Entities.Office>()
             .SingleOrDefaultAsync(x => x.Id == id);
 
         if (office is null)
@@ -52,7 +50,7 @@ public class OfficeCommands(
 
         office.Name = request.Name;
         office.FloorPlanJson = request.FloorPlanJson;
-
+        
         await dataContext.Save();
     }
 }

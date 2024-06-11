@@ -1,5 +1,4 @@
-using Hippo.Booking.Application.Commands;
-using Hippo.Booking.Application.Models;
+using Hippo.Booking.Application.Commands.Office;
 using Hippo.Booking.Application.Queries.Offices;
 using Microsoft.AspNetCore.Http.HttpResults;
 

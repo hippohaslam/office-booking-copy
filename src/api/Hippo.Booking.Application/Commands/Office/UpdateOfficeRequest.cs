@@ -1,6 +1,7 @@
 using FluentValidation;
+using Hippo.Booking.Application.Models;
 
-namespace Hippo.Booking.Application.Models;
+namespace Hippo.Booking.Application.Commands.Office;
 
 public class UpdateOfficeRequest
 {
