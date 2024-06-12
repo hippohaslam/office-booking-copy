@@ -25,6 +25,12 @@ const FloorplanEditor = () => {
   const { officeId } = useParams();
   const [office, setOffice] = useState<Office>();
   const [postOffice, setPostOffice] = useState<Office | undefined>();
+  const [selectedObject, setSelectedObject] = useState<string | null>(null);
+  const [editMode, setEditMode] = useState<boolean>(true);
+  const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
+  const [textState, setTextState] = useState({hidden: true, text: ""});
+  const canvasElRef = useRef<HTMLCanvasElement>(null);
+  const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   
   const {isPending, error: officeError, data: officeData} = useQuery({
     queryKey: ['office'],
@@ -32,7 +38,7 @@ const FloorplanEditor = () => {
     enabled: !!officeId
   });
   
-  const {isPending: isUpdatePending, error: putUpdateError, isSuccess} = useQuery({
+  const {isPending: isUpdateLocationPending, error: putUpdateLocationError, isSuccess: isUpdateLocationSuccess} = useQuery({
     queryKey: ['office-update'],
     queryFn: () => putOfficeAsync(postOffice as Office),
     enabled: !!postOffice
@@ -44,39 +50,40 @@ const FloorplanEditor = () => {
     enabled: !!postOffice && !!postOffice.bookableObjects
   });
 
-  const [selectedObject, setSelectedObject] = useState<string | null>(null);
-
-  const canvasElRef = useRef<HTMLCanvasElement>(null);
-  const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
-
-  const [editMode, setEditMode] = useState<boolean>(true);
-  const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
+  
 
   useEffect(() => {
     if (officeData) {
       setOffice(officeData);
+    }
+  }, [officeData]);
 
-      if (canvasElRef.current) {
-        const fabricCanvas = loadCanvas(officeData?.floorPlanJson ?? "");
+  useEffect(() => {
+    if (canvasElRef.current) {
+      const fabricCanvas = loadCanvas(officeData?.floorPlanJson ?? "");
 
-        // Make canvas interactive
-        fabricCanvas.selection = true;
+      // Make canvas interactive
+      fabricCanvas.selection = true;
 
-        fabricCanvas.on("mouse:down", (e) => {
-          const selectedObject = e.target as CustomFabricObject;
-          if (selectedObject) {
-            // TODO: Only certain shapes we want to be classed as an assignable object (cirle, square, etc.)
-            console.log("Object ID:", selectedObject.id);
-            setSelectedObject(selectedObject.id ?? null);
-            // Perform other operations as needed
-          } else {
-            setSelectedObject(null);
-          }
-        });
+      fabricCanvas.on("mouse:down", (e) => {
+        const selectedObject = e.target as CustomFabricObject;
+        if (selectedObject) {
+          if(selectedObject.type === 'text') {
+                    setTextState({hidden: false, text: (selectedObject as fabric.Text).text ?? ""});
+          }else {
+            setTextState({hidden: true, text: ""});
+           }
 
-        initializeCanvasZoom(fabricCanvas);
-        initializeCanvasDragging(fabricCanvas);
-      }
+          // If there is no id, then it is not a bookable object
+          setSelectedObject(selectedObject.id ?? null);
+          // Perform other operations as needed
+        } else {
+          setSelectedObject(null);
+        }
+      });
+
+      initializeCanvasZoom(fabricCanvas);
+      initializeCanvasDragging(fabricCanvas);
     }
 
     // Cleanup function to dispose the canvas when component unmounts
@@ -84,7 +91,7 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current?.dispose();
       fabricCanvasRef.current = null;
     };
-  }, [officeData]);
+  }, [officeData?.floorPlanJson]);
 
   const addCircle = () => {
     if (fabricCanvasRef.current) {
@@ -165,7 +172,7 @@ const FloorplanEditor = () => {
     if (selectedObject && office) {
       const nextDesks = office.bookableObjects.map((desk) => {
         if (desk.id === deskId) {
-          desk.floorplanObjectId = selectedObject;
+          desk.floorPlanObjectId = selectedObject;
         }
         return desk;
       });
@@ -177,7 +184,7 @@ const FloorplanEditor = () => {
     if (selectedObject && office) {
       const nextDesks = office.bookableObjects.map((desk) => {
         if (desk.id === deskId) {
-          desk.floorplanObjectId = undefined;
+          desk.floorPlanObjectId = undefined;
         }
         return desk;
       });
@@ -204,6 +211,7 @@ const FloorplanEditor = () => {
       const activeObject = fabricCanvasRef.current.getActiveObject();
       if (activeObject) {
         fabricCanvasRef.current.remove(activeObject);
+        setTextState({hidden: true, text: ""});
       }
     }
   };
@@ -218,6 +226,31 @@ const FloorplanEditor = () => {
       });
       fabricCanvasRef.current.add(line);
       fabricCanvasRef.current.renderAll();
+    }
+  };
+
+  const handleAddText = () => {
+    if (fabricCanvasRef.current) {
+      const text = new fabric.Text("Hello, World!", {
+        left: 100,
+        top: 100,
+        fill: "black",
+      });
+      fabricCanvasRef.current.add(text);
+      fabricCanvasRef.current.renderAll();
+    }
+  }
+
+  const handleChangeText = (newText: string) => {
+    if (fabricCanvasRef.current) {
+      const activeObject = fabricCanvasRef.current.getActiveObject();
+  
+      if (activeObject && activeObject.type === 'text') {
+        const textObject = activeObject as fabric.Text;
+        textObject.text = newText;
+        fabricCanvasRef.current.renderAll();
+        setTextState({hidden: false, text: newText});
+      }
     }
   };
   
@@ -254,9 +287,22 @@ const FloorplanEditor = () => {
     });
   };
 
-  const hasErrors = officeError || putUpdateObjectsError || putUpdateError;
-  const isLoading = isPending || isUpdatePending || isUpdateObjectsPending;
-  const hasSuccess = isSuccess || isUpdateObjectsSuccess;
+  const handleSelectCanvasObject = (floorPlanObjectId?: string) => {
+    if (fabricCanvasRef.current && floorPlanObjectId) {
+      const object: CustomFabricObject | undefined = fabricCanvasRef.current.getObjects().find((obj: CustomFabricObject) => obj.id === floorPlanObjectId);
+      if (object) {
+        fabricCanvasRef.current.setActiveObject(object as fabric.Object);
+        fabricCanvasRef.current.renderAll();
+        if(object.id) {
+          setSelectedObject(object.id);
+        }
+      }
+    }
+  }
+
+  const hasErrors = officeError || putUpdateObjectsError || putUpdateLocationError;
+  const isLoading = isPending || isUpdateLocationPending || isUpdateObjectsPending;
+  const hasSuccess = isUpdateLocationSuccess || isUpdateObjectsSuccess;
 
   // RENDERS
   // Must always have a canvas element, adding conditional logic to hide the canvas if the office is not loaded will break the fabric.js canvas
@@ -292,6 +338,7 @@ const FloorplanEditor = () => {
           <button type="button" onClick={toggleFreeDraw} disabled={!editMode}>
             Free draw mode: {freeDrawMode.toString()}
           </button>
+          <button type="button" onClick={handleAddText}>Add text</button>
 
           <button type="button" onClick={removeObject} disabled={!editMode}>
             Remove object
@@ -327,19 +374,24 @@ const FloorplanEditor = () => {
                 <button
                   type="button"
                   onClick={() => unassignDesk(desk.id)}
-                  disabled={desk.floorplanObjectId === undefined}
+                  disabled={desk.floorPlanObjectId === undefined}
                 >
                   Unassign desk
                 </button>
                 <br />
-                <small style={{ fontStyle: "italic" }}>
-                  {desk.floorplanObjectId ?? "No assigned location"}
+                <small style={{ fontStyle: "italic" }} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
+                  {desk.floorPlanObjectId ?? "No assigned location"}
                 </small>
               </li>
             ))}
           </ul>
         </div>
       </div>
+      <div className={textState.hidden ? "hide-node" : ""}>
+        <label>Text: </label>
+        <input type="text" value={textState.text} onChange={(e) => handleChangeText(e.target.value)} />
+      </div> 
+      <br />
       <button type="button" onClick={saveOffice}>
         Save office
       </button>

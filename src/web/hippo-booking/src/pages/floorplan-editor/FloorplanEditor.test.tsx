@@ -9,9 +9,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const assignableObjects: Array<BookableObject> = [
-    { id: 1, name: "Desk 1", floorplanObjectId: undefined },
-    { id: 2, name: "Desk 2", floorplanObjectId: undefined },
-    { id: 3, name: "Desk 3", floorplanObjectId: undefined },
+    { id: 1, name: "Desk 1", floorPlanObjectId: undefined },
+    { id: 2, name: "Desk 2", floorPlanObjectId: undefined },
+    { id: 3, name: "Desk 3", floorPlanObjectId: undefined },
   ];
  
 // Provide the server-side API with the request handlers.
