@@ -15,4 +15,20 @@
 
 .floorplan__desk-list {
     width: 100%;
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .floorplan__desk-list-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        max-width: 300px;
+        border: 1px solid #000;
+        padding: 1em;
+        border-radius: 5%;
+        background-color: #e2e4db;
+    }
 }

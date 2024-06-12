@@ -266,8 +266,9 @@ const FloorplanEditor = () => {
   }
 
   const handleDeskUpdate = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    deskId: number
+    text: string,
+    deskId: number,
+    field: 'name' | 'description'
   ) => {
     setOffice((prev) => {
       if (prev) {
@@ -277,7 +278,7 @@ const FloorplanEditor = () => {
             if (d.id === deskId) {
               return {
                 ...d,
-                name: e.target.value,
+                [field]: text,
               };
             }
             return d;
@@ -353,17 +354,26 @@ const FloorplanEditor = () => {
           <ul>
             {office?.bookableObjects.map((desk) => (
               <li key={desk.id}>
-                <input
-                  data-testid={`edit-id-${desk.id}`}
-                  type="text"
-                  value={desk.name}
-                  onChange={(e) => {
-                    handleDeskUpdate(e, desk.id);
-                  }}
-               />
-                <br />
-                <small>{desk.description}</small>
-                <br />
+                <div className="floorplan__desk-list-card">
+                  <label htmlFor={`desk-name=${desk.id}`}>Name: </label>
+                  <input
+                    id={`desk-name=${desk.id}`}
+                    data-testid={`edit-id-${desk.id}`}
+                    type="text"
+                    value={desk.name}
+                    onChange={(e) => {
+                      handleDeskUpdate(e.target.value, desk.id, 'name');
+                    }} />
+            
+                  <label htmlFor={`desk-description=${desk.id}`}>Description: </label>
+                  <textarea
+                    id={`desk-description=${desk.id}`}
+                    data-testid={`edit-id-${desk.id}`}
+                    value={desk.description}
+                    onChange={(e) => {
+                      handleDeskUpdate(e.target.value, desk.id, 'description');
+                    }} />
+                
                 <button
                   type="button"
                   onClick={() => assignDesk(desk.id)}
@@ -382,6 +392,7 @@ const FloorplanEditor = () => {
                 <small style={{ fontStyle: "italic" }} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
                   {desk.floorPlanObjectId ?? "No assigned location"}
                 </small>
+                </div>
               </li>
             ))}
           </ul>
