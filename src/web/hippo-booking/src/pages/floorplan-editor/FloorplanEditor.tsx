@@ -1,15 +1,19 @@
 import { fabric } from "fabric";
+import { fetchOfficeAsync, putObjectsAsync, putOfficeAsync } from "../../services/Apis";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import useFetch from "../../hooks/useFetchData";
+import {useQuery} from '@tanstack/react-query';
 import {
   CustomCircle,
   CustomFabricObject,
   CustomRect,
 } from "../../shared/fabric/CustomObjects";
 import { ErrorBanner, SuccessBanner } from "../../components/banners/Banners";
-import { initializeCanvasZoom, initializeCanvasDragging } from "../../shared/fabric/Canvas";
+import {
+  initializeCanvasZoom,
+  initializeCanvasDragging,
+} from "../../shared/fabric/Canvas";
 
 import "./FloorplanEditor.scss";
 
@@ -17,24 +21,28 @@ const generateUniqueId = () => {
   return uuidv4();
 };
 
-// This is only while the backend is not implemented for saving desks
-const assignableObjects: Array<BookableObject> = [
-  { id: 1, name: "Desk 1", floorplanObjectId: undefined },
-  { id: 2, name: "Desk 2", floorplanObjectId: undefined },
-  { id: 3, name: "Desk 3", floorplanObjectId: undefined },
-];
-
 const FloorplanEditor = () => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
   const { officeId } = useParams();
   const [office, setOffice] = useState<Office>();
   const [postOffice, setPostOffice] = useState<Office | undefined>();
-  const {
-    data: officeData,
-    isLoading: officeLoading,
-    error: officeError,
-  } = useFetch<Office>(`${baseUrl}/office/${officeId}`);
-  const { success: updateSuccess, error: updateError } = useFetch<Office>(`${baseUrl}/office/${officeId}`,"PUT", undefined, postOffice);
+  
+  const {isPending, error: officeError, data: officeData} = useQuery({
+    queryKey: ['office'],
+    queryFn: () => fetchOfficeAsync(officeId as string),
+    enabled: !!officeId
+  });
+  
+  const {isPending: isUpdatePending, error: putUpdateError, isSuccess} = useQuery({
+    queryKey: ['office-update'],
+    queryFn: () => putOfficeAsync(postOffice as Office),
+    enabled: !!postOffice
+  });
+
+  const {isPending: isUpdateObjectsPending, error: putUpdateObjectsError, isSuccess: isUpdateObjectsSuccess} = useQuery({
+    queryKey: ['office-objects-update'],
+    queryFn: () => putObjectsAsync(officeId as string, postOffice?.bookableObjects as BookableObject[]),
+    enabled: !!postOffice && !!postOffice.bookableObjects
+  });
 
   const [selectedObject, setSelectedObject] = useState<string | null>(null);
 
@@ -46,7 +54,6 @@ const FloorplanEditor = () => {
 
   useEffect(() => {
     if (officeData) {
-      officeData.bookableObjects = assignableObjects;
       setOffice(officeData);
 
       if (canvasElRef.current) {
@@ -207,22 +214,45 @@ const FloorplanEditor = () => {
         left: 170,
         top: 150,
         stroke: "black",
-        strokeWidth: 2,
+        strokeWidth: 20,
       });
       fabricCanvasRef.current.add(line);
       fabricCanvasRef.current.renderAll();
     }
   };
 
-  const hasErrors = officeError || updateError;
+  const handleDeskUpdate = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    deskId: number
+  ) => {
+    setOffice((prev) => {
+      if (prev) {
+        return {
+          ...prev,
+          bookableObjects: prev.bookableObjects.map((d) => {
+            if (d.id === deskId) {
+              return {
+                ...d,
+                name: e.target.value,
+              };
+            }
+            return d;
+          }),
+        };
+      }
+    });
+  };
+
+  const hasErrors = officeError || putUpdateError;
+  const isLoading = isPending || isUpdatePending || isUpdateObjectsPending;
 
   // RENDERS
   // Must always have a canvas element, adding conditional logic to hide the canvas if the office is not loaded will break the fabric.js canvas
   return (
     <div>
-      <h1>{!office && officeLoading ? "Office loading..." : office?.name}</h1>
+      <h1>{!office && isLoading ? "Office loading..." : office?.name}</h1>
       {hasErrors && <ErrorBanner />}
-      {updateSuccess && <SuccessBanner text="Saved successfully" />}
+      {isSuccess && <SuccessBanner text="Saved successfully" />}
       <div>
         <label htmlFor="office-name">Office name: </label>
         <input
@@ -241,7 +271,7 @@ const FloorplanEditor = () => {
           }}
         />
       </div>
-      <br />  
+      <br />
       <div className="floorplan__container">
         <div className="floorplan__editor">
           <button type="button" onClick={toggleEditMode}>
@@ -273,7 +303,16 @@ const FloorplanEditor = () => {
           <ul>
             {office?.bookableObjects.map((desk) => (
               <li key={desk.id}>
-                {desk.name}
+                <input
+                  data-testid={`edit-id-${desk.id}`}
+                  type="text"
+                  value={desk.name}
+                  onChange={(e) => {
+                    handleDeskUpdate(e, desk.id);
+                  }}
+               />
+                <br />
+                <small>{desk.description}</small>
                 <br />
                 <button
                   type="button"
