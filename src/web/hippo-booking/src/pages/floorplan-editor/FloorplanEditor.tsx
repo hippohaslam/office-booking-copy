@@ -220,6 +220,17 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current.renderAll();
     }
   };
+  
+  const handleLocationUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOffice((prev) => {
+              if (prev) {
+                return {
+                  ...prev,
+                  name: e.target.value,
+                };
+              }
+            });
+  }
 
   const handleDeskUpdate = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -243,8 +254,9 @@ const FloorplanEditor = () => {
     });
   };
 
-  const hasErrors = officeError || putUpdateError;
+  const hasErrors = officeError || putUpdateObjectsError || putUpdateError;
   const isLoading = isPending || isUpdatePending || isUpdateObjectsPending;
+  const hasSuccess = isSuccess || isUpdateObjectsSuccess;
 
   // RENDERS
   // Must always have a canvas element, adding conditional logic to hide the canvas if the office is not loaded will break the fabric.js canvas
@@ -252,23 +264,14 @@ const FloorplanEditor = () => {
     <div>
       <h1>{!office && isLoading ? "Office loading..." : office?.name}</h1>
       {hasErrors && <ErrorBanner />}
-      {isSuccess && <SuccessBanner text="Saved successfully" />}
+      {hasSuccess && <SuccessBanner text="Saved successfully" />}
       <div>
         <label htmlFor="office-name">Office name: </label>
         <input
           id="office-name"
           type="text"
           value={office?.name || ""}
-          onChange={(e) => {
-            setOffice((prev) => {
-              if (prev) {
-                return {
-                  ...prev,
-                  name: e.target.value,
-                };
-              }
-            });
-          }}
+          onChange={handleLocationUpdate}
         />
       </div>
       <br />
