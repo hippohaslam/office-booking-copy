@@ -40,6 +40,7 @@ public class OfficeQueries(IDataContext dataContext) : IOfficeQueries
                 {
                     Id = y.Id,
                     Name = y.Name,
+                    Description = y.Description,
                     FloorPlanObjectId = y.FloorplanObjectId
                 }).ToList()
             })

@@ -1,3 +1,4 @@
+using Hippo.Booking.Application.Commands.BookableObject;
 using Hippo.Booking.Application.Commands.Office;
 using Hippo.Booking.Application.Queries.Offices;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -7,6 +8,27 @@ namespace Hippo.Booking.API.Endpoints;
 public class OfficeEndpoints() : EndpointBase("office", "Offices")
 {
     public override void MapEndpoints(RouteGroupBuilder builder)
+    {
+        MapOfficeEndpoints(builder);
+        
+        builder.MapPost("{officeId:int}/bookable-object", async (int officeId, ICreateBookableObject command, CreateBookableObjectRequest request) =>
+        {
+            var resp = await HandleCreatedResponse(
+                async () => await command.Handle(officeId, request),
+                value => $"office/{officeId}/desk/{value}");
+
+            return resp;
+        });
+        
+        builder.MapPut(
+            "{officeId:int}/bookable-object/{bookableObjectId:int}", 
+            async (int officeId, int bookableObjectId, IUpdateBookableObject command, UpdateBookableObjectRequest request) =>
+        {
+            return await HandleResponse(async () => await command.Handle(bookableObjectId, officeId, request));
+        });
+    }
+
+    private void MapOfficeEndpoints(RouteGroupBuilder builder)
     {
         builder.MapGet("", async (IOfficeQueries officeQueries) => 
             TypedResults.Ok(await officeQueries.GetOffices()));
