@@ -46,9 +46,9 @@ test('displays the data on the screen', async () => {
 
   // find desks by input value
   // 
-  const desk1 = await screen.findByTestId('edit-id-1');
-  const desk2 = await screen.findByTestId('edit-id-2');
-  const desk3 = await screen.findByTestId('edit-id-3');
+  const desk1 = await screen.findByTestId('object-name-1');
+  const desk2 = await screen.findByTestId('object-name-2');
+  const desk3 = await screen.findByTestId('object-name-3');
 
   expect(desk1).toBeInTheDocument();
   expect(desk1).toHaveValue('Desk 1');

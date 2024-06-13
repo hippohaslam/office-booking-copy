@@ -355,20 +355,20 @@ const FloorplanEditor = () => {
             {office?.bookableObjects.map((desk) => (
               <li key={desk.id}>
                 <div className="floorplan__desk-list-card">
-                  <label htmlFor={`desk-name=${desk.id}`}>Name: </label>
+                  <label htmlFor={`object-name=${desk.id}`}>Name: </label>
                   <input
-                    id={`desk-name=${desk.id}`}
-                    data-testid={`edit-id-${desk.id}`}
+                    id={`object-name=${desk.id}`}
+                    data-testid={`object-name-${desk.id}`}
                     type="text"
                     value={desk.name}
                     onChange={(e) => {
                       handleDeskUpdate(e.target.value, desk.id, 'name');
                     }} />
             
-                  <label htmlFor={`desk-description=${desk.id}`}>Description: </label>
+                  <label htmlFor={`object-description=${desk.id}`}>Description: </label>
                   <textarea
                     id={`desk-description=${desk.id}`}
-                    data-testid={`edit-id-${desk.id}`}
+                    data-testid={`object-description-${desk.id}`}
                     value={desk.description}
                     onChange={(e) => {
                       handleDeskUpdate(e.target.value, desk.id, 'description');
