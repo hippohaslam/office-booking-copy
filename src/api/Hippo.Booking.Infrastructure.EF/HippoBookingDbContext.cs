@@ -38,5 +38,5 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
     
     public DbSet<Core.Entities.Booking>? Bookings { get; set; }
     
-    public DbSet<Office>? Offices { get; set; }
+    public DbSet<Location>? Locations { get; set; }
 }

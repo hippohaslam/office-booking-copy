@@ -1,4 +1,4 @@
-interface Office {
+interface Location {
     id: string;
     name: string;
     floorPlanJson: string;

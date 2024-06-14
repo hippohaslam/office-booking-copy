@@ -30,11 +30,11 @@ const router = createBrowserRouter([
         element: <Suspense fallback={<div>Loading...</div>}><Parking /></Suspense>
       },
       {
-        path: "/offices",
-        element: <div>List of offices</div>
+        path: "/locations",
+        element: <div>List of locations</div>
       },
       {
-        path: "/offices/:officeId/editor",
+        path: "/locations/:locationId/editor",
         element: <Suspense fallback={<div>Loading editor...</div>}><FloorplanEditor /></Suspense>
       }
     ]

@@ -1,9 +1,9 @@
 using FluentValidation;
 using Hippo.Booking.Application.Models;
 
-namespace Hippo.Booking.Application.Commands.Office;
+namespace Hippo.Booking.Application.Commands.Location;
 
-public class UpdateOfficeRequest
+public class UpdateLocationRequest
 {
     public string Name { get; set; } = string.Empty;
     
@@ -13,9 +13,9 @@ public class UpdateOfficeRequest
     
 }
 
-public class UpdateOfficeRequestValidator : AbstractValidator<UpdateOfficeRequest>
+public class UpdateLocationRequestValidator : AbstractValidator<UpdateLocationRequest>
 {
-    public UpdateOfficeRequestValidator()
+    public UpdateLocationRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty();
     }

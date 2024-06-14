@@ -5,20 +5,20 @@ namespace Hippo.Booking.Application.Commands.BookableObject;
 
 public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableObject, IUpdateBookableObject
 {
-    public async Task<int> Handle(int officeId, CreateBookableObjectRequest request)
+    public async Task<int> Handle(int locationId, CreateBookableObjectRequest request)
     {
-        var office = await dataContext.Query<Core.Entities.Office>()
+        var location = await dataContext.Query<Core.Entities.Location>()
             .Include(i => i.BookableObjects)
-            .SingleOrDefaultAsync(x => x.Id == officeId);
+            .SingleOrDefaultAsync(x => x.Id == locationId);
 
-        if (office == null)
+        if (location == null)
         {
-            throw new ClientException("Office not found");
+            throw new ClientException("Location not found");
         }
         
-        if (office.BookableObjects.Any(x => x.Name == request.Name))
+        if (location.BookableObjects.Any(x => x.Name == request.Name))
         {
-            throw new ClientException("Bookable object with this name already exists in this office.");
+            throw new ClientException("Bookable object with this name already exists in this location.");
         }
         
         var bookableObject = new Core.Entities.BookableObject
@@ -26,32 +26,32 @@ public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableO
             Name = request.Name,
             Description = request.Description,
             FloorplanObjectId = request.FloorPlanObjectId,
-            OfficeId = officeId
+            LocationId = locationId
         };
         
-        office.BookableObjects.Add(bookableObject);
+        location.BookableObjects.Add(bookableObject);
 
         await dataContext.Save();
 
         return bookableObject.Id;
     }
 
-    public async Task Handle(int bookableObjectId, int officeId, UpdateBookableObjectRequest request)
+    public async Task Handle(int bookableObjectId, int locationId, UpdateBookableObjectRequest request)
     {
-        var office = await dataContext.Query<Core.Entities.Office>()
+        var location = await dataContext.Query<Core.Entities.Location>()
             .Include(i => i.BookableObjects)
-            .SingleOrDefaultAsync(x => x.Id == officeId);
+            .SingleOrDefaultAsync(x => x.Id == locationId);
 
-        if (office == null)
+        if (location == null)
         {
-            throw new ClientException("Office not found");
+            throw new ClientException("Location not found");
         }
 
-        var bookableObject = office.BookableObjects.SingleOrDefault(x => x.Id == bookableObjectId);
+        var bookableObject = location.BookableObjects.SingleOrDefault(x => x.Id == bookableObjectId);
         
         if (bookableObject == null)
         {
-            throw new ClientException("Bookable object with this name already exists in this office.");
+            throw new ClientException("Bookable object with this name already exists in this location.");
         }
         
         bookableObject.Name = request.Name;

@@ -1,6 +1,6 @@
 using FluentAssertions;
 using FluentValidation;
-using Hippo.Booking.Application.Commands.Office;
+using Hippo.Booking.Application.Commands.Location;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.EF;
@@ -9,9 +9,9 @@ using NSubstitute;
 
 namespace Hippo.Booking.Application.Tests.Commands;
 
-public class CreateOfficeCommandTests
+public class CreateLocationCommandTests
 {
-    private ICreateOfficeCommmand _sut;
+    private ICreateLocationCommmand _sut;
 
     [OneTimeSetUp]
     public async Task Setup()
@@ -22,25 +22,25 @@ public class CreateOfficeCommandTests
 
         IDataContext dataContext = new HippoBookingDbContext(dbOptions);
 
-        dataContext.Set<Office>().Add(new Office
+        dataContext.Set<Location>().Add(new Location
         {
-            Name = "Existing Office"
+            Name = "Existing Location"
         });
 
         await dataContext.Save();
         
-        _sut = new OfficeCommands(
+        _sut = new LocationCommands(
             dataContext,
-            Substitute.For<IValidator<CreateOfficeRequest>>(),
-            Substitute.For<IValidator<UpdateOfficeRequest>>());
+            Substitute.For<IValidator<CreateLocationRequest>>(),
+            Substitute.For<IValidator<UpdateLocationRequest>>());
     }
     
     [Test]
-    public async Task CanCreateOffice()
+    public async Task CanCreateLocation()
     {
-        var request = new CreateOfficeRequest
+        var request = new CreateLocationRequest
         {
-            Name = "Test Office"
+            Name = "Test Location"
         };
         
         var result = await _sut.Handle(request);
@@ -49,11 +49,11 @@ public class CreateOfficeCommandTests
     }
     
     [Test]
-    public void CannotCreateDuplicateOffice()
+    public void CannotCreateDuplicateLocation()
     {
-        var request = new CreateOfficeRequest
+        var request = new CreateLocationRequest
         {
-            Name = "Existing Office"
+            Name = "Existing Location"
         };
         
         Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(request));

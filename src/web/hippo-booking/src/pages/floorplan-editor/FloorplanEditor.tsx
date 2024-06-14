@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import { fetchOfficeAsync, putObjectsAsync, putOfficeAsync } from "../../services/Apis";
+import { fetchLocationAsync, putObjectsAsync, putLocationAsync } from "../../services/Apis";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -22,9 +22,9 @@ const generateUniqueId = () => {
 };
 
 const FloorplanEditor = () => {
-  const { officeId } = useParams();
-  const [office, setOffice] = useState<Office>();
-  const [postOffice, setPostOffice] = useState<Office | undefined>();
+  const { locationId } = useParams();
+  const [location, setLocation] = useState<Location>();
+  const [postLocation, setPostLocation] = useState<Location | undefined>();
   const [selectedObject, setSelectedObject] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<boolean>(true);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
@@ -32,35 +32,35 @@ const FloorplanEditor = () => {
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   
-  const {isPending, error: officeError, data: officeData} = useQuery({
-    queryKey: ['office'],
-    queryFn: () => fetchOfficeAsync(officeId as string),
-    enabled: !!officeId
+  const {isPending, error: locationError, data: locationData} = useQuery({
+    queryKey: ['location'],
+    queryFn: () => fetchLocationAsync(locationId as string),
+    enabled: !!locationId
   });
   
   const {isPending: isUpdateLocationPending, error: putUpdateLocationError, isSuccess: isUpdateLocationSuccess} = useQuery({
-    queryKey: ['office-update'],
-    queryFn: () => putOfficeAsync(postOffice as Office),
-    enabled: !!postOffice
+    queryKey: ['location-update'],
+    queryFn: () => putLocationAsync(postLocation as Location),
+    enabled: !!postLocation
   });
 
   const {isPending: isUpdateObjectsPending, error: putUpdateObjectsError, isSuccess: isUpdateObjectsSuccess} = useQuery({
-    queryKey: ['office-objects-update'],
-    queryFn: () => putObjectsAsync(officeId as string, postOffice?.bookableObjects as BookableObject[]),
-    enabled: !!postOffice && !!postOffice.bookableObjects
+    queryKey: ['location-objects-update'],
+    queryFn: () => putObjectsAsync(locationId as string, postLocation?.bookableObjects as BookableObject[]),
+    enabled: !!postLocation && !!postLocation.bookableObjects
   });
 
   
 
   useEffect(() => {
-    if (officeData) {
-      setOffice(officeData);
+    if (locationData) {
+      setLocation(locationData);
     }
-  }, [officeData]);
+  }, [locationData]);
 
   useEffect(() => {
     if (canvasElRef.current) {
-      const fabricCanvas = loadCanvas(officeData?.floorPlanJson ?? "");
+      const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "");
 
       // Make canvas interactive
       fabricCanvas.selection = true;
@@ -91,7 +91,7 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current?.dispose();
       fabricCanvasRef.current = null;
     };
-  }, [officeData?.floorPlanJson]);
+  }, [locationData?.floorPlanJson]);
 
   const addCircle = () => {
     if (fabricCanvasRef.current) {
@@ -169,37 +169,37 @@ const FloorplanEditor = () => {
   };
 
   const assignDesk = (deskId: number) => {
-    if (selectedObject && office) {
-      const nextDesks = office.bookableObjects.map((desk) => {
+    if (selectedObject && location) {
+      const nextDesks = location.bookableObjects.map((desk) => {
         if (desk.id === deskId) {
           desk.floorPlanObjectId = selectedObject;
         }
         return desk;
       });
-      setOffice({ ...office, bookableObjects: nextDesks });
+      setLocation({ ...location, bookableObjects: nextDesks });
     }
   };
 
   const unassignDesk = (deskId: number) => {
-    if (selectedObject && office) {
-      const nextDesks = office.bookableObjects.map((desk) => {
+    if (selectedObject && location) {
+      const nextDesks = location.bookableObjects.map((desk) => {
         if (desk.id === deskId) {
           desk.floorPlanObjectId = undefined;
         }
         return desk;
       });
-      setOffice({ ...office, bookableObjects: nextDesks });
+      setLocation({ ...location, bookableObjects: nextDesks });
     }
   };
 
-  const saveOffice = async () => {
-    if (office && fabricCanvasRef.current) {
-      const nextOffice = {
-        ...office,
+  const saveLocation = async () => {
+    if (location && fabricCanvasRef.current) {
+      const nextLocation = {
+        ...location,
         floorPlanJson: JSON.stringify(fabricCanvasRef.current.toJSON(["id"])),
       };
       // use useFetch for API call
-      setPostOffice(nextOffice);
+      setPostLocation(nextLocation);
 
       // scroll window top;
       window.scrollTo(0, 0);
@@ -255,7 +255,7 @@ const FloorplanEditor = () => {
   };
   
   const handleLocationUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOffice((prev) => {
+    setLocation((prev) => {
               if (prev) {
                 return {
                   ...prev,
@@ -270,7 +270,7 @@ const FloorplanEditor = () => {
     deskId: number,
     field: 'name' | 'description'
   ) => {
-    setOffice((prev) => {
+    setLocation((prev) => {
       if (prev) {
         return {
           ...prev,
@@ -301,23 +301,23 @@ const FloorplanEditor = () => {
     }
   }
 
-  const hasErrors = officeError || putUpdateObjectsError || putUpdateLocationError;
+  const hasErrors = locationError || putUpdateObjectsError || putUpdateLocationError;
   const isLoading = isPending || isUpdateLocationPending || isUpdateObjectsPending;
   const hasSuccess = isUpdateLocationSuccess || isUpdateObjectsSuccess;
 
   // RENDERS
-  // Must always have a canvas element, adding conditional logic to hide the canvas if the office is not loaded will break the fabric.js canvas
+  // Must always have a canvas element, adding conditional logic to hide the canvas if the location is not loaded will break the fabric.js canvas
   return (
     <div>
-      <h1>{!office && isLoading ? "Office loading..." : office?.name}</h1>
+      <h1>{!location && isLoading ? "Location loading..." : location?.name}</h1>
       {hasErrors && <ErrorBanner />}
       {hasSuccess && <SuccessBanner text="Saved successfully" />}
       <div>
-        <label htmlFor="office-name">Office name: </label>
+        <label htmlFor="location-name">Location name: </label>
         <input
-          id="office-name"
+          id="location-name"
           type="text"
-          value={office?.name || ""}
+          value={location?.name || ""}
           onChange={handleLocationUpdate}
         />
       </div>
@@ -352,7 +352,7 @@ const FloorplanEditor = () => {
         <div className="floorplan__desk-list">
           <h2>Bookable objects list</h2>
           <ul>
-            {office?.bookableObjects.map((desk) => (
+            {location?.bookableObjects.map((desk) => (
               <li key={desk.id}>
                 <div className="floorplan__desk-list-card">
                   <label htmlFor={`object-name=${desk.id}`}>Name: </label>
@@ -403,8 +403,8 @@ const FloorplanEditor = () => {
         <input type="text" value={textState.text} onChange={(e) => handleChangeText(e.target.value)} />
       </div> 
       <br />
-      <button type="button" onClick={saveOffice}>
-        Save office
+      <button type="button" onClick={saveLocation}>
+        Save location
       </button>
     </div>
   );

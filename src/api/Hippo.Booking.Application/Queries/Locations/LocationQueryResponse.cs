@@ -1,8 +1,8 @@
 using Hippo.Booking.Application.Models;
 
-namespace Hippo.Booking.Application.Queries.Offices;
+namespace Hippo.Booking.Application.Queries.Locations;
 
-public class OfficeQueryResponse
+public class LocationQueryResponse
 {
     public int Id { get; set; }
     

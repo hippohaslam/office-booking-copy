@@ -1,6 +1,6 @@
 namespace Hippo.Booking.Core.Entities;
 
-public class Office : BaseEntity<int>
+public class Location : BaseEntity<int>
 {
     public string Name { get; set; } = string.Empty;
 

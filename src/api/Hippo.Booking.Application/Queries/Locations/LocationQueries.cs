@@ -3,22 +3,21 @@ using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hippo.Booking.Application.Queries.Offices;
+namespace Hippo.Booking.Application.Queries.Locations;
 
-public interface IOfficeQueries
+public interface ILocationQueries
 {
-    Task<List<OfficeListQueryResponse>> GetOffices();
+    Task<List<LocationListQueryResponse>> GetLocations();
 
-    Task<OfficeQueryResponse?> GetOfficeById(int id);
+    Task<LocationQueryResponse?> GetLocationById(int id);
 }
 
-
-public class OfficeQueries(IDataContext dataContext) : IOfficeQueries
+public class LocationQueries(IDataContext dataContext) : ILocationQueries
 {
-    public Task<List<OfficeListQueryResponse>> GetOffices()
+    public Task<List<LocationListQueryResponse>> GetLocations()
     {
-        return dataContext.Query<Office>(x => x.WithNoTracking())
-            .Select(x => new OfficeListQueryResponse
+        return dataContext.Query<Location>(x => x.WithNoTracking())
+            .Select(x => new LocationListQueryResponse
             {
                 Id = x.Id,
                 Name = x.Name
@@ -26,12 +25,12 @@ public class OfficeQueries(IDataContext dataContext) : IOfficeQueries
             .ToListAsync();
     }
 
-    public Task<OfficeQueryResponse?> GetOfficeById(int id)
+    public Task<LocationQueryResponse?> GetLocationById(int id)
     {
-        return dataContext.Query<Office>(x => x.WithNoTracking())
+        return dataContext.Query<Location>(x => x.WithNoTracking())
             .Include(i => i.BookableObjects)
             .Where(x => x.Id == id)
-            .Select(x => new OfficeQueryResponse
+            .Select(x => new LocationQueryResponse
             {
                 Id = x.Id,
                 Name = x.Name,

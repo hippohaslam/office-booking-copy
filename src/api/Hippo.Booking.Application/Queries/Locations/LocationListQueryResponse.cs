@@ -1,6 +1,6 @@
-namespace Hippo.Booking.Application.Queries.Offices;
+namespace Hippo.Booking.Application.Queries.Locations;
 
-public class OfficeListQueryResponse
+public class LocationListQueryResponse
 {
     public int Id { get; set; }
     

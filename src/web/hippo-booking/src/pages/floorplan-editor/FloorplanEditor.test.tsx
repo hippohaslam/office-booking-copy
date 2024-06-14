@@ -16,10 +16,10 @@ const assignableObjects: Array<BookableObject> = [
  
 // Provide the server-side API with the request handlers.
 const server = setupServer(
-  http.get(`${baseUrl}/office/1`, () => {
+  http.get(`${baseUrl}/location/1`, () => {
     return HttpResponse.json({
-        name: "Office 1",
-        description: 'This is office 1',
+        name: "Location 1",
+        description: 'This is location 1',
         bookableObjects: assignableObjects
      })
   })
@@ -35,9 +35,9 @@ afterAll(() => server.close());
 test('displays the data on the screen', async () => {
   render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={['/office/1']}>
+      <MemoryRouter initialEntries={['/location/1']}>
         <Routes>
-          <Route path="/office/:officeId" element={<FloorplanEditor />} />
+          <Route path="/location/:locationId" element={<FloorplanEditor />} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>

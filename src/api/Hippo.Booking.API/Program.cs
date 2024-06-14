@@ -46,7 +46,7 @@ builder.Services.AddHippoBookingApplication();
 
 var app = builder.Build();
 
-new OfficeEndpoints().Map(app);
+new LocationEndpoints().Map(app);
 new HealthEndpoints().Map(app);
 
 if (app.Environment.IsDevelopment())
