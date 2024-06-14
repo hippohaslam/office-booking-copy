@@ -236,3 +236,5 @@ jobs:
 #          api_location: ${{ env.API_LOCATION }}
           app_artifact_location: 'dist'
           ###### End of Repository/Build Configurations ######
+        env:
+          VITE_API_URL: ${{ vars.DEV_API_URL }}

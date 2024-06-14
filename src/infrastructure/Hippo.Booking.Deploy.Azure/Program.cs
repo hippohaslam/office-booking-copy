@@ -91,10 +91,6 @@ return await Pulumi.Deployment.RunAsync(() =>
         Name = WithStackName("hippo-booking-static-web"),
         ResourceGroupName = rg.Name,
         Location = "West Europe",
-        SkuTier = "Free",
-        AppSettings =
-        {
-            { "VITE_API_BASE_URL", backEndAppService.DefaultHostname.Apply(h => $"https://{h}") }
-        }
+        SkuTier = "Free"
     });
 });
