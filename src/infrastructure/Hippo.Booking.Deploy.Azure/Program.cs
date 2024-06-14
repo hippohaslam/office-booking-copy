@@ -19,14 +19,6 @@ return await Pulumi.Deployment.RunAsync(() =>
         Location = "UK South"
     });
     
-    var frontEnd = new StaticWebApp("hippo-booking-static-web", new StaticWebAppArgs
-    {
-        Name = WithStackName("hippo-booking-static-web"),
-        ResourceGroupName = rg.Name,
-        Location = "West Europe",
-        SkuTier = "Free"
-    });
-    
     var randomDbPassword = new RandomPassword("hippo-booking-db-password", new RandomPasswordArgs
     {
         Length = 16,
@@ -91,6 +83,18 @@ return await Pulumi.Deployment.RunAsync(() =>
         SiteConfig = new LinuxWebAppSiteConfigArgs
         {
             AlwaysOn = true
+        }
+    });
+
+    var frontEnd = new StaticWebApp("hippo-booking-static-web", new StaticWebAppArgs
+    {
+        Name = WithStackName("hippo-booking-static-web"),
+        ResourceGroupName = rg.Name,
+        Location = "West Europe",
+        SkuTier = "Free",
+        AppSettings =
+        {
+            { "ENV_API_URL", backEndAppService.DefaultHostname.Apply(h => $"https://{h}") }
         }
     });
 });
