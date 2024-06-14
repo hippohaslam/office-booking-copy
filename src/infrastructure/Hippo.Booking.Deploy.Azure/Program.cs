@@ -94,7 +94,7 @@ return await Pulumi.Deployment.RunAsync(() =>
         SkuTier = "Free",
         AppSettings =
         {
-            { "ENV_API_URL", backEndAppService.DefaultHostname.Apply(h => $"https://{h}") }
+            { "VITE_API_BASE_URL", backEndAppService.DefaultHostname.Apply(h => $"https://{h}") }
         }
     });
 });
