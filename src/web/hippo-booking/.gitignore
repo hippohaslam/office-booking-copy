@@ -33,4 +33,4 @@ dist-ssr
 !.yarn/versions
 
 # Environment variables
-.env
+.env.*.local
