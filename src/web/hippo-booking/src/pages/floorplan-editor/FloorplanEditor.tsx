@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import { fetchLocationAsync, putObjectsAsync, putLocationAsync } from "../../services/Apis";
+import { getLocationAsync, putObjectsAsync, putLocationAsync } from "../../services/Apis";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -34,7 +34,7 @@ const FloorplanEditor = () => {
   
   const {isPending, error: locationError, data: locationData} = useQuery({
     queryKey: ['location', locationId],
-    queryFn: () => fetchLocationAsync(locationId as string),
+    queryFn: () => getLocationAsync(locationId as string),
     enabled: !!locationId
   });
   

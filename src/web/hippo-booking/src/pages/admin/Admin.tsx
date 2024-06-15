@@ -42,9 +42,9 @@ const Admin = () => {
         document.body
       )}
         <ul className="locations-list">
-          {data?.map((office) => (
-            <li key={office.id}>
-              <Link to={`/locations/edit/${office.id}`}>{office.name}</Link>
+          {data?.map((location) => (
+            <li key={location.id}>
+              <Link to={`/locations/${location.id}/editor`}>{location.name}</Link>
             </li>
           ))}
         </ul>

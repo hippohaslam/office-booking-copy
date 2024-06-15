@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import './index.scss'
-import { Parking, Admin, FloorplanEditor } from './imports.tsx'
+import { Parking, Admin, FloorplanEditor, DeskBooking } from './imports.tsx'
 import ErrorPage from './pages/error/Error.tsx';
 import Home from './pages/home/Home.tsx';
 import Locations from './pages/locations/Locations.tsx';
@@ -31,8 +31,8 @@ const router = createBrowserRouter([
         element: <Suspense fallback={<div>Loading...</div>}><Locations /></Suspense>
       },
       {
-        path: "/offices",
-        element: <div>List of offices</div>
+        path: "/locations/:locationId/booking",
+        element: <Suspense fallback={<div>Loading...</div>}><DeskBooking /></Suspense>
       },
       {
         path: "/locations/:locationId/editor",

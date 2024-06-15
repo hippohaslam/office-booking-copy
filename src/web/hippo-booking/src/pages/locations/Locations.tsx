@@ -22,9 +22,9 @@ const Locations = () => {
     <div>
       <h1>Locations</h1>
       <ul className="locations-list">
-        {data?.map((office) => (
-          <li key={office.id}>
-            <Link to={`/locations/booking/${office.id}`}>{office.name}</Link>
+        {data?.map((location) => (
+          <li key={location.id}>
+            <Link to={`/locations/${location.id}/booking`}>{location.name}</Link>
           </li>
         ))}
       </ul>
