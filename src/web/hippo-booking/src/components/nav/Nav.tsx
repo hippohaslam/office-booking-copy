@@ -13,14 +13,11 @@ const Nav = () => {
          <nav>
         <ul>
           <li>
-            <Link to="desk">Desks</Link>
+            <Link to="locations">Booking</Link>
           </li>
           <li>
-            <Link to="parking">Parking</Link>
+            <Link to="/admin">Admin</Link>
           </li>
-          {/* <li>
-            <Link to="floorplan">floorplan</Link>
-          </li> */}
         </ul>
       </nav>
        </div>

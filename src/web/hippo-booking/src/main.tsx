@@ -6,9 +6,10 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import './index.scss'
-import { Parking, DeskBooking, FloorplanEditor } from './imports.tsx'
+import { Parking, Admin, FloorplanEditor } from './imports.tsx'
 import ErrorPage from './pages/error/Error.tsx';
 import Home from './pages/home/Home.tsx';
+import Locations from './pages/locations/Locations.tsx';
 
 
 const router = createBrowserRouter([
@@ -22,20 +23,25 @@ const router = createBrowserRouter([
         element: <Suspense fallback={<div>Loading...</div>}><Home /></Suspense>,
       },
       {
-        path: "/desk",
-        element: <Suspense fallback={<div>Loading...</div>}><DeskBooking /></Suspense>,
-      },
-      {
-        path: "parking",
-        element: <Suspense fallback={<div>Loading...</div>}><Parking /></Suspense>
+        path: "/admin",
+        element: <Suspense fallback={<div>Loading...</div>}><Admin /></Suspense>
       },
       {
         path: "/locations",
-        element: <div>List of locations</div>
+        element: <Suspense fallback={<div>Loading...</div>}><Locations /></Suspense>
+      },
+      {
+        path: "/offices",
+        element: <div>List of offices</div>
       },
       {
         path: "/locations/:locationId/editor",
         element: <Suspense fallback={<div>Loading editor...</div>}><FloorplanEditor /></Suspense>
+      },
+      {
+        // This may get removed, can't see a use for it with locations
+        path: "parking",
+        element: <Suspense fallback={<div>Loading...</div>}><Parking /></Suspense>
       }
     ]
   },

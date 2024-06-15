@@ -1,8 +1,13 @@
 import axios from 'axios';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-const fetchLocationAsync = async (locationId: string): Promise<Location> => {
+const getLocationAsync = async (locationId: string): Promise<Location> => {
   const response = await axios.get(`${baseUrl}/location/${locationId}`);
+  return response.data;
+}
+
+const getLocationsAsync = async (): Promise<Location[]> => {
+  const response = await axios.get(`${baseUrl}/location`);
   return response.data;
 }
   
@@ -18,4 +23,8 @@ const putObjectsAsync = async (locationId: string, bookableObjects: BookableObje
       );
 }
 
-export {fetchLocationAsync, putLocationAsync, putObjectsAsync};
+export {
+  getLocationAsync, 
+  getLocationsAsync, 
+  putLocationAsync, 
+  putObjectsAsync};

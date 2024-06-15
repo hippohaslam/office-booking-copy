@@ -33,19 +33,19 @@ const FloorplanEditor = () => {
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   
   const {isPending, error: locationError, data: locationData} = useQuery({
-    queryKey: ['location'],
+    queryKey: ['location', locationId],
     queryFn: () => fetchLocationAsync(locationId as string),
     enabled: !!locationId
   });
   
   const {isPending: isUpdateLocationPending, error: putUpdateLocationError, isSuccess: isUpdateLocationSuccess} = useQuery({
-    queryKey: ['location-update'],
+    queryKey: ['location-update', locationId],
     queryFn: () => putLocationAsync(postLocation as Location),
     enabled: !!postLocation
   });
 
   const {isPending: isUpdateObjectsPending, error: putUpdateObjectsError, isSuccess: isUpdateObjectsSuccess} = useQuery({
-    queryKey: ['location-objects-update'],
+    queryKey: ['location-edit-objects-update', locationId],
     queryFn: () => putObjectsAsync(locationId as string, postLocation?.bookableObjects as BookableObject[]),
     enabled: !!postLocation && !!postLocation.bookableObjects
   });

@@ -35,9 +35,9 @@ afterAll(() => server.close());
 test('displays the data on the screen', async () => {
   render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={['/location/1']}>
+      <MemoryRouter initialEntries={['/locations/1']}>
         <Routes>
-          <Route path="/location/:locationId" element={<FloorplanEditor />} />
+          <Route path="/locations/:locationId" element={<FloorplanEditor />} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>
