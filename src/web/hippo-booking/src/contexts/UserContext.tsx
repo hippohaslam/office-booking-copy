@@ -1,11 +1,6 @@
 // src/contexts/UserContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface User {
-  name: string;
-  email: string;
-  picture: string;
-}
 
 interface UserContextType {
   user: User | null;
@@ -14,8 +9,8 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider: React.FC<{children: ReactNode}> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+export const UserProvider: React.FC<{children: ReactNode, initialUser?: User | null}> = ({ children, initialUser = null }) => {
+  const [user, setUser] = useState<User | null>(initialUser);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
@@ -24,7 +19,6 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useUser = () => {
   const context = useContext(UserContext);
   if (context === undefined) {
