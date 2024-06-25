@@ -197,7 +197,7 @@ const FloorplanEditor = () => {
         return desk;
       });
       setLocation({ ...location, bookableObjects: nextDesks });
-      // change fill of object to green
+      // change fill of object to white
       const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject);
       if (object) {
         object.set("fill", "white");
@@ -365,48 +365,32 @@ const FloorplanEditor = () => {
         </div>
         <div className="floorplan__desk-list">
           <h2>Bookable objects list</h2>
+          <h3>Unassigned desks</h3>
           <ul>
-            {location?.bookableObjects.map((desk) => (
-              <li key={desk.id}>
-                <div className="floorplan__desk-list-card">
-                  <label htmlFor={`object-name=${desk.id}`}>Name: </label>
-                  <input
-                    id={`object-name=${desk.id}`}
-                    data-testid={`object-name-${desk.id}`}
-                    type="text"
-                    value={desk.name}
-                    onChange={(e) => {
-                      handleDeskUpdate(e.target.value, desk.id, 'name');
-                    }} />
-            
-                  <label htmlFor={`object-description=${desk.id}`}>Description: </label>
-                  <textarea
-                    id={`desk-description=${desk.id}`}
-                    data-testid={`object-description-${desk.id}`}
-                    value={desk.description}
-                    onChange={(e) => {
-                      handleDeskUpdate(e.target.value, desk.id, 'description');
-                    }} />
-                <button
-                  type="button"
-                  onClick={() => assignDesk(desk.id)}
-                  disabled={selectedObject === null || desk.floorPlanObjectId !== undefined}
-                >
-                  Assign desk
-                </button>
-                <button
-                  type="button"
-                  onClick={() => unassignDesk(desk.id)}
-                  disabled={desk.floorPlanObjectId === undefined}
-                >
-                  Unassign desk
-                </button>
-                <br />
-                <small className="clickable" onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
-                  {desk.floorPlanObjectId ?? "No assigned location"}
-                </small>
-                </div>
-              </li>
+          {location?.bookableObjects.filter(desk => desk.floorPlanObjectId == null || desk.floorPlanObjectId === '').map((desk) => (
+              <DeskListItem
+              key={desk.id}
+              desk={desk}
+              handleDeskUpdate={handleDeskUpdate}
+              assignDesk={assignDesk}
+              unassignDesk={unassignDesk}
+              handleSelectCanvasObject={handleSelectCanvasObject}
+              selectedObject={selectedObject}
+            />
+            ))}
+          </ul>
+          <h3>Assigned desks</h3>
+          <ul>
+            {location?.bookableObjects.filter(desk => desk.floorPlanObjectId !== undefined && desk.floorPlanObjectId !== '').map((desk) => (
+              <DeskListItem
+              key={desk.id}
+              desk={desk}
+              handleDeskUpdate={handleDeskUpdate}
+              assignDesk={assignDesk}
+              unassignDesk={unassignDesk}
+              handleSelectCanvasObject={handleSelectCanvasObject}
+              selectedObject={selectedObject}
+            />
             ))}
           </ul>
         </div>
@@ -424,3 +408,60 @@ const FloorplanEditor = () => {
 };
 
 export default FloorplanEditor;
+
+interface DeskListItemProps {
+  desk: BookableObject;
+  handleDeskUpdate: (value: string, id: number, field: 'name' | 'description') => void;
+  assignDesk: (id: number) => void;
+  unassignDesk: (id: number) => void;
+  handleSelectCanvasObject: (id?: string) => void;
+  selectedObject: string | null;
+}
+
+const DeskListItem: React.FC<DeskListItemProps> = ({
+  desk,
+  handleDeskUpdate,
+  assignDesk,
+  unassignDesk,
+  handleSelectCanvasObject,
+  selectedObject,
+}) => (
+  <li key={desk.id}>
+    <div className="floorplan__desk-list-card">
+      <label htmlFor={`object-name=${desk.id}`}>Name: </label>
+      <input
+        id={`object-name=${desk.id}`}
+        data-testid={`object-name-${desk.id}`}
+        type="text"
+        value={desk.name}
+        onChange={(e) => handleDeskUpdate(e.target.value, desk.id, 'name')}
+      />
+
+      <label htmlFor={`object-description=${desk.id}`}>Description: </label>
+      <textarea
+        id={`desk-description=${desk.id}`}
+        data-testid={`object-description-${desk.id}`}
+        value={desk.description}
+        onChange={(e) => handleDeskUpdate(e.target.value, desk.id, 'description')}
+      />
+      <button
+        type="button"
+        onClick={() => assignDesk(desk.id)}
+        disabled={selectedObject === null || desk.floorPlanObjectId !== undefined}
+      >
+        Assign desk
+      </button>
+      <button
+        type="button"
+        onClick={() => unassignDesk(desk.id)}
+        disabled={desk.floorPlanObjectId === undefined}
+      >
+        Unassign desk
+      </button>
+      <br />
+      <small className="clickable" onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
+        {desk.floorPlanObjectId ?? "No assigned location"}
+      </small>
+    </div>
+  </li>
+);
