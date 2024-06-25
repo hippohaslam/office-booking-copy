@@ -35,27 +35,21 @@ afterAll(() => server.close());
 test('displays the data on the screen', async () => {
   render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={['/locations/1']}>
+      <MemoryRouter initialEntries={['/admin/locations/1']}>
         <Routes>
-          <Route path="/locations/:locationId" element={<FloorplanEditor />} />
+          <Route path="/admin/locations/:locationId" element={<FloorplanEditor />} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>
   );
   
 
-  // find desks by input value
-  // 
-  const desk1 = await screen.findByTestId('object-name-1');
-  const desk2 = await screen.findByTestId('object-name-2');
-  const desk3 = await screen.findByTestId('object-name-3');
+  // find desks by text
+  const desk1 = await screen.findByText('Desk 1');
+  const desk2 = await screen.findByText('Desk 2');
+  const desk3 = await screen.findByText('Desk 3');
 
   expect(desk1).toBeInTheDocument();
-  expect(desk1).toHaveValue('Desk 1');
-
   expect(desk2).toBeInTheDocument();
-  expect(desk2).toHaveValue('Desk 2');
-
   expect(desk3).toBeInTheDocument();
-  expect(desk3).toHaveValue('Desk 3');
 });

@@ -16,16 +16,23 @@ import {
 } from "../../shared/fabric/Canvas";
 
 import "./FloorplanEditor.scss";
+import { AccordionItem } from "../../components/accordion/Accordion";
+import { isNullOrEmpty } from "../../helpers/StringHelpers";
 
 const generateUniqueId = () => {
   return uuidv4();
 };
 
+interface SelectedObject {
+  id: string;
+  hasAssignedDesk: boolean;
+}
+
 const FloorplanEditor = () => {
   const { locationId } = useParams();
   const [location, setLocation] = useState<Location>();
   const [postLocation, setPostLocation] = useState<Location | undefined>();
-  const [selectedObject, setSelectedObject] = useState<string | null>(null);
+  const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
   const [editMode, setEditMode] = useState<boolean>(true);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
   const [textState, setTextState] = useState({hidden: true, text: ""});
@@ -66,16 +73,18 @@ const FloorplanEditor = () => {
       fabricCanvas.selection = true;
 
       fabricCanvas.on("mouse:down", (e) => {
-        const selectedObject = e.target as CustomFabricObject;
-        if (selectedObject) {
-          if(selectedObject.type === 'text') {
-                    setTextState({hidden: false, text: (selectedObject as fabric.Text).text ?? ""});
+        const selectedFabricObject = e.target as CustomFabricObject;
+        if (selectedFabricObject) {
+          if(selectedFabricObject.type === 'text') {
+                    setTextState({hidden: false, text: (selectedFabricObject as fabric.Text).text ?? ""});
           }else {
             setTextState({hidden: true, text: ""});
            }
 
           // If there is no id, then it is not a bookable object
-          setSelectedObject(selectedObject.id ?? null);
+          if(selectedFabricObject.id) {
+            setSelectedObject({id: selectedFabricObject.id, hasAssignedDesk: location?.bookableObjects.some(desk => desk.floorPlanObjectId === selectedFabricObject.id) ?? false});
+          }
           // Perform other operations as needed
         } else {
           setSelectedObject(null);
@@ -172,14 +181,14 @@ const FloorplanEditor = () => {
     if (selectedObject && location) {
       const nextDesks = location.bookableObjects.map((desk) => {
         if (desk.id === deskId) {
-          desk.floorPlanObjectId = selectedObject;
+          desk.floorPlanObjectId = selectedObject.id;
         }
         return desk;
       });
       setLocation({ ...location, bookableObjects: nextDesks });
 
       // change fill of object to green
-      const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject);
+      const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject.id);
       if (object) {
         object.set("fill", "green");
         fabricCanvasRef.current?.renderAll();
@@ -198,7 +207,7 @@ const FloorplanEditor = () => {
       });
       setLocation({ ...location, bookableObjects: nextDesks });
       // change fill of object to white
-      const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject);
+      const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject.id);
       if (object) {
         object.set("fill", "white");
         fabricCanvasRef.current?.renderAll();
@@ -302,18 +311,28 @@ const FloorplanEditor = () => {
     });
   };
 
-  const handleSelectCanvasObject = (floorPlanObjectId?: string) => {
-    if (fabricCanvasRef.current && floorPlanObjectId) {
+  /**
+   * Finds the object in the canvas and selects it or deselects it if the floorPlanObjectId is null or undefined
+   * @param floorPlanObjectId The id of the object to select
+   */
+  const handleSelectCanvasObject = (floorPlanObjectId?: string): void => {
+    if (fabricCanvasRef.current && !isNullOrEmpty(floorPlanObjectId)) {
       const object: CustomFabricObject | undefined = fabricCanvasRef.current.getObjects().find((obj: CustomFabricObject) => obj.id === floorPlanObjectId);
       if (object) {
         fabricCanvasRef.current.setActiveObject(object as fabric.Object);
         fabricCanvasRef.current.renderAll();
         if(object.id) {
-          setSelectedObject(object.id);
+          const hasAssignedDesk = location?.bookableObjects.some(desk => desk.floorPlanObjectId === object.id);
+          setSelectedObject({id: object.id, hasAssignedDesk: hasAssignedDesk ?? false});
         }
       }
+    } else if (fabricCanvasRef.current && isNullOrEmpty(floorPlanObjectId)) {
+      fabricCanvasRef.current.discardActiveObject();
+      fabricCanvasRef.current.renderAll();
+      setSelectedObject(null);
     }
   }
+
 
   const hasErrors = locationError || putUpdateObjectsError || putUpdateLocationError;
   const isLoading = isPending || isUpdateLocationPending || isUpdateObjectsPending;
@@ -367,30 +386,34 @@ const FloorplanEditor = () => {
           <h2>Bookable objects list</h2>
           <h3>Unassigned desks</h3>
           <ul>
-          {location?.bookableObjects.filter(desk => desk.floorPlanObjectId == null || desk.floorPlanObjectId === '').map((desk) => (
-              <DeskListItem
-              key={desk.id}
-              desk={desk}
-              handleDeskUpdate={handleDeskUpdate}
-              assignDesk={assignDesk}
-              unassignDesk={unassignDesk}
-              handleSelectCanvasObject={handleSelectCanvasObject}
-              selectedObject={selectedObject}
-            />
+          {location?.bookableObjects.filter(desk => isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
+              <li key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
+                <AccordionItem  name={desk.name}>
+                <DeskListItem
+                  desk={desk}
+                  handleDeskUpdate={handleDeskUpdate}
+                  assignDesk={assignDesk}
+                  unassignDesk={unassignDesk}
+                  selectedObject={selectedObject}
+                />
+              </AccordionItem>
+              </li>
             ))}
           </ul>
           <h3>Assigned desks</h3>
           <ul>
-            {location?.bookableObjects.filter(desk => desk.floorPlanObjectId !== undefined && desk.floorPlanObjectId !== '').map((desk) => (
-              <DeskListItem
-              key={desk.id}
-              desk={desk}
-              handleDeskUpdate={handleDeskUpdate}
-              assignDesk={assignDesk}
-              unassignDesk={unassignDesk}
-              handleSelectCanvasObject={handleSelectCanvasObject}
-              selectedObject={selectedObject}
-            />
+            {location?.bookableObjects.filter(desk => !isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
+              <li  key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
+                <AccordionItem name={desk.name}>
+                <DeskListItem
+                  desk={desk}
+                  handleDeskUpdate={handleDeskUpdate}
+                  assignDesk={assignDesk}
+                  unassignDesk={unassignDesk}
+                  selectedObject={selectedObject}
+                />
+              </AccordionItem>
+              </li>
             ))}
           </ul>
         </div>
@@ -414,8 +437,7 @@ interface DeskListItemProps {
   handleDeskUpdate: (value: string, id: number, field: 'name' | 'description') => void;
   assignDesk: (id: number) => void;
   unassignDesk: (id: number) => void;
-  handleSelectCanvasObject: (id?: string) => void;
-  selectedObject: string | null;
+  selectedObject: SelectedObject | null;
 }
 
 const DeskListItem: React.FC<DeskListItemProps> = ({
@@ -423,10 +445,9 @@ const DeskListItem: React.FC<DeskListItemProps> = ({
   handleDeskUpdate,
   assignDesk,
   unassignDesk,
-  handleSelectCanvasObject,
   selectedObject,
 }) => (
-  <li key={desk.id}>
+  <div>
     <div className="floorplan__desk-list-card">
       <label htmlFor={`object-name=${desk.id}`}>Name: </label>
       <input
@@ -447,21 +468,17 @@ const DeskListItem: React.FC<DeskListItemProps> = ({
       <button
         type="button"
         onClick={() => assignDesk(desk.id)}
-        disabled={selectedObject === null || desk.floorPlanObjectId !== undefined}
+        disabled={!selectedObject || selectedObject.hasAssignedDesk || !isNullOrEmpty(desk.floorPlanObjectId)}
       >
         Assign desk
       </button>
       <button
         type="button"
         onClick={() => unassignDesk(desk.id)}
-        disabled={desk.floorPlanObjectId === undefined}
+        disabled={isNullOrEmpty(desk.floorPlanObjectId)}
       >
         Unassign desk
       </button>
-      <br />
-      <small className="clickable" onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
-        {desk.floorPlanObjectId ?? "No assigned location"}
-      </small>
     </div>
-  </li>
+  </div>
 );
