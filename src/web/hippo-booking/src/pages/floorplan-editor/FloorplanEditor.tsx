@@ -177,6 +177,14 @@ const FloorplanEditor = () => {
         return desk;
       });
       setLocation({ ...location, bookableObjects: nextDesks });
+
+      // change fill of object to green
+      const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject);
+      if (object) {
+        object.set("fill", "green");
+        fabricCanvasRef.current?.renderAll();
+      }
+
     }
   };
 
@@ -189,6 +197,12 @@ const FloorplanEditor = () => {
         return desk;
       });
       setLocation({ ...location, bookableObjects: nextDesks });
+      // change fill of object to green
+      const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject);
+      if (object) {
+        object.set("fill", "white");
+        fabricCanvasRef.current?.renderAll();
+      }
     }
   };
 
@@ -373,11 +387,10 @@ const FloorplanEditor = () => {
                     onChange={(e) => {
                       handleDeskUpdate(e.target.value, desk.id, 'description');
                     }} />
-                
                 <button
                   type="button"
                   onClick={() => assignDesk(desk.id)}
-                  disabled={!selectedObject}
+                  disabled={selectedObject === null || desk.floorPlanObjectId !== undefined}
                 >
                   Assign desk
                 </button>
@@ -389,7 +402,7 @@ const FloorplanEditor = () => {
                   Unassign desk
                 </button>
                 <br />
-                <small style={{ fontStyle: "italic" }} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
+                <small className="clickable" onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
                   {desk.floorPlanObjectId ?? "No assigned location"}
                 </small>
                 </div>
