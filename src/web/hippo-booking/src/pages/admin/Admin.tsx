@@ -44,7 +44,7 @@ const Admin = () => {
         <ul className="locations-list">
           {data?.map((location) => (
             <li key={location.id}>
-              <Link to={`/locations/${location.id}/editor`}>{location.name}</Link>
+              <Link to={`/admin/locations/${location.id}`}>{location.name}</Link>
             </li>
           ))}
         </ul>

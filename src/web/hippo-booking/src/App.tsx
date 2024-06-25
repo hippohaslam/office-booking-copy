@@ -9,13 +9,13 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="app-container">
-        <Nav />
-        <main>
-          <Outlet />
-        </main>
-        <footer>A footer</footer>
-      </div>
+          <div className="app-container">
+            <Nav />
+            <main>
+              <Outlet />
+            </main>
+            <footer>A footer</footer>
+          </div>
     </QueryClientProvider>
   );
 }

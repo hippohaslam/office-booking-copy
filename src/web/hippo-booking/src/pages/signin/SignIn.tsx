@@ -1,0 +1,38 @@
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
+
+// There must be a more universal way to handle this type?
+type JwtToken = {
+  name: string;
+  email: string;
+  picture: string;
+};
+
+export default function SignIn() {
+    const location = useLocation();
+    const userContext = useUser();
+    const navigate = useNavigate();
+    const returnURl = new URLSearchParams(location.search).get('returnUrl');
+
+    async function handleSignInUser(credentialResponse: CredentialResponse) {
+      if(credentialResponse.credential) {
+        const userJwt: JwtToken = jwtDecode(credentialResponse.credential);
+        userContext.setUser({
+          name: userJwt.name,
+          email: userJwt.email,
+          picture: userJwt.picture
+        });
+
+        navigate(returnURl || '/');
+      }
+    }
+    const errorMessage = () => {
+        throw Error('Error signing in');
+    };
+
+  return (
+    <GoogleLogin onSuccess={handleSignInUser} onError={errorMessage} />
+  );
+}
