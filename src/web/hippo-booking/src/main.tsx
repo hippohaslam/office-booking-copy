@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.scss";
-import { Parking, Dashboard, FloorplanEditor, Booking, Locations } from "./imports";
+import { Dashboard, FloorplanEditor, Booking, Locations } from "./imports";
 import ErrorPage from "./pages/error/Error.tsx";
 import Home from "./pages/home/Home.tsx";
 import ProtectedRoute from "./ProtectedRoute.tsx";
@@ -57,7 +57,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/booking",
+        path: "/locations",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ProtectedRoute>
@@ -67,21 +67,12 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/locations/:locationId/booking",
+        path: "/locations/:locationId",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ProtectedRoute>
               <Booking />
             </ProtectedRoute>
-          </Suspense>
-        ),
-      },
-      {
-        // This may get removed, can't see a use for it with locations
-        path: "parking",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <Parking />
           </Suspense>
         ),
       },
