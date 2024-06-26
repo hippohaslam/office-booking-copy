@@ -8,7 +8,5 @@ public class Booking : BaseEntity<int>
     public int BookableObjectId { get; set; }
     public BookableObject BookableObject { get; set; } = null!;
     
-    public DateTime StartTime { get; set; }
-    
-    public DateTime EndTime { get; set; }
+    public DateOnly Date { get; set; }
 }

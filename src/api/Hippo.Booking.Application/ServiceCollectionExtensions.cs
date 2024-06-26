@@ -1,6 +1,7 @@
 using FluentValidation;
 using Hippo.Booking.Application.Commands.BookableObject;
 using Hippo.Booking.Application.Commands.Location;
+using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Application.Queries.Locations;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +20,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<CreateLocationRequest>, CreateLocationRequestValidator>();
         services.AddScoped<IValidator<UpdateLocationRequest>, UpdateLocationRequestValidator>();
 
-        services.AddScoped<ILocationQueries, LocationQueries>();
+        services.AddScoped<ILocationQueries, LocationQueries>()
+            .AddScoped<IBookingQueries, BookingQueries>();
         
         return services;
     }

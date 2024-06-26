@@ -48,6 +48,7 @@ var app = builder.Build();
 
 new LocationEndpoints().Map(app);
 new HealthEndpoints().Map(app);
+new BookingEndpoints().Map(app);
 
 if (app.Environment.IsDevelopment())
 {

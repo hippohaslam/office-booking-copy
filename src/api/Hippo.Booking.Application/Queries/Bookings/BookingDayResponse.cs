@@ -1,0 +1,27 @@
+namespace Hippo.Booking.Application.Queries.Bookings;
+
+public class BookingDayResponse
+{
+    public DateOnly Date { get; set; }
+    public string FloorplanJson { get; set; }
+
+    public List<BookableObjectResponse> BookableObjects { get; set; }
+
+    public class BookableObjectResponse
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
+
+        public Booking? ExistingBooking { get; set; }
+
+        public class Booking
+        {
+            public int? Id { get; set; }
+
+            public string? Name { get; set; }
+        }
+    }
+}
