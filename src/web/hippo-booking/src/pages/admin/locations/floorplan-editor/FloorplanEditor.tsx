@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import { getLocationAsync, putObjectsAsync, putLocationAsync } from "../../services/Apis";
+import { getLocationAsync, putObjectsAsync, putLocationAsync } from "../../../../services/Apis";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -8,16 +8,16 @@ import {
   CustomCircle,
   CustomFabricObject,
   CustomRect,
-} from "../../shared/fabric/CustomObjects";
-import { ErrorBanner, SuccessBanner } from "../../components";
+} from "../../../../shared/fabric/CustomObjects";
+import { ErrorBanner, SuccessBanner } from "../../../../components";
 import {
   initializeCanvasZoom,
   initializeCanvasDragging,
-} from "../../shared/fabric/Canvas";
+} from "../../../../shared/fabric/Canvas";
 
 import "./FloorplanEditor.scss";
-import { AccordionItem } from "../../components/accordion/Accordion";
-import { isNullOrEmpty } from "../../helpers/StringHelpers";
+import { AccordionItem } from "../../../../components/accordion/Accordion";
+import { isNullOrEmpty } from "../../../../helpers/StringHelpers";
 
 const generateUniqueId = () => {
   return uuidv4();

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ErrorBanner } from "../../components/banners/Banners";
+import { ErrorBanner } from "../../components";
 import { getLocationsAsync } from "../../services/Apis";
 
 const Admin = () => {

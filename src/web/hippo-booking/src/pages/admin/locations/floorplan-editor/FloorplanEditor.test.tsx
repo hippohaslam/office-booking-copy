@@ -2,7 +2,7 @@
 import { render, screen } from '@testing-library/react';
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import {FloorplanEditor}  from '../../imports';
+import FloorplanEditor  from './FloorplanEditor';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 

@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.scss";
-import { Parking, Admin, FloorplanEditor, DeskBooking, Locations } from "./imports.tsx";
+import { Parking, Dashboard, FloorplanEditor, Booking, Locations } from "./imports";
 import ErrorPage from "./pages/error/Error.tsx";
 import Home from "./pages/home/Home.tsx";
 import ProtectedRoute from "./ProtectedRoute.tsx";
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ProtectedRoute>
-              <Admin />
+              <Dashboard />
             </ProtectedRoute>
           </Suspense>
         ),
@@ -71,7 +71,7 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ProtectedRoute>
-              <DeskBooking />
+              <Booking />
             </ProtectedRoute>
           </Suspense>
         ),
