@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { getLocationsAsync } from "../../services/Apis";
+import { getLocationsAsync } from "../../../services/Apis";
 import { Link } from "react-router-dom";
-import { ErrorBanner } from "../../components/banners/Banners";
+import { ErrorBanner } from '../../../components';
 
 const Locations = () => {
   const { isFetching, error, data } = useQuery({

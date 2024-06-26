@@ -9,7 +9,7 @@ import {
   CustomFabricObject,
   CustomRect,
 } from "../../shared/fabric/CustomObjects";
-import { ErrorBanner, SuccessBanner } from "../../components/banners/Banners";
+import { ErrorBanner, SuccessBanner } from "../../components";
 import {
   initializeCanvasZoom,
   initializeCanvasDragging,
