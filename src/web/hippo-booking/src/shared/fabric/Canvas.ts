@@ -1,4 +1,27 @@
+import { fabric } from "fabric";
 import { ExtendedCanvas } from "./CustomObjects";
+import { isNullOrEmpty } from "../../helpers/StringHelpers";
+
+const loadCanvas = (canvasJson: string, canvasRef: React.RefObject<HTMLCanvasElement>, fabricCanvasRef: React.MutableRefObject<fabric.Canvas | null>) => {
+  if (isNullOrEmpty(canvasJson)) {
+    const canvas = new fabric.Canvas(canvasRef.current, {
+      backgroundColor: "#F0F8FF",
+      width: 800,
+      height: 600,
+    });
+    fabricCanvasRef.current = canvas;
+    return canvas;
+  } else {
+    const canvas = new fabric.Canvas(canvasRef.current).loadFromJSON(
+      canvasJson,
+      () => {
+        fabricCanvasRef.current?.renderAll();
+      }
+    );
+    fabricCanvasRef.current = canvas;
+    return canvas;
+  }
+};
 
 const initializeCanvasZoom = (canvas: fabric.Canvas) => {
     canvas.on('mouse:wheel', function(opt) {
@@ -51,4 +74,5 @@ const initializeCanvasZoom = (canvas: fabric.Canvas) => {
     });
   };
 
-  export { initializeCanvasZoom, initializeCanvasDragging };
+
+  export { loadCanvas, initializeCanvasZoom, initializeCanvasDragging };

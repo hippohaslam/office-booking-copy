@@ -5,16 +5,9 @@
   width: 100%;
 }
 
-.floorplan__editor {
-
-    .floorplan__editor-canvas {
-        border: 1px solid #000;
-        margin-right:1em;
-    }
-}
-
 .floorplan__desk-list {
     width: 100%;
+    margin-left: 10px;
 
     ul {
         list-style-type: none;

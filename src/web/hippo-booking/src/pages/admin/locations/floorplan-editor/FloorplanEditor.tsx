@@ -13,6 +13,7 @@ import { ErrorBanner, SuccessBanner } from "../../../../components";
 import {
   initializeCanvasZoom,
   initializeCanvasDragging,
+  loadCanvas,
 } from "../../../../shared/fabric/Canvas";
 
 import "./FloorplanEditor.scss";
@@ -67,7 +68,7 @@ const FloorplanEditor = () => {
 
   useEffect(() => {
     if (canvasElRef.current) {
-      const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "");
+      const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef);
 
       // Make canvas interactive
       fabricCanvas.selection = true;
@@ -134,27 +135,6 @@ const FloorplanEditor = () => {
       });
       fabricCanvasRef.current.add(square);
       fabricCanvasRef.current.renderAll();
-    }
-  };
-
-  const loadCanvas = (canvasJson: string) => {
-    if (canvasJson === "") {
-      const canvas = new fabric.Canvas(canvasElRef.current, {
-        backgroundColor: "#F0F8FF",
-        width: 800,
-        height: 600,
-      });
-      fabricCanvasRef.current = canvas;
-      return canvas;
-    } else {
-      const canvas = new fabric.Canvas(canvasElRef.current).loadFromJSON(
-        canvasJson,
-        () => {
-          fabricCanvasRef.current?.renderAll();
-        }
-      );
-      fabricCanvasRef.current = canvas;
-      return canvas;
     }
   };
 
@@ -378,7 +358,7 @@ const FloorplanEditor = () => {
             Remove object
           </button>
 
-          <div className="floorplan__editor-canvas">
+          <div className="canvas__container">
             <canvas width="800" height="600" ref={canvasElRef} />
           </div>
         </div>

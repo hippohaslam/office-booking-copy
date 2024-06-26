@@ -3,6 +3,8 @@ import { getLocationsAsync } from "../../services/Apis";
 import { Link } from "react-router-dom";
 import { ErrorBanner } from '../../components';
 
+// TODO: Add location type so we know what's parking and whats an office.
+
 const Locations = () => {
   const { isFetching, error, data } = useQuery({
     queryKey: ["locations"],
