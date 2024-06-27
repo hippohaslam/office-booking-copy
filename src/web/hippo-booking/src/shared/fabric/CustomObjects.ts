@@ -4,6 +4,10 @@ interface CustomFabricObject extends fabric.Object {
     id?: string;
 }
 
+export function isCustomFabricObject(object: fabric.Object): object is CustomFabricObject {
+    return object instanceof fabric.Object && 'id' in object;
+  }
+
 interface ExtendedCanvas extends fabric.Canvas {
     isDragging?: boolean;
     lastPosX?: number;

@@ -4,13 +4,15 @@ import { getLocationAsync } from "../../../services/Apis";
 import { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas";
-import { CustomFabricObject } from "../../../shared/fabric/CustomObjects";
+import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric/CustomObjects";
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
 import { CustomConfirmDialog } from "../../../components";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
 // Needs discussion with the team to see what's the best approach.
+
+
 
 const DeskBooking = () => {
   const { locationId } = useParams();
@@ -44,7 +46,10 @@ const DeskBooking = () => {
           object.hoverCursor = "pointer";
 
           // Once we have knowledge of whether a desk is booked or not, we can change the color here (green/white for booked/unbooked desks)
-          object.set("fill", "white");
+          if(isCustomFabricObject(object)){
+            object.set("fill", "white");
+          }
+          
         }
       });
       fabricCanvas.renderAll();
