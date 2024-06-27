@@ -1,4 +1,5 @@
 import {Link} from 'react-router-dom'
+import { googleLogout } from '@react-oauth/google';
 import './Nav.scss'
 import HippoSvg from '../../assets/hippo.svg'
 import { useUser } from '../../contexts/UserContext';
@@ -9,6 +10,7 @@ const Nav = () => {
   function handleSignOut() {
     console.log('Sign out clicked');
     userContext.setUser(null);
+    googleLogout();
   }
 
 
