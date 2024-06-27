@@ -33,6 +33,6 @@ export default function SignIn() {
     };
 
   return (
-    <GoogleLogin onSuccess={handleSignInUser} onError={errorMessage} />
+    <GoogleLogin onSuccess={handleSignInUser} onError={errorMessage} useOneTap auto_select />
   );
 }
