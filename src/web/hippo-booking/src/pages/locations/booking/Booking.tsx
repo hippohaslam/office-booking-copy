@@ -6,28 +6,11 @@ import { fabric } from "fabric";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas";
 import { CustomFabricObject } from "../../../shared/fabric/CustomObjects";
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
+import { CustomConfirmDialog } from "../../../components";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
 // Needs discussion with the team to see what's the best approach.
-
-type CustomConfirmDialogProps = {
-  isOpen: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
-  message: string;
-};
-const CustomConfirmDialog = ({ isOpen, onConfirm, onCancel, message }: CustomConfirmDialogProps) => {
-  if (!isOpen) return null;
-  // TODO: Style the dialog. Currently looks terrible. Ideally move this to a separate component and style it properly.
-  return (
-    <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#A9A9A9', padding: '20px', zIndex: 100 }}>
-      <p>{message}</p>
-      <button onClick={onConfirm}>Yes</button>
-      <button onClick={onCancel}>No</button>
-    </div>
-  );
-};
 
 const DeskBooking = () => {
   const { locationId } = useParams();
