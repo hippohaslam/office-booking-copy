@@ -16,7 +16,6 @@ public class BookingQueries(IDataContext dataContext) : IBookingQueries
             .Select(x => new BookingDayResponse
             {
                 Date = date,
-                FloorplanJson = x.FloorPlanJson,
                 BookableObjects = x.BookableObjects
                     .Select(y => new BookingDayResponse.BookableObjectResponse
                 {

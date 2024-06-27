@@ -3,7 +3,6 @@ namespace Hippo.Booking.Application.Queries.Bookings;
 public class BookingDayResponse
 {
     public DateOnly Date { get; set; }
-    public string FloorplanJson { get; set; }
 
     public List<BookableObjectResponse> BookableObjects { get; set; }
 

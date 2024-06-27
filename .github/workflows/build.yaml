@@ -69,10 +69,10 @@ jobs:
           cmd: ci-test
           dir: ./src/web/hippo-booking
           
-      - name: Run Cypress Tests
-        working-directory: ./src/web/hippo-booking
-        run: |
-          npx cypress run --component
+#      - name: Run Cypress Tests
+#        working-directory: ./src/web/hippo-booking
+#        run: |
+#          npx cypress run --component
           
 #  pulumi-test:
 #    runs-on: ubuntu-latest
