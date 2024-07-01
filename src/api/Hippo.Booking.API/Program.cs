@@ -4,9 +4,14 @@ using Hippo.Booking.API.StartupTasks;
 using Hippo.Booking.Application;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.EF;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
+
+const string googleClientId = "287640824547-7jf3a50aklmis16bh1uptkius9nibkga.apps.googleusercontent.com";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +35,10 @@ builder.Services.AddSwaggerGen(options =>
         Description = "JWT Authorization header using the Bearer scheme.",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.OAuth2,
+        Extensions = new Dictionary<string, IOpenApiExtension>
+        {
+            {"x-tokenName", new OpenApiString("id_token")}
+        },
         Flows = new OpenApiOAuthFlows
         {
             AuthorizationCode = new OpenApiOAuthFlow
@@ -79,6 +88,16 @@ builder.Services.AddStartupTask<EnsureCreatedStartupTask>();
 
 builder.Services.AddHippoBookingApplication();
 
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.UseGoogle(googleClientId);
+    });
+
+// builder.Services.AddAuthorization(x => x.FallbackPolicy = new AuthorizationPolicyBuilder()
+//     .RequireAuthenticatedUser()
+//     .Build());
+
 var app = builder.Build();
 
 new LocationEndpoints().Map(app);
@@ -94,8 +113,12 @@ app.MapGet("/", () => TypedResults.Redirect("/swagger/index.html"));
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
+    options.OAuthClientId(googleClientId);
     options.OAuthScopes("profile", "openid");
     options.OAuthUsePkce();
 });
+
+app.UseAuthentication();
+// app.UseAuthorization();
 
 app.Run();
