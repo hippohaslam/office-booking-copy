@@ -49,7 +49,6 @@ public class LocationCommands(
         }
 
         location.Name = request.Name;
-        location.FloorPlanJson = request.FloorPlanJson;
         
         await dataContext.Save();
     }

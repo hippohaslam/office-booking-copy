@@ -1,3 +1,4 @@
+using Hippo.Booking.Application.Commands.Areas;
 using Hippo.Booking.Application.Commands.BookableObject;
 using Hippo.Booking.Application.Commands.Location;
 using Hippo.Booking.Application.Queries.Locations;
@@ -11,20 +12,56 @@ public class LocationEndpoints() : EndpointBase("location", "Locations")
     {
         MapLocationEndpoints(builder);
         
-        builder.MapPost("{locationId:int}/bookable-object", async (int locationId, ICreateBookableObject command, CreateBookableObjectRequest request) =>
+        MapAreaEndpoints(builder);
+        
+        builder.MapPost("{locationId:int}/area/{areaId:int}/bookable-object", 
+            async (int locationId, int areaId, ICreateBookableObject command, CreateBookableObjectRequest request) =>
         {
             var resp = await HandleCreatedResponse(
-                async () => await command.Handle(locationId, request),
-                value => $"location/{locationId}/desk/{value}");
+                async () => await command.Handle(locationId, areaId, request),
+                value => $"location/{locationId}/area/{areaId}/bookable-object/{value}");
 
             return resp;
         });
         
         builder.MapPut(
-            "{locationId:int}/bookable-object/{bookableObjectId:int}", 
-            async (int locationId, int bookableObjectId, IUpdateBookableObject command, UpdateBookableObjectRequest request) =>
+            "{locationId:int}/area/{areaId:int}/bookable-object/{bookableObjectId:int}", 
+            async (int locationId, int areaId, int bookableObjectId, IUpdateBookableObject command, UpdateBookableObjectRequest request) =>
         {
-            return await HandleResponse(async () => await command.Handle(bookableObjectId, locationId, request));
+            return await HandleResponse(async () => await command.Handle(bookableObjectId, locationId, areaId, request));
+        });
+    }
+
+    private void MapAreaEndpoints(RouteGroupBuilder builder)
+    {
+        builder.MapGet("{locationId:int}/area", async (IAreaQueries areaQueries, int locationId) => 
+            TypedResults.Ok(await areaQueries.GetAreas(locationId)));
+        
+        builder.MapGet("{locationId:int}/area/{areaId}", 
+            async Task<Results<Ok<AreaQueryResponse>, NotFound>> 
+                (int locationId, int areaId, IAreaQueries areaQueries) =>
+        {
+            var areas = await areaQueries.GetAreaById(locationId, areaId);
+
+            return areas is null
+                ? TypedResults.NotFound()
+                : TypedResults.Ok(areas);
+        });
+        
+        builder.MapPost("{locationId:int}/area", async Task<Results<Created, BadRequest<string>, ValidationProblem>> 
+            (int locationId, ICreateAreaCommand command, CreateAreaRequest request) =>
+        {
+            var resp = await HandleCreatedResponse(
+                async () => await command.Handle(locationId, request),
+                value => $"location/{locationId}/area/{value}");
+
+            return resp;
+        });
+        
+        builder.MapPut("{locationId:int}/area/{areaId:int}", 
+            async (int locationId, int areaId, IUpdateAreaCommand command, UpdateAreaRequest request) =>
+        {
+            return await HandleResponse(async () => await command.Handle(locationId, areaId, request));
         });
     }
 

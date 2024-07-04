@@ -5,19 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Application.Queries.Locations;
 
-public interface ILocationQueries
-{
-    Task<List<LocationListQueryResponse>> GetLocations();
-
-    Task<LocationQueryResponse?> GetLocationById(int id);
-}
-
 public class LocationQueries(IDataContext dataContext) : ILocationQueries
 {
-    public Task<List<LocationListQueryResponse>> GetLocations()
+    public Task<List<IdName<int>>> GetLocations()
     {
         return dataContext.Query<Location>(x => x.WithNoTracking())
-            .Select(x => new LocationListQueryResponse
+            .Select(x => new IdName<int>
             {
                 Id = x.Id,
                 Name = x.Name
@@ -28,19 +21,16 @@ public class LocationQueries(IDataContext dataContext) : ILocationQueries
     public Task<LocationQueryResponse?> GetLocationById(int id)
     {
         return dataContext.Query<Location>(x => x.WithNoTracking())
-            .Include(i => i.BookableObjects)
+            .Include(i => i.Areas)
             .Where(x => x.Id == id)
             .Select(x => new LocationQueryResponse
             {
                 Id = x.Id,
                 Name = x.Name,
-                FloorPlanJson = x.FloorPlanJson,
-                BookableObjects = x.BookableObjects.Select(y => new BookableObjectDto
+                Areas = x.Areas.Select(y => new LocationQueryResponse.AreaResponse
                 {
                     Id = y.Id,
-                    Name = y.Name,
-                    Description = y.Description,
-                    FloorPlanObjectId = y.FloorplanObjectId
+                    Name = y.Name
                 }).ToList()
             })
             .SingleOrDefaultAsync();

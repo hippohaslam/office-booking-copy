@@ -1,3 +1,4 @@
+using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -5,20 +6,20 @@ namespace Hippo.Booking.Application.Commands.BookableObject;
 
 public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableObject, IUpdateBookableObject
 {
-    public async Task<int> Handle(int locationId, CreateBookableObjectRequest request)
+    public async Task<int> Handle(int locationId, int areaId, CreateBookableObjectRequest request)
     {
-        var location = await dataContext.Query<Core.Entities.Location>()
+        var area = await dataContext.Query<Area>()
             .Include(i => i.BookableObjects)
-            .SingleOrDefaultAsync(x => x.Id == locationId);
+            .SingleOrDefaultAsync(x => x.LocationId == locationId && x.Id == areaId);
 
-        if (location == null)
+        if (area == null)
         {
-            throw new ClientException("Location not found");
+            throw new ClientException("Area not found");
         }
         
-        if (location.BookableObjects.Any(x => x.Name == request.Name))
+        if (area.BookableObjects.Any(x => x.Name == request.Name))
         {
-            throw new ClientException("Bookable object with this name already exists in this location.");
+            throw new ClientException("Bookable object with this name already exists in this area.");
         }
         
         var bookableObject = new Core.Entities.BookableObject
@@ -26,28 +27,28 @@ public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableO
             Name = request.Name,
             Description = request.Description,
             FloorplanObjectId = request.FloorPlanObjectId,
-            LocationId = locationId
+            AreaId = areaId
         };
         
-        location.BookableObjects.Add(bookableObject);
+        area.BookableObjects.Add(bookableObject);
 
         await dataContext.Save();
 
         return bookableObject.Id;
     }
 
-    public async Task Handle(int bookableObjectId, int locationId, UpdateBookableObjectRequest request)
+    public async Task Handle(int bookableObjectId, int locationId, int areaId, UpdateBookableObjectRequest request)
     {
-        var location = await dataContext.Query<Core.Entities.Location>()
+        var area = await dataContext.Query<Area>()
             .Include(i => i.BookableObjects)
-            .SingleOrDefaultAsync(x => x.Id == locationId);
+            .SingleOrDefaultAsync(x => x.Id == areaId && x.Id == locationId);
 
-        if (location == null)
+        if (area == null)
         {
             throw new ClientException("Location not found");
         }
 
-        var bookableObject = location.BookableObjects.SingleOrDefault(x => x.Id == bookableObjectId);
+        var bookableObject = area.BookableObjects.SingleOrDefault(x => x.Id == bookableObjectId);
         
         if (bookableObject == null)
         {

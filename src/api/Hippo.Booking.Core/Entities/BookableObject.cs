@@ -8,8 +8,8 @@ public class BookableObject : BaseEntity<int>
     
     public string FloorplanObjectId { get; set; } = string.Empty;
     
-    public int LocationId { get; set; }
-    public Location Location { get; set; } = null!;
+    public int AreaId { get; set; }
+    public Area Area { get; set; } = null!;
     
     public List<Booking> Bookings { get; set; } = new();
 }
