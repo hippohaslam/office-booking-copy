@@ -21,29 +21,30 @@ const Nav = () => {
 
 
     return (
-       <div className="nav-container">
-         <div className="nav-container-logo">
-          <Link to="">
-          <img src={HippoSvg} alt="Hippo Logo" />
-          </Link>
-         </div>
-         <nav>
-        <ul>
-          <li>
-            <Link to="/locations">Booking</Link>
-          </li>
-          <li>
-            <Link to="/admin">Admin</Link>
-          </li>
-          <li>
-           {userContext.user 
-           ? <button type="button" onClick={handleSignOut}>Sign out</button>
-          : null}
-            
-          </li>
-        </ul>
-      </nav>
-       </div>
+       <header>
+           <div className="nav-container">
+               <Link className="nav-container-logo" to="">
+                   <img src={HippoSvg} alt="Hippo Logo"/>
+                   Hippo Bookings
+               </Link>
+               <nav id="main-navigation" aria-label="primary">
+                   <ul>
+                       <li>
+                           <Link to="/locations">Booking</Link>
+                       </li>
+                       <li>
+                           <Link to="/admin">Admin</Link>
+                       </li>
+                       <li>
+                           {userContext.user
+                               ? <button type="button" onClick={handleSignOut} className="primary-cta">Sign out</button>
+                               : null}
+
+                       </li>
+                   </ul>
+               </nav>
+           </div>
+       </header>
     )
 }
 

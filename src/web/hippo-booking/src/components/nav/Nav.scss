@@ -2,6 +2,29 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: auto;
+    max-width: 1512px;
+    padding: 0 25px;
+}
+
+.nav-container-logo{
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 20px;
+    font-weight: bold;
+    font-size: 1.5rem;
+
+    &:hover{
+        text-decoration: underline;
+    }
+}
+
+#main-navigation{
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    padding: 0;
 }
 
 img {
@@ -17,8 +40,60 @@ nav {
         padding: 0.5rem;
     }
 
+    a:hover{
+        text-decoration: underline;
+    }
+
     ul {
         display: flex;
         list-style: none;
+        align-items: center;
+        margin-bottom: auto;
+        padding-inline-start: 0;
+        gap: 20px;
+
+        li {
+            list-style-type: none;
+            font-weight: bold;
+        }
     }
+}
+
+header button.primary-cta {
+    display: inline-block;
+    min-height: 48px;
+    white-space: nowrap;
+    padding: 17px 30px;
+    color: #fff;
+    background: #005e5d;
+    border-radius: 28px;
+    font-weight: 500;
+    line-height: 1;
+    overflow: hidden;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    transition: .4s ease;
+    transition-property: color;
+    -webkit-appearance: none;
+    appearance: none;
+    transform-style: preserve-3d;
+    text-decoration: none;
+    border: none;
+}
+
+header button.primary-cta:hover {
+    background-color: #004c4b;
+    transition: all .4s ease;
+    text-decoration: underline
+}
+
+header button.primary-cta:focus,header button.primary-cta:focus-visible {
+    outline-width: 2px;
+    outline-offset: 1px;
+    outline-style: solid
+}
+
+header button.primary-cta {
+    position: relative;
+    font-family: 'DM Sans', serif;
 }
