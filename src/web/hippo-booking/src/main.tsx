@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.scss";
-import { Dashboard, FloorplanEditor, Booking, Locations, BookingAreas } from "./imports";
+import { Dashboard, FloorplanEditor, Booking, Locations, BookingAreas, SvgAreaEditor } from "./imports";
 import ErrorPage from "./pages/error/Error.tsx";
 import Home from "./pages/home/Home.tsx";
 import ProtectedRoute from "./ProtectedRoute.tsx";
@@ -52,6 +52,17 @@ const router = createBrowserRouter([
           <Suspense fallback={<div>Loading editor...</div>}>
             <ProtectedRoute>
               <FloorplanEditor />
+            </ProtectedRoute>
+          </Suspense>
+        ),
+      },
+      {
+        // Experimental route
+        path: "/admin/locations/:locationId/area/:areaId/svg-editor",
+        element: (
+          <Suspense fallback={<div>Loading editor...</div>}>
+            <ProtectedRoute>
+              <SvgAreaEditor />
             </ProtectedRoute>
           </Suspense>
         ),

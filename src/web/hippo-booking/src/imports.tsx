@@ -8,7 +8,14 @@ const FloorplanEditor = React.lazy(() => import('./pages/admin/locations/floorpl
 const Booking = React.lazy(() => import('./pages/locations/booking/Booking.tsx'));
 const Locations = React.lazy(() => import('./pages/locations/Locations.tsx'));
 const BookingAreas = React.lazy(() => import('./pages/locations/areas/BookingAreas.tsx'));
+const SvgAreaEditor = React.lazy(() => import('./pages/admin/locations/floorplan-editor/FloorplanEditorSvg.tsx'));
 
 
 // export parking component
-export { Booking, FloorplanEditor, Locations, Dashboard, BookingAreas };
+export { 
+    Booking, 
+    FloorplanEditor, 
+    Locations, 
+    Dashboard, 
+    BookingAreas,
+    SvgAreaEditor };

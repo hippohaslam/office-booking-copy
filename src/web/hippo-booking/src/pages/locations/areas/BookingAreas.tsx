@@ -1,9 +1,7 @@
 
-import SvgEditor from "../../../components/svg-booking/SvgEditor";
-
 const BookingAreas = () => {
     return (
-        <SvgEditor />
+        <div>TODO: Add list of areas</div>
     )
 };
 

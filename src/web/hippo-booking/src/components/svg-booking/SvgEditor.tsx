@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 
-// Experimental SVG Editor. partially working.
+// ! Experimental SVG Editor. partially working. Does not use API so saving here is just local storage.
 
 interface SvgElementWithId {
     id: number;
