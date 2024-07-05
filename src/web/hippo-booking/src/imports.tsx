@@ -7,7 +7,8 @@ const FloorplanEditor = React.lazy(() => import('./pages/admin/locations/floorpl
 // Location/booking
 const Booking = React.lazy(() => import('./pages/locations/booking/Booking.tsx'));
 const Locations = React.lazy(() => import('./pages/locations/Locations.tsx'));
+const BookingAreas = React.lazy(() => import('./pages/locations/areas/BookingAreas.tsx'));
 
 
 // export parking component
-export { Booking, FloorplanEditor, Locations, Dashboard };
+export { Booking, FloorplanEditor, Locations, Dashboard, BookingAreas };

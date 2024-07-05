@@ -15,7 +15,7 @@ import { CustomConfirmDialog } from "../../../components";
 
 
 const DeskBooking = () => {
-  const { locationId } = useParams();
+  const { locationId, areaId } = useParams();
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -24,8 +24,8 @@ const DeskBooking = () => {
 
   const { data: locationData} = useQuery({
     queryKey: ['location', locationId],
-    queryFn: () => getLocationAsync(locationId as string),
-    enabled: !!locationId,
+    queryFn: () => getLocationAsync(locationId as string, areaId as string),
+    enabled: !!locationId && !!areaId,
     //staleTime: 1000 * 60 * 60 * 12, // 12 hours.  TODO: Set for production use, extend time to a day? Makes sense to cache this data for a while.
   });
 

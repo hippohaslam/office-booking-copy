@@ -3,7 +3,7 @@ import { getLocationAsync, putObjectsAsync, putLocationAsync } from "../../../..
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import {useQuery} from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {
   CustomCircle,
   CustomFabricObject,
@@ -30,38 +30,39 @@ interface SelectedObject {
 }
 
 const FloorplanEditor = () => {
-  const { locationId } = useParams();
+  const { locationId, areaId } = useParams();
   const [location, setLocation] = useState<Location>();
-  const [postLocation, setPostLocation] = useState<Location | undefined>();
   const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
   const [editMode, setEditMode] = useState<boolean>(true);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
   const [textState, setTextState] = useState({hidden: true, text: ""});
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
+
+  const queryClient = useQueryClient();
   
   const {isPending, error: locationError, data: locationData} = useQuery({
     queryKey: ['location', locationId],
-    queryFn: () => getLocationAsync(locationId as string),
+    queryFn: () => getLocationAsync(locationId as string, areaId as string),
     enabled: !!locationId
   });
-  
-  const {isPending: isUpdateLocationPending, error: putUpdateLocationError, isSuccess: isUpdateLocationSuccess} = useQuery({
-    queryKey: ['location-update', locationId],
-    queryFn: () => putLocationAsync(postLocation as Location),
-    enabled: !!postLocation
+
+
+  const locationMutation = useMutation({
+    mutationFn: (nextLocationData: Location) => putLocationAsync(nextLocationData, areaId as string),
   });
 
-  const {isPending: isUpdateObjectsPending, error: putUpdateObjectsError, isSuccess: isUpdateObjectsSuccess} = useQuery({
-    queryKey: ['location-edit-objects-update', locationId],
-    queryFn: () => putObjectsAsync(locationId as string, postLocation?.bookableObjects as BookableObject[]),
-    enabled: !!postLocation && !!postLocation.bookableObjects
+  const locationObjectsMutation = useMutation({
+    mutationFn: (bookableObjects: BookableObject[]) => putObjectsAsync(locationId as string, areaId as string, bookableObjects),
   });
-
-  
 
   useEffect(() => {
     if (locationData) {
+      // Defensive in case API does not return empty array
+      console.log('got location data', locationData)
+      if(!locationData.bookableObjects){
+        locationData.bookableObjects = [];
+      }
       setLocation(locationData);
     }
   }, [locationData]);
@@ -201,10 +202,16 @@ const FloorplanEditor = () => {
         ...location,
         floorPlanJson: JSON.stringify(fabricCanvasRef.current.toJSON(["id"])),
       };
-      // use useFetch for API call
-      setPostLocation(nextLocation);
-
-      // scroll window top;
+      Promise.all([
+        locationMutation.mutateAsync(nextLocation),
+        locationObjectsMutation.mutateAsync(location.bookableObjects),
+      ]).finally(() => {
+        if (locationId) {
+          queryClient.invalidateQueries({
+            queryKey: ['location', locationId],
+          });
+        }
+      })
       window.scrollTo(0, 0);
     }
   };
@@ -314,9 +321,9 @@ const FloorplanEditor = () => {
   }
 
 
-  const hasErrors = locationError || putUpdateObjectsError || putUpdateLocationError;
-  const isLoading = isPending || isUpdateLocationPending || isUpdateObjectsPending;
-  const hasSuccess = isUpdateLocationSuccess || isUpdateObjectsSuccess;
+  const hasErrors = locationError || locationMutation.isError || locationObjectsMutation.isError;
+  const isLoading = isPending || locationMutation.isPending || locationObjectsMutation.isPending;
+  const hasSuccess = locationMutation.isSuccess || locationObjectsMutation.isSuccess;
 
   // RENDERS
   // Must always have a canvas element, adding conditional logic to hide the canvas if the location is not loaded will break the fabric.js canvas

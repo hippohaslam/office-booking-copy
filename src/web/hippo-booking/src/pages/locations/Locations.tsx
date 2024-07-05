@@ -26,7 +26,7 @@ const Locations = () => {
       <ul className="locations-list">
         {data?.map((location) => (
           <li key={location.id}>
-            <Link to={`/locations/${location.id}`}>{location.name}</Link>
+            <Link to={`/locations/${location.id}/areas`}>{location.name}</Link>
           </li>
         ))}
       </ul>

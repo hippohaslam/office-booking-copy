@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.scss";
-import { Dashboard, FloorplanEditor, Booking, Locations } from "./imports";
+import { Dashboard, FloorplanEditor, Booking, Locations, BookingAreas } from "./imports";
 import ErrorPage from "./pages/error/Error.tsx";
 import Home from "./pages/home/Home.tsx";
 import ProtectedRoute from "./ProtectedRoute.tsx";
@@ -47,7 +47,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/admin/locations/:locationId",
+        path: "/admin/locations/:locationId/area/:areaId",
         element: (
           <Suspense fallback={<div>Loading editor...</div>}>
             <ProtectedRoute>
@@ -67,7 +67,17 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/locations/:locationId",
+        path: "/locations/:locationId/areas",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProtectedRoute>
+              <BookingAreas />
+            </ProtectedRoute>
+          </Suspense>
+        ),
+      },
+      {
+        path: "/locations/:locationId/areas/:areaId",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ProtectedRoute>
