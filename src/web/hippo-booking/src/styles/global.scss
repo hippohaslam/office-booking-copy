@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+  font-display: swap;
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root{
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-size: calc(16px + 0.3vw);
+  font-family: 'DM Sans', serif;
+  background-color: var(--hippo-light-grey);
+  color: var(--hippo-dark-blue);
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-top: 0;
+  line-height: 1.25;
+}
+
+h2 {
+  margin-bottom: 30px;
+  font-size: 2em;
+}
+
+h3 {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+}
+
+h4 {
+  margin-bottom: 16px;
+  font-size: 1.3em;
+}
+
+h5 {
+  margin-bottom: 10px;
+  font-size: 1.1em;
+  color: var(--hippo-purple);
+}
+
+h6 {
+  margin-bottom: 10px;
+  font-size: 1em;
+  color: var(--hippo-light-green);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+ol,
+ul {
+  margin-top: 0;
+  li::marker {
+    color: var(--hippo-purple);
+  }
+}
+
+ul {
+  li {
+    list-style-type: disc;
+    > ul > li > ul li {
+      list-style-type: circle;
+    }
+  }
+}
+
+a {
+  color: var(--hippo-dark-green);
+
+  &:visited {
+    color: var(--hippo-dark-green);
+  }
+  &:hover {
+    color: var(--hippo-purple);
+  }
+
+  // External link styling
+  &[href^="http://"]:not([href*="localhost"]),
+  &[href^="https://"]:not([href*="wiki.hippodigital.co.uk"]) {
+    &::after {
+      content: "";
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-left: 4px;
+      background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' %3F%3E%3Csvg height='48' viewBox='0 0 48 48' width='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h48v48h-48z' fill='none'/%3E%3Cpath d='M38 38h-28v-28h14v-4h-14c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-14h-4v14zm-10-32v4h7.17l-19.66 19.66 2.83 2.83 19.66-19.66v7.17h4v-14h-14z' fill='%23005e5d'/%3E%3C/svg%3E");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+    &:hover {
+      &::after {
+        background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' %3F%3E%3Csvg height='48' viewBox='0 0 48 48' width='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h48v48h-48z' fill='none'/%3E%3Cpath d='M38 38h-28v-28h14v-4h-14c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-14h-4v14zm-10-32v4h7.17l-19.66 19.66 2.83 2.83 19.66-19.66v7.17h4v-14h-14z' fill='%233c1053'/%3E%3C/svg%3E");
+      }
+    }
+  }
+}
+
+.app-container {
+  background-color: #EFF3F6;
+}
+
+main {
+  display: flex;
+}
+
+.login-container {
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  background-color: #E5EBF0;
+  border-radius: 26px;
+  max-width: 600px;
+  padding: 20px 50px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media only screen and (max-width: 700px){
+  .login-container {
+    padding: 20px;
+  }
+}

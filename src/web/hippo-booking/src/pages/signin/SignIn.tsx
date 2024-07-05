@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { useCallback, useEffect, useState } from "react";
 import { getSession, postSessionGoogle } from "../../services/Apis";
+import HippoSvg from "../../assets/hippo.svg";
 
 
 export default function SignIn() {
@@ -18,7 +19,7 @@ export default function SignIn() {
         email: res.data.email
       })
     }, [userContext]);
-  
+
     // Define callSessionGoogleApi using useCallback
     const callSessionGoogleApi = useCallback(async (credential: string) => {
       return await postSessionGoogle(credential);
@@ -55,10 +56,18 @@ export default function SignIn() {
 
     if(showLogin){
       return (
-        <GoogleLogin onSuccess={handleSignInUser} onError={errorMessage} />
+          <div className="login-container">
+              <img src={HippoSvg} alt="Hippo Logo"/>
+              <h1>Office bookings</h1>
+              <p>For booking desks, dog-of-the-day, and car parking spaces at the Hippo offices.</p>
+              <div style={{paddingTop:20 + 'px', paddingBlock:20 + 'px'}}>
+                  <GoogleLogin onSuccess={handleSignInUser} onError={errorMessage} />
+              </div>
+          </div>
+
       );
     }
 
     return <div>Checking login, please wait...</div>
-  
+
 }

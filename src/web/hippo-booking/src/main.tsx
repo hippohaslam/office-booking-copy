@@ -10,6 +10,8 @@ import ProtectedRoute from "./ProtectedRoute.tsx";
 import SignIn from "./pages/signin/SignIn.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { UserProvider } from "./contexts/UserContext.tsx";
+import MainLayout from "./layouts/mainLayout.tsx";
+import SignInLayout from "./layouts/signInLayout.tsx";
 
 
 const router = createBrowserRouter([
@@ -21,39 +23,47 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: (
+        <MainLayout>
           <Suspense fallback={<div>Loading...</div>}>
             <ProtectedRoute>
               <Home />
             </ProtectedRoute>
           </Suspense>
+        </MainLayout>
         ),
       },
       {
         path: "/signin",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
-              <SignIn />
-          </Suspense>
+          <SignInLayout>
+            <Suspense fallback={<div>Loading...</div>}>
+                <SignIn />
+            </Suspense>
+          </SignInLayout>
         ),
       },
       {
         path: "/admin",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          </Suspense>
+          <MainLayout>
+            <Suspense fallback={<div>Loading...</div>}>
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            </Suspense>
+          </MainLayout>
         ),
       },
       {
         path: "/admin/locations/:locationId/area/:areaId",
         element: (
-          <Suspense fallback={<div>Loading editor...</div>}>
-            <ProtectedRoute>
-              <FloorplanEditor />
-            </ProtectedRoute>
-          </Suspense>
+          <MainLayout>
+            <Suspense fallback={<div>Loading editor...</div>}>
+              <ProtectedRoute>
+                <FloorplanEditor />
+              </ProtectedRoute>
+            </Suspense>
+          </MainLayout>
         ),
       },
       {
@@ -70,31 +80,37 @@ const router = createBrowserRouter([
       {
         path: "/locations",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedRoute>
-              <Locations />
-            </ProtectedRoute>
-          </Suspense>
+          <MainLayout>
+            <Suspense fallback={<div>Loading...</div>}>
+              <ProtectedRoute>
+                <Locations />
+              </ProtectedRoute>
+            </Suspense>
+          </MainLayout>
         ),
       },
       {
         path: "/locations/:locationId/areas",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedRoute>
-              <BookingAreas />
-            </ProtectedRoute>
-          </Suspense>
+          <MainLayout>
+            <Suspense fallback={<div>Loading...</div>}>
+              <ProtectedRoute>
+                <BookingAreas />
+              </ProtectedRoute>
+            </Suspense>
+          </MainLayout>
         ),
       },
       {
         path: "/locations/:locationId/areas/:areaId",
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedRoute>
-              <Booking />
-            </ProtectedRoute>
-          </Suspense>
+          <MainLayout>
+            <Suspense fallback={<div>Loading...</div>}>
+              <ProtectedRoute>
+                <Booking />
+              </ProtectedRoute>
+            </Suspense>
+          </MainLayout>
         ),
       },
     ],
