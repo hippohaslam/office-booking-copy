@@ -1,9 +1,10 @@
+
+import SvgEditor from "../../../components/svg-booking/SvgEditor";
+
 const BookingAreas = () => {
     return (
-        <div>
-            Booking Areas
-        </div>
+        <SvgEditor />
     )
-}
+};
 
 export default BookingAreas;

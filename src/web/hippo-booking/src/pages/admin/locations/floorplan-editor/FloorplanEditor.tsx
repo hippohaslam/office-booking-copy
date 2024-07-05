@@ -59,7 +59,6 @@ const FloorplanEditor = () => {
   useEffect(() => {
     if (locationData) {
       // Defensive in case API does not return empty array
-      console.log('got location data', locationData)
       if(!locationData.bookableObjects){
         locationData.bookableObjects = [];
       }
@@ -102,7 +101,7 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current?.dispose();
       fabricCanvasRef.current = null;
     };
-  }, [locationData?.floorPlanJson]);
+  }, [locationData?.floorPlanJson, location?.bookableObjects]);
 
   const addCircle = () => {
     if (fabricCanvasRef.current) {
