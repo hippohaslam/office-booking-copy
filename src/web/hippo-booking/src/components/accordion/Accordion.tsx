@@ -16,7 +16,7 @@ const AccordionItem = ({ name, children }: AccordionProps) => {
     return (
       <div className="accordion-item">
         <div className="accordion-header" onClick={toggleAccordion}>
-          <span>{name}</span>
+          <h3>{name}</h3>
           <span className={`arrow ${isOpen ? 'open' : ''}`}>&#9660;</span>
         </div>
         {isOpen && <div className="accordion-content">{children}</div>}
