@@ -1,8 +1,14 @@
+import { useUser } from "../../contexts/UserContext.tsx";
+
+
 const Home = () => {
+
+    const userContext = useUser();
+
   return (
-    <div>
-      <h1>Home</h1>
-    </div>
+      <section className="text-section">
+          <h1>Hello {userContext.user?.name}</h1>
+      </section>
   );
 };
 

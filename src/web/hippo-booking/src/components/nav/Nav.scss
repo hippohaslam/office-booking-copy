@@ -5,6 +5,7 @@
     margin: auto;
     max-width: 1512px;
     padding: 0 25px;
+    height: 100px;
 }
 
 .nav-container-logo{
@@ -13,7 +14,7 @@
     text-decoration: none;
     gap: 20px;
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
 
     &:hover{
         text-decoration: underline;
@@ -27,17 +28,13 @@
     padding: 0;
 }
 
-img {
-    height: 100px;
-    width: 150px;
-}
-
 nav {
     padding: 0 1.5rem;
     a {
         color: #0c2340;
         text-decoration: none;
         padding: 0.5rem;
+        font-weight: normal;
     }
 
     a:hover{
@@ -59,41 +56,133 @@ nav {
     }
 }
 
-header button.primary-cta {
-    display: inline-block;
-    min-height: 48px;
-    white-space: nowrap;
-    padding: 17px 30px;
-    color: #fff;
-    background: #005e5d;
-    border-radius: 28px;
-    font-weight: 500;
-    line-height: 1;
-    overflow: hidden;
-    text-underline-offset: 2px;
-    cursor: pointer;
-    transition: .4s ease;
-    transition-property: color;
-    -webkit-appearance: none;
-    appearance: none;
-    transform-style: preserve-3d;
-    text-decoration: none;
-    border: none;
+.nav-container-logo img {
+    height: 100px;
+    width: 150px;
 }
 
-header button.primary-cta:hover {
-    background-color: #004c4b;
-    transition: all .4s ease;
-    text-decoration: underline
-}
+header {
+    button.primary-cta {
+        display: inline-block;
+        min-height: 48px;
+        white-space: nowrap;
+        padding: 17px 30px;
+        color: #fff;
+        background: #005e5d;
+        border-radius: 28px;
+        font-weight: 500;
+        line-height: 1;
+        overflow: hidden;
+        text-underline-offset: 2px;
+        cursor: pointer;
+        transition: .4s ease;
+        transition-property: color;
+        -webkit-appearance: none;
+        appearance: none;
+        transform-style: preserve-3d;
+        text-decoration: none;
+        border: none;
+        font-size: 1rem;
+    }
 
-header button.primary-cta:focus,header button.primary-cta:focus-visible {
-    outline-width: 2px;
-    outline-offset: 1px;
-    outline-style: solid
-}
+    header button.primary-cta:hover {
+        background-color: #004c4b;
+        transition: all .4s ease;
+        text-decoration: underline
+    }
 
-header button.primary-cta {
-    position: relative;
-    font-family: 'DM Sans', serif;
+    header button.primary-cta:focus,header button.primary-cta:focus-visible {
+        outline-width: 2px;
+        outline-offset: 1px;
+        outline-style: solid
+    }
+
+    header button.primary-cta {
+        position: relative;
+        font-family: 'DM Sans', serif;
+    }
+
+    .hamburger {
+        display: none;
+    }
+
+    .bar {
+        display: block;
+        width: 25px;
+        height: 3px;
+        margin: 5px auto;
+        -webkit-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
+        background-color: #000000;
+    }
+
+    .nav-menu a {
+        font-size: 1.2rem;
+    }
+
+    @media only screen and (max-width: 768px)
+    {
+        .nav-container-logo img {
+            height: 50px;
+            width: 50px;
+        }
+
+        .nav-container {
+            padding: 0 10px;
+        }
+
+        .nav-menu {
+            position: fixed;
+            left: 100%;
+            top: 6rem;
+            flex-direction: column;
+            width: 100%;
+            border-radius: 10px;
+            transition: 0.4s;
+            height: calc(100dvh - 6rem);
+            z-index: 1;
+            background-color: #eff3f6;
+            padding: 0 25px;
+
+            &.active {
+                left: 0;
+                display: block;
+                position: absolute;
+            }
+
+            li {
+                width: 100%;
+                padding: 25px 0;
+
+                &:not(:last-of-type){
+                    border-bottom: #979797 1px solid;
+                }
+            }
+
+            a {
+                font-size: 1.5rem;
+                width: 100%;
+                display: block;
+            }
+        }
+
+        .hamburger {
+            display: block;
+            cursor: pointer;
+            background-color: unset;
+            border: unset;
+        }
+
+        .hamburger.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active .bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active .bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+    }
 }
