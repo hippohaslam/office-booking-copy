@@ -151,6 +151,10 @@ section.text-section {
   padding: 20px 50px;
   margin-left: auto;
   margin-right: auto;
+
+  img {
+    width: 150px;
+  }
 }
 
 @media only screen and (max-width: 768px){
