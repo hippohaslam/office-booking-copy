@@ -36,6 +36,10 @@ body {
   line-height: 1.5;
 }
 
+.page-container{
+  width: 100%;
+}
+
 h1 {
   margin-bottom: 0;
   font-size: 3rem;
@@ -157,8 +161,50 @@ section.text-section {
   }
 }
 
+section.full-width-darker-grey{
+  background-color: #E5EBF0;
+  width: 100%;
+}
+
+section.full-width-standard-grey{
+  background-color: #EFF3F6;
+  width: 100%;
+}
+
+.content-container{
+  margin: 0 auto;
+  max-width: 1512px;
+  padding: 0 25px;
+}
+
+.hero-container{
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1512px;
+  padding: 0 25px;
+
+  .hero-content {
+    margin: 30px 0;
+  }
+
+  .hero-graphic {
+    height: 300px;
+    margin: 30px 0;
+  }
+}
+
 @media only screen and (max-width: 768px){
   .login-container {
     padding: 20px;
+  }
+
+  .hero-container {
+    align-items: flex-start;
+  }
+
+  .hero-graphic{
+    display: none;
   }
 }
