@@ -36,6 +36,12 @@ body {
   line-height: 1.5;
 }
 
+main {
+  display: flex;
+  flex: 1;
+  height: calc(100dvh - (6rem + 4rem)); // = full height - (header height - footer height)
+}
+
 .page-container{
   width: 100%;
 }
@@ -113,7 +119,7 @@ a {
 
   // External link styling
   &[href^="http://"]:not([href*="localhost"]),
-  &[href^="https://"]:not([href*="wiki.hippodigital.co.uk"]) {
+  &[href^="https://"]:not([href*="officebooking.hippodigital.co.uk"]) {
     &::after {
       content: "";
       display: inline-block;
@@ -135,10 +141,6 @@ a {
 
 .app-container {
   background-color: #EFF3F6;
-}
-
-main {
-  display: flex;
 }
 
 section.text-section {

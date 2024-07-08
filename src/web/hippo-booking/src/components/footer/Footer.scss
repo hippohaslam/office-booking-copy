@@ -1,0 +1,20 @@
+footer {
+  background-color: #0C2340;
+  color: white;
+  display: flex;
+
+  p {
+    margin: 0;
+  }
+}
+
+.footer-container{
+  height: 4rem;
+  display: flex;
+  max-width: 1512px;
+  margin: auto;
+  padding: 0 25px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
