@@ -16,7 +16,7 @@ interface SvgElementWithId {
 
 const SvgEditor = () => {
     const [elements, setElements] = useState<SvgElementWithId[]>([]);
-    const [dragging, setDragging] = useState(null);
+    const [dragging, setDragging] = useState<number | null>(null);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [viewBox, setViewBox] = useState([0, 0, 600, 400]);
   
@@ -35,7 +35,7 @@ const SvgEditor = () => {
       }
     }, []);
   
-    const getMousePosition = (e) => {
+    const getMousePosition = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
       if(svgRef.current){
         const svg = svgRef.current;
         const pt = svg.createSVGPoint();
@@ -46,27 +46,33 @@ const SvgEditor = () => {
       }
     };
   
-    const handleMouseDown = (e: any, index: number) => {
+    const handleMouseDown = (e: React.MouseEvent<SVGElement, MouseEvent>, index: number) => {
       const element = elements[index];
       const cursorPoint = getMousePosition(e);
-      const offsetX = cursorPoint.x - (element.cx || element.x);
-      const offsetY = cursorPoint.y - (element.cy || element.y);
-      setDragging(index);
-      setOffset({ x: offsetX, y: offsetY });
+      if(cursorPoint && element !== undefined){
+        // @ts-expect-error cx or x will be defined
+        const offsetX = cursorPoint.x - (element.cx || element.x);
+        // @ts-expect-error cx or x will be defined
+        const offsetY = cursorPoint.y - (element.cy || element.y);
+        setDragging(index);
+        setOffset({ x: offsetX, y: offsetY });
+      }
     };
   
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
       if (dragging !== null) {
         const cursorPoint = getMousePosition(e);
-        const updatedElements = elements.map((element, index) => {
-          if (index === dragging) {
-            const x = cursorPoint.x - offset.x;
-            const y = cursorPoint.y - offset.y;
-            return element.cx ? { ...element, cx: x, cy: y } : { ...element, x, y };
-          }
-          return element;
-        });
-        setElements(updatedElements);
+        if(cursorPoint){
+          const updatedElements = elements.map((element, index) => {
+            if (index === dragging) {
+              const x = cursorPoint.x - offset.x;
+              const y = cursorPoint.y - offset.y;
+              return element.cx ? { ...element, cx: x, cy: y } : { ...element, x, y };
+            }
+            return element;
+          });
+          setElements(updatedElements);
+        }
       }
     };
   
@@ -88,7 +94,7 @@ const SvgEditor = () => {
       setViewBox([x - (newWidth - width) / 2, y - (newHeight - height) / 2, newWidth, newHeight]);
     };
   
-    const handleWheel = (e) => {
+    const handleWheel = (e: React.WheelEvent<SVGSVGElement>) => {
       if (e.deltaY < 0) {
         zoomIn();
       } else {

@@ -27,6 +27,8 @@ test("Navigation shows sign out if user is signed in", async () => {
     name: "Test User",
     email: "",
     picture: "",
+    // add exp a minute from now
+    exp: Math.floor(Date.now() / 1000) + 60,
   };
   render(
     <UserProvider initialUser={user}>
