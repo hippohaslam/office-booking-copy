@@ -3,12 +3,6 @@ import { jwtDecode } from "jwt-decode";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 
-// There must be a more universal way to handle this type?
-type JwtToken = {
-  name: string;
-  email: string;
-  picture: string;
-};
 
 export default function SignIn() {
     const location = useLocation();
@@ -22,8 +16,10 @@ export default function SignIn() {
         userContext.setUser({
           name: userJwt.name,
           email: userJwt.email,
-          picture: userJwt.picture
+          picture: userJwt.picture,
+          exp: userJwt.exp
         });
+        sessionStorage.setItem('user', JSON.stringify(credentialResponse.credential));
 
         navigate(returnURl || '/');
       }

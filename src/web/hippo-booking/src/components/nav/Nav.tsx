@@ -8,8 +8,7 @@ const Nav = () => {
   const userContext = useUser();
 
   function handleSignOut() {
-    console.log('Sign out clicked');
-    userContext.setUser(null);
+    userContext.clearUser();
     googleLogout();
   }
 
