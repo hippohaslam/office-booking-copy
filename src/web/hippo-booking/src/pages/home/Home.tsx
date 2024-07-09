@@ -13,7 +13,7 @@ const Home = () => {
                   <div className="hero-content">
                       <h1>Hi {userContext.user?.name}</h1>
                       <p>You don't have any upcoming bookings.</p>
-                      <Link to="/locations" className="cta-link cta-link-green">Make a new booking</Link>
+                      <Link to="/locations" className="cta cta-green">Make a new booking</Link>
                   </div>
                   <img className="hero-graphic" alt="graphic of someone relaxing on a chair" src={RelaxingGraphic}/>
               </div>
