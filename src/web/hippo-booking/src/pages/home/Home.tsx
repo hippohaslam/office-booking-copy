@@ -11,7 +11,7 @@ const Home = () => {
           <section className="full-width-darker-grey">
               <div className="hero-container">
                   <div className="hero-content">
-                      <h1>Hi {userContext.user?.name}</h1>
+                      <h1>Hi {userContext.user?.given_name}</h1>
                       <p>You don't have any upcoming bookings.</p>
                       <Link to="/locations" className="cta cta-green">Make a new booking</Link>
                   </div>

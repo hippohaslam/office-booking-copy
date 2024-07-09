@@ -30,11 +30,23 @@ export default function SignIn() {
        try {
         const res = await callSessionGoogleApi(credentialResponse.credential);
         userContext.setUser({
+<<<<<<< HEAD
           email: res.data.email
         })
        } catch (err) {
         console.log('google error', err);
        }
+=======
+          name: userJwt.name,
+          given_name: userJwt.given_name,
+          family_name: userJwt.family_name,
+          email: userJwt.email,
+          picture: userJwt.picture,
+          exp: userJwt.exp
+        });
+        sessionStorage.setItem('user', JSON.stringify(credentialResponse.credential));
+
+>>>>>>> 6873047 (feat: added given and family name properties)
         navigate(returnURl || '/');
       }
     }
