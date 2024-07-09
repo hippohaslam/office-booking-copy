@@ -54,7 +54,7 @@ body {
 main {
   display: flex;
   flex: 1;
-  height: calc(100dvh - (6rem + 4rem)); // = full height - (header height - footer height)
+  min-height: calc(100dvh - (6rem + 4rem)); // = full height - (header height - footer height)
 }
 
 .page-container{
@@ -165,17 +165,19 @@ a {
     }
   }
 
-  &.cta-link-green{
-    background-color: var(--hippo-brand-green);
+  &.cta-link{
+
     color: white;
     padding: 10px 20px;
     border-radius: 26px;
     text-decoration: none;
     font-size: 16px;
+    display: inline-flex;
 
     &::after {
       content: "";
       display: inline-block;
+      line-height: 500px;
       width: 16px;
       height: 16px;
       margin-left: 15px;
@@ -189,12 +191,16 @@ a {
       transition-duration: 0.2s;
     }
 
-    &:hover{
+    &:hover, &:active{
       text-decoration: underline;
 
       &::after{
           margin-left: 20px;
       }
+    }
+
+    &.cta-link-green{
+      background-color: var(--hippo-brand-green);
     }
 
   }
@@ -224,6 +230,7 @@ section.full-width-standard-grey{
 
 .login-container {
   align-self: center;
+  justify-self: center;
   display: flex;
   flex-direction: column;
   background-color: #E5EBF0;
@@ -263,6 +270,12 @@ section.full-width-standard-grey{
 /*  */
 
 /* || General mobile styling */
+
+@media only screen and (max-width: 640px) {
+  .login-container {
+    margin: 0 20px;
+  }
+}
 
 @media only screen and (max-width: 768px){
   .login-container {

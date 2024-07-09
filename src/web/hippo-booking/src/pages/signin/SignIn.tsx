@@ -64,10 +64,15 @@ export default function SignIn() {
                   <GoogleLogin onSuccess={handleSignInUser} onError={errorMessage} />
               </div>
           </div>
+<<<<<<< HEAD
 
       );
     }
 
     return <div>Checking login, please wait...</div>
 
+=======
+      </div>
+  );
+>>>>>>> cec12cc (feat: cta button is working!)
 }
