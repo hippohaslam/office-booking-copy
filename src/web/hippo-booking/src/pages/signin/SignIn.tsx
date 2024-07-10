@@ -38,8 +38,6 @@ export default function SignIn() {
        }
 =======
           name: userJwt.name,
-          given_name: userJwt.given_name,
-          family_name: userJwt.family_name,
           email: userJwt.email,
           picture: userJwt.picture,
           exp: userJwt.exp
