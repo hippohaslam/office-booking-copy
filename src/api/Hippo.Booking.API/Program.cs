@@ -20,9 +20,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowLocalhost",
         builder =>
         {
-            builder.WithOrigins("http://localhost:5173")
+            builder.WithOrigins("http://localhost:5173", "https://localhost:5173")
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 
@@ -91,6 +92,11 @@ builder.Services.AddHippoBookingApplication();
 builder.Services.AddAuthentication("Cookie")
     .AddCookie("Cookie", options =>
     {
+        if (builder.Environment.IsDevelopment())
+        {
+            options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+            options.Cookie.SameSite = SameSiteMode.Lax;
+        }
         options.Events.OnRedirectToLogin = context =>
         {
             context.Response.StatusCode = 401;
