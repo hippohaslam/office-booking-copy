@@ -88,37 +88,46 @@ builder.Services.AddStartupTask<EnsureCreatedStartupTask>();
 
 builder.Services.AddHippoBookingApplication();
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
+builder.Services.AddAuthentication("Cookie")
+    .AddCookie("Cookie", options =>
+    {
+        options.Events.OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = 401;
+            return Task.CompletedTask;
+        };
+    })
+    .AddJwtBearer("Google", options =>
     {
         options.UseGoogle(googleClientId);
     });
 
-// builder.Services.AddAuthorization(x => x.FallbackPolicy = new AuthorizationPolicyBuilder()
-//     .RequireAuthenticatedUser()
-//     .Build());
+builder.Services.AddAuthorization(x => x.FallbackPolicy = new AuthorizationPolicyBuilder()
+    .RequireAuthenticatedUser()
+    .Build());
 
 var app = builder.Build();
 
 new LocationEndpoints().Map(app);
 new HealthEndpoints().Map(app);
 new BookingEndpoints().Map(app);
+new SessionEndpoints().Map(app);
 
 if (app.Environment.IsDevelopment())
 {
     app.UseCors("AllowLocalhost");
 }
-app.MapGet("/", () => TypedResults.Redirect("/swagger/index.html"));
+app.MapGet("/", [AllowAnonymous] () => TypedResults.Redirect("/swagger/index.html"));
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.OAuthClientId(googleClientId);
-    options.OAuthScopes("profile", "openid");
+    options.OAuthScopes("profile", "openid", "email");
     options.OAuthUsePkce();
 });
 
 app.UseAuthentication();
-// app.UseAuthorization();
+app.UseAuthorization();
 
 app.Run();
