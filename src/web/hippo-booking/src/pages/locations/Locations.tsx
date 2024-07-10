@@ -21,15 +21,19 @@ const Locations = () => {
   }
 
   return (
-    <div>
-      <h1>Locations</h1>
-      <ul className="locations-list">
-        {data?.map((location) => (
-          <li key={location.id}>
-            <Link to={`/locations/${location.id}/areas`}>{location.name}</Link>
-          </li>
-        ))}
-      </ul>
+    <div className="page-container">
+      <section className="full-width-standard-grey">
+          <div className="content-container">
+            <h1>Locations</h1>
+            <ul className="locations-list">
+              {data?.map((location) => (
+                <li key={location.id}>
+                  <Link to={`/locations/${location.id}/areas`}>{location.name}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+      </section>
     </div>
   );
 };

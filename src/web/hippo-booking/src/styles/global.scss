@@ -23,6 +23,8 @@
   -moz-osx-font-smoothing: grayscale;
 
   --foreground-rgb: 0,0,0;
+  --hippo-brand-bluey-grey: #e5ebf0;
+  --hippo-brand-light-grey: #EFF3F6;
   --hippo-brand-grey: #dde4e6;
   --hippo-brand-green: #005e5d;
   --hippo-brand-navy: #0c2340;
@@ -206,16 +208,27 @@ a.cta, button.cta{
 }
 
 .app-container {
-  background-color: #EFF3F6;
+  background-color: var(--hippo-brand-grey);
 }
 
-section.full-width-darker-grey{
-  background-color: #E5EBF0;
+section.full-width-grey{
+  background-color: var(--hippo-brand-grey);
   width: 100%;
 }
 
-section.full-width-standard-grey{
-  background-color: #EFF3F6;
+section.full-width-light-grey{
+  background-color: var(--hippo-brand-light-grey);
+  width: 100%;
+}
+
+section.full-width-bluey-grey{
+  background-color: var(--hippo-brand-bluey-grey);
+  width: 100%;
+}
+
+section.full-width-navy{
+  background-color: var(--hippo-brand-navy);
+  color: white;
   width: 100%;
 }
 
@@ -223,6 +236,8 @@ section.full-width-standard-grey{
   margin: 0 auto;
   max-width: 1512px;
   padding: 0 25px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* || Login styling */
@@ -232,7 +247,7 @@ section.full-width-standard-grey{
   justify-self: center;
   display: flex;
   flex-direction: column;
-  background-color: #E5EBF0;
+  background-color: var(--hippo-brand-light-grey);
   border-radius: 26px;
   max-width: 600px;
   padding: 20px 50px;
@@ -241,6 +256,7 @@ section.full-width-standard-grey{
 
   img {
     width: 150px;
+    padding: 25px 0;
   }
 }
 

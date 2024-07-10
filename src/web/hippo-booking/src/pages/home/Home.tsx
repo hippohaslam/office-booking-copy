@@ -8,7 +8,7 @@ const Home = () => {
 
   return (
       <div className="page-container">
-          <section className="full-width-darker-grey">
+          <section className="full-width-grey">
               <div className="hero-container">
                   <div className="hero-content">
                       <h1>Hi {userContext.user?.name}</h1>
@@ -18,7 +18,7 @@ const Home = () => {
                   <img className="hero-graphic" alt="graphic of someone relaxing on a chair" src={RelaxingGraphic}/>
               </div>
           </section>
-          <section className="full-width-standard-grey">
+          <section className="full-width-grey">
               <div className="content-container">
                   <h2>Our offices</h2>
                   <p>Some content about our offices will go in here.</p>

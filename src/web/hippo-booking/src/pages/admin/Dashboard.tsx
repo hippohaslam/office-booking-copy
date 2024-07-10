@@ -37,7 +37,8 @@ const Admin = () => {
   }
 
   return (
-    <div className={showModal ? "modal-backdrop" : ""}>
+    <div className={showModal ? "modal-backdrop page-container" : "page-container"}>
+        <section className="content-container">
       <h1>Admin</h1>
 
       <div id="edit-locations">
@@ -67,6 +68,7 @@ const Admin = () => {
     ))}
   </div>
       </div>
+        </section>
     </div>
   );
 };

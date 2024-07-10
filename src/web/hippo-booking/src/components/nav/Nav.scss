@@ -1,3 +1,7 @@
+header {
+    background-color: var(--hippo-brand-grey);
+}
+
 .nav-container {
     display: flex;
     justify-content: space-between;
@@ -31,7 +35,7 @@
 nav {
     padding: 0 1.5rem;
     a {
-        color: #0c2340;
+        color: var(--hippo-brand-navy);
         text-decoration: none;
         padding: 0.5rem;
         font-weight: normal;
@@ -68,7 +72,7 @@ header {
         white-space: nowrap;
         padding: 17px 30px;
         color: #fff;
-        background: #005e5d;
+        background: var(--hippo-brand-green);
         border-radius: 28px;
         font-weight: 500;
         line-height: 1;
@@ -86,7 +90,7 @@ header {
     }
 
     header button.primary-cta:hover {
-        background-color: #004c4b;
+        background-color: var(--hippo-brand-green);
         transition: all .4s ease;
         text-decoration: underline
     }
@@ -113,7 +117,7 @@ header {
         margin: 5px auto;
         -webkit-transition: all 0.3s ease-in-out;
         transition: all 0.3s ease-in-out;
-        background-color: #000000;
+        background-color: var(--hippo-brand-navy);
     }
 
     .nav-menu a {
@@ -141,7 +145,7 @@ header {
             transition: 0.4s;
             height: calc(100dvh - 6rem);
             z-index: 1;
-            background-color: #eff3f6;
+            background-color: var(--hippo-brand-light-grey);
             padding: 0 25px;
 
             &.active {
@@ -155,7 +159,7 @@ header {
                 padding: 25px 0;
 
                 &:not(:last-of-type){
-                    border-bottom: #979797 1px solid;
+                    border-bottom: var(--hippo-brand-grey) 1px solid;
                 }
             }
 
