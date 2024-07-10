@@ -2,6 +2,7 @@ using FluentValidation;
 using Hippo.Booking.Application.Commands.Areas;
 using Hippo.Booking.Application.Commands.BookableObject;
 using Hippo.Booking.Application.Commands.Location;
+using Hippo.Booking.Application.Commands.Users;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Application.Queries.Locations;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,10 +22,15 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICreateAreaCommand, AreaCommands>();
         services.AddScoped<IUpdateAreaCommand, AreaCommands>();
         
+        services.AddScoped<IUpsertUserCommand, UserCommands>();
+        
         services.AddScoped<IValidator<CreateLocationRequest>, CreateLocationRequestValidator>();
         services.AddScoped<IValidator<UpdateLocationRequest>, UpdateLocationRequestValidator>();
+        
         services.AddScoped<IValidator<CreateAreaRequest>, CreateAreaRequestValidator>();
         services.AddScoped<IValidator<UpdateAreaRequest>, UpdateAreaRequestValidator>();
+
+        services.AddScoped<IValidator<RegisteredUserDto>, RegisteredUserDtoValidator>();
 
         services
             .AddScoped<ILocationQueries, LocationQueries>()
