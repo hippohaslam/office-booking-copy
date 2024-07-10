@@ -1,6 +1,8 @@
 import axios from 'axios';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
+axios.defaults.withCredentials = true;
+
 const getLocationAsync = async (locationId: string, areaId: string): Promise<Location> => {
   const response = await axios.get(`${baseUrl}/location/${locationId}/area/${areaId}`);
   return response.data;
@@ -34,10 +36,29 @@ const getLocationAreasAsync = async (locationId: string): Promise<Area[]> => {
   return response.data;
 }
 
+// AUTH
+const getSession = async () => {
+  return await axios.get('https://localhost:7249/session', {
+    withCredentials: true
+  })
+}
+
+const postSessionGoogle = async (bearerToken: string) => {
+  return await axios.post('https://localhost:7249/session/google', {}, {
+    headers:{
+      Authorization: `Bearer ${bearerToken}`
+    }
+  });
+}
+
 export {
   getLocationAsync, 
   getLocationsAsync, 
   putLocationAsync, 
   putObjectsAsync,
   // AREAS
-  getLocationAreasAsync};
+  getLocationAreasAsync,
+  // AUTH
+  getSession,
+  postSessionGoogle
+};

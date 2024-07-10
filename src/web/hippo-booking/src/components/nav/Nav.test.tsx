@@ -24,11 +24,7 @@ test.each(links)("has link to $text", async ({ text, link }) => {
 
 test("Navigation shows sign out if user is signed in", async () => {
   const user: User = {
-    name: "Test User",
-    email: "",
-    picture: "",
-    // add exp a minute from now
-    exp: Math.floor(Date.now() / 1000) + 60,
+    email: ""
   };
   render(
     <UserProvider initialUser={user}>

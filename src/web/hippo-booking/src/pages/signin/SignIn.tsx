@@ -1,7 +1,8 @@
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
+import { useCallback, useEffect, useState } from "react";
+import { getSession, postSessionGoogle } from "../../services/Apis";
 
 
 export default function SignIn() {
@@ -9,18 +10,30 @@ export default function SignIn() {
     const userContext = useUser();
     const navigate = useNavigate();
     const returnURl = new URLSearchParams(location.search).get('returnUrl');
+    const [showLogin, setShowLogin] = useState(false);
+
+    const callSessionApi = useCallback(async () => {
+      const res = await getSession();
+      userContext.setUser({
+        email: res.data.email
+      })
+    }, [userContext]);
+  
+    // Define callSessionGoogleApi using useCallback
+    const callSessionGoogleApi = useCallback(async (credential: string) => {
+      return await postSessionGoogle(credential);
+    }, []);
 
     async function handleSignInUser(credentialResponse: CredentialResponse) {
       if(credentialResponse.credential) {
-        const userJwt: JwtToken = jwtDecode(credentialResponse.credential);
+       try {
+        const res = await callSessionGoogleApi(credentialResponse.credential);
         userContext.setUser({
-          name: userJwt.name,
-          email: userJwt.email,
-          picture: userJwt.picture,
-          exp: userJwt.exp
-        });
-        sessionStorage.setItem('user', JSON.stringify(credentialResponse.credential));
-
+          email: res.data.email
+        })
+       } catch (err) {
+        console.log('google error', err);
+       }
         navigate(returnURl || '/');
       }
     }
@@ -28,7 +41,24 @@ export default function SignIn() {
         throw Error('Error signing in');
     };
 
-  return (
-    <GoogleLogin onSuccess={handleSignInUser} onError={errorMessage} useOneTap auto_select />
-  );
+    useEffect(() => {
+      console.log('Checking logged in user')
+      callSessionApi()
+      .then(() => {
+        // This is good, navigate user back to where they were going.
+        navigate(returnURl || '/');
+      }).catch(() => {
+        // Likely a 401, try get the user to log in again
+        setShowLogin(true);
+      });
+    }, [callSessionApi, navigate, returnURl]);
+
+    if(showLogin){
+      return (
+        <GoogleLogin onSuccess={handleSignInUser} onError={errorMessage} />
+      );
+    }
+
+    return <div>Checking login, please wait...</div>
+  
 }

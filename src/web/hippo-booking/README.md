@@ -3,6 +3,23 @@
 ## Yarn V4
 This project uses Yarn V4 with node_modules. Currently there is a bug in typescript where imports are not linked so we cannot use pnp
 
+
+
+## App
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Development
+
+### HTTPS certificates
+
+- For local development, because we use httpOnly cookies for authentication. You will need to create dev certificates, this is done automatically through the `vite-plugin-mkcert` package, you will just be asked your machine password to be able to create the certificates. They are then stored locally in the /certs directory which is git ignored.
+
 ## Upgrading packages.
 
 We recommend to keep the local packages up to date with minor versions as frequency as possible.
@@ -13,14 +30,7 @@ A good tool to use in ncu:
 - run with `ncu` to see possible updates. Then use `ncu -u` to update package.json file. The yarn install to complete.
 - Finally test and smoke test the app. 
 
-## App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
 ## Expanding the ESLint configuration
 
