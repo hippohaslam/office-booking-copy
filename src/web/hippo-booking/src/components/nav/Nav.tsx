@@ -1,7 +1,7 @@
 import {Link} from 'react-router-dom'
 import { googleLogout } from '@react-oauth/google';
 import './Nav.scss'
-import HippoSvg from '../../assets/hippo.svg'
+import HippoSvg from '../../assets/hippo-navy.svg'
 import HippoIconSvg from '../../assets/hippo-icon.svg'
 import { useUser } from '../../contexts/UserContext';
 import { signUserOut } from '../../services/Apis';
