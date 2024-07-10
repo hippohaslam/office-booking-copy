@@ -56,7 +56,7 @@ const Admin = () => {
         <h3>{location.name}</h3>
         <ul>
           {/* Get all the areas of this location */}
-          {getAreas(Number.parseInt(location.id)).map((area) => (
+          {getAreas(location.id).map((area) => (
             <li key={area.id}>
               <Link to={`/admin/locations/${location.id}/area/${area.id}`}>{area.name}</Link>
             </li>

@@ -1,26 +1,29 @@
 import axios from 'axios';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-axios.defaults.withCredentials = true;
+const axiosInstance = axios.create({
+  baseURL: `${baseUrl}`,
+  withCredentials: true
+});
 
 const getLocationAsync = async (locationId: string, areaId: string): Promise<Location> => {
-  const response = await axios.get(`${baseUrl}/location/${locationId}/area/${areaId}`);
+  const response = await axiosInstance.get(`/location/${locationId}/area/${areaId}`);
   return response.data;
 }
 
 const getLocationsAsync = async (): Promise<Location[]> => {
-  const response = await axios.get(`${baseUrl}/location`);
+  const response = await axiosInstance.get(`/location`);
   return response.data;
 }
   
 const putLocationAsync = async (location: Location, areaId: string) => {
-  return await axios.put(`${baseUrl}/location/${location.id}/area/${areaId}`, location);
+  return await axiosInstance.put(`/location/${location.id}/area/${areaId}`, location);
 }
 
 const putObjectsAsync = async (locationId: string, areaId: string, bookableObjects: BookableObject[]) => {
     return await Promise.all(
         bookableObjects.map((bookableObject) =>
-            axios.put(`${baseUrl}/location/${locationId}/area/${areaId}/bookable-object/${bookableObject.id}`, bookableObject)
+            axiosInstance.put(`/location/${locationId}/area/${areaId}/bookable-object/${bookableObject.id}`, bookableObject)
         )
       );
 }
@@ -28,27 +31,29 @@ const putObjectsAsync = async (locationId: string, areaId: string, bookableObjec
 // AREAS
 
 /** Combines the locationId with the area data */ 
-const getLocationAreasAsync = async (locationId: string): Promise<Area[]> => {
-  const response = await axios.get(`${baseUrl}/location/${locationId}/area`);
+const getLocationAreasAsync = async (locationId: number): Promise<Area[]> => {
+  const response = await axiosInstance.get(`/location/${locationId}/area`);
   response.data.forEach((area: Area) => {
-    area.locationId = parseInt(locationId);
+    area.locationId = locationId;
   });
   return response.data;
 }
 
 // AUTH
 const getSession = async () => {
-  return await axios.get('https://localhost:7249/session', {
-    withCredentials: true
-  })
+  return await axiosInstance.get(`/session`)
 }
 
 const postSessionGoogle = async (bearerToken: string) => {
-  return await axios.post('https://localhost:7249/session/google', {}, {
+  return await axiosInstance.post(`/session/google`, {}, {
     headers:{
       Authorization: `Bearer ${bearerToken}`
     }
   });
+}
+
+const signUserOut = async () => {
+  return await axiosInstance.post(`/session/sign-out`, {});
 }
 
 export {
@@ -60,5 +65,6 @@ export {
   getLocationAreasAsync,
   // AUTH
   getSession,
-  postSessionGoogle
+  postSessionGoogle,
+  signUserOut
 };

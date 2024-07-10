@@ -3,13 +3,19 @@ import { googleLogout } from '@react-oauth/google';
 import './Nav.scss'
 import HippoSvg from '../../assets/hippo.svg'
 import { useUser } from '../../contexts/UserContext';
+import { signUserOut } from '../../services/Apis';
 
 const Nav = () => {
   const userContext = useUser();
 
-  function handleSignOut() {
-    userContext.clearUser();
-    googleLogout();
+  async function handleSignOut() {
+    try {
+      await signUserOut();
+      userContext.clearUser();
+      googleLogout();
+    } catch(err) {
+      console.error('error signing user out', err);
+    }
   }
 
 

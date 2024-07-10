@@ -1,6 +1,6 @@
 interface Location {
-    id: string;
+    id: number;
     name: string;
     floorPlanJson: string;
     bookableObjects: Array<BookableObject>;
-    }
+}
