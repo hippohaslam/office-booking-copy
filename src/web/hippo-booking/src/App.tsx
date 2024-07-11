@@ -1,6 +1,5 @@
 import "./styles/App.scss";
 import { Outlet } from "react-router-dom";
-// import Nav from "./components/nav/Nav";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import useAxiosInterceptors from "./hooks/AxiosInterceptor";
 
