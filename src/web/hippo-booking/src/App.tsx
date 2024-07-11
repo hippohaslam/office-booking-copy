@@ -1,6 +1,5 @@
-import "./App.scss";
+import "./styles/App.scss";
 import { Outlet } from "react-router-dom";
-import Nav from "./components/nav/Nav";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import useAxiosInterceptors from "./hooks/AxiosInterceptor";
 
@@ -12,13 +11,9 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-          <div className="app-container">
-            <Nav />
-            <main>
-              <Outlet />
-            </main>
-            <footer>A footer</footer>
-          </div>
+      <div className="app-container">
+          <Outlet />
+      </div>
     </QueryClientProvider>
   );
 }

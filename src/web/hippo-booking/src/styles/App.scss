@@ -1,24 +1,10 @@
-main {
-  margin: 0 50px;
-  flex: 1;
-}
-
-@media screen and (max-width: 600px) {
-  main {
-    margin: 0 10px;
-  } 
-}
-
-footer {
-    min-height: 50px;
-}
-
+@import "global.scss";
 
 .app-container {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 100vh;
+    min-height: 100dvh;
   }
 
 .hide-node {
@@ -63,6 +49,8 @@ footer {
     border: 1px solid #000;
     margin-right:1em;
   }
+
+
 }
 
 // .logo {

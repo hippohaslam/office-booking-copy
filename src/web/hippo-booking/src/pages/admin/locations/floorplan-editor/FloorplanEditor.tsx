@@ -327,91 +327,95 @@ const FloorplanEditor = () => {
   // RENDERS
   // Must always have a canvas element, adding conditional logic to hide the canvas if the location is not loaded will break the fabric.js canvas
   return (
-    <div>
-      <h1>{!location && isLoading ? "Location loading..." : location?.name}</h1>
-      {hasErrors && <ErrorBanner />}
-      {hasSuccess && <SuccessBanner text="Saved successfully" />}
-      <div>
-        <label htmlFor="location-name">Location name: </label>
-        <input
-          id="location-name"
-          type="text"
-          value={location?.name || ""}
-          onChange={handleLocationUpdate}
-        />
-      </div>
-      <br />
-      <div className="floorplan__container">
-        <div className="floorplan__editor">
-          <button type="button" onClick={toggleEditMode}>
-            Edit mode: {editMode.toString()}
-          </button>
-          <button type="button" onClick={addCircle} disabled={!editMode}>
-            Add circle
-          </button>
-          <button type="button" onClick={addSquare} disabled={!editMode}>
-            Add square
-          </button>
-          <button type="button" onClick={handleLineDraw} disabled={!editMode}>
-            Add line
-          </button>
-          <button type="button" onClick={toggleFreeDraw} disabled={!editMode}>
-            Free draw mode: {freeDrawMode.toString()}
-          </button>
-          <button type="button" onClick={handleAddText}>Add text</button>
-
-          <button type="button" onClick={removeObject} disabled={!editMode}>
-            Remove object
-          </button>
-
-          <div className="canvas__container">
-            <canvas width="800" height="600" ref={canvasElRef} />
+    <div className="page-container">
+      <section className="full-width-standard-grey">
+        <div className="content-container">
+          <h1>{!location && isLoading ? "Location loading..." : location?.name}</h1>
+          {hasErrors && <ErrorBanner />}
+          {hasSuccess && <SuccessBanner text="Saved successfully" />}
+          <div>
+            <label htmlFor="location-name">Location name: </label>
+            <input
+              id="location-name"
+              type="text"
+              value={location?.name || ""}
+              onChange={handleLocationUpdate}
+            />
           </div>
+          <br />
+          <div className="floorplan__container">
+            <div className="floorplan__editor">
+              <button type="button" onClick={toggleEditMode}>
+                Edit mode: {editMode.toString()}
+              </button>
+              <button type="button" onClick={addCircle} disabled={!editMode}>
+                Add circle
+              </button>
+              <button type="button" onClick={addSquare} disabled={!editMode}>
+                Add square
+              </button>
+              <button type="button" onClick={handleLineDraw} disabled={!editMode}>
+                Add line
+              </button>
+              <button type="button" onClick={toggleFreeDraw} disabled={!editMode}>
+                Free draw mode: {freeDrawMode.toString()}
+              </button>
+              <button type="button" onClick={handleAddText}>Add text</button>
+
+              <button type="button" onClick={removeObject} disabled={!editMode}>
+                Remove object
+              </button>
+
+              <div className="canvas__container">
+                <canvas width="800" height="600" ref={canvasElRef} />
+              </div>
+            </div>
+            <div className="floorplan__desk-list">
+              <h2>Bookable objects list</h2>
+              <h3>Unassigned desks</h3>
+              <ul>
+              {location?.bookableObjects.filter(desk => isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
+                  <li key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
+                    <AccordionItem  name={desk.name}>
+                    <DeskListItem
+                      desk={desk}
+                      handleDeskUpdate={handleDeskUpdate}
+                      assignDesk={assignDesk}
+                      unassignDesk={unassignDesk}
+                      selectedObject={selectedObject}
+                    />
+                  </AccordionItem>
+                  </li>
+                ))}
+              </ul>
+              <h3>Assigned desks</h3>
+              <ul>
+                {location?.bookableObjects.filter(desk => !isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
+                  <li  key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
+                    <AccordionItem name={desk.name}>
+                    <DeskListItem
+                      desk={desk}
+                      handleDeskUpdate={handleDeskUpdate}
+                      assignDesk={assignDesk}
+                      unassignDesk={unassignDesk}
+                      selectedObject={selectedObject}
+                    />
+                  </AccordionItem>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className={textState.hidden ? "hide-node" : ""}>
+            <label>Text: </label>
+            <input type="text" value={textState.text} onChange={(e) => handleChangeText(e.target.value)} />
+          </div>
+          <br />
+          <button type="button" onClick={saveLocation}>
+            Save location
+          </button>
         </div>
-        <div className="floorplan__desk-list">
-          <h2>Bookable objects list</h2>
-          <h3>Unassigned desks</h3>
-          <ul>
-          {location?.bookableObjects.filter(desk => isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
-              <li key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
-                <AccordionItem  name={desk.name}>
-                <DeskListItem
-                  desk={desk}
-                  handleDeskUpdate={handleDeskUpdate}
-                  assignDesk={assignDesk}
-                  unassignDesk={unassignDesk}
-                  selectedObject={selectedObject}
-                />
-              </AccordionItem>
-              </li>
-            ))}
-          </ul>
-          <h3>Assigned desks</h3>
-          <ul>
-            {location?.bookableObjects.filter(desk => !isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
-              <li  key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
-                <AccordionItem name={desk.name}>
-                <DeskListItem
-                  desk={desk}
-                  handleDeskUpdate={handleDeskUpdate}
-                  assignDesk={assignDesk}
-                  unassignDesk={unassignDesk}
-                  selectedObject={selectedObject}
-                />
-              </AccordionItem>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      <div className={textState.hidden ? "hide-node" : ""}>
-        <label>Text: </label>
-        <input type="text" value={textState.text} onChange={(e) => handleChangeText(e.target.value)} />
-      </div> 
-      <br />
-      <button type="button" onClick={saveLocation}>
-        Save location
-      </button>
+      </section>
     </div>
   );
 };
@@ -433,7 +437,7 @@ const DeskListItem: React.FC<DeskListItemProps> = ({
   unassignDesk,
   selectedObject,
 }) => (
-  <div>
+  <section>
     <div className="floorplan__desk-list-card">
       <label htmlFor={`object-name=${desk.id}`}>Name: </label>
       <input
@@ -466,5 +470,5 @@ const DeskListItem: React.FC<DeskListItemProps> = ({
         Unassign desk
       </button>
     </div>
-  </div>
+  </section>
 );
