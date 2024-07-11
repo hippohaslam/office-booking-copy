@@ -8,14 +8,14 @@ const Home = () => {
 
   return (
       <div className="page-container">
-          <section className="full-width-grey">
+          <section className="full-width-navy">
               <div className="hero-container">
                   <div className="hero-content">
                       <h1>Hi {userContext.user?.name}</h1>
                       <p>You don't have any upcoming bookings.</p>
-                      <Link to="/locations" className="cta cta-green">Make a new booking</Link>
+                      <Link to="/locations" className="cta cta-green cta-with-arrow">Make a new booking</Link>
                   </div>
-                  <img className="hero-graphic" alt="graphic of someone relaxing on a chair" src={RelaxingGraphic}/>
+                  <img className="hero-graphic" alt="" src={RelaxingGraphic}/>
               </div>
           </section>
           <section className="full-width-grey">

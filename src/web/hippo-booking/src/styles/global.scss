@@ -167,16 +167,21 @@ a {
     }
   }
 }
+/*  */
+
+/* || cta */
 
 a.cta, button.cta{
   color: white;
-  padding: 10px 20px;
-  border-radius: 26px;
+  padding: 17px 20px;
+  border-radius: 28px;
   text-decoration: none;
   font-size: 16px;
   display: inline-flex;
+  transition: .4s ease;
+  border: none;
 
-  &::after {
+  &.cta-with-arrow::after {
     content: "";
     display: inline-block;
     line-height: 500px;
@@ -193,10 +198,14 @@ a.cta, button.cta{
     transition-duration: 0.2s;
   }
 
+  &:hover {
+    cursor: pointer;
+  }
+
   &:hover, &:active{
     text-decoration: underline;
 
-    &::after{
+    &.cta-with-arrow::after{
       margin-left: 20px;
     }
   }
@@ -205,7 +214,17 @@ a.cta, button.cta{
     background-color: var(--hippo-brand-green);
   }
 
+  &.cta-navy{
+    background-color: var(--hippo-brand-navy);
+  }
+
+  &.cta-yellow{
+    background-color: var(--hippo-brand-yellow);
+  }
 }
+/*  */
+
+/* Containers and sections */
 
 .app-container {
   background-color: var(--hippo-brand-grey);
@@ -240,6 +259,8 @@ section.full-width-navy{
   flex-direction: column;
 }
 
+/*  */
+
 /* || Login styling */
 
 .login-container {
@@ -248,6 +269,7 @@ section.full-width-navy{
   display: flex;
   flex-direction: column;
   background-color: var(--hippo-brand-light-grey);
+  color: var(--hippo-brand-navy);
   border-radius: 26px;
   max-width: 600px;
   padding: 20px 50px;

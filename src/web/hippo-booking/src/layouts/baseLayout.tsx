@@ -1,7 +1,7 @@
 import React from 'react';
 import Nav from "../components/nav/Nav.tsx";
 import Footer from "../components/footer/Footer.tsx";
-const MainLayout = ({children}: {children: React.ReactElement}) => {
+const BaseLayout = ({children}: {children: React.ReactElement}) => {
     return (
         <div>
             <Nav />
@@ -12,4 +12,4 @@ const MainLayout = ({children}: {children: React.ReactElement}) => {
         </div>
     );
 };
-export default MainLayout;
+export default BaseLayout;

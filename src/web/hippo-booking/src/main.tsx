@@ -10,7 +10,8 @@ import ProtectedRoute from "./ProtectedRoute.tsx";
 import SignIn from "./pages/signin/SignIn.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { UserProvider } from "./contexts/UserContext.tsx";
-import MainLayout from "./layouts/mainLayout.tsx";
+import FullPageContentLayout from "./layouts/fullContentPageLayout.tsx";
+import BaseLayout from "./layouts/baseLayout.tsx";
 import SignInLayout from "./layouts/signInLayout.tsx";
 
 
@@ -23,13 +24,13 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: (
-        <MainLayout>
+        <BaseLayout>
           <Suspense fallback={<div>Loading...</div>}>
             <ProtectedRoute>
               <Home />
             </ProtectedRoute>
           </Suspense>
-        </MainLayout>
+        </BaseLayout>
         ),
       },
       {
@@ -45,25 +46,25 @@ const router = createBrowserRouter([
       {
         path: "/admin",
         element: (
-          <MainLayout>
+          <FullPageContentLayout>
             <Suspense fallback={<div>Loading...</div>}>
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
             </Suspense>
-          </MainLayout>
+          </FullPageContentLayout>
         ),
       },
       {
         path: "/admin/locations/:locationId/area/:areaId",
         element: (
-          <MainLayout>
+          <BaseLayout>
             <Suspense fallback={<div>Loading editor...</div>}>
               <ProtectedRoute>
                 <FloorplanEditor />
               </ProtectedRoute>
             </Suspense>
-          </MainLayout>
+          </BaseLayout>
         ),
       },
       {
@@ -80,37 +81,37 @@ const router = createBrowserRouter([
       {
         path: "/locations",
         element: (
-          <MainLayout>
+          <FullPageContentLayout>
             <Suspense fallback={<div>Loading...</div>}>
               <ProtectedRoute>
                 <Locations />
               </ProtectedRoute>
             </Suspense>
-          </MainLayout>
+          </FullPageContentLayout>
         ),
       },
       {
         path: "/locations/:locationId/areas",
         element: (
-          <MainLayout>
+          <FullPageContentLayout>
             <Suspense fallback={<div>Loading...</div>}>
               <ProtectedRoute>
                 <BookingAreas />
               </ProtectedRoute>
             </Suspense>
-          </MainLayout>
+          </FullPageContentLayout>
         ),
       },
       {
         path: "/locations/:locationId/areas/:areaId",
         element: (
-          <MainLayout>
+          <BaseLayout>
             <Suspense fallback={<div>Loading...</div>}>
               <ProtectedRoute>
                 <Booking />
               </ProtectedRoute>
             </Suspense>
-          </MainLayout>
+          </BaseLayout>
         ),
       },
     ],

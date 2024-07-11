@@ -58,7 +58,7 @@ const Nav = () => {
                            <li>
                                {userContext.user
                                    ?
-                                   <button type="button" onClick={handleSignOut} className="primary-cta"
+                                   <button type="button" onClick={handleSignOut} className="cta cta-green"
                                            id="sign-out-btn">
                                        Sign out
                                    </button>

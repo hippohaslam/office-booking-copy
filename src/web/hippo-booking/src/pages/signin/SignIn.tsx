@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { useCallback, useEffect, useState } from "react";
 import { getSession, postSessionGoogle } from "../../services/Apis";
-import HippoSvg from "../../assets/hippo.svg";
+import HippoSvg from "../../assets/hippo-navy.svg";
 
 
 export default function SignIn() {
@@ -30,13 +30,11 @@ export default function SignIn() {
        try {
         const res = await callSessionGoogleApi(credentialResponse.credential);
         userContext.setUser({
-<<<<<<< HEAD
           email: res.data.email
         })
        } catch (err) {
         console.log('google error', err);
        }
-=======
           name: userJwt.name,
           email: userJwt.email,
           picture: userJwt.picture,
@@ -44,7 +42,6 @@ export default function SignIn() {
         });
         sessionStorage.setItem('user', JSON.stringify(credentialResponse.credential));
 
->>>>>>> 6873047 (feat: added given and family name properties)
         navigate(returnURl || '/');
       }
     }
@@ -74,15 +71,9 @@ export default function SignIn() {
                   <GoogleLogin onSuccess={handleSignInUser} onError={errorMessage} />
               </div>
           </div>
-<<<<<<< HEAD
 
       );
     }
 
-    return <div>Checking login, please wait...</div>
-
-=======
-      </div>
-  );
->>>>>>> cec12cc (feat: cta button is working!)
+    return <div>Checking login, please wait...</div>;
 }

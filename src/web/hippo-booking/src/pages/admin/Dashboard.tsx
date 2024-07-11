@@ -29,16 +29,15 @@ const Admin = () => {
   };
 
   if (error || locationDetailsQueries.some(query => query.isError)) {
-    return <ErrorBanner text="Unable to get locations, please try again" />;
+      return <div className="content-container"><ErrorBanner text="Unable to get locations, please try again" /></div>;
   }
 
   if (isFetching || locationDetailsQueries.some(query => query.isLoading)) {
-    return <div>Fetching locations...</div>;
+      return <div className="content-container"><span>Fetching locations...</span></div>;
   }
 
   return (
-    <div className={showModal ? "modal-backdrop page-container" : "page-container"}>
-        <section className="content-container">
+    <div className={showModal? "modal-backdrop content-container" : "content-container"}>
       <h1>Admin</h1>
 
       <div id="edit-locations">
@@ -66,9 +65,8 @@ const Admin = () => {
         </ul>
       </div>
     ))}
-  </div>
+        </div>
       </div>
-        </section>
     </div>
   );
 };

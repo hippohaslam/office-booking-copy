@@ -68,46 +68,6 @@ nav {
 }
 
 header {
-    button.primary-cta {
-        display: inline-block;
-        min-height: 48px;
-        white-space: nowrap;
-        padding: 17px 30px;
-        color: #fff;
-        background: var(--hippo-brand-green);
-        border-radius: 28px;
-        font-weight: 500;
-        line-height: 1;
-        overflow: hidden;
-        text-underline-offset: 2px;
-        cursor: pointer;
-        transition: .4s ease;
-        transition-property: color;
-        -webkit-appearance: none;
-        appearance: none;
-        transform-style: preserve-3d;
-        text-decoration: none;
-        border: none;
-        font-size: 1rem;
-    }
-
-    header button.primary-cta:hover {
-        background-color: var(--hippo-brand-green);
-        transition: all .4s ease;
-        text-decoration: underline
-    }
-
-    header button.primary-cta:focus,header button.primary-cta:focus-visible {
-        outline-width: 2px;
-        outline-offset: 1px;
-        outline-style: solid
-    }
-
-    header button.primary-cta {
-        position: relative;
-        font-family: 'DM Sans', serif;
-    }
-
     .hamburger {
         display: none;
     }
