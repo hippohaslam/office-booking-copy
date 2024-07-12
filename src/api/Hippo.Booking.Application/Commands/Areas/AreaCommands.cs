@@ -40,7 +40,7 @@ public class AreaCommands(
             LocationId = locationId
         };
 
-        dataContext.Set<Area>().Add(area);
+        dataContext.AddEntity(area);
 
         await dataContext.Save();
 

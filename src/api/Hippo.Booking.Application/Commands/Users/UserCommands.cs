@@ -21,7 +21,7 @@ public class UserCommands(IDataContext dataContext) : IUpsertUserCommand
                 //TODO: Split first and last name out
             };
 
-            dataContext.Set<User>().Add(user);
+            dataContext.AddEntity(user);
         }
         else
         {

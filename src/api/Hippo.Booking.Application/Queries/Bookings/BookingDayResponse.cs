@@ -4,7 +4,7 @@ public class BookingDayResponse
 {
     public DateOnly Date { get; set; }
 
-    public List<BookableObjectResponse> BookableObjects { get; set; }
+    public List<BookableObjectResponse> BookableObjects { get; set; } = new();
 
     public class BookableObjectResponse
     {

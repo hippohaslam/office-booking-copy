@@ -22,7 +22,7 @@ public class CreateLocationCommandTests
 
         IDataContext dataContext = new HippoBookingDbContext(dbOptions);
 
-        dataContext.Set<Location>().Add(new Location
+        dataContext.AddEntity(new Location
         {
             Name = "Existing Location"
         });

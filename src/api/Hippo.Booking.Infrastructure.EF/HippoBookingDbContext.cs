@@ -32,6 +32,11 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
         return SaveChangesAsync();
     }
 
+    public void AddEntity<TEntity>(TEntity entity) where TEntity : class
+    {
+        Set<TEntity>().Add(entity);
+    }
+
     public DbSet<User>? Users { get; set; }
     
     public DbSet<BookableObject>? BookableObjects { get; set; }

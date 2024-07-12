@@ -1,5 +1,8 @@
+using Hippo.Booking.API.Extensions;
+using Hippo.Booking.Application.Commands.Bookings;
 using Hippo.Booking.Application.Queries.Bookings;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hippo.Booking.API.Endpoints;
 
@@ -18,6 +21,27 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings")
                 }
                 
                 return TypedResults.Ok(location);
+            });
+        
+        builder.MapPost("location/{locationId:int}/area/{areaId:int}/{date}", 
+            async Task<Results<NoContent, BadRequest<string>, ValidationProblem>> (
+                HttpContext httpContext,
+                ICreateBookingCommand createBookingCommand, 
+                int locationId, 
+                int areaId, 
+                DateOnly date,
+                [FromBody] int bookableObjectId) =>
+            {
+                var createBookingRequest = new CreateBookingRequest
+                {
+                    AreaId = areaId,
+                    Date = date,
+                    BookableObjectId = bookableObjectId,
+                    UserId = httpContext.GetUserId()
+                };
+
+                return await HandleResponse(
+                    async () => await createBookingCommand.Handle(createBookingRequest));
             });
     }
 }

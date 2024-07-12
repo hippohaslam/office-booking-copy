@@ -121,6 +121,7 @@ new SessionEndpoints().Map(app);
 
 if (app.Environment.IsDevelopment())
 {
+    new TestEndpoints().Map(app);
     app.UseCors("AllowLocalhost");
 }
 app.MapGet("/", [AllowAnonymous] () => TypedResults.Redirect("/swagger/index.html"));

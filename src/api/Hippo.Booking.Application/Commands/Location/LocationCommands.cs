@@ -29,7 +29,7 @@ public class LocationCommands(
             Name = request.Name
         };
 
-        dataContext.Set<Core.Entities.Location>().Add(location);
+        dataContext.AddEntity(location);
 
         await dataContext.Save();
 

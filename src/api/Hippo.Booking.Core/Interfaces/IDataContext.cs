@@ -9,4 +9,6 @@ public interface IDataContext
     DbSet<TEntity> Set<TEntity>() where TEntity : class;
 
     Task Save();
+    
+    void AddEntity<TEntity>(TEntity entity) where TEntity : class;
 }
