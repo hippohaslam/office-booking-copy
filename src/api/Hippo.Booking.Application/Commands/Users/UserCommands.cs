@@ -17,8 +17,8 @@ public class UserCommands(IDataContext dataContext) : IUpsertUserCommand
             {
                 Id = registeredUserDto.UserId,
                 Email = registeredUserDto.Email,
-                Name = registeredUserDto.FullName,
-                //TODO: Split first and last name out
+                FirstName = registeredUserDto.FirstName,
+                LastName = registeredUserDto.LastName
             };
 
             dataContext.AddEntity(user);
@@ -26,7 +26,8 @@ public class UserCommands(IDataContext dataContext) : IUpsertUserCommand
         else
         {
             user.Email = registeredUserDto.Email;
-            user.Name = registeredUserDto.FullName;
+            user.FirstName = registeredUserDto.FirstName;
+            user.LastName = registeredUserDto.LastName;
         }
 
         await dataContext.Save();

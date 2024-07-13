@@ -1,3 +1,4 @@
+using System.Reflection;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -44,4 +45,13 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
     public DbSet<Core.Entities.Booking>? Bookings { get; set; }
     
     public DbSet<Location>? Locations { get; set; }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        var assembly = Assembly.GetAssembly(GetType());
+        if (assembly != null)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(assembly);
+        }
+    }
 }

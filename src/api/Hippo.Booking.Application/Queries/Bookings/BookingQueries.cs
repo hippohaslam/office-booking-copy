@@ -26,7 +26,7 @@ public class BookingQueries(IDataContext dataContext) : IBookingQueries
                         .Select(z => new BookingDayResponse.BookableObjectResponse.Booking
                         {
                             Id = z.Id,
-                            Name = z.User.Name
+                            Name = z.User.FirstName + " " + z.User.LastName
                         })
                         .SingleOrDefault()
                 }).ToList()

@@ -85,7 +85,7 @@ builder.Services.AddScoped<IDataContext, HippoBookingDbContext>();
 
 builder.Services.AddHostedService<StartupTaskExecutor>();
 
-builder.Services.AddStartupTask<EnsureCreatedStartupTask>();
+builder.Services.AddStartupTask<MigrateDatabaseStartupTask>();
 
 builder.Services.AddHippoBookingApplication();
 

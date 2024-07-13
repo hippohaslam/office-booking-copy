@@ -11,6 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Hippo.Booking.Application\Hippo.Booking.Application.csproj" />
       <ProjectReference Include="..\Hippo.Booking.Core\Hippo.Booking.Core.csproj" />
     </ItemGroup>
 
