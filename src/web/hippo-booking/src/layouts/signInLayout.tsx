@@ -1,8 +1,10 @@
-import React from 'react';
-const MainLayout = ({children}: {children: React.ReactElement}) => {
+import {Outlet} from "react-router-dom";
+const MainLayout = () => {
     return (
         <main>
-            {children}
+            <div className="login-page-container">
+                <Outlet />
+            </div>
         </main>
     );
 };

@@ -16,6 +16,8 @@ export default function SignIn() {
     const callSessionApi = useCallback(async () => {
         const res = await getSession();
         userContext.setUser({
+            firstName: res.data.firstName,
+            lastName: res.data.lastName,
             email: res.data.email
         })
     }, [userContext]);
@@ -30,6 +32,8 @@ export default function SignIn() {
             try {
                 const res = await callSessionGoogleApi(credentialResponse.credential);
                 userContext.setUser({
+                    firstName: res.data.firstName,
+                    lastName: res.data.lastName,
                     email: res.data.email
                 })
             } catch (err) {

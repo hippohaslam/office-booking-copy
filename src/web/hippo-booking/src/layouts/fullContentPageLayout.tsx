@@ -1,16 +1,14 @@
-import React from 'react';
 import Nav from "../components/nav/Nav.tsx";
 import Footer from "../components/footer/Footer.tsx";
-const BaseLayout = ({children}: {children: React.ReactElement}) => {
+import {Outlet} from "react-router-dom";
+const BaseLayout = () => {
     return (
         <div>
             <Nav />
             <main>
-                <div className="page-container">
-                    <section className="full-width-standard-grey">
-                        {children}
-                    </section>
-                </div>
+                <section className="full-width-standard-grey">
+                    <Outlet />
+                </section>
             </main>
             <Footer/>
         </div>

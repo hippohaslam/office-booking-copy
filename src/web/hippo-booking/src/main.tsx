@@ -1,8 +1,6 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./index.scss";
 import { Dashboard, FloorplanEditor, Booking, Locations, BookingAreas, SvgAreaEditor } from "./imports";
 import ErrorPage from "./pages/error/Error.tsx";
 import Home from "./pages/home/Home.tsx";
@@ -10,113 +8,134 @@ import ProtectedRoute from "./ProtectedRoute.tsx";
 import SignIn from "./pages/signin/SignIn.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { UserProvider } from "./contexts/UserContext.tsx";
-import FullPageContentLayout from "./layouts/fullContentPageLayout.tsx";
-import BaseLayout from "./layouts/baseLayout.tsx";
-import SignInLayout from "./layouts/signInLayout.tsx";
+import { FullContentPageLayout, BaseLayout, SignInLayout } from "./layouts";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import App from "./App.tsx";
 
+const queryClient = new QueryClient();
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "/",
-        element: (
-        <BaseLayout>
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          </Suspense>
-        </BaseLayout>
-        ),
-      },
-      {
-        path: "/signin",
-        element: (
-          <SignInLayout>
-            <Suspense fallback={<div>Loading...</div>}>
-                <SignIn />
-            </Suspense>
-          </SignInLayout>
-        ),
-      },
-      {
-        path: "/admin",
-        element: (
-          <FullPageContentLayout>
-            <Suspense fallback={<div>Loading...</div>}>
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            </Suspense>
-          </FullPageContentLayout>
-        ),
-      },
-      {
-        path: "/admin/locations/:locationId/area/:areaId",
-        element: (
-          <BaseLayout>
-            <Suspense fallback={<div>Loading editor...</div>}>
-              <ProtectedRoute>
-                <FloorplanEditor />
-              </ProtectedRoute>
-            </Suspense>
-          </BaseLayout>
-        ),
-      },
-      {
-        // Experimental route
-        path: "/admin/locations/:locationId/area/:areaId/svg-editor",
-        element: (
-          <Suspense fallback={<div>Loading editor...</div>}>
-            <ProtectedRoute>
-              <SvgAreaEditor />
-            </ProtectedRoute>
-          </Suspense>
-        ),
-      },
-      {
-        path: "/locations",
-        element: (
-          <FullPageContentLayout>
-            <Suspense fallback={<div>Loading...</div>}>
-              <ProtectedRoute>
-                <Locations />
-              </ProtectedRoute>
-            </Suspense>
-          </FullPageContentLayout>
-        ),
-      },
-      {
-        path: "/locations/:locationId/areas",
-        element: (
-          <FullPageContentLayout>
-            <Suspense fallback={<div>Loading...</div>}>
-              <ProtectedRoute>
-                <BookingAreas />
-              </ProtectedRoute>
-            </Suspense>
-          </FullPageContentLayout>
-        ),
-      },
-      {
-        path: "/locations/:locationId/areas/:areaId",
-        element: (
-          <BaseLayout>
-            <Suspense fallback={<div>Loading...</div>}>
-              <ProtectedRoute>
-                <Booking />
-              </ProtectedRoute>
-            </Suspense>
-          </BaseLayout>
-        ),
-      },
-    ],
-  },
-]);
+const router =  createBrowserRouter([
+    {
+        element: <App/>,
+        children: [
+            {
+                path: "/",
+                element: <BaseLayout/>,
+                errorElement: <ErrorPage/>,
+                children: [
+                    {
+                        path: "/",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProtectedRoute>
+                                    <Home/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        path: "/admin/locations/:locationId/area/:areaId",
+                        element: (
+                            <Suspense fallback={<div>Loading editor...</div>}>
+                                <ProtectedRoute>
+                                    <FloorplanEditor/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        path: "/locations/:locationId/areas/:areaId",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProtectedRoute>
+                                    <Booking/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                ],
+            },
+            {
+                element: <FullContentPageLayout/>,
+                children: [
+                    {
+                        path: "/locations/:locationId/areas",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProtectedRoute>
+                                    <BookingAreas/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        path: "/locations/:locationId/areas",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProtectedRoute>
+                                    <BookingAreas/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        path: "/locations",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProtectedRoute>
+                                    <Locations/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        path: "/locations",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProtectedRoute>
+                                    <Locations/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        path: "/admin",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProtectedRoute>
+                                    <Dashboard/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        // Experimental route
+                        path: "/admin/locations/:locationId/area/:areaId/svg-editor",
+                        element: (
+                            <Suspense fallback={<div>Loading editor...</div>}>
+                                <ProtectedRoute>
+                                    <SvgAreaEditor/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                ]
+            },
+            {
+                element: <SignInLayout/>,
+                children: [
+                    {
+                        path: "/signin",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <SignIn/>
+                            </Suspense>
+                        ),
+                    }
+                ]
+            }]
+    }]
+);
 
 const root = document.getElementById("root");
 if (root === null) {
@@ -129,7 +148,9 @@ ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={clientId}>
       <UserProvider>
-        <RouterProvider router={router} />
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
       </UserProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>
