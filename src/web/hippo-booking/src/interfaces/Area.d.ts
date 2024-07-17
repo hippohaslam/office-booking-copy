@@ -3,3 +3,8 @@ interface Area {
     name: string;
     locationId: number;
 }
+
+interface NewArea {
+    name: string;
+    description: string;
+}

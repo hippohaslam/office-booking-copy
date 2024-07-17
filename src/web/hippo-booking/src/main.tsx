@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Dashboard, FloorplanEditor, Booking, Locations, BookingAreas, SvgAreaEditor } from "./imports";
+import { Dashboard, FloorplanEditor, Booking, Locations, BookingAreas, SvgAreaEditor, CreateLocation, CreateArea } from "./imports";
 import ErrorPage from "./pages/error/Error.tsx";
 import Home from "./pages/home/Home.tsx";
 import ProtectedRoute from "./ProtectedRoute.tsx";
@@ -84,6 +84,26 @@ const router =  createBrowserRouter([
                             <Suspense fallback={<div>Loading...</div>}>
                                 <ProtectedRoute>
                                     <Dashboard/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        path: "/admin/locations/new",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProtectedRoute>
+                                    <CreateLocation />
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        path: "/admin/locations/:locationId/areas/new",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProtectedRoute>
+                                    <CreateArea />
                                 </ProtectedRoute>
                             </Suspense>
                         ),

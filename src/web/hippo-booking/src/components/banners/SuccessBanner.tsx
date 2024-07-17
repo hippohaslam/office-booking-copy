@@ -1,8 +1,9 @@
   
   const SuccessBanner = ({text = "Success"}) => {
+    // TODO: Needs styling
     return (
       <div>
-        <h2>{text}</h2>
+        <h3>{text}</h3>
       </div>
     );
   }

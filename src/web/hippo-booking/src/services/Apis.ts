@@ -6,7 +6,11 @@ const axiosInstance = axios.create({
   withCredentials: true
 });
 
-const getLocationAsync = async (locationId: string, areaId: string): Promise<Location> => {
+const getLocationAsync = async (locationId: string) => {
+  return await axiosInstance.get(`/location/${locationId}`);
+}
+
+const getLocationAreaAsync = async (locationId: string, areaId: string): Promise<Location> => {
   const response = await axiosInstance.get(`/location/${locationId}/area/${areaId}`);
   return response.data;
 }
@@ -15,9 +19,13 @@ const getLocationsAsync = async (): Promise<Location[]> => {
   const response = await axiosInstance.get(`/location`);
   return response.data;
 }
+
+const postNewLocationAsync = async (location: NewLocation) => {
+  return await axiosInstance.post(`/location`, location);
+}
   
-const putLocationAsync = async (location: Location, areaId: string) => {
-  return await axiosInstance.put(`/location/${location.id}/area/${areaId}`, location);
+const putLocationAsync = async (locationId: string, location: Location, areaId: string) => {
+  return await axiosInstance.put(`/location/${locationId}/area/${areaId}`, location);
 }
 
 const putObjectsAsync = async (locationId: string, areaId: string, bookableObjects: BookableObject[]) => {
@@ -29,6 +37,9 @@ const putObjectsAsync = async (locationId: string, areaId: string, bookableObjec
 }
 
 // AREAS
+const postLocationAreaAsync = async (locationId: number, area: NewArea) => {
+  return await axiosInstance.post(`/location/${locationId}/area`, area);
+}
 
 /** Combines the locationId with the area data */ 
 const getLocationAreasAsync = async (locationId: number): Promise<Area[]> => {
@@ -57,12 +68,16 @@ const signUserOut = async () => {
 }
 
 export {
-  getLocationAsync, 
+  // Locations
+  getLocationAsync,
+  postNewLocationAsync,
+  getLocationAreaAsync, 
   getLocationsAsync, 
   putLocationAsync, 
   putObjectsAsync,
   // AREAS
   getLocationAreasAsync,
+  postLocationAreaAsync,
   // AUTH
   getSession,
   postSessionGoogle,

@@ -4,3 +4,8 @@ interface Location {
     floorPlanJson: string;
     bookableObjects: Array<BookableObject>;
 }
+
+interface NewLocation {
+    name: string;
+    description: string;
+}

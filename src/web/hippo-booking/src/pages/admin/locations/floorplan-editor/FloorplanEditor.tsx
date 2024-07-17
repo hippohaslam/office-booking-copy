@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import { getLocationAsync, putObjectsAsync, putLocationAsync } from "../../../../services/Apis";
+import { getLocationAreaAsync, putObjectsAsync, putLocationAsync } from "../../../../services/Apis";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -31,7 +31,7 @@ interface SelectedObject {
 
 const FloorplanEditor = () => {
   const { locationId, areaId } = useParams();
-  const [location, setLocation] = useState<Location>();
+  const [area, setArea] = useState<Location>();
   const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
   const [editMode, setEditMode] = useState<boolean>(true);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
@@ -42,14 +42,14 @@ const FloorplanEditor = () => {
   const queryClient = useQueryClient();
   
   const {isPending, error: locationError, data: locationData} = useQuery({
-    queryKey: ['location', locationId],
-    queryFn: () => getLocationAsync(locationId as string, areaId as string),
+    queryKey: ['area-edit', locationId, areaId],
+    queryFn: () => getLocationAreaAsync(locationId as string, areaId as string),
     enabled: !!locationId
   });
 
 
   const locationMutation = useMutation({
-    mutationFn: (nextLocationData: Location) => putLocationAsync(nextLocationData, areaId as string),
+    mutationFn: (nextAreaData: Location) => putLocationAsync(locationId as string, nextAreaData, areaId as string),
   });
 
   const locationObjectsMutation = useMutation({
@@ -62,7 +62,7 @@ const FloorplanEditor = () => {
       if(!locationData.bookableObjects){
         locationData.bookableObjects = [];
       }
-      setLocation(locationData);
+      setArea(locationData);
     }
   }, [locationData]);
 
@@ -84,7 +84,7 @@ const FloorplanEditor = () => {
 
           // If there is no id, then it is not a bookable object
           if(selectedFabricObject.id) {
-            setSelectedObject({id: selectedFabricObject.id, hasAssignedDesk: location?.bookableObjects.some(desk => desk.floorPlanObjectId === selectedFabricObject.id) ?? false});
+            setSelectedObject({id: selectedFabricObject.id, hasAssignedDesk: area?.bookableObjects.some(desk => desk.floorPlanObjectId === selectedFabricObject.id) ?? false});
           }
           // Perform other operations as needed
         } else {
@@ -101,7 +101,7 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current?.dispose();
       fabricCanvasRef.current = null;
     };
-  }, [locationData?.floorPlanJson, location?.bookableObjects]);
+  }, [locationData?.floorPlanJson, area?.bookableObjects]);
 
   const addCircle = () => {
     if (fabricCanvasRef.current) {
@@ -158,14 +158,14 @@ const FloorplanEditor = () => {
   };
 
   const assignDesk = (deskId: number) => {
-    if (selectedObject && location) {
-      const nextDesks = location.bookableObjects.map((desk) => {
+    if (selectedObject && area) {
+      const nextDesks = area.bookableObjects.map((desk) => {
         if (desk.id === deskId) {
           desk.floorPlanObjectId = selectedObject.id;
         }
         return desk;
       });
-      setLocation({ ...location, bookableObjects: nextDesks });
+      setArea({ ...area, bookableObjects: nextDesks });
 
       // change fill of object to green
       const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject.id);
@@ -178,14 +178,14 @@ const FloorplanEditor = () => {
   };
 
   const unassignDesk = (deskId: number) => {
-    if (selectedObject && location) {
-      const nextDesks = location.bookableObjects.map((desk) => {
+    if (selectedObject && area) {
+      const nextDesks = area.bookableObjects.map((desk) => {
         if (desk.id === deskId) {
           desk.floorPlanObjectId = undefined;
         }
         return desk;
       });
-      setLocation({ ...location, bookableObjects: nextDesks });
+      setArea({ ...area, bookableObjects: nextDesks });
       // change fill of object to white
       const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject.id);
       if (object) {
@@ -196,14 +196,14 @@ const FloorplanEditor = () => {
   };
 
   const saveLocation = async () => {
-    if (location && fabricCanvasRef.current) {
+    if (area && fabricCanvasRef.current) {
       const nextLocation = {
-        ...location,
+        ...area,
         floorPlanJson: JSON.stringify(fabricCanvasRef.current.toJSON(["id"])),
       };
       Promise.all([
         locationMutation.mutateAsync(nextLocation),
-        locationObjectsMutation.mutateAsync(location.bookableObjects),
+        locationObjectsMutation.mutateAsync(area.bookableObjects),
       ]).finally(() => {
         if (locationId) {
           queryClient.invalidateQueries({
@@ -264,7 +264,7 @@ const FloorplanEditor = () => {
   };
   
   const handleLocationUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation((prev) => {
+    setArea((prev) => {
               if (prev) {
                 return {
                   ...prev,
@@ -279,7 +279,7 @@ const FloorplanEditor = () => {
     deskId: number,
     field: 'name' | 'description'
   ) => {
-    setLocation((prev) => {
+    setArea((prev) => {
       if (prev) {
         return {
           ...prev,
@@ -308,7 +308,7 @@ const FloorplanEditor = () => {
         fabricCanvasRef.current.setActiveObject(object as fabric.Object);
         fabricCanvasRef.current.renderAll();
         if(object.id) {
-          const hasAssignedDesk = location?.bookableObjects.some(desk => desk.floorPlanObjectId === object.id);
+          const hasAssignedDesk = area?.bookableObjects.some(desk => desk.floorPlanObjectId === object.id);
           setSelectedObject({id: object.id, hasAssignedDesk: hasAssignedDesk ?? false});
         }
       }
@@ -330,7 +330,7 @@ const FloorplanEditor = () => {
     <div className="page-container">
       <section className="full-width-standard-grey">
         <div className="content-container">
-          <h1>{!location && isLoading ? "Location loading..." : location?.name}</h1>
+          <h1>{!area && isLoading ? "Location loading..." : area?.name}</h1>
           {hasErrors && <ErrorBanner />}
           {hasSuccess && <SuccessBanner text="Saved successfully" />}
           <div>
@@ -338,7 +338,7 @@ const FloorplanEditor = () => {
             <input
               id="location-name"
               type="text"
-              value={location?.name || ""}
+              value={area?.name || ""}
               onChange={handleLocationUpdate}
             />
           </div>
@@ -374,7 +374,7 @@ const FloorplanEditor = () => {
               <h2>Bookable objects list</h2>
               <h3>Unassigned desks</h3>
               <ul>
-              {location?.bookableObjects.filter(desk => isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
+              {area?.bookableObjects.filter(desk => isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
                   <li key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
                     <AccordionItem  name={desk.name}>
                     <DeskListItem
@@ -390,7 +390,7 @@ const FloorplanEditor = () => {
               </ul>
               <h3>Assigned desks</h3>
               <ul>
-                {location?.bookableObjects.filter(desk => !isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
+                {area?.bookableObjects.filter(desk => !isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
                   <li  key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
                     <AccordionItem name={desk.name}>
                     <DeskListItem
