@@ -10,6 +10,21 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings")
 {
     public override void MapEndpoints(RouteGroupBuilder builder)
     {
+        builder.MapGet("upcoming", 
+            async Task<Results<Ok<List<UserBookingsResponse>>, UnauthorizedHttpResult>> (IBookingQueries bookingQueries, HttpContext httpContext) =>
+            {
+                var userId = httpContext.GetUserId();
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return TypedResults.Unauthorized();
+                }
+                
+                var bookings = await bookingQueries.GetUpcomingBookingsForUser(userId);
+                
+                return TypedResults.Ok(bookings);
+            });
+        
         builder.MapGet("location/{locationId:int}/area/{areaId:int}/{date}", 
             async Task<Results<Ok<BookingDayResponse>, NotFound>> (IBookingQueries bookingQueries, int locationId, int areaId, DateOnly date) =>
             {
@@ -23,14 +38,14 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings")
                 return TypedResults.Ok(location);
             });
         
-        builder.MapPost("location/{locationId:int}/area/{areaId:int}/{date}", 
+        builder.MapPost("location/{locationId:int}/area/{areaId:int}/{date}/bookable-object/{bookableObjectId:int}", 
             async Task<Results<NoContent, BadRequest<string>, ValidationProblem>> (
                 HttpContext httpContext,
                 ICreateBookingCommand createBookingCommand, 
                 int locationId, 
                 int areaId, 
                 DateOnly date,
-                [FromBody] int bookableObjectId) =>
+                int bookableObjectId) =>
             {
                 var createBookingRequest = new CreateBookingRequest
                 {

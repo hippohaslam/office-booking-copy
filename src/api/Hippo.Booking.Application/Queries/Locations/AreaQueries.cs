@@ -18,11 +18,7 @@ public class AreaQueries(IDataContext dataContext) : IAreaQueries
     {
         return dataContext.Query<Area>(x => x.WithNoTracking())
             .Where(x => x.LocationId == locationId)
-            .Select(x => new IdName<int>
-            {
-                Id = x.Id,
-                Name = x.Name
-            })
+            .Select(x => new IdName<int>(x.Id, x.Name))
             .ToListAsync();
     }
 

@@ -10,11 +10,7 @@ public class LocationQueries(IDataContext dataContext) : ILocationQueries
     public Task<List<IdName<int>>> GetLocations()
     {
         return dataContext.Query<Location>(x => x.WithNoTracking())
-            .Select(x => new IdName<int>
-            {
-                Id = x.Id,
-                Name = x.Name
-            })
+            .Select(x => new IdName<int>(x.Id, x.Name))
             .ToListAsync();
     }
 

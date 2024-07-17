@@ -1,11 +1,29 @@
+using Hippo.Booking.Application.Models;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Application.Queries.Bookings;
 
-public class BookingQueries(IDataContext dataContext) : IBookingQueries
+public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTimeProvider) : IBookingQueries
 {
+    public Task<List<UserBookingsResponse>> GetUpcomingBookingsForUser(string userId)
+    {
+        return dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
+            .Include(i => i.BookableObject)
+            .ThenInclude(i => i.Area)
+            .ThenInclude(i => i.Location)
+            .Where(x => x.Date >= dateTimeProvider.Today)
+            .Select(x => new UserBookingsResponse
+            {
+                Date = x.Date,
+                BookableObject = new IdName<int>(x.BookableObjectId, x.BookableObject.Name),
+                Area = new IdName<int>(x.BookableObject.AreaId, x.BookableObject.Area.Name),
+                Location = new IdName<int>(x.BookableObject.Area.LocationId, x.BookableObject.Area.Location.Name)
+            })
+            .ToListAsync();
+    }
+
     public async Task<BookingDayResponse?> GetAreaAndBookingsForTheDay(int locationId, int areaId, DateOnly date)
     {
         var location = await dataContext.Query<Area>(x => x.WithNoTracking())

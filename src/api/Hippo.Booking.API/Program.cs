@@ -2,6 +2,7 @@ using FluentValidation;
 using Hippo.Booking.API.Endpoints;
 using Hippo.Booking.API.StartupTasks;
 using Hippo.Booking.Application;
+using Hippo.Booking.Core;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.EF;
 using Microsoft.AspNetCore.Authorization;
@@ -81,6 +82,7 @@ builder.Services.AddDbContext<HippoBookingDbContext>(
         }
     });
 
+builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 builder.Services.AddScoped<IDataContext, HippoBookingDbContext>();
 
 builder.Services.AddHostedService<StartupTaskExecutor>();
