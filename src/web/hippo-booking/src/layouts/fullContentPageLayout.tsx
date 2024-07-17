@@ -6,7 +6,7 @@ const BaseLayout = () => {
         <div>
             <Nav />
             <main>
-                <section className="full-width-standard-grey">
+                <section className="full-width-standard-grey content-container">
                     <Outlet />
                 </section>
             </main>

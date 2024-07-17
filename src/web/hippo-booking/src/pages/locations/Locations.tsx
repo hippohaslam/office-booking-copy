@@ -13,15 +13,15 @@ const Locations = () => {
   });
 
   if (error) {
-    return <div className="content-container"><ErrorBanner text="Unable to get locations, please refresh the page" /></div>;
+    return <div><ErrorBanner text="Unable to get locations, please refresh the page" /></div>;
   }
 
   if (isFetching) {
-      return <div className="content-container"><span>Fetching locations...</span></div>;
+      return <div><span>Fetching locations...</span></div>;
   }
 
   return (
-      <div className="content-container">
+      <div>
         <h1>Locations</h1>
         <ul className="locations-list">
           {data?.map((location) => (

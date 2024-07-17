@@ -37,7 +37,7 @@ const Admin = () => {
   }
 
   return (
-    <div className={showModal? "modal-backdrop content-container" : "content-container"}>
+    <div className={showModal? "modal-backdrop content-container" : ""}>
       <h1>Admin</h1>
 
       <div id="edit-locations">

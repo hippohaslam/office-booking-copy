@@ -60,7 +60,7 @@ export default function SignIn() {
 
     if(showLogin){
         return (
-            <div className="login-container">
+            <div>
                 <img src={HippoSvg} alt="Hippo Logo"/>
                 <h1>Office bookings</h1>
                 <p>For booking desks, dog-of-the-day, and car parking spaces at the Hippo offices.</p>
@@ -71,6 +71,6 @@ export default function SignIn() {
         );
     }
 
-    return <div className="login-container"><span>Checking login, please wait...</span></div>
+    return <div><span>Checking login, please wait...</span></div>
 
 }

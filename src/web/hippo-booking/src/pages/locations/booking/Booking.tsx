@@ -81,10 +81,8 @@ const DeskBooking = () => {
 
 
   return (
-    <div className="page-container">
-      <section className="full-width-standard-grey">
-        <div className="content-container">
-          <h1>Desk Booking</h1>
+    <div>
+      <h1>Desk Booking</h1>
           <CustomConfirmDialog
               isOpen={isDialogOpen}
               onConfirm={() => setDialogOpen(false)}
@@ -94,8 +92,6 @@ const DeskBooking = () => {
           <div className="canvas__container">
             <canvas width="800" height="600" ref={canvasElRef}/>
           </div>
-        </div>
-      </section>
     </div>
   );
 }

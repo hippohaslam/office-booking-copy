@@ -69,26 +69,6 @@ const router =  createBrowserRouter([
                         ),
                     },
                     {
-                        path: "/locations/:locationId/areas",
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <ProtectedRoute>
-                                    <BookingAreas/>
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
-                    {
-                        path: "/locations",
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <ProtectedRoute>
-                                    <Locations/>
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
-                    {
                         path: "/locations",
                         element: (
                             <Suspense fallback={<div>Loading...</div>}>
