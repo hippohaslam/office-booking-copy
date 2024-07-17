@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { getLocationAsync } from "../../../services/Apis";
+import { getLocationAreaAsync } from "../../../services/Apis";
 import { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas";
@@ -24,7 +24,7 @@ const DeskBooking = () => {
 
   const { data: locationData} = useQuery({
     queryKey: ['location', locationId],
-    queryFn: () => getLocationAsync(locationId as string, areaId as string),
+    queryFn: () => getLocationAreaAsync(locationId as string, areaId as string),
     enabled: !!locationId && !!areaId,
     //staleTime: 1000 * 60 * 60 * 12, // 12 hours.  TODO: Set for production use, extend time to a day? Makes sense to cache this data for a while.
   });

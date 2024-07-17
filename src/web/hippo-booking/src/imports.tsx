@@ -2,7 +2,7 @@ import React from 'react';
 
 // Admin
 const Dashboard = React.lazy(() => import('./pages/admin/Dashboard.tsx'));
-const FloorplanEditor = React.lazy(() => import('./pages/admin/locations/floorplan-editor/FloorplanEditor.tsx'));
+const FloorplanEditor = React.lazy(() => import('./pages/admin/locations/area/area-editor-fabric/AreaEditorFabric.tsx'));
 const CreateLocation = React.lazy(() => import('./pages/admin/locations/CreateLocation.tsx'));
 const CreateArea = React.lazy(() => import('./pages/admin/locations/area/CreateNewArea.tsx'));
 
@@ -10,7 +10,7 @@ const CreateArea = React.lazy(() => import('./pages/admin/locations/area/CreateN
 const Booking = React.lazy(() => import('./pages/locations/booking/Booking.tsx'));
 const Locations = React.lazy(() => import('./pages/locations/Locations.tsx'));
 const BookingAreas = React.lazy(() => import('./pages/locations/areas/BookingAreas.tsx'));
-const SvgAreaEditor = React.lazy(() => import('./pages/admin/locations/floorplan-editor/FloorplanEditorSvg.tsx'));
+const SvgAreaEditor = React.lazy(() => import('./pages/admin/locations/area/area-editor-svg/AreaEditorSvg.tsx'));
 
 
 // export parking component
