@@ -56,11 +56,6 @@ body {
 main {
   min-height: calc(100dvh - (6rem + 4rem)); // = full height - (header height - footer height)
   background-color: var(--hippo-brand-grey);
-  width: 100vw;
-}
-
-.page-container{
-  width: 100vw;
 }
 
 .login-page-container{
