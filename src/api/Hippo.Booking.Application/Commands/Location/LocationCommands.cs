@@ -26,7 +26,8 @@ public class LocationCommands(
 
         var location = new Core.Entities.Location
         {
-            Name = request.Name
+            Name = request.Name,
+            Description = request.Description
         };
 
         dataContext.AddEntity(location);
@@ -49,6 +50,7 @@ public class LocationCommands(
         }
 
         location.Name = request.Name;
+        location.Description = request.Description;
         
         await dataContext.Save();
     }
