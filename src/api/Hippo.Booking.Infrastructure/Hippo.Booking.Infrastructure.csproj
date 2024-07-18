@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Hippo.Booking.Core\Hippo.Booking.Core.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -6,6 +6,7 @@ using Hippo.Booking.Application.Commands.Location;
 using Hippo.Booking.Application.Commands.Users;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Application.Queries.Locations;
+using Hippo.Booking.Application.Queries.Scheduling;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Hippo.Booking.Application;
@@ -41,6 +42,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<ILocationQueries, LocationQueries>()
             .AddScoped<IBookingQueries, BookingQueries>()
             .AddScoped<IAreaQueries, AreaQueries>()
+            .AddScoped<IScheduledTaskQueries, ScheduledTaskQueries>()
             ;
         
         return services;

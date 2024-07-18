@@ -1,10 +1,13 @@
 using FluentValidation;
 using Hippo.Booking.API.Endpoints;
+using Hippo.Booking.API.HostedServices;
 using Hippo.Booking.API.StartupTasks;
 using Hippo.Booking.Application;
+using Hippo.Booking.Core.Extensions;
 using Hippo.Booking.Core;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.EF;
+using Hippo.Booking.Infrastructure.Scheduling;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -113,6 +116,12 @@ builder.Services.AddAuthentication("Cookie")
 builder.Services.AddAuthorization(x => x.FallbackPolicy = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
     .Build());
+
+builder.Services.AddScoped<IExclusiveLockProvider, NullExclusiveLockProvider>();
+
+builder.Services.AddScheduledTask<TestScheduledTask>();
+
+builder.Services.AddHostedService<SchedulingWorkerService>();
 
 var app = builder.Build();
 

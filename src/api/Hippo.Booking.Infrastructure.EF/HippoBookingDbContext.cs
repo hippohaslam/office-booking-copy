@@ -46,6 +46,8 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
     
     public DbSet<Location>? Locations { get; set; }
     
+    public DbSet<ScheduledTask>? ScheduledTasks { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var assembly = Assembly.GetAssembly(GetType());
