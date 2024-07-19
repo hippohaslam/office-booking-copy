@@ -1,4 +1,4 @@
-interface Location {
+interface BookingLocation {
     id: number;
     name: string;
     floorPlanJson: string;

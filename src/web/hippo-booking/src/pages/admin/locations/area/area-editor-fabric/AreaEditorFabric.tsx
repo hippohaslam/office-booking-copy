@@ -31,7 +31,7 @@ interface SelectedObject {
 
 const FloorplanEditor = () => {
   const { locationId, areaId } = useParams();
-  const [area, setArea] = useState<Location>();
+  const [area, setArea] = useState<BookingLocation>();
   const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
   const [editMode, setEditMode] = useState<boolean>(true);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
@@ -49,7 +49,7 @@ const FloorplanEditor = () => {
 
 
   const locationMutation = useMutation({
-    mutationFn: (nextAreaData: Location) => putLocationAsync(locationId as string, nextAreaData, areaId as string),
+    mutationFn: (nextAreaData: BookingLocation) => putLocationAsync(locationId as string, nextAreaData, areaId as string),
   });
 
   const locationObjectsMutation = useMutation({

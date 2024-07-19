@@ -138,12 +138,17 @@ ul {
 
 a {
   color: var(--hippo-dark-green);
+  text-underline-offset: 7px;
+  text-decoration-color: var(--hippo-brand-green);
+  margin: 1em 0;
+  font-size: 15pt;
 
   &:visited {
     color: var(--hippo-dark-green);
   }
-  &:hover {
-    color: var(--hippo-purple);
+  &:hover, &:active{
+    opacity: 90%;
+    text-decoration-color: var(--hippo-brand-light-grey);
   }
 
   // External link styling
@@ -167,21 +172,15 @@ a {
     }
   }
 }
-/*  */
 
-/* || cta */
+p a {
+  margin: 0;
+}
 
-a.cta, button.cta{
-  color: white;
-  padding: 17px 20px;
-  border-radius: 28px;
-  text-decoration: none;
-  font-size: 16px;
-  display: inline-flex;
-  transition: .4s ease;
-  border: none;
+a.with-arrow {
+  display: flex;
 
-  &.cta-with-arrow::after {
+  &::after {
     content: "";
     display: inline-block;
     line-height: 500px;
@@ -197,6 +196,20 @@ a.cta, button.cta{
     background-size: contain;
     transition-duration: 0.2s;
   }
+}
+/*  */
+
+/* || cta */
+
+a.cta, button.cta{
+  color: white;
+  padding: 17px 20px;
+  border-radius: 28px;
+  text-decoration: none;
+  font-size: 16px;
+  display: inline-flex;
+  transition: .4s ease;
+  border: none;
 
   &:hover {
     cursor: pointer;
@@ -204,6 +217,7 @@ a.cta, button.cta{
 
   &:hover, &:active{
     text-decoration: underline;
+    opacity: 100%;
 
     &.cta-with-arrow::after{
       margin-left: 20px;
@@ -226,11 +240,12 @@ a.cta, button.cta{
     background-color: var(--hippo-brand-pink);
     color: var(--hippo-brand-navy);
 
-    &.cta-with-arrow::after{
+    &.with-arrow::after{
       background-image: url(../assets/cta-arrow-navy.svg);
     }
   }
 }
+
 /*  */
 
 /* Containers and sections */
@@ -304,11 +319,6 @@ section.full-width-navy{
   .hero-content {
     margin: 30px 0;
   }
-
-  .hero-graphic {
-    height: 300px;
-    margin: 30px 0;
-  }
 }
 
 /*  */
@@ -326,8 +336,8 @@ section.full-width-navy{
     padding: 20px;
   }
 
-  .hero-container {
-    align-items: flex-start;
+  .hero-content {
+    width: 100%;
   }
 
   .hero-graphic{

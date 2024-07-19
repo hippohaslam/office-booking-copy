@@ -1,0 +1,24 @@
+.booking-card{
+    background-color: var(--hippo-brand-grey);
+    padding: 20px;
+    margin: 10px 0;
+    color: var(--hippo-brand-navy);
+    border-radius: 26px;
+    min-width: 500px;
+
+    table li{
+        list-style: none;
+    }
+
+    .bookable-object-item{
+        font-size: 2rem;
+        font-weight: bold;
+    }
+}
+
+@media only screen and (max-width: 768px){
+    .booking-card{
+        min-width: 0;
+        width: 100%;
+    }
+}

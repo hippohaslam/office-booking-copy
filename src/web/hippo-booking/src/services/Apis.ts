@@ -10,12 +10,12 @@ const getLocationAsync = async (locationId: string) => {
   return await axiosInstance.get(`/location/${locationId}`);
 }
 
-const getLocationAreaAsync = async (locationId: string, areaId: string): Promise<Location> => {
+const getLocationAreaAsync = async (locationId: string, areaId: string): Promise<BookingLocation> => {
   const response = await axiosInstance.get(`/location/${locationId}/area/${areaId}`);
   return response.data;
 }
 
-const getLocationsAsync = async (): Promise<Location[]> => {
+const getLocationsAsync = async (): Promise<BookingLocation[]> => {
   const response = await axiosInstance.get(`/location`);
   return response.data;
 }
@@ -23,8 +23,8 @@ const getLocationsAsync = async (): Promise<Location[]> => {
 const postNewLocationAsync = async (location: NewLocation) => {
   return await axiosInstance.post(`/location`, location);
 }
-  
-const putLocationAsync = async (locationId: string, location: Location, areaId: string) => {
+
+const putLocationAsync = async (locationId: string, location: BookingLocation, areaId: string) => {
   return await axiosInstance.put(`/location/${locationId}/area/${areaId}`, location);
 }
 
@@ -50,6 +50,13 @@ const getLocationAreasAsync = async (locationId: number): Promise<Area[]> => {
   return response.data;
 }
 
+// BOOKINGS
+
+const getUpcomingBookingsAsync = async(): Promise<Booking[]> => {
+  const response = await axiosInstance.get(`/booking/upcoming`);
+  return response.data
+}
+
 // AUTH
 const getSession = async () => {
   return await axiosInstance.get(`/session`)
@@ -71,13 +78,15 @@ export {
   // Locations
   getLocationAsync,
   postNewLocationAsync,
-  getLocationAreaAsync, 
+  getLocationAreaAsync,
   getLocationsAsync, 
   putLocationAsync, 
   putObjectsAsync,
   // AREAS
   getLocationAreasAsync,
   postLocationAreaAsync,
+  // BOOKINGS
+  getUpcomingBookingsAsync,
   // AUTH
   getSession,
   postSessionGoogle,
