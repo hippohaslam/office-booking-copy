@@ -6,6 +6,17 @@ export default function ErrorPage() {
   const error: any = useRouteError();
   console.error(error);
 
+  if(error && error.status === 404) {
+    return (
+      <div>
+      <div id="error-page">
+        <h1>404</h1>
+        <p>Sorry, this is not the page you are looking for...</p>
+      </div>
+      </div>
+    );
+  }
+
   return (
     <div>
     <div id="error-page">
