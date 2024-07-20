@@ -10,6 +10,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import { FullContentPageLayout, BaseLayout, SignInLayout } from "./layouts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {BookingAreaParams, bookingAreasLoader} from "./loaders/BookingAreaLoader.ts";
 import App from "./App.tsx";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,7 @@ const router =  createBrowserRouter([
                 children: [
                     {
                         path: "/locations/:locationId/areas",
+                        errorElement: <ErrorPage />,
                         element: (
                             <Suspense fallback={<div>Loading...</div>}>
                                 <ProtectedRoute>
@@ -67,6 +69,9 @@ const router =  createBrowserRouter([
                                 </ProtectedRoute>
                             </Suspense>
                         ),
+                        loader: async ({ params }) => {
+                            return bookingAreasLoader(queryClient)(params as BookingAreaParams);
+                        }
                     },
                     {
                         path: "/locations",
