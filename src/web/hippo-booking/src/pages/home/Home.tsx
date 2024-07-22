@@ -47,12 +47,16 @@ const Home = () => {
                 return <p>You don't have any upcoming bookings.</p>;
             }
             
-            return <BookingCardStacked                 
-                date={nextBooking.date as Date}
-                bookableObjectName={nextBooking.bookableObject.name as string}
-                areaName={nextBooking.area.name as string}
-                locationName={nextBooking.location.name as string}
-                />;
+            return <div>
+                    <p>You have an upcoming booking:</p>
+                    <BookingCardStacked
+                    date={nextBooking.date}
+                    bookableObjectName={nextBooking.bookableObject.name}
+                    areaName={nextBooking.area.name}
+                    locationName={nextBooking.location.name}
+                    />
+                    <Link className='with-arrow' to="/locations">Manage this and other bookings</Link>
+                </div>;
         } else {
             // This should never happen
             return <p></p>;

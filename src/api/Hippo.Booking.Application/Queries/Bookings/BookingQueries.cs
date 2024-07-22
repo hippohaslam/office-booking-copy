@@ -14,6 +14,7 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
             .ThenInclude(i => i.Area)
             .ThenInclude(i => i.Location)
             .Where(x => x.Date >= dateTimeProvider.Today)
+            .OrderBy(x => x.Date)
             .Select(x => new UserBookingsResponse
             {
                 Date = x.Date,
