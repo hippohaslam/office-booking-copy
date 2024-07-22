@@ -2,13 +2,15 @@ import { fabric } from "fabric";
 import { ExtendedCanvas } from "./CustomObjects";
 import { isNullOrEmpty } from "../../helpers/StringHelpers";
 
-const loadCanvas = (canvasJson: string, canvasRef: React.RefObject<HTMLCanvasElement>, fabricCanvasRef: React.MutableRefObject<fabric.Canvas | null>) => {
+type CanvasOptions = {
+  backgroundColor: string;
+  width: number;
+  height: number;
+};
+
+const loadCanvas = (canvasJson: string, canvasRef: React.RefObject<HTMLCanvasElement>, fabricCanvasRef: React.MutableRefObject<fabric.Canvas | null>, options: CanvasOptions) => {
   if (isNullOrEmpty(canvasJson)) {
-    const canvas = new fabric.Canvas(canvasRef.current, {
-      backgroundColor: "#F0F8FF",
-      width: 800,
-      height: 600,
-    });
+    const canvas = new fabric.Canvas(canvasRef.current, options);
     fabricCanvasRef.current = canvas;
     return canvas;
   } else {

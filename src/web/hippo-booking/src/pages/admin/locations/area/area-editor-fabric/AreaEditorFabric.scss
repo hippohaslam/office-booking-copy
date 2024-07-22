@@ -5,6 +5,13 @@
   width: 100%;
 }
 
+// if media is less than 900px
+@media (max-width: 900px) {
+  .floorplan__container {
+    flex-direction: column;
+  }
+}
+
 .floorplan__desk-list {
     width: 100%;
     margin-left: 10px;

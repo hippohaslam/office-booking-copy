@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import { useWindowSize } from "../../../../../hooks/WindowSizeHook";
 import {
   CustomCircle,
   CustomFabricObject,
@@ -38,6 +39,7 @@ const FloorplanEditor = () => {
   const [textState, setTextState] = useState({hidden: true, text: ""});
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
+  const { windowWidth, windowHeight } = useWindowSize();
 
   const queryClient = useQueryClient();
   
@@ -67,8 +69,27 @@ const FloorplanEditor = () => {
   }, [locationData]);
 
   useEffect(() => {
+    if (fabricCanvasRef.current) {
+      // < 900 and your on mobile/tablet so adjust canvas size
+      if(windowWidth < 900){
+        fabricCanvasRef.current.setWidth(windowWidth - 100);
+        fabricCanvasRef.current.setHeight(600);
+      } else {
+        fabricCanvasRef.current.setWidth(800);
+        fabricCanvasRef.current.setHeight(600);
+      }
+      
+    }
+  }, [windowWidth, windowHeight]);
+
+  useEffect(() => {
     if (canvasElRef.current) {
-      const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef);
+      const canvasOptions = {
+        backgroundColor: "white",
+        width: 800,
+        height: 600
+      };
+      const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
 
       // Make canvas interactive
       fabricCanvas.selection = true;
@@ -327,9 +348,7 @@ const FloorplanEditor = () => {
   // RENDERS
   // Must always have a canvas element, adding conditional logic to hide the canvas if the location is not loaded will break the fabric.js canvas
   return (
-    <div className="page-container">
-      <section className="full-width-standard-grey">
-        <div className="content-container">
+    <div className="content-container">
           <h1>{!area && isLoading ? "Location loading..." : area?.name}</h1>
           {hasErrors && <ErrorBanner />}
           {hasSuccess && <SuccessBanner text="Saved successfully" />}
@@ -367,7 +386,7 @@ const FloorplanEditor = () => {
               </button>
 
               <div className="canvas__container">
-                <canvas width="800" height="600" ref={canvasElRef} />
+                <canvas ref={canvasElRef} />
               </div>
             </div>
             <div className="floorplan__desk-list">
@@ -415,8 +434,6 @@ const FloorplanEditor = () => {
             Save location
           </button>
         </div>
-      </section>
-    </div>
   );
 };
 
