@@ -13,10 +13,26 @@ import { useWindowSize } from "../../../hooks/WindowSizeHook";
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
 // Needs discussion with the team to see what's the best approach.
 
+interface CanvasPreferences {
+  showCanvas: boolean;
+}
+
+const saveCanvasPreferences = (options: CanvasPreferences) => {
+  localStorage.setItem("canvasPreferences", JSON.stringify(options));
+}
+
+const loadCanvasPreferences = () => {
+  const canvasPreferences = localStorage.getItem("canvasPreferences");
+  if(canvasPreferences){
+    const options: CanvasPreferences = JSON.parse(canvasPreferences);
+    return options;
+  }
+}
 
 
 const DeskBooking = () => {
   const { locationId, areaId } = useParams();
+  const [showCanvas, setShowCanvas] = useState<boolean>(false);
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -32,18 +48,32 @@ const DeskBooking = () => {
   });
 
   useEffect(() => {
+    const canvasPreferences = loadCanvasPreferences();
+    if(canvasPreferences){
+      setShowCanvas(canvasPreferences.showCanvas);
+    }
+  }, []);
+
+  useEffect(() => {
     if (fabricCanvasRef.current) {
       // < 900 and your on mobile/tablet so adjust canvas size
-      if(windowWidth < 900){
+      if(windowWidth < 900 && showCanvas){
         fabricCanvasRef.current.setWidth(windowWidth - 100);
         fabricCanvasRef.current.setHeight(600);
-      } else {
+      } else if(showCanvas) {
         fabricCanvasRef.current.setWidth(800);
         fabricCanvasRef.current.setHeight(600);
       }
       
+      
+      if(showCanvas === false){
+        fabricCanvasRef.current.setWidth(1);
+        fabricCanvasRef.current.setHeight(1);
+      }
+      saveCanvasPreferences({showCanvas});
+      fabricCanvasRef.current.renderAll();
     }
-  }, [windowWidth]);
+  }, [windowWidth, showCanvas]);
 
   // TODO: Get bookableobject data so we know if a desk is booked or not
 
@@ -81,8 +111,7 @@ const DeskBooking = () => {
         if (selectedFabricObject) {
             if(!isNullOrEmpty(selectedFabricObject.id)) {
               // TODO: Handle booking
-              setDialogMessage('Would you like to book this desk?'); // Customize this message as needed
-              setDialogOpen(true);
+              handleObjectSelected();
             }
         }
       });
@@ -99,7 +128,18 @@ const DeskBooking = () => {
     
   }, [locationData?.floorPlanJson]);
 
+  // TODO: Handle booking
+  function handleObjectSelected() {
+    setDialogMessage('Would you like to book this desk?'); // Customize this message as needed
+    setDialogOpen(true);
+  }
+  
 
+  const handleToggleCanvas = () => {
+    if(fabricCanvasRef.current){
+      setShowCanvas(!showCanvas);
+    }
+  }
 
   return (
     <div>
@@ -110,8 +150,17 @@ const DeskBooking = () => {
               onCancel={() => setDialogOpen(false)}
               message={dialogMessage}
           />
+          <button type="button" onClick={handleToggleCanvas}>{showCanvas ? "Hide floorplan" : "Show floorplan"}</button>
           <div className="canvas__container">
-            <canvas width="800" height="600" ref={canvasElRef}/>
+            <canvas height={1} width={1} ref={canvasElRef}/>
+          </div>
+          <br />
+          <div>
+            {locationData?.bookableObjects.map((bookableObject) => (
+              <div key={bookableObject.id} onClick={handleObjectSelected}>
+                {bookableObject.name}
+                </div>
+            ))}
           </div>
     </div>
   );
