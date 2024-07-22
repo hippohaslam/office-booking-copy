@@ -44,16 +44,6 @@ const router =  createBrowserRouter([
                             </Suspense>
                         ),
                     },
-                    {
-                        path: "/locations/:locationId/areas/:areaId",
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <ProtectedRoute>
-                                    <Booking/>
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
                 ],
             },
             {
@@ -72,6 +62,16 @@ const router =  createBrowserRouter([
                         loader: async ({ params }) => {
                             return bookingAreasLoader(queryClient)(params as BookingAreaParams);
                         }
+                    },
+                    {
+                        path: "/locations/:locationId/areas/:areaId",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProtectedRoute>
+                                    <Booking/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        ),
                     },
                     {
                         path: "/locations",
