@@ -316,6 +316,11 @@ section.full-width-navy{
   max-width: 1512px;
   padding: 0 25px;
 
+  // picked 'medium' but can change to anything
+  .hero-container__medium-height{
+    min-height: 280px;
+  }
+
   .hero-content {
     margin: 30px 0;
   }
