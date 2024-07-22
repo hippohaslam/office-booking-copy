@@ -8,12 +8,14 @@ using Hippo.Booking.Core;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.EF;
 using Hippo.Booking.Infrastructure.Scheduling;
+using Hippo.Booking.Infrastructure.Slack;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
+using SlackNet.AspNetCore;
 
 const string googleClientId = "287640824547-7jf3a50aklmis16bh1uptkius9nibkga.apps.googleusercontent.com";
 
@@ -85,6 +87,11 @@ builder.Services.AddDbContext<HippoBookingDbContext>(
         }
     });
 
+builder.Services.AddSlackNet(x =>
+{
+    x.UseApiToken(builder.Configuration["Slack:Token"]);
+});
+
 builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 builder.Services.AddScoped<IDataContext, HippoBookingDbContext>();
 
@@ -119,7 +126,10 @@ builder.Services.AddAuthorization(x => x.FallbackPolicy = new AuthorizationPolic
 
 builder.Services.AddScoped<IExclusiveLockProvider, NullExclusiveLockProvider>();
 
+builder.Services.AddSingleton<SlackClient>();
+
 builder.Services.AddScheduledTask<TestScheduledTask>();
+builder.Services.AddScheduledTask<SlackBookingTomorrowAlert>();
 
 builder.Services.AddHostedService<SchedulingWorkerService>();
 
@@ -147,5 +157,7 @@ app.UseSwaggerUI(options =>
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSlackNet();
 
 app.Run();
