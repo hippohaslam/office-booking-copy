@@ -39,7 +39,7 @@ const FloorplanEditor = () => {
   const [textState, setTextState] = useState({hidden: true, text: ""});
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
-  const { windowWidth, windowHeight } = useWindowSize();
+  const { windowWidth } = useWindowSize();
 
   const queryClient = useQueryClient();
   
@@ -80,7 +80,7 @@ const FloorplanEditor = () => {
       }
       
     }
-  }, [windowWidth, windowHeight]);
+  }, [windowWidth]);
 
   useEffect(() => {
     if (canvasElRef.current) {
@@ -318,6 +318,34 @@ const FloorplanEditor = () => {
     });
   };
 
+  const handleCopy = () => {
+    // This was a bit tricky to implement, but the idea is to clone the selected objects and add them to the canvas, then reselect because fabric...
+    // I had to discardActiveObject then setActiveObject to make the objects selectable again without losing left and top positions
+    if (fabricCanvasRef.current) {
+      const activeObjects = fabricCanvasRef.current.getActiveObjects();
+      fabricCanvasRef.current.discardActiveObject();
+      const forSelect: CustomFabricObject[] = [];
+      if(activeObjects && activeObjects.length > 0) {
+        activeObjects.forEach((activeObject: CustomFabricObject) => {
+          console.log('activeObject', activeObject)
+          activeObject.clone((cloned: CustomFabricObject) => {
+            const id = generateUniqueId();
+            cloned.set("id", id);  
+            cloned.set("left", activeObject?.left ? activeObject.left + 10 : 150);
+            cloned.set("top", activeObject?.top ? activeObject.top + 10 : 150);
+            forSelect.push(cloned);
+            fabricCanvasRef.current?.add(cloned);
+          });
+        });
+        fabricCanvasRef.current.setActiveObject(new fabric.ActiveSelection(forSelect, {
+          canvas: fabricCanvasRef.current,
+        }));
+      }
+      fabricCanvasRef.current.renderAll();
+      
+    }
+  }
+
   /**
    * Finds the object in the canvas and selects it or deselects it if the floorPlanObjectId is null or undefined
    * @param floorPlanObjectId The id of the object to select
@@ -384,6 +412,7 @@ const FloorplanEditor = () => {
               <button type="button" onClick={removeObject} disabled={!editMode}>
                 Remove object
               </button>
+              <button type="button" onClick={handleCopy}>Copy</button>
 
               <div className="canvas__container">
                 <canvas ref={canvasElRef} />

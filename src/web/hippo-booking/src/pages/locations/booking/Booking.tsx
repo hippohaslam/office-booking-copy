@@ -7,6 +7,7 @@ import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../.
 import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric/CustomObjects";
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
 import { CustomConfirmDialog } from "../../../components";
+import { useWindowSize } from "../../../hooks/WindowSizeHook";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
@@ -20,6 +21,7 @@ const DeskBooking = () => {
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState(''); 
+  const { windowWidth } = useWindowSize();
 
 
   const { data: locationData} = useQuery({
@@ -29,11 +31,30 @@ const DeskBooking = () => {
     //staleTime: 1000 * 60 * 60 * 12, // 12 hours.  TODO: Set for production use, extend time to a day? Makes sense to cache this data for a while.
   });
 
+  useEffect(() => {
+    if (fabricCanvasRef.current) {
+      // < 900 and your on mobile/tablet so adjust canvas size
+      if(windowWidth < 900){
+        fabricCanvasRef.current.setWidth(windowWidth - 100);
+        fabricCanvasRef.current.setHeight(600);
+      } else {
+        fabricCanvasRef.current.setWidth(800);
+        fabricCanvasRef.current.setHeight(600);
+      }
+      
+    }
+  }, [windowWidth]);
+
   // TODO: Get bookableobject data so we know if a desk is booked or not
 
   useEffect(() => {
     if (canvasElRef.current) {
-      const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef);
+      const canvasOptions = {
+        backgroundColor: "white",
+        width: 800,
+        height: 600
+      };
+      const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
 
       // Make all objects non-selectable (but still emits events when clicked on)
       fabricCanvas.forEachObject((object) => {
