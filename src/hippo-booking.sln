@@ -39,8 +39,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{A7C5220D-837C-409A-9444-1CCB2DE323D9}"
 	ProjectSection(SolutionItems) = preProject
 		infrastructure\docker\README.MD = infrastructure\docker\README.MD
-		infrastructure\docker\docker-compose.yml = infrastructure\docker\docker-compose.yml
 		infrastructure\docker\docker-compose-services.yml = infrastructure\docker\docker-compose-services.yml
+		infrastructure\docker\docker-compose-ci.yml = infrastructure\docker\docker-compose-ci.yml
+		infrastructure\docker\docker-compose-local.yml = infrastructure\docker\docker-compose-local.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Infrastructure", "api\Hippo.Booking.Infrastructure\Hippo.Booking.Infrastructure.csproj", "{6F0C2DF4-A417-402A-B185-B3D2EEB4669D}"
