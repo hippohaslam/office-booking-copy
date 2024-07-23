@@ -26,6 +26,8 @@ public class SlackBookingTomorrowAlert(
             })
             .ToListAsync();
         
+        logger.LogDebug("Found {0} bookings for tomorrow", usersBookedTomorrow.Count);
+        
         foreach (var booking in usersBookedTomorrow)
         {
             var userId = await SlackClient.GetUserIdByEmail(booking.User.Email);

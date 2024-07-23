@@ -68,6 +68,8 @@ public class SchedulingWorkerService(
             throw new InvalidOperationException("Scheduled task not found");
         }
 
+        logger.LogInformation("Running scheduled task {0}", task);
+        
         await scheduledTask.RunTask();
 
         await exclusiveLockProvider.ReleaseExclusiveLock(task, cancellationToken);
