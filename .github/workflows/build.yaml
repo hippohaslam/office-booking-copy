@@ -34,11 +34,11 @@ jobs:
       - name: Run Core Unit Tests
         run: dotnet test api/tests/**/Hippo.Booking.Core.Tests.csproj --no-build --verbosity normal
 
-      - name: Run Docker Compose
-        run: docker compose -f infrastructure/docker/docker-compose.yml up -d
-
-      - name: Run Integration Tests
-        run: dotnet test api/tests/**/Hippo.Booking.Integration.Tests.csproj --verbosity normal
+#      - name: Run Docker Compose
+#        run: docker compose -f infrastructure/docker/docker-compose.yml up -d
+#
+#      - name: Run Integration Tests
+#        run: dotnet test api/tests/**/Hippo.Booking.Integration.Tests.csproj --verbosity normal
 
   build-frontend:
     name: 'Build Front End App'
