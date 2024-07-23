@@ -12,7 +12,8 @@ services:
       - "./sql/data:/var/opt/mssql/data"
       - "./sql/log:/var/opt/mssql/log"
       - "./sql/secrets:/var/opt/mssql/secrets"
-      
+
+
 #  postgres:
 #    image: postgres:latest
 #    restart: always

@@ -21,11 +21,18 @@ public class StartupTaskExecutor : IHostedService
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        using var scope = _serviceProvider.CreateScope();
-
-        foreach (var task in scope.ServiceProvider.GetServices<IShutdownTask>())
+        try
         {
-            await task.Execute();
+            using var scope = _serviceProvider.CreateScope();
+
+            foreach (var task in scope.ServiceProvider.GetServices<IShutdownTask>())
+            {
+                await task.Execute();
+            }
+        }
+        catch
+        {
+            // App is shutting down, ignore
         }
     }
 }

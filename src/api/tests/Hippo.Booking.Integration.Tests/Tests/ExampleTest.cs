@@ -3,12 +3,12 @@ using Hippo.Booking.Integration.Tests.Models;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
 
-public class ExampleTest
+public class ExampleTest : IntegrationTestBase
 {
     [SetUp]
     public void Setup()
     {
-        
+        GetClient();
     }
 
     [Test]
