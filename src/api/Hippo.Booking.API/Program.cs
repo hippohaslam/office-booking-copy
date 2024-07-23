@@ -161,3 +161,5 @@ app.UseAuthorization();
 app.UseSlackNet();
 
 app.Run();
+
+public partial class Program { }

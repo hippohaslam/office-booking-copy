@@ -63,3 +63,23 @@ We also use msw to mock API calls so for simpler and more robust testing.
 
 For Canvas we need to follow `https://www.npmjs.com/package/canvas` install instructions before doing a  `yarn install` otherwise the test runner cannot read the browser canvas.
 This would also be the case for CI/CD pipelines.
+
+## Cypress component tests
+
+These tests are similar to the vite-tests but test the behaviour of components with an actual browser. This allows the testing of
+browser events etc.
+
+### Adding tests
+
+Tests should be added as `[componentName].cy.tsx` in the `./Cypress/tests` directory to keep them separate from the vite ones.
+
+Cypress is heavily GUI based which is really helpful when writing/editing tests as it'll continuously run the spec that you're
+working on as you make changes. To launch the GUI you need to run `npx cypress open` and then click the 'component testing'
+option on the first page.
+
+### Running tests (headless)
+
+To run tests from terminal or in a pipeline, run the following command `npx cypress run --component`.
+This will run all of the component tests against a default browser (usually Electron).
+
+Other options and commands can be found [in the Cypress 'Command line' documentation](https://docs.cypress.io/guides/guides/command-line#Options).

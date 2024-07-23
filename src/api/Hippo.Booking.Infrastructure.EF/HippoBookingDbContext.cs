@@ -38,13 +38,13 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
         Set<TEntity>().Add(entity);
     }
 
-    public DbSet<User>? Users { get; set; }
-    
-    public DbSet<BookableObject>? BookableObjects { get; set; }
-    
-    public DbSet<Core.Entities.Booking>? Bookings { get; set; }
-    
-    public DbSet<Location>? Locations { get; set; }
+    public DbSet<User> Users { get; set; } = null!;
+
+    public DbSet<BookableObject> BookableObjects { get; set; } = null!;
+
+    public DbSet<Core.Entities.Booking> Bookings { get; set; } = null!;
+
+    public DbSet<Location> Locations { get; set; } = null!;
     
     public DbSet<ScheduledTask>? ScheduledTasks { get; set; }
     

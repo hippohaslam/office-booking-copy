@@ -10,25 +10,20 @@ public class SessionEndpoints() : EndpointBase("session", "Sessions")
 {
     public override void MapEndpoints(RouteGroupBuilder builder)
     {
-        builder.MapGet("", [AllowAnonymous] Results<Ok<RegisteredUserDto>, UnauthorizedHttpResult>
+        builder.MapGet("", Results<Ok<RegisteredUserDto>, UnauthorizedHttpResult>
             (HttpContext httpContext) =>
         {
             var user = httpContext.User;
-
-            if (user.Identity is { AuthenticationType: "Cookie", IsAuthenticated: true })
+            
+            var registeredUserDto = new RegisteredUserDto
             {
-                var registeredUserDto = new RegisteredUserDto
-                {
-                    UserId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
-                    FirstName = user.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
-                    LastName = user.FindFirstValue(ClaimTypes.Surname) ?? string.Empty,
-                    Email = user.FindFirstValue(ClaimTypes.Email) ?? string.Empty
-                };
+                UserId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
+                FirstName = user.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
+                LastName = user.FindFirstValue(ClaimTypes.Surname) ?? string.Empty,
+                Email = user.FindFirstValue(ClaimTypes.Email) ?? string.Empty
+            };
 
-                return TypedResults.Ok(registeredUserDto);
-            }
-
-            return TypedResults.Unauthorized();
+            return TypedResults.Ok(registeredUserDto);
         });
 
         builder.MapPost("google", 
