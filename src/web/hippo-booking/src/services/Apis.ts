@@ -57,6 +57,12 @@ const getUpcomingBookingsAsync = async(): Promise<Booking[]> => {
   return response.data
 }
 
+const getBookingsForDateAsync = async(locationId: number, areaId: number, date: Date): Promise<BookedObjects> => {
+  const dateString = date.toISOString().split('T')[0];
+  const response = await axiosInstance.get(`/booking/location/${locationId}/area/${areaId}/${dateString}`);
+  return response.data
+}
+
 // AUTH
 const getSession = async () => {
   return await axiosInstance.get(`/session`)
@@ -87,6 +93,7 @@ export {
   postLocationAreaAsync,
   // BOOKINGS
   getUpcomingBookingsAsync,
+  getBookingsForDateAsync,
   // AUTH
   getSession,
   postSessionGoogle,

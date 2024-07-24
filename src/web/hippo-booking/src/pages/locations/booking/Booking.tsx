@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { getLocationAreaAsync } from "../../../services/Apis";
-import { useEffect, useRef, useState } from "react";
+import { getBookingsForDateAsync, getLocationAreaAsync } from "../../../services/Apis";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas";
 import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric/CustomObjects";
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
-import { CustomConfirmDialog } from "../../../components";
 import { useWindowSize } from "../../../hooks/WindowSizeHook";
+import { CtaButton } from "../../../components/buttons/Buttons";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
@@ -32,11 +32,11 @@ const loadCanvasPreferences = () => {
 
 const DeskBooking = () => {
   const { locationId, areaId } = useParams();
+  const [selectedObject, setSelectedObject] = useState<BookableObject | null>(null);
+  const selectedObjectRef = useRef<HTMLDivElement>(null);
   const [showCanvas, setShowCanvas] = useState<boolean>(false);
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState(''); 
   const { windowWidth } = useWindowSize();
 
 
@@ -47,12 +47,61 @@ const DeskBooking = () => {
     //staleTime: 1000 * 60 * 60 * 12, // 12 hours.  TODO: Set for production use, extend time to a day? Makes sense to cache this data for a while.
   });
 
+  const {data: bookingsData} = useQuery({
+    queryKey: ['bookings', locationId, areaId],
+    queryFn: () => getBookingsForDateAsync(Number.parseInt(locationId!), Number.parseInt(areaId!), new Date()),
+    enabled: !!locationId && !!areaId,
+  })
+
+  const handleAllObjectColourReset = useCallback((objectId: string | null) => {
+    const setColours = (object: CustomFabricObject) => {
+      let foundLocationObjectFloorplanId: string = '';
+            const findBookableObject = (id: number) => {
+              const found = locationData?.bookableObjects.find(obj => obj.id === id);
+              if(found){
+                foundLocationObjectFloorplanId = found.floorPlanObjectId as string;
+              }
+              return found !== undefined;
+            };
+            const isBooked = bookingsData?.bookableObjects.find(obj => findBookableObject(obj.id));
+            if(isBooked !== undefined && foundLocationObjectFloorplanId !== '' && foundLocationObjectFloorplanId === object.id){
+              object.set("fill", "grey");
+            } else {
+              object.set("fill", "white");
+            }
+    }
+
+    if(objectId !== null){
+      fabricCanvasRef.current?.forEachObject((object: CustomFabricObject) => {
+        if(isCustomFabricObject(object) && object.id !== objectId){
+          setColours(object)
+        }
+      });
+      fabricCanvasRef.current?.renderAll();
+    } else {
+      fabricCanvasRef.current?.forEachObject((object: CustomFabricObject) => {
+        if(isCustomFabricObject(object)){
+          setColours(object)
+        }
+      });
+      fabricCanvasRef.current?.renderAll();
+    }
+    // TODO: Reset colour depending on whether it's booked or not
+  }, [bookingsData?.bookableObjects, locationData?.bookableObjects]);
+
   useEffect(() => {
     const canvasPreferences = loadCanvasPreferences();
     if(canvasPreferences){
       setShowCanvas(canvasPreferences.showCanvas);
+      // focus on the selected object ref
     }
   }, []);
+
+  useEffect(() => {
+    if(selectedObject !== null && selectedObjectRef.current !== null){
+      selectedObjectRef.current.scrollIntoView({behavior: "smooth"});
+    }
+  }, [selectedObject]);
 
   useEffect(() => {
     if (fabricCanvasRef.current) {
@@ -77,6 +126,19 @@ const DeskBooking = () => {
 
   // TODO: Get bookableobject data so we know if a desk is booked or not
 
+  const handleObjectSelected = useCallback((id: string | null) => {
+    if(id === null){
+      setSelectedObject(null);
+      handleAllObjectColourReset(null);
+      return;
+    }
+    const bookableObject = locationData?.bookableObjects.find(obj => obj.floorPlanObjectId === id);
+    if(bookableObject){
+      setSelectedObject(bookableObject);
+    }
+  }, [handleAllObjectColourReset, locationData?.bookableObjects]);
+  
+
   useEffect(() => {
     if (canvasElRef.current) {
       const canvasOptions = {
@@ -87,18 +149,23 @@ const DeskBooking = () => {
       const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
 
       // Make all objects non-selectable (but still emits events when clicked on)
-      fabricCanvas.forEachObject((object) => {
+      fabricCanvas.forEachObject((object: CustomFabricObject) => {
         if (object) {
           object.selectable = false; 
           object.lockMovementX = true; 
           object.lockMovementY = true; 
           object.hasControls = false;
           object.hasBorders = false; 
-          object.hoverCursor = "pointer";
+          if(locationData?.bookableObjects.find(obj => obj.floorPlanObjectId === object.id)){
+            object.hoverCursor = "pointer";
+          } else {
+            object.hoverCursor = "default";
+          }
 
           // Once we have knowledge of whether a desk is booked or not, we can change the color here (green/white for booked/unbooked desks)
           if(isCustomFabricObject(object)){
-            object.set("fill", "white");
+            // bookableObjectData, find the object in data and check if it's booked
+            handleAllObjectColourReset(null);
           }
           
         }
@@ -109,10 +176,24 @@ const DeskBooking = () => {
       fabricCanvas.on("mouse:down", (e) => {
         const selectedFabricObject = e.target as CustomFabricObject;
         if (selectedFabricObject) {
+            // check if data contains an id matching the selected object
+            
             if(!isNullOrEmpty(selectedFabricObject.id)) {
-              // TODO: Handle booking
-              handleObjectSelected();
+              const found = locationData?.bookableObjects.find(obj => obj.floorPlanObjectId === selectedFabricObject.id);
+              if(found !== undefined){
+                handleObjectSelected(selectedFabricObject.id as string);
+                if(isCustomFabricObject(selectedFabricObject)){
+                  selectedFabricObject.set("fill", "orange");
+                  handleAllObjectColourReset(selectedFabricObject.id as string);
+                }
+              } else {
+                setSelectedObject(null);
+                handleAllObjectColourReset(null);
+              }
             }
+        } else {
+          setSelectedObject(null);
+          handleAllObjectColourReset(null);
         }
       });
 
@@ -126,13 +207,7 @@ const DeskBooking = () => {
       fabricCanvasRef.current = null;
     }
     
-  }, [locationData?.floorPlanJson]);
-
-  // TODO: Handle booking
-  function handleObjectSelected() {
-    setDialogMessage('Would you like to book this desk?'); // Customize this message as needed
-    setDialogOpen(true);
-  }
+  }, [bookingsData, handleAllObjectColourReset, handleObjectSelected, locationData?.bookableObjects, locationData?.floorPlanJson]);
   
 
   const handleToggleCanvas = () => {
@@ -141,23 +216,33 @@ const DeskBooking = () => {
     }
   }
 
+  const handleConfirmBooking = () => {
+    const confirmBooking = window.confirm("Book desk?");
+    if(confirmBooking){
+      console.log("Desk booked");
+    }
+  }
+
   return (
     <div>
       <h1>Desk Booking</h1>
-          <CustomConfirmDialog
-              isOpen={isDialogOpen}
-              onConfirm={() => setDialogOpen(false)}
-              onCancel={() => setDialogOpen(false)}
-              message={dialogMessage}
-          />
           <button type="button" onClick={handleToggleCanvas}>{showCanvas ? "Hide floorplan" : "Show floorplan"}</button>
           <div className="canvas__container">
             <canvas height={1} width={1} ref={canvasElRef}/>
           </div>
           <br />
+          <div ref={selectedObjectRef}></div>
+          {selectedObject !== null ? 
+            <div style={{margin: '20px 0', padding: '5px 15px 20px 15px', backgroundColor: '#f9a502', borderRadius: '10px'}}>
+              <h3>{selectedObject.name}</h3>
+              <p>{selectedObject.description}</p>
+              <CtaButton text="Book this desk" onClick={handleConfirmBooking} color={"cta-green"} />
+                <button onClick={() => handleObjectSelected(null)}>Deselect</button>
+            </div> 
+            : null}
           <div>
-            {locationData?.bookableObjects.map((bookableObject) => (
-              <div key={bookableObject.id} onClick={handleObjectSelected}>
+            {locationData?.bookableObjects.filter(obj => !isNullOrEmpty(obj.floorPlanObjectId)).map((bookableObject) => (
+              <div key={bookableObject.id} onClick={() => handleObjectSelected(bookableObject.floorPlanObjectId as string)}>
                 {bookableObject.name}
                 </div>
             ))}
