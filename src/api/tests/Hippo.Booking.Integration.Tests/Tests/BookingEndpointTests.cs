@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Hippo.Booking.Application.Commands.Bookings;
@@ -7,7 +8,7 @@ namespace Hippo.Booking.Integration.Tests.Tests;
 
 public class BookingEndpointTests : IntegrationTestBase
 {
-    [SetUp]
+    [OneTimeSetUp]
     public async Task BookingEndpointTestsSetup()
     {
         GetClient();
@@ -71,7 +72,73 @@ public class BookingEndpointTests : IntegrationTestBase
             x.UserId == "testuser" 
             && x.Date == DateOnly.FromDateTime(DateTime.Now) 
             && x.BookableObjectId == bookableObject.Id);
+        
+        dbBookings.Should().HaveCount(1, "only 1 booking should exist that matches those details");
+    }
+    
+    [Test]
+    public async Task CreateNewBookingForABookedObjectOnTheSameDateReturns400()
+    {
+        var client = GetClient();
+        //Arrange
+        var location = new Location
+        {
+            Name = "Booking Test Location",
+            Description = "Test Location"
+        };
+        await AddEntity(location);
+        
+        var area = new Area
+        {
+            Name = "Test Area",
+            Description = "Test area",
+            FloorPlanJson = "[]",
+            LocationId = location.Id,
+            Location = location
+        };
+        await AddEntity(area);
 
+        var bookableObject = new BookableObject
+        {
+            Name = "Test Bookable Object",
+            Description = "Test Bookable Object",
+            AreaId = area.Id,
+            Area = area
+        };
+        await AddEntity(bookableObject);
+        
+        var booking = new Core.Entities.Booking
+        {
+            UserId = "testuser",
+            BookableObjectId = bookableObject.Id,
+            Date = DateOnly.FromDateTime(DateTime.Now)
+        };
+        await AddEntity(booking);
+
+        var createBookingRequest = new CreateBookingRequest
+        {
+            BookableObjectId = bookableObject.Id,
+            AreaId = area.Id,
+            Date = DateOnly.FromDateTime(DateTime.Now),
+            UserId = "testuser"
+        };
+
+        //Act
+        var response = await client.PostAsJsonAsync(
+            $"booking/location/{location.Id}/area/{area.Id}/{createBookingRequest.Date.ToString("yyyy-MM-dd")}/bookable-object/{bookableObject.Id}",
+            createBookingRequest);
+
+        //Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest,
+            "a bookable object cannot be booked more than once on the same date");
+        var responseContent = await response.Content.ReadAsStringAsync();
+        responseContent.Should().Be("\"Booking already exists\"",
+            "a bookable object cannot be booked more than once on the same date");
+
+        var dbBookings = DbContext.Bookings.Where(x =>
+            x.UserId == "testuser" 
+            && x.Date == DateOnly.FromDateTime(DateTime.Now) 
+            && x.BookableObjectId == bookableObject.Id);
         dbBookings.Should().HaveCount(1, "only 1 booking should exist that matches those details");
     }
 }
