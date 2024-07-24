@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Hippo.Booking.Application.Commands.Location;
@@ -8,7 +9,7 @@ namespace Hippo.Booking.Integration.Tests.Tests;
 public class LocationEndpointTests : IntegrationTestBase
 {
     [Test]
-    public async Task AddingLocationIsSuccessful()
+    public async Task AddingANewUniqueLocationIsSuccessful()
     {
         // Arrange
         var client = GetClient();
@@ -35,6 +36,34 @@ public class LocationEndpointTests : IntegrationTestBase
             Id = int.Parse(value),
             Name = "Create Test Location",
             Description = "Test Location"
+        }, "the content from the request should be added to the database");
+    }
+    
+    [Test]
+    public async Task AddingALocationWithTheSameNameReturns400()
+    {
+        // Arrange
+        var client = GetClient();
+        await AddEntity(new Location
+        {
+            Name = "Test Location",
+            Description = "Test Location"
         });
+        var createLocation = new CreateLocationRequest
+        {
+            Name = "Test Location",
+            Description = "Test Location"
+        };
+        
+        //Act
+        var response = await client.PostAsJsonAsync("location", createLocation);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest, "locations cannot share the same name");
+        var responseContent = await response.Content.ReadAsStringAsync();
+        responseContent.Should().Be("\"Location already exists\"", "locations cannot share the same name");
+        
+        var location = DbContext.Locations.Where(x => x.Name == "Test Location");
+        location.Count().Should().Be(1, "the duplicate location should not have been added");
     }
 }
