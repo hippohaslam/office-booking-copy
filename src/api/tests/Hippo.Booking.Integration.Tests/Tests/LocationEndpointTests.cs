@@ -64,6 +64,6 @@ public class LocationEndpointTests : IntegrationTestBase
         responseContent.Should().Be("\"Location already exists\"", "locations cannot share the same name");
         
         var location = DbContext.Locations.Where(x => x.Name == "Test Location");
-        location.Count().Should().Be(1, "the duplicate location should not have been added");
+        location.Should().HaveCount(1, "the duplicate location should not have been added");
     }
 }
