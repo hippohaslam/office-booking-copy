@@ -41,7 +41,7 @@ public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableO
     {
         var area = await dataContext.Query<Area>()
             .Include(i => i.BookableObjects)
-            .SingleOrDefaultAsync(x => x.Id == areaId && x.Id == locationId);
+            .SingleOrDefaultAsync(x => x.Id == areaId && x.LocationId == locationId);
 
         if (area == null)
         {
