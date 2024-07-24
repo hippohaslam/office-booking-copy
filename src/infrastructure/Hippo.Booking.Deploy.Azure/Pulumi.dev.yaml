@@ -1,5 +1,0 @@
-encryptionsalt: v1:v3avBF5BTiQ=:v1:ptSQ7ZQ7PYmaLOPc:rXU/vefdCPm8FYdFPsEV8bdT41TGZA==
-config:
-  Hippo.Booking.Deploy.Azure:DockerPassword:
-    secure: v1:/tLcupHTk4TM/Kl2:BWvgMxnH/D2fShFGpu7UrjpQEKDLxPv1UiAWgMQ4Brs3xUhEgc6bwr3Cdg+CTr8/bKfXatJNruY=
-  Hippo.Booking.Deploy.Azure:DockerUsername: harryy94
