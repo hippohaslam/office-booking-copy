@@ -24,6 +24,7 @@ public class SchedulingWorkerService(
             {
                 logger.LogInformation("No schedules found, will check in 1 hour");
                 await Task.Delay(TimeSpan.FromHours(1), cancellationToken);
+                continue;
             }
             
             var nowUtc = DateTime.UtcNow;
