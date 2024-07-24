@@ -24,8 +24,8 @@ resource "aws_db_subnet_group" "db-subnet" {
 }
 
 resource "aws_subnet" "hippo-booking-subnet-a" {
-  vpc_id     = aws_vpc.hippo-booking-vpc.id
-  cidr_block = "10.0.1.0/24"
+  vpc_id            = aws_vpc.hippo-booking-vpc.id
+  cidr_block        = "10.0.1.0/24"
   availability_zone = "eu-west-1a"
 }
 resource "aws_route_table_association" "hippo-booking-subnet-a-routing" {
@@ -34,8 +34,8 @@ resource "aws_route_table_association" "hippo-booking-subnet-a-routing" {
 }
 
 resource "aws_subnet" "hippo-booking-subnet-b" {
-  vpc_id     = aws_vpc.hippo-booking-vpc.id
-  cidr_block = "10.0.2.0/24"
+  vpc_id            = aws_vpc.hippo-booking-vpc.id
+  cidr_block        = "10.0.2.0/24"
   availability_zone = "eu-west-1b"
 }
 resource "aws_route_table_association" "hippo-booking-subnet-b-routing" {
@@ -44,8 +44,8 @@ resource "aws_route_table_association" "hippo-booking-subnet-b-routing" {
 }
 
 resource "aws_subnet" "hippo-booking-subnet-c" {
-  vpc_id     = aws_vpc.hippo-booking-vpc.id
-  cidr_block = "10.0.3.0/24"
+  vpc_id            = aws_vpc.hippo-booking-vpc.id
+  cidr_block        = "10.0.3.0/24"
   availability_zone = "eu-west-1c"
 }
 resource "aws_route_table_association" "hippo-booking-subnet-c-routing" {
