@@ -8,6 +8,7 @@ import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
 import { useWindowSize } from "../../../hooks/WindowSizeHook";
 import { CtaButton } from "../../../components/buttons/Buttons";
+import './Booking.scss';
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
@@ -17,12 +18,14 @@ interface CanvasPreferences {
   showCanvas: boolean;
 }
 
+const canvasPreferenceKey = "canvasPreferences";
+
 const saveCanvasPreferences = (options: CanvasPreferences) => {
-  localStorage.setItem("canvasPreferences", JSON.stringify(options));
+  localStorage.setItem(canvasPreferenceKey, JSON.stringify(options));
 };
 
 const loadCanvasPreferences = () => {
-  const canvasPreferences = localStorage.getItem("canvasPreferences");
+  const canvasPreferences = localStorage.getItem(canvasPreferenceKey);
   if (canvasPreferences) {
     const options: CanvasPreferences = JSON.parse(canvasPreferences);
     return options;
@@ -33,7 +36,7 @@ const DeskBooking = () => {
   const { locationId, areaId } = useParams();
   const [selectedObject, setSelectedObject] = useState<BookableObject | null>(null);
   const selectedObjectRef = useRef<HTMLDivElement>(null);
-  const [showCanvas, setShowCanvas] = useState<boolean>(false);
+  const [showCanvas, setShowCanvas] = useState<boolean>(loadCanvasPreferences()?.showCanvas ?? true);
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const { windowWidth } = useWindowSize();
@@ -54,24 +57,27 @@ const DeskBooking = () => {
   const handleObjectColours = useCallback(
     (objectId: string | null) => {
       const setColours = (object: CustomFabricObject) => {
-        let foundLocationObjectFloorplanId: string = "";
-        const findBookableObject = (id: number) => {
-          const found = locationData?.bookableObjects.find((obj) => obj.id === id);
-          if (found) {
-            foundLocationObjectFloorplanId = found.floorPlanObjectId as string;
+
+        const getColorBasedOnBookingStatus = () => {
+          // Find if the object is bookable
+          const bookableObject = locationData?.bookableObjects.find(
+            (obj) => obj.floorPlanObjectId === object.id
+          );
+          const isBookable = bookingsData?.bookableObjects.find(
+            (obj) => obj.id === bookableObject?.id
+          );
+        
+          // Determine the color based on booking status
+          if (!isBookable) {
+            return 'white'; // Not a bookable object
+          } else if (isBookable.existingBooking) {
+            return 'grey'; // Booked
+          } else {
+            return 'green'; // Not booked
           }
-          return found !== undefined;
         };
-        const isBooked = bookingsData?.bookableObjects.find((obj) => findBookableObject(obj.id));
-        if (
-          isBooked !== undefined &&
-          foundLocationObjectFloorplanId !== "" &&
-          foundLocationObjectFloorplanId === object.id
-        ) {
-          object.set("fill", "grey");
-        } else {
-          object.set("fill", "white");
-        }
+
+        object.set("fill", getColorBasedOnBookingStatus());
       };
 
       if (objectId !== null) {
@@ -93,17 +99,8 @@ const DeskBooking = () => {
     [bookingsData?.bookableObjects, locationData?.bookableObjects]
   );
 
-  useEffect(() => {
-    const canvasPreferences = loadCanvasPreferences();
-    if (canvasPreferences) {
-      setShowCanvas(canvasPreferences.showCanvas);
-      // focus on the selected object ref
-    }
-  }, []);
-
-  useEffect(() => {
+  const adjustCanvasSize = useCallback(() => {
     if (fabricCanvasRef.current) {
-      // < 900 and your on mobile/tablet so adjust canvas size
       if (windowWidth < 900 && showCanvas) {
         fabricCanvasRef.current.setWidth(windowWidth - 70);
         fabricCanvasRef.current.setHeight(600);
@@ -119,7 +116,8 @@ const DeskBooking = () => {
       saveCanvasPreferences({ showCanvas });
       fabricCanvasRef.current.renderAll();
     }
-  }, [windowWidth, showCanvas]);
+  }
+  , [windowWidth, showCanvas]);
 
   // TODO: Get bookableobject data so we know if a desk is booked or not
 
@@ -154,6 +152,7 @@ const DeskBooking = () => {
         height: 600,
       };
       const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
+      adjustCanvasSize();
 
       // Make all objects non-selectable (but still emits events when clicked on)
       fabricCanvas.forEachObject((object: CustomFabricObject) => {
@@ -210,13 +209,7 @@ const DeskBooking = () => {
       fabricCanvasRef.current?.dispose();
       fabricCanvasRef.current = null;
     };
-  }, [
-    bookingsData,
-    handleObjectColours,
-    handleObjectSelected,
-    locationData?.bookableObjects,
-    locationData?.floorPlanJson,
-  ]);
+  }, [adjustCanvasSize, bookingsData, handleObjectColours, handleObjectSelected, locationData?.bookableObjects, locationData?.floorPlanJson]);
 
   const handleToggleCanvas = () => {
     if (fabricCanvasRef.current) {
@@ -229,7 +222,6 @@ const DeskBooking = () => {
     if (confirmBooking) {
       // TODO: Book desk, if successful go to the next page (still need to implement this)
       // If it fails show an error message
-      console.log("Desk booked");
     }
   };
 
@@ -239,9 +231,10 @@ const DeskBooking = () => {
     return isBooked !== undefined && isBooked !== null;
   };
 
+  // Returns the name of the person who booked the desk or null if it's available
   const getBookedBy = (selectedObject: BookableObject): string | null => {
     const bookedBy = bookingsData?.bookableObjects.find((obj) => obj.id === selectedObject.id)?.existingBooking?.name;
-    return bookedBy ?? null;
+    return bookedBy ? `Booked by: ${bookedBy}` : null;
   };
 
   return (
@@ -251,20 +244,12 @@ const DeskBooking = () => {
         {showCanvas ? "Hide floorplan" : "Show floorplan"}
       </button>
       <div className="canvas__container">
-        <canvas height={1} width={1} ref={canvasElRef} />
+        <canvas height={800} width={600} ref={canvasElRef} />
       </div>
       <br />
       <div ref={selectedObjectRef}></div>
       {selectedObject !== null ? (
-        <div
-          style={{
-            margin: "10px",
-            padding: "5px 15px 20px 15px",
-            maxWidth: "800px",
-            backgroundColor: "#f9a502",
-            borderRadius: "10px",
-          }}
-        >
+        <div className="selected-object-element">
           <h3>{selectedObject.name}</h3>
           <p>{selectedObject.description}</p>
           <p>{getBookedBy(selectedObject) ?? "This is availabe for booking"}</p>
@@ -306,14 +291,7 @@ const BookableObjectDisplay = ({
 }) => {
   return (
     <div
-      style={{
-        padding: "10px",
-        margin: "10px",
-        maxWidth: "800px",
-        backgroundColor: isBooked ? "#9ba0a1" : "#a0dab3",
-        borderRadius: "10px",
-        cursor: "pointer",
-      }}
+      className={`booking-list-item ` + (isBooked ? "booking-list-item__booked" : "booking-list-item__available")}
       key={bookableObject.id}
       onClick={() => onObjectSelected(bookableObject.floorPlanObjectId!)}
     >

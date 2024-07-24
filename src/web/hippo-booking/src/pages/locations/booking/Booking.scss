@@ -1,0 +1,27 @@
+@import '../../../styles/variables.scss';
+
+
+.booking-list-item {
+    padding: 10px;
+    margin: 10px;
+    max-width: 800px;
+    border-radius: 10px;
+    cursor: pointer;
+
+    &.booking-list-item__booked {
+        background-color: $hippo-brand-dark-grey;
+    }
+
+    &.booking-list-item__available {
+        background-color: $hippo-brand-light-green;
+        color: $hippo-brand-navy;
+    }
+}
+
+.selected-object-element {
+    margin: 10px;
+    padding: 5px 15px 20px 15px;
+    max-width: 800px;
+    background-color: $hippo-brand-yellow;
+    border-radius: 10px;
+}
