@@ -1,7 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using FluentAssertions;
 using Hippo.Booking.Application.Commands.Bookings;
+using Hippo.Booking.Application.Models;
+using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Core.Entities;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
@@ -24,34 +27,12 @@ public class BookingEndpointTests : IntegrationTestBase
     [Test]
     public async Task CreateNewBookingIsSuccessful()
     {
-        var client = GetClient();
         //Arrange
-        var location = new Location
-        {
-            Name = "Booking Test Location",
-            Description = "Test Location"
-        };
-        await AddEntity(location);
+        var client = GetClient();
+        var location = await SetUpLocation();
+        var area = await SetUpArea(location);
+        var bookableObject = await SetUpBookableObject(area);
         
-        var area = new Area
-        {
-            Name = "Test Area",
-            Description = "Test area",
-            FloorPlanJson = "[]",
-            LocationId = location.Id,
-            Location = location
-        };
-        await AddEntity(area);
-
-        var bookableObject = new BookableObject
-        {
-            Name = "Test Bookable Object",
-            Description = "Test Bookable Object",
-            AreaId = area.Id,
-            Area = area
-        };
-        await AddEntity(bookableObject);
-
         var createBookingRequest = new CreateBookingRequest
         {
             BookableObjectId = bookableObject.Id,
@@ -79,45 +60,16 @@ public class BookingEndpointTests : IntegrationTestBase
     [Test]
     public async Task CreateNewBookingForABookedObjectOnTheSameDateReturns400()
     {
-        var client = GetClient();
         //Arrange
-        var location = new Location
-        {
-            Name = "Booking Test Location",
-            Description = "Test Location"
-        };
-        await AddEntity(location);
-        
-        var area = new Area
-        {
-            Name = "Test Area",
-            Description = "Test area",
-            FloorPlanJson = "[]",
-            LocationId = location.Id,
-            Location = location
-        };
-        await AddEntity(area);
-
-        var bookableObject = new BookableObject
-        {
-            Name = "Test Bookable Object",
-            Description = "Test Bookable Object",
-            AreaId = area.Id,
-            Area = area
-        };
-        await AddEntity(bookableObject);
-        
-        var booking = new Core.Entities.Booking
-        {
-            UserId = "testuser",
-            BookableObjectId = bookableObject.Id,
-            Date = DateOnly.FromDateTime(DateTime.Now)
-        };
-        await AddEntity(booking);
+        var client = GetClient();
+        var location = await SetUpLocation();
+        var area = await SetUpArea(location);
+        var bookableObject = await SetUpBookableObject(area);
+        var booking = await SetUpBooking(bookableObject, DateOnly.FromDateTime(DateTime.Now));
 
         var createBookingRequest = new CreateBookingRequest
         {
-            BookableObjectId = bookableObject.Id,
+            BookableObjectId = booking.Id,
             AreaId = area.Id,
             Date = DateOnly.FromDateTime(DateTime.Now),
             UserId = "testuser"
@@ -140,5 +92,80 @@ public class BookingEndpointTests : IntegrationTestBase
             && x.Date == DateOnly.FromDateTime(DateTime.Now) 
             && x.BookableObjectId == bookableObject.Id);
         dbBookings.Should().HaveCount(1, "only 1 booking should exist that matches those details");
+    }
+
+    [Test]
+    public async Task GetUpcomingBookingsShouldReturnExistingBookingsInOrder()
+    {
+        //Arrange
+        var client = GetClient();
+        var location = await SetUpLocation();
+        var area = await SetUpArea(location);
+        var bookableObjects = new List<BookableObject>
+        {
+            await SetUpBookableObject(area, "Test Desk 1"),
+            await SetUpBookableObject(area, "Test Desk 2")
+        };
+        await SetUpBooking(bookableObjects.First(), DateOnly.FromDateTime(DateTime.Now.AddDays(3)));
+        await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(DateTime.Now));
+        await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(DateTime.Now.AddDays(1)));
+        
+        //Act
+        var response = await client.GetAsync("booking/upcoming");
+        
+        //Assert
+        response.EnsureSuccessStatusCode();
+        
+        //TODO: Add in response assertion
+    }
+
+    private async Task<Location> SetUpLocation(string name = "Booking Test Location")
+    {
+        var location = new Location
+        {
+            Name = name,
+            Description = "Test Location"
+        };
+        await AddEntity(location);
+        return location;
+    }
+
+    private async Task<Area> SetUpArea(Location location, string name = "Test Area")
+    {
+        var area = new Area
+        {
+            Name = name,
+            Description = "Test area",
+            FloorPlanJson = "[]",
+            LocationId = location.Id,
+            Location = location
+        };
+        await AddEntity(area);
+        return area;
+    }
+
+    private async Task<BookableObject> SetUpBookableObject(Area area, string name = "Test Bookable Object")
+    {
+        var bookableObject = new BookableObject
+        {
+            Name = name,
+            Description = "Test Bookable Object",
+            AreaId = area.Id,
+            Area = area
+        };
+        await AddEntity(bookableObject);
+        return bookableObject;
+    }
+
+    private async Task<Core.Entities.Booking> SetUpBooking(BookableObject bookableObject, DateOnly date)
+    {
+        var booking = new Core.Entities.Booking
+        {
+            UserId = "testuser",
+            BookableObjectId = bookableObject.Id,
+            Date = date
+        };
+        await AddEntity(booking);
+        return booking;
     }
 }
