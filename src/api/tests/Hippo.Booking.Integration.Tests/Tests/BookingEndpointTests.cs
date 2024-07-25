@@ -6,6 +6,7 @@ using Hippo.Booking.Application.Commands.Bookings;
 using Hippo.Booking.Application.Models;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
 
@@ -115,8 +116,33 @@ public class BookingEndpointTests : IntegrationTestBase
         
         //Assert
         response.EnsureSuccessStatusCode();
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var responseBookings = JsonSerializer.Deserialize<List<UserBookingsResponse>>(responseContent, new JsonSerializerOptions 
+        {
+            PropertyNameCaseInsensitive = true
+        });
         
-        //TODO: Add in response assertion
+        var dbBookings = DbContext.Bookings
+            .OrderBy(x => x.Date)
+            .Include(booking => booking.BookableObject)
+            .ThenInclude(bookableObject => bookableObject.Area)
+            .ThenInclude(area1 => area1.Location).ToList();
+
+        var expectedBookings = new List<UserBookingsResponse>();
+        foreach (var booking in dbBookings)
+        {
+            expectedBookings.Add(new UserBookingsResponse
+            {
+                Date = booking.Date,
+                BookableObject = new IdName<int>(id: booking.BookableObjectId, name: booking.BookableObject.Name),
+                Location = new IdName<int>(id: booking.BookableObject.Area.LocationId,
+                    name: booking.BookableObject.Area.Location.Name),
+                Area = new IdName<int>(id: booking.BookableObject.AreaId, name: booking.BookableObject.Area.Name)
+            });
+        }
+
+        responseBookings.Should().BeEquivalentTo(expectedBookings, options => options.WithStrictOrdering(),
+            "the upcoming bookings should be as expected and in the correct order");
     }
 
     private async Task<Location> SetUpLocation(string name = "Booking Test Location")
