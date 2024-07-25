@@ -18,38 +18,38 @@ resource "aws_db_instance" "hippo-booking-db" {
 
 resource "aws_db_subnet_group" "db-subnet" {
   name       = "booking-db-subnet"
-  subnet_ids = [aws_subnet.hippo-booking-subnet-a.id, aws_subnet.hippo-booking-subnet-b.id, aws_subnet.hippo-booking-subnet-c.id]
+  subnet_ids = [aws_subnet.hippo-booking-subnet-db-a.id, aws_subnet.hippo-booking-subnet-db-b.id, aws_subnet.hippo-booking-subnet-db-c.id]
 
   tags = local.tags
 }
 
-resource "aws_subnet" "hippo-booking-subnet-a" {
+resource "aws_subnet" "hippo-booking-subnet-db-a" {
   vpc_id            = aws_vpc.hippo-booking-vpc.id
   cidr_block        = "10.0.1.0/24"
   availability_zone = "eu-west-1a"
 }
-resource "aws_route_table_association" "hippo-booking-subnet-a-routing" {
-  subnet_id      = aws_subnet.hippo-booking-subnet-a.id
+resource "aws_route_table_association" "hippo-booking-subnet-db-a-routing" {
+  subnet_id      = aws_subnet.hippo-booking-subnet-db-a.id
   route_table_id = aws_route_table.route_table.id
 }
 
-resource "aws_subnet" "hippo-booking-subnet-b" {
+resource "aws_subnet" "hippo-booking-subnet-db-b" {
   vpc_id            = aws_vpc.hippo-booking-vpc.id
   cidr_block        = "10.0.2.0/24"
   availability_zone = "eu-west-1b"
 }
-resource "aws_route_table_association" "hippo-booking-subnet-b-routing" {
-  subnet_id      = aws_subnet.hippo-booking-subnet-b.id
+resource "aws_route_table_association" "hippo-booking-subnet-db-b-routing" {
+  subnet_id      = aws_subnet.hippo-booking-subnet-db-b.id
   route_table_id = aws_route_table.route_table.id
 }
 
-resource "aws_subnet" "hippo-booking-subnet-c" {
+resource "aws_subnet" "hippo-booking-subnet-db-c" {
   vpc_id            = aws_vpc.hippo-booking-vpc.id
   cidr_block        = "10.0.3.0/24"
   availability_zone = "eu-west-1c"
 }
 resource "aws_route_table_association" "hippo-booking-subnet-c-routing" {
-  subnet_id      = aws_subnet.hippo-booking-subnet-c.id
+  subnet_id      = aws_subnet.hippo-booking-subnet-db-c.id
   route_table_id = aws_route_table.route_table.id
 }
 
