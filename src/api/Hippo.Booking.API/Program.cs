@@ -1,3 +1,5 @@
+using Amazon;
+using Amazon.CloudWatchLogs;
 using FluentValidation;
 using Hippo.Booking.API.Endpoints;
 using Hippo.Booking.API.Extensions;
@@ -17,26 +19,29 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Events;
 using SlackNet.AspNetCore;
 
 const string googleClientId = "287640824547-7jf3a50aklmis16bh1uptkius9nibkga.apps.googleusercontent.com";
 
+
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
+    .ConfigureLogging(Environment.GetEnvironmentVariable("Aws__AccessKey"),
+            Environment.GetEnvironmentVariable("Aws__SecretKey"))
+        .CreateBootstrapLogger();
 
 try
 {
     Log.Logger.Information("Starting application");
 
     var builder = WebApplication.CreateBuilder(args);
+    
+    Log.Logger.Information("Environment: {0}", builder.Environment.EnvironmentName);
+    Log.Logger.Information("Host: {0}", builder.Environment.ApplicationName);
 
     builder.Services.AddSerilog((services, lc) => lc
-        .ReadFrom.Configuration(builder.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext());
+        .ConfigureLogging(
+            builder.Configuration.GetValue<string>("Aws:AccessKeyId"),
+            builder.Configuration.GetValue<string>("Aws:AccessSecretKey")));
 
     builder.Services.AddCors(options =>
     {

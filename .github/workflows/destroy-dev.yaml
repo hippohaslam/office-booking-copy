@@ -1,0 +1,31 @@
+name: Destroy Dev Environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  deploy-infrastructure:
+    name: 'Destroy Dev Infrastructure'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src/infrastructure/terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init --backend-config="bucket=hippo-booking-terraform" --backend-config="key=terraform.Development.tfstate" --backend-config="region=eu-west-1"
+
+      - name: Terraform Destroy
+        id: destroy
+        run: terraform destroy -auto-approve

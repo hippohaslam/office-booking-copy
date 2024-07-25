@@ -93,6 +93,18 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
     value = "Server=hippo-booking-db.cjx1ea2stfxn.eu-west-1.rds.amazonaws.com;Database=HippoBooking_Test;User Id=admin;Password=password123;TrustServerCertificate=True"
   }
 
+  setting {
+    name      = "aws:elasticbeanstalk:application:environment"
+    namespace = "Aws__AccessKeyId"
+    value     = var.aws_access_key_id
+  }
+
+  setting {
+    name      = "aws:elasticbeanstalk:application:environment"
+    namespace = "Aws__AccessSecretKey"
+    value     = var.aws_secret_access_key
+  }
+
   tags = local.tags
 }
 
