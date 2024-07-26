@@ -88,8 +88,9 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "ConnectionStrings:HipposBookingDbContext"
-    value     = "Server=${aws_db_instance.hippo-booking-db.address}Database=HippoBooking_Test;User Id=${aws_db_instance.hippo-booking-db.username};Password=${aws_db_instance.hippo-booking-db.password};TrustServerCertificate=True"
+    name      = "ConnectionStrings__HippoBookingDbContext"
+    #value     = "Server=${aws_db_instance.hippo-booking-db.endpoint};Database=HippoBooking_Test;User Id=${aws_db_instance.hippo-booking-db.username};Password=${aws_db_instance.hippo-booking-db.password};TrustServerCertificate=True"
+    value     = "Server=hippo-booking-db.cjx1ea2stfxn.eu-west-1.rds.amazonaws.com;Database=HippoBooking_Test;User Id=admin;Password=password123;TrustServerCertificate=True"
   }
 
   tags = local.tags
