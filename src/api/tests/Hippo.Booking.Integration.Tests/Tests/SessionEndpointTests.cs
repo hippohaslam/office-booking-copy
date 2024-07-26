@@ -1,9 +1,6 @@
-using System.Net.Http.Json;
 using System.Text.Json;
 using FluentAssertions;
 using Hippo.Booking.Application.Commands.Users;
-using Hippo.Booking.Core.Entities;
-using Hippo.Booking.Integration.Tests.TestSupport;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
 

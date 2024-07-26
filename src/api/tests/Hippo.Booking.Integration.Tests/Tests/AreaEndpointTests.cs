@@ -58,20 +58,53 @@ public class AreaEndpointTests : IntegrationTestBase
             Name = "Test Area 2",
             Description = "Test Area 2"
         };
-        
+
         //Act
         var response = await client.PostAsJsonAsync($"location/{location.Id}/area", createAreaRequest);
-        
+
         //Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest, "areas cannot share the same name");
-        
+
         var responseContent = await response.Content.ReadAsStringAsync();
         responseContent.Should().Be("\"Area already exists\"", "areas cannot share the same name");
-        
+
         var dbArea = DbContext.Locations.Include(l => l.Areas)
             .SingleOrDefault(x => x.Name == location.Name)?.Areas
             .Where(x => x.Name == area.Name);
         dbArea.Should().HaveCount(1, "the duplicate area should not have been added to the database");
+    }
+    
+    [Test]
+    public async Task UpdatingExistingAreaIsSuccessful()
+    {
+        //Arrange
+        var client = GetClient();
+        var location = await SetUpLocation("Area Test Location 3");
+        var area = await SetUpArea(location, "Test Area 7");
+
+        var updateAreaRequest = new UpdateAreaRequest
+        {
+            Name = "Test Area 7 - updated",
+            Description = "Test Area 7 - updated",
+            FloorPlanJson = "[]"
+        };
+        
+        //Act
+        var response = await client.PutAsJsonAsync($"location/{location.Id}/area/{area.Id}", updateAreaRequest);
+
+        //Assert
+        response.EnsureSuccessStatusCode();
+
+        var dbArea = DbContext.Areas.SingleOrDefault(a => a.Id == area.Id);
+
+        dbArea.Should().BeEquivalentTo(new Area
+        {
+            Id = area.Id,
+            Name = "Test Area 7 - updated",
+            Description = "Test Area 7 - updated",
+            LocationId = location.Id,
+            Location = location
+        }, "updates sent in the request should be reflected in the database");
     }
 
     [OneTimeSetUp]
