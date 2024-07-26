@@ -63,6 +63,12 @@ const getBookingsForDateAsync = async(locationId: number, areaId: number, date: 
   return response.data
 }
 
+// BookableObjects
+/** Request to create a new bookable object  */
+const postBookableObjectAsync = async (locationId: number, areaId: number, bookableObject: BookableObject) => {
+  return await axiosInstance.post(`/location/${locationId}/area/${areaId}/bookable-object`, bookableObject);
+}
+
 // AUTH
 const getSession = async () => {
   return await axiosInstance.get(`/session`)
@@ -94,6 +100,8 @@ export {
   // BOOKINGS
   getUpcomingBookingsAsync,
   getBookingsForDateAsync,
+  // BookableObjects
+  postBookableObjectAsync,
   // AUTH
   getSession,
   postSessionGoogle,

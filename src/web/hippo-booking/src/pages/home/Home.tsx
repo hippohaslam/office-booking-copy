@@ -6,7 +6,7 @@ import ErrorGraphic from '../../assets/undraw_not_found_re_bh2e.svg'
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getUpcomingBookingsAsync } from "../../services/Apis.ts";
-import ErrorBanner from "../../components/banners/ErrorBanner.tsx";
+import {ErrorBanner} from "../../components/banners/ErrorBanner.tsx";
 import BookingCardStacked from "../../components/booking/BookingCardStacked.tsx";
 
 

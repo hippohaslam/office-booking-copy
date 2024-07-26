@@ -1,25 +1,23 @@
 import { fabric } from "fabric";
-import { getLocationAreaAsync, putObjectsAsync, putLocationAsync } from "../../../../../services/Apis";
-import { useEffect, useRef, useState } from "react";
+import {
+  getLocationAreaAsync,
+  putObjectsAsync,
+  putLocationAsync,
+  postBookableObjectAsync,
+} from "../../../../../services/Apis";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useWindowSize } from "../../../../../hooks/WindowSizeHook";
-import {
-  CustomCircle,
-  CustomFabricObject,
-  CustomRect,
-} from "../../../../../shared/fabric/CustomObjects";
-import { ErrorBanner, SuccessBanner } from "../../../../../components";
-import {
-  initializeCanvasZoom,
-  initializeCanvasDragging,
-  loadCanvas,
-} from "../../../../../shared/fabric/Canvas";
+import { CustomCircle, CustomFabricObject, CustomRect } from "../../../../../shared/fabric/CustomObjects";
+import { ErrorBannerMultiple, SuccessBanner } from "../../../../../components";
+import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../../../shared/fabric/Canvas";
 
 import "./AreaEditorFabric.scss";
 import { AccordionItem } from "../../../../../components/accordion/Accordion";
 import { isNullOrEmpty } from "../../../../../helpers/StringHelpers";
+import { CtaButton } from "../../../../../components/buttons/Buttons";
 
 const generateUniqueId = () => {
   return uuidv4();
@@ -30,38 +28,94 @@ interface SelectedObject {
   hasAssignedDesk: boolean;
 }
 
+const errorKeys = {
+  areaFetch: "area-fetch",
+  areaSave: "area-save",
+  saveFabricObjects: "save-fabric-objects",
+  saveBookableObjects: "save-bookable-objects",
+};
+
 const FloorplanEditor = () => {
   const { locationId, areaId } = useParams();
+  const [errors, setErrors] = useState<ErrorObjects[]>([]);
   const [area, setArea] = useState<BookingLocation>();
   const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
   const [editMode, setEditMode] = useState<boolean>(true);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
-  const [textState, setTextState] = useState({hidden: true, text: ""});
+  const [textState, setTextState] = useState({ hidden: true, text: "" });
+  const [newBookableObject, setNewBookableObject] = useState<BookableObject>({name: '', description: '', id: 0});
+  const [showCreateNewBookableObject, setShowCreateNewBookableObject] = useState(false);
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const { windowWidth } = useWindowSize();
 
   const queryClient = useQueryClient();
-  
-  const {isPending, error: locationError, data: locationData} = useQuery({
-    queryKey: ['area-edit', locationId, areaId],
+
+  const handleAddError = (key: string, message: string) => {
+    setErrors([{ key, message }]);
+  }
+
+  const handleRemoveError = useCallback((key: string) => {
+    setErrors(errors.filter((error) => error.key !== key));
+  }, [errors]);
+
+  const {
+    isPending,
+    data: locationData,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["area-edit", locationId, areaId],
     queryFn: () => getLocationAreaAsync(locationId as string, areaId as string),
-    enabled: !!locationId
+    enabled: !!locationId,
   });
 
+  useEffect(() => {
+    if (isError && error) {
+      handleAddError(errorKeys.areaFetch, "Failed to fetch area");
+    } else {
+      if(errors.some((error) => error.key === errorKeys.areaFetch)){
+        handleRemoveError(errorKeys.areaFetch);
+      }
+    }
+  }, [error, errors, handleRemoveError, isError]);
+  
 
   const locationMutation = useMutation({
-    mutationFn: (nextAreaData: BookingLocation) => putLocationAsync(locationId as string, nextAreaData, areaId as string),
+    mutationFn: (nextAreaData: BookingLocation) =>
+      putLocationAsync(locationId as string, nextAreaData, areaId as string),
+      onSuccess: () => {
+        handleRemoveError(errorKeys.areaSave);
+      },
+      onError: () => handleAddError(errorKeys.areaSave, "Failed to save area"),
   });
 
   const locationObjectsMutation = useMutation({
-    mutationFn: (bookableObjects: BookableObject[]) => putObjectsAsync(locationId as string, areaId as string, bookableObjects),
+    mutationFn: (bookableObjects: BookableObject[]) =>
+      putObjectsAsync(locationId as string, areaId as string, bookableObjects),
+      onSuccess: () => {
+        handleRemoveError(errorKeys.saveBookableObjects);
+      },
+      onError: () => handleAddError(errorKeys.saveFabricObjects, "Error saving bookable objects"),
+  });
+
+  const createNewBookableOBjectMutation = useMutation({
+    mutationFn: (bookableObject: BookableObject) => postBookableObjectAsync(Number.parseInt(locationId!), Number.parseInt(areaId!), bookableObject),
+    onSuccess: () => {
+      setShowCreateNewBookableObject(false);
+      handleRemoveError(errorKeys.saveBookableObjects);
+      setNewBookableObject({name: '', description: '', id: 0});
+      queryClient.invalidateQueries({
+        queryKey: ["area-edit", locationId, areaId],
+      });
+    },
+    onError: () => handleAddError(errorKeys.saveBookableObjects, "Error saving bookable objects"),
   });
 
   useEffect(() => {
     if (locationData) {
       // Defensive in case API does not return empty array
-      if(!locationData.bookableObjects){
+      if (!locationData.bookableObjects) {
         locationData.bookableObjects = [];
       }
       setArea(locationData);
@@ -71,14 +125,13 @@ const FloorplanEditor = () => {
   useEffect(() => {
     if (fabricCanvasRef.current) {
       // < 900 and your on mobile/tablet so adjust canvas size
-      if(windowWidth < 900){
+      if (windowWidth < 900) {
         fabricCanvasRef.current.setWidth(windowWidth - 100);
         fabricCanvasRef.current.setHeight(600);
       } else {
         fabricCanvasRef.current.setWidth(800);
         fabricCanvasRef.current.setHeight(600);
       }
-      
     }
   }, [windowWidth]);
 
@@ -87,7 +140,7 @@ const FloorplanEditor = () => {
       const canvasOptions = {
         backgroundColor: "white",
         width: 800,
-        height: 600
+        height: 600,
       };
       const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
 
@@ -97,15 +150,19 @@ const FloorplanEditor = () => {
       fabricCanvas.on("mouse:down", (e) => {
         const selectedFabricObject = e.target as CustomFabricObject;
         if (selectedFabricObject) {
-          if(selectedFabricObject.type === 'text') {
-                    setTextState({hidden: false, text: (selectedFabricObject as fabric.Text).text ?? ""});
-          }else {
-            setTextState({hidden: true, text: ""});
-           }
+          if (selectedFabricObject.type === "text") {
+            setTextState({ hidden: false, text: (selectedFabricObject as fabric.Text).text ?? "" });
+          } else {
+            setTextState({ hidden: true, text: "" });
+          }
 
           // If there is no id, then it is not a bookable object
-          if(selectedFabricObject.id) {
-            setSelectedObject({id: selectedFabricObject.id, hasAssignedDesk: area?.bookableObjects.some(desk => desk.floorPlanObjectId === selectedFabricObject.id) ?? false});
+          if (selectedFabricObject.id) {
+            setSelectedObject({
+              id: selectedFabricObject.id,
+              hasAssignedDesk:
+                area?.bookableObjects.some((desk) => desk.floorPlanObjectId === selectedFabricObject.id) ?? false,
+            });
           }
           // Perform other operations as needed
         } else {
@@ -172,8 +229,7 @@ const FloorplanEditor = () => {
 
   const toggleFreeDraw = () => {
     if (fabricCanvasRef.current) {
-      fabricCanvasRef.current.isDrawingMode =
-        !fabricCanvasRef.current.isDrawingMode;
+      fabricCanvasRef.current.isDrawingMode = !fabricCanvasRef.current.isDrawingMode;
     }
     setFreeDrawMode(!freeDrawMode);
   };
@@ -189,12 +245,13 @@ const FloorplanEditor = () => {
       setArea({ ...area, bookableObjects: nextDesks });
 
       // change fill of object to green
-      const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject.id);
+      const object: CustomFabricObject | undefined = fabricCanvasRef.current
+        ?.getObjects()
+        .find((obj: CustomFabricObject) => obj.id === selectedObject.id);
       if (object) {
         object.set("fill", "green");
         fabricCanvasRef.current?.renderAll();
       }
-
     }
   };
 
@@ -208,7 +265,9 @@ const FloorplanEditor = () => {
       });
       setArea({ ...area, bookableObjects: nextDesks });
       // change fill of object to white
-      const object: CustomFabricObject | undefined = fabricCanvasRef.current?.getObjects().find((obj: CustomFabricObject) => obj.id === selectedObject.id);
+      const object: CustomFabricObject | undefined = fabricCanvasRef.current
+        ?.getObjects()
+        .find((obj: CustomFabricObject) => obj.id === selectedObject.id);
       if (object) {
         object.set("fill", "white");
         fabricCanvasRef.current?.renderAll();
@@ -228,10 +287,10 @@ const FloorplanEditor = () => {
       ]).finally(() => {
         if (locationId) {
           queryClient.invalidateQueries({
-            queryKey: ['location', locationId],
+            queryKey: ["area-edit", locationId, areaId],
           });
         }
-      })
+      });
       window.scrollTo(0, 0);
     }
   };
@@ -241,7 +300,7 @@ const FloorplanEditor = () => {
       const activeObject = fabricCanvasRef.current.getActiveObject();
       if (activeObject) {
         fabricCanvasRef.current.remove(activeObject);
-        setTextState({hidden: true, text: ""});
+        setTextState({ hidden: true, text: "" });
       }
     }
   };
@@ -269,47 +328,40 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current.add(text);
       fabricCanvasRef.current.renderAll();
     }
-  }
+  };
 
   const handleChangeText = (newText: string) => {
     if (fabricCanvasRef.current) {
       const activeObject = fabricCanvasRef.current.getActiveObject();
-  
-      if (activeObject && activeObject.type === 'text') {
+
+      if (activeObject && activeObject.type === "text") {
         const textObject = activeObject as fabric.Text;
         textObject.text = newText;
         fabricCanvasRef.current.renderAll();
-        setTextState({hidden: false, text: newText});
+        setTextState({ hidden: false, text: newText });
       }
     }
   };
-  
+
   const handleLocationUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
     setArea((prev) => {
-              if (prev) {
-                return {
-                  ...prev,
-                  name: e.target.value,
-                };
-              }
-            });
-  }
+      if (prev) {
+        return {
+          ...prev,
+          name: e.target.value,
+        };
+      }
+    });
+  };
 
-  const handleDeskUpdate = (
-    text: string,
-    deskId: number,
-    field: 'name' | 'description'
-  ) => {
+  const handleDeskUpdate = (text: string, deskId: number, field: "name" | "description") => {
     setArea((prev) => {
       if (prev) {
         return {
           ...prev,
           bookableObjects: prev.bookableObjects.map((d) => {
             if (d.id === deskId) {
-              return {
-                ...d,
-                [field]: text,
-              };
+              return {...d,[field]: text,};
             }
             return d;
           }),
@@ -325,26 +377,27 @@ const FloorplanEditor = () => {
       const activeObjects = fabricCanvasRef.current.getActiveObjects();
       fabricCanvasRef.current.discardActiveObject();
       const forSelect: CustomFabricObject[] = [];
-      if(activeObjects && activeObjects.length > 0) {
+      if (activeObjects && activeObjects.length > 0) {
         activeObjects.forEach((activeObject: CustomFabricObject) => {
-          console.log('activeObject', activeObject)
+          console.log("activeObject", activeObject);
           activeObject.clone((cloned: CustomFabricObject) => {
             const id = generateUniqueId();
-            cloned.set("id", id);  
+            cloned.set("id", id);
             cloned.set("left", activeObject?.left ? activeObject.left + 10 : 150);
             cloned.set("top", activeObject?.top ? activeObject.top + 10 : 150);
             forSelect.push(cloned);
             fabricCanvasRef.current?.add(cloned);
           });
         });
-        fabricCanvasRef.current.setActiveObject(new fabric.ActiveSelection(forSelect, {
-          canvas: fabricCanvasRef.current,
-        }));
+        fabricCanvasRef.current.setActiveObject(
+          new fabric.ActiveSelection(forSelect, {
+            canvas: fabricCanvasRef.current,
+          })
+        );
       }
       fabricCanvasRef.current.renderAll();
-      
     }
-  }
+  };
 
   /**
    * Finds the object in the canvas and selects it or deselects it if the floorPlanObjectId is null or undefined
@@ -352,13 +405,15 @@ const FloorplanEditor = () => {
    */
   const handleSelectCanvasObject = (floorPlanObjectId?: string): void => {
     if (fabricCanvasRef.current && !isNullOrEmpty(floorPlanObjectId)) {
-      const object: CustomFabricObject | undefined = fabricCanvasRef.current.getObjects().find((obj: CustomFabricObject) => obj.id === floorPlanObjectId);
+      const object: CustomFabricObject | undefined = fabricCanvasRef.current
+        .getObjects()
+        .find((obj: CustomFabricObject) => obj.id === floorPlanObjectId);
       if (object) {
         fabricCanvasRef.current.setActiveObject(object as fabric.Object);
         fabricCanvasRef.current.renderAll();
-        if(object.id) {
-          const hasAssignedDesk = area?.bookableObjects.some(desk => desk.floorPlanObjectId === object.id);
-          setSelectedObject({id: object.id, hasAssignedDesk: hasAssignedDesk ?? false});
+        if (object.id) {
+          const hasAssignedDesk = area?.bookableObjects.some((desk) => desk.floorPlanObjectId === object.id);
+          setSelectedObject({ id: object.id, hasAssignedDesk: hasAssignedDesk ?? false });
         }
       }
     } else if (fabricCanvasRef.current && isNullOrEmpty(floorPlanObjectId)) {
@@ -366,10 +421,11 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current.renderAll();
       setSelectedObject(null);
     }
-  }
+  };
 
+  const handleAddNewBookableObject = () => createNewBookableOBjectMutation.mutate(newBookableObject);
+  const handleAddNewBookableObjectDisplay = () => setShowCreateNewBookableObject(!showCreateNewBookableObject);
 
-  const hasErrors = locationError || locationMutation.isError || locationObjectsMutation.isError;
   const isLoading = isPending || locationMutation.isPending || locationObjectsMutation.isPending;
   const hasSuccess = locationMutation.isSuccess || locationObjectsMutation.isSuccess;
 
@@ -377,92 +433,128 @@ const FloorplanEditor = () => {
   // Must always have a canvas element, adding conditional logic to hide the canvas if the location is not loaded will break the fabric.js canvas
   return (
     <div className="content-container">
-          <h1>{!area && isLoading ? "Location loading..." : area?.name}</h1>
-          {hasErrors && <ErrorBanner />}
-          {hasSuccess && <SuccessBanner text="Saved successfully" />}
-          <div>
-            <label htmlFor="location-name">Location name: </label>
-            <input
-              id="location-name"
-              type="text"
-              value={area?.name || ""}
-              onChange={handleLocationUpdate}
-            />
-          </div>
-          <br />
-          <div className="floorplan__container">
-            <div className="floorplan__editor">
-              <button type="button" onClick={toggleEditMode}>
-                Edit mode: {editMode.toString()}
-              </button>
-              <button type="button" onClick={addCircle} disabled={!editMode}>
-                Add circle
-              </button>
-              <button type="button" onClick={addSquare} disabled={!editMode}>
-                Add square
-              </button>
-              <button type="button" onClick={handleLineDraw} disabled={!editMode}>
-                Add line
-              </button>
-              <button type="button" onClick={toggleFreeDraw} disabled={!editMode}>
-                Free draw mode: {freeDrawMode.toString()}
-              </button>
-              <button type="button" onClick={handleAddText}>Add text</button>
-
-              <button type="button" onClick={removeObject} disabled={!editMode}>
-                Remove object
-              </button>
-              <button type="button" onClick={handleCopy}>Copy</button>
-
-              <div className="canvas__container">
-                <canvas ref={canvasElRef} />
-              </div>
-            </div>
-            <div className="floorplan__desk-list">
-              <h2>Bookable objects list</h2>
-              <h3>Unassigned desks</h3>
-              <ul>
-              {area?.bookableObjects.filter(desk => isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
-                  <li key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
-                    <AccordionItem  name={desk.name}>
-                    <DeskListItem
-                      desk={desk}
-                      handleDeskUpdate={handleDeskUpdate}
-                      assignDesk={assignDesk}
-                      unassignDesk={unassignDesk}
-                      selectedObject={selectedObject}
-                    />
-                  </AccordionItem>
-                  </li>
-                ))}
-              </ul>
-              <h3>Assigned desks</h3>
-              <ul>
-                {area?.bookableObjects.filter(desk => !isNullOrEmpty(desk.floorPlanObjectId)).map((desk) => (
-                  <li  key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
-                    <AccordionItem name={desk.name}>
-                    <DeskListItem
-                      desk={desk}
-                      handleDeskUpdate={handleDeskUpdate}
-                      assignDesk={assignDesk}
-                      unassignDesk={unassignDesk}
-                      selectedObject={selectedObject}
-                    />
-                  </AccordionItem>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div className={textState.hidden ? "hide-node" : ""}>
-            <label>Text: </label>
-            <input type="text" value={textState.text} onChange={(e) => handleChangeText(e.target.value)} />
-          </div>
-          <br />
-          <button type="button" onClick={saveLocation}>
-            Save location
+      <h1>{!area && isLoading ? "Location loading..." : area?.name}</h1>
+      {errors.length > 0 && <ErrorBannerMultiple errors={errors} />}
+      {hasSuccess && errors.length < 1 && <SuccessBanner text="Saved successfully" />}
+      <div>
+        <label htmlFor="location-name">Location name: </label>
+        <input id="location-name" type="text" value={area?.name || ""} onChange={handleLocationUpdate} />
+      </div>
+      <br />
+      <div>
+      <CtaButton type="button" text="Save changes" color="cta-green" onClick={saveLocation} />
+      </div>
+      <br />
+      <div className="floorplan__container">
+        <div className="floorplan__editor">
+          <button type="button" onClick={toggleEditMode}>
+            Edit mode: {editMode.toString()}
           </button>
+          <button type="button" onClick={addCircle} disabled={!editMode}>
+            Add circle
+          </button>
+          <button type="button" onClick={addSquare} disabled={!editMode}>
+            Add square
+          </button>
+          <button type="button" onClick={handleLineDraw} disabled={!editMode}>
+            Add line
+          </button>
+          <button type="button" onClick={toggleFreeDraw} disabled={!editMode}>
+            Free draw mode: {freeDrawMode.toString()}
+          </button>
+          <button type="button" onClick={handleAddText}>
+            Add text
+          </button>
+
+          <button type="button" onClick={removeObject} disabled={!editMode}>
+            Remove object
+          </button>
+          <button type="button" onClick={handleCopy}>
+            Copy
+          </button>
+
+          <div className="canvas__container">
+            <canvas width={800} height={600} ref={canvasElRef} />
+          </div>
         </div>
+
+        <div className="floorplan__desk-list">
+          <h2>Bookable objects list</h2>
+          <button type="button" onClick={handleAddNewBookableObjectDisplay}>
+            Create a new bookable object
+          </button>
+          {showCreateNewBookableObject ? (
+            <div>
+              <div>
+                <label htmlFor="new-bookable-object-name">Name: </label>
+                <input 
+                  type="text" 
+                  name="new-bookable-object-name" 
+                  value={newBookableObject.name} 
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewBookableObject({...newBookableObject, name: e.target.value})} />
+              </div>
+              <div>
+                <label htmlFor="new-bookable-object-description">Description: </label>
+                <input 
+                  type="text" 
+                  name="new-bookable-object-description"
+                  value={newBookableObject.description} 
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewBookableObject({...newBookableObject, description: e.target.value})} />
+              </div>
+              <button type="button" onClick={handleAddNewBookableObject}>Create</button>
+            </div>
+          ) : null}
+          <h3>Unassigned places</h3>
+          {area && area.bookableObjects.filter((desk) => isNullOrEmpty(desk.floorPlanObjectId)).length < 1 && (
+            <p>No unassigned places</p>
+          )}
+          <ul>
+            {area?.bookableObjects
+              .filter((desk) => isNullOrEmpty(desk.floorPlanObjectId))
+              .map((desk) => (
+                <li key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
+                  <AccordionItem name={desk.name}>
+                    <DeskListItem
+                      desk={desk}
+                      handleDeskUpdate={handleDeskUpdate}
+                      assignDesk={assignDesk}
+                      unassignDesk={unassignDesk}
+                      selectedObject={selectedObject}
+                    />
+                  </AccordionItem>
+                </li>
+              ))}
+          </ul>
+          <h3>Assigned places</h3>
+          {area && area.bookableObjects.filter((desk) => !isNullOrEmpty(desk.floorPlanObjectId)).length < 1 && (
+            <p>No assigned places</p>
+          )}
+          <ul>
+            {area?.bookableObjects
+              .filter((desk) => !isNullOrEmpty(desk.floorPlanObjectId))
+              .map((desk) => (
+                <li key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
+                  <AccordionItem name={desk.name}>
+                    <DeskListItem
+                      desk={desk}
+                      handleDeskUpdate={handleDeskUpdate}
+                      assignDesk={assignDesk}
+                      unassignDesk={unassignDesk}
+                      selectedObject={selectedObject}
+                    />
+                  </AccordionItem>
+                </li>
+              ))}
+          </ul>
+        </div>
+      </div>
+      <div className={textState.hidden ? "hide-node" : ""}>
+        <label>Text: </label>
+        <input type="text" value={textState.text} onChange={(e) => handleChangeText(e.target.value)} />
+      </div>
+      <br />
+      
+    </div>
   );
 };
 
@@ -470,7 +562,7 @@ export default FloorplanEditor;
 
 interface DeskListItemProps {
   desk: BookableObject;
-  handleDeskUpdate: (value: string, id: number, field: 'name' | 'description') => void;
+  handleDeskUpdate: (value: string, id: number, field: "name" | "description") => void;
   assignDesk: (id: number) => void;
   unassignDesk: (id: number) => void;
   selectedObject: SelectedObject | null;
@@ -491,7 +583,7 @@ const DeskListItem: React.FC<DeskListItemProps> = ({
         data-testid={`object-name-${desk.id}`}
         type="text"
         value={desk.name}
-        onChange={(e) => handleDeskUpdate(e.target.value, desk.id, 'name')}
+        onChange={(e) => handleDeskUpdate(e.target.value, desk.id, "name")}
       />
 
       <label htmlFor={`object-description=${desk.id}`}>Description: </label>
@@ -499,7 +591,7 @@ const DeskListItem: React.FC<DeskListItemProps> = ({
         id={`desk-description=${desk.id}`}
         data-testid={`object-description-${desk.id}`}
         value={desk.description}
-        onChange={(e) => handleDeskUpdate(e.target.value, desk.id, 'description')}
+        onChange={(e) => handleDeskUpdate(e.target.value, desk.id, "description")}
       />
       <button
         type="button"
@@ -508,11 +600,7 @@ const DeskListItem: React.FC<DeskListItemProps> = ({
       >
         Assign desk
       </button>
-      <button
-        type="button"
-        onClick={() => unassignDesk(desk.id)}
-        disabled={isNullOrEmpty(desk.floorPlanObjectId)}
-      >
+      <button type="button" onClick={() => unassignDesk(desk.id)} disabled={isNullOrEmpty(desk.floorPlanObjectId)}>
         Unassign desk
       </button>
     </div>
