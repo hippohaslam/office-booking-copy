@@ -60,6 +60,7 @@ public class AreaCommands(
         }
 
         location.Name = request.Name;
+        location.Description = request.Description;
         location.FloorPlanJson = request.FloorPlanJson;
         
         await dataContext.Save();
