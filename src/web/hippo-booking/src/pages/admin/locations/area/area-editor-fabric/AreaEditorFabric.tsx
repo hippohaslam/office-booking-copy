@@ -112,6 +112,7 @@ const FloorplanEditor = () => {
     onError: () => handleAddError(errorKeys.saveBookableObjects, "Error saving bookable objects"),
   });
 
+  // Set the area data to the state
   useEffect(() => {
     if (locationData) {
       // Defensive in case API does not return empty array
@@ -122,6 +123,7 @@ const FloorplanEditor = () => {
     }
   }, [locationData]);
 
+  // Adjust canvas size based on window width
   useEffect(() => {
     if (fabricCanvasRef.current) {
       // < 900 and your on mobile/tablet so adjust canvas size
@@ -135,19 +137,10 @@ const FloorplanEditor = () => {
     }
   }, [windowWidth]);
 
+  // Add event listener to canvas to handle object selection
   useEffect(() => {
-    if (canvasElRef.current) {
-      const canvasOptions = {
-        backgroundColor: "white",
-        width: 800,
-        height: 600,
-      };
-      const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
-
-      // Make canvas interactive
-      fabricCanvas.selection = true;
-
-      fabricCanvas.on("mouse:down", (e) => {
+    if(fabricCanvasRef.current){
+      fabricCanvasRef.current.on("mouse:down", (e) => {
         const selectedFabricObject = e.target as CustomFabricObject;
         if (selectedFabricObject) {
           if (selectedFabricObject.type === "text") {
@@ -155,7 +148,7 @@ const FloorplanEditor = () => {
           } else {
             setTextState({ hidden: true, text: "" });
           }
-
+  
           // If there is no id, then it is not a bookable object
           if (selectedFabricObject.id) {
             setSelectedObject({
@@ -169,6 +162,22 @@ const FloorplanEditor = () => {
           setSelectedObject(null);
         }
       });
+    }
+  }, [area?.bookableObjects])
+
+  // Initialize the canvas
+  useEffect(() => {
+    
+    if (canvasElRef.current && locationData) {
+      const canvasOptions = {
+        backgroundColor: "white",
+        width: 800,
+        height: 600,
+      };
+      const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
+
+      // Make canvas interactive
+      fabricCanvas.selection = true;
 
       initializeCanvasZoom(fabricCanvas);
       initializeCanvasDragging(fabricCanvas);
@@ -179,9 +188,10 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current?.dispose();
       fabricCanvasRef.current = null;
     };
-  }, [locationData?.floorPlanJson, area?.bookableObjects]);
+  }, [locationData]);
 
   const addCircle = () => {
+    console.log('fabricCanvasRef.current', fabricCanvasRef.current)
     if (fabricCanvasRef.current) {
       const circle = new CustomCircle({
         radius: 50,
@@ -379,7 +389,6 @@ const FloorplanEditor = () => {
       const forSelect: CustomFabricObject[] = [];
       if (activeObjects && activeObjects.length > 0) {
         activeObjects.forEach((activeObject: CustomFabricObject) => {
-          console.log("activeObject", activeObject);
           activeObject.clone((cloned: CustomFabricObject) => {
             const id = generateUniqueId();
             cloned.set("id", id);
