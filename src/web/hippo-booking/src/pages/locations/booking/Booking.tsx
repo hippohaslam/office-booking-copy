@@ -185,10 +185,10 @@ const DeskBooking = () => {
               (obj) => obj.floorPlanObjectId === selectedFabricObject.id
             );
             if (found !== undefined) {
-              handleObjectSelected(selectedFabricObject.id as string);
+              handleObjectSelected(selectedFabricObject.id);
               if (isCustomFabricObject(selectedFabricObject)) {
                 selectedFabricObject.set("fill", "orange");
-                handleObjectColours(selectedFabricObject.id as string);
+                handleObjectColours(selectedFabricObject.id);
               }
             } else {
               setSelectedObject(null);
