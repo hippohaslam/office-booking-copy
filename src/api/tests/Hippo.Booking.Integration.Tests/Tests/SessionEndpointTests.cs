@@ -4,6 +4,7 @@ using Hippo.Booking.Application.Commands.Users;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
 
+[TestFixture]
 public class SessionEndpointTests : IntegrationTestBase
 {
     [Test]

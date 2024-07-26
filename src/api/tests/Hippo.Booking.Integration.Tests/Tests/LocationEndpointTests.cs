@@ -6,6 +6,7 @@ using Hippo.Booking.Core.Entities;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
 
+[TestFixture]
 public class LocationEndpointTests : IntegrationTestBase
 {
     [Test]

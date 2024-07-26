@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
 
+[TestFixture]
 public class BookingEndpointTests : IntegrationTestBase
 {
     [OneTimeSetUp]
