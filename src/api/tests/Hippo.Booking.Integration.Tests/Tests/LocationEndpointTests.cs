@@ -1,7 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using FluentAssertions;
 using Hippo.Booking.Application.Commands.Location;
+using Hippo.Booking.Application.Queries.Locations;
 using Hippo.Booking.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -97,5 +99,77 @@ public class LocationEndpointTests : IntegrationTestBase
             Name = "Location Test Location 1 - updated",
             Description = "Location Test Location 1 - updated"
         }, "the updates to the location should be reflected in the database");
+    }
+    
+    [OneTimeSetUp]
+    public async Task LocationEndpointTestsSetup()
+    {
+        GetClient();
+        await AddEntity(new User
+        {
+            Id = "locationtestuser",
+            FirstName = "Location",
+            LastName = "User",
+            Email = "locationtestuser@hippodigital.co.uk"
+        });
+    }
+
+    [Test]
+    public async Task GetLocationsShouldReturnAllExistingLocationsSuccessfully()
+    {
+        //Arrange
+        var client = GetClient();
+        await SetUpLocation("Location Test location 2");
+        await SetUpLocation("Location Test Location 3");
+        await SetUpLocation("Location Test Location 4");
+        
+        //Act
+        var response = await client.GetAsync("location");
+        
+        //Assert
+        response.EnsureSuccessStatusCode();
+        
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var responseLocations = JsonSerializer.Deserialize<List<LocationQueryResponse>>(responseContent, new JsonSerializerOptions 
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        var dbLocations = DbContext.Locations.ToList();
+        var expectedLocations = dbLocations.Select(l => new LocationQueryResponse {Id = l.Id, Name = l.Name}).ToList();
+
+        responseLocations.Should()
+            .BeEquivalentTo(expectedLocations, "the returned locations should match the existing locations");
+    }
+
+    [Test]
+    public async Task GetLocationShouldReturnLocationSuccessfully()
+    {
+        //Arrange
+        var client = GetClient();
+        var locations = new List<Location>
+        {
+            await SetUpLocation("Location Test location 5"),
+            await SetUpLocation("Location Test Location 6"),
+            await SetUpLocation("Location Test Location 7")
+        };
+        
+        //Act
+        var response = await client.GetAsync("location/" + locations.First().Id);
+        
+        //Assert
+        response.EnsureSuccessStatusCode();
+        
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var responseLocation = JsonSerializer.Deserialize<LocationQueryResponse>(responseContent, new JsonSerializerOptions 
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        
+        responseLocation.Should().BeEquivalentTo(new LocationQueryResponse
+            {
+                Id = locations.First().Id, 
+                Name = locations.First().Name
+            },
+            "the correct location should be returned");
     }
 }
