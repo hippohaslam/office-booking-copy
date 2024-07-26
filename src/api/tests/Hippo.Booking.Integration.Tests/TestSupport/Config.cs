@@ -8,16 +8,11 @@ public class Config
     private static IConfiguration? _configuration;
 
     private static IConfiguration Instance => _configuration ??= new ConfigurationBuilder()
-        
-#if !DEBUG
-                .AddJsonFile("appsettings.json", optional: false)
-#else
-        .AddJsonFile("appsettings.Development.json", optional: false)
+        .AddJsonFile("appsettings.json", optional: false)
         .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
-#endif
         .Build();
 
     public static string DatabaseConnectionString => Instance.GetConnectionString("HippoBookingDbContext") ??
-    throw new InvalidOperationException(
-        "Database connection string requires a value. Please check appsettings and/or secrets");
+                                                     throw new InvalidOperationException(
+                                                         "Database connection string requires a value. Please check appsettings and/or secrets");
 }

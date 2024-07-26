@@ -95,16 +95,18 @@ public class AreaEndpointTests : IntegrationTestBase
 
         //Assert
         response.EnsureSuccessStatusCode();
-
-        var dbArea = DbContext.Areas.SingleOrDefault(a => a.Id == area.Id);
+        
+        var dbArea = await DbContext.Areas
+            .AsNoTracking()
+            .SingleOrDefaultAsync(a => a.Id == area.Id);
 
         dbArea.Should().BeEquivalentTo(new Area
         {
             Id = area.Id,
             Name = "Test Area 7 - updated",
             Description = "Test Area 7 - updated",
-            LocationId = location.Id,
-            Location = location
+            FloorPlanJson = "[]",
+            LocationId = location.Id
         }, "updates sent in the request should be reflected in the database");
     }
 
