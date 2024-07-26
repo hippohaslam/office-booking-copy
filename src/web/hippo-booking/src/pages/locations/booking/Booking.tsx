@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { getBookingsForDateAsync, getLocationAreaAsync } from "../../../services/Apis";
+import { getBookingsForDateAsync, getLocationAreaAsync, postBookingForDateAsync } from "../../../services/Apis";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas";
@@ -48,11 +48,16 @@ const DeskBooking = () => {
     //staleTime: 1000 * 60 * 60 * 12, // 12 hours.  TODO: Set for production use, extend time to a day? Makes sense to cache this data for a while.
   });
 
-  const { data: bookingsData } = useQuery({
+  const { data: bookingsData, refetch } = useQuery({
     queryKey: ["bookings", locationId, areaId],
     queryFn: () => getBookingsForDateAsync(Number.parseInt(locationId!), Number.parseInt(areaId!), new Date()),
     enabled: !!locationId && !!areaId,
   });
+
+  const handleBooking = useMutation({
+    mutationFn: (objectId: number) => postBookingForDateAsync(Number.parseInt(locationId!), Number.parseInt(areaId!), new Date(), objectId),
+    onSuccess: () => refetch()
+  })
 
   const handleObjectColours = useCallback(
     (objectId: string | null) => {
@@ -122,13 +127,13 @@ const DeskBooking = () => {
   // TODO: Get bookableobject data so we know if a desk is booked or not
 
   const handleObjectSelected = useCallback(
-    (id: string | null) => {
-      if (id === null) {
+    (floorplanObjectId: string | null) => {
+      if (floorplanObjectId === null) {
         setSelectedObject(null);
         handleObjectColours(null);
         return;
       }
-      const bookableObject = locationData?.bookableObjects.find((obj) => obj.floorPlanObjectId === id);
+      const bookableObject = locationData?.bookableObjects.find((obj) => obj.floorPlanObjectId === floorplanObjectId);
       if (bookableObject) {
         setSelectedObject(bookableObject);
       }
@@ -217,9 +222,10 @@ const DeskBooking = () => {
     }
   };
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = (bookableObjectId: number) => {
     const confirmBooking = window.confirm("Book desk?");
     if (confirmBooking) {
+      handleBooking.mutate(bookableObjectId);
       // TODO: Book desk, if successful go to the next page (still need to implement this)
       // If it fails show an error message
     }
@@ -255,7 +261,7 @@ const DeskBooking = () => {
           <p>{getBookedBy(selectedObject) ?? "This is availabe for booking"}</p>
           {getBookedBy(selectedObject) ? null : (
             <div>
-              <CtaButton text="Book this desk" onClick={handleConfirmBooking} color={"cta-green"} />
+              <CtaButton text="Book this desk" onClick={() => handleConfirmBooking(selectedObject.id)} color={"cta-green"} />
               <button onClick={() => handleObjectSelected(null)}>Deselect</button>
             </div>
           )}
@@ -287,7 +293,7 @@ const BookableObjectDisplay = ({
 }: {
   bookableObject: BookableObject;
   isBooked: boolean;
-  onObjectSelected: (id: string) => void;
+  onObjectSelected: (floorPlanObjectId: string) => void;
 }) => {
   return (
     <div
