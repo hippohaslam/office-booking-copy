@@ -145,4 +145,65 @@ public class BookingEndpointTests : IntegrationTestBase
         responseBookings.Should().BeEquivalentTo(expectedBookings, options => options.WithStrictOrdering(),
             "the upcoming bookings should be as expected and in the correct order");
     }
+
+    [Test]
+    public async Task GetBookingShouldReturnBookingSuccessfully()
+    {
+        //Arrange
+        var client = GetClient();
+        var location = await SetUpLocation();
+        var area = await SetUpArea(location);
+        var bookableObjects = new List<BookableObject>
+        {
+            await SetUpBookableObject(area, "Booking Test Desk 1"),
+            await SetUpBookableObject(area, "Booking Test Desk 2")
+        };
+        var bookings = new List<Core.Entities.Booking>{
+            await SetUpBooking(bookableObjects.First(), DateOnly.FromDateTime(DateTime.Now)),
+            await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(DateTime.Now))
+        };
+        
+        //Act
+        var response =
+            await client.GetAsync(
+                $"/booking/location/{location.Id}/area/{area.Id}/{DateOnly.FromDateTime(DateTime.Now).ToString("yyyy-MM-dd")}");
+        
+        //Assert
+        response.EnsureSuccessStatusCode();
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var responseBooking = JsonSerializer.Deserialize<BookingDayResponse>(responseContent, new JsonSerializerOptions 
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        responseBooking.Should().BeEquivalentTo(new BookingDayResponse
+        {
+            Date = DateOnly.FromDateTime(DateTime.Now),
+            BookableObjects =
+            [
+                new()
+                {
+                    Id = bookableObjects.First().Id,
+                    Name = bookableObjects.First().Name,
+                    Description = bookableObjects.First().Description,
+                    ExistingBooking = new BookingDayResponse.BookableObjectResponse.Booking
+                    {
+                        Id = bookings.First().Id,
+                        Name = "Test User"
+                    }
+                },
+                new()
+                {
+                    Id = bookableObjects.Last().Id,
+                    Name = bookableObjects.Last().Name,
+                    Description = bookableObjects.Last().Description,
+                    ExistingBooking = new BookingDayResponse.BookableObjectResponse.Booking
+                    {
+                        Id = bookings.Last().Id,
+                        Name = "Test User"
+                    }
+                }
+            ]
+        });
+    }
 }
