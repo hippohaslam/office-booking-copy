@@ -132,30 +132,32 @@ jobs:
         env:
           TF_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           TF_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_VAR_google_client_id: ${{ secrets.GOOGLE_CLIENT_ID }}
+          TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
       - name: Terraform Apply
         id: apply
         run: terraform apply plan.plan
 
-#  deploy-backend:
-#    name: 'Deploy Backend to Beanstalk'
-#    runs-on: ubuntu-latest
-#    needs: [ deploy-infrastructure ]
-#    environment:
-#      name: 'Development'
-#    steps:
-#      - uses: actions/download-artifact@v4.1.7
-#
-#      - name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v4
-#        with:
-#          aws-region: eu-west-1
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#
-#      - name: Deploy to Elastic Beanstalk
-#        run: |
-#          aws s3 cp "deploy-files/${{github.run_id}}.zip" s3://elasticbeanstalk-eu-west-1-${{ secrets.AWS_ACCOUNT_ID }}/artifact/hippo-booking-api/
-#          aws elasticbeanstalk create-application-version --application-name $ELASTIC_BEANSTALK_NAME --version-label ${{github.run_id}} --description ${{github.run_id}} --source-bundle S3Bucket="elasticbeanstalk-eu-west-1-${{ secrets.AWS_ACCOUNT_ID }}",S3Key="artifact/hippo-booking-api/${{github.run_id}}.zip"
-#          aws elasticbeanstalk update-environment --application-name $ELASTIC_BEANSTALK_NAME --environment-name $ELASTIC_BEANSTALK_ENV_NAME --version-label ${{github.run_id}}
-#          aws elasticbeanstalk wait environment-updated --application-name $ELASTIC_BEANSTALK_NAME --environment-name $ELASTIC_BEANSTALK_ENV_NAME
+  deploy-backend:
+    name: 'Deploy Backend to Beanstalk'
+    runs-on: ubuntu-latest
+    needs: [ deploy-infrastructure ]
+    environment:
+      name: 'Development'
+    steps:
+      - uses: actions/download-artifact@v4.1.7
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Deploy to Elastic Beanstalk
+        run: |
+          aws s3 cp "deploy-files/${{github.run_id}}.zip" s3://elasticbeanstalk-eu-west-1-${{ secrets.AWS_ACCOUNT_ID }}/artifact/hippo-booking-api/
+          aws elasticbeanstalk create-application-version --application-name $ELASTIC_BEANSTALK_NAME --version-label ${{github.run_id}} --description ${{github.run_id}} --source-bundle S3Bucket="elasticbeanstalk-eu-west-1-${{ secrets.AWS_ACCOUNT_ID }}",S3Key="artifact/hippo-booking-api/${{github.run_id}}.zip"
+          aws elasticbeanstalk update-environment --application-name $ELASTIC_BEANSTALK_NAME --environment-name $ELASTIC_BEANSTALK_ENV_NAME --version-label ${{github.run_id}}
+          aws elasticbeanstalk wait environment-updated --application-name $ELASTIC_BEANSTALK_NAME --environment-name $ELASTIC_BEANSTALK_ENV_NAME

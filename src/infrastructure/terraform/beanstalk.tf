@@ -61,18 +61,18 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
     name      = "Subnets"
     value     = join(",", [aws_subnet.hippo-booking-api-subnet-a.id, aws_subnet.hippo-booking-api-subnet-b.id])
   }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:environment:process:default"
-    name      = "Port"
-    value     = "80"
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:environment:process:default"
-    name      = "Protocol"
-    value     = "HTTP"
-  }
+  #
+  #  setting {
+  #    namespace = "aws:elasticbeanstalk:environment:process:default"
+  #    name      = "Port"
+  #    value     = "80"
+  #  }
+  #
+  #  setting {
+  #    namespace = "aws:elasticbeanstalk:environment:process:default"
+  #    name      = "Protocol"
+  #    value     = "HTTP"
+  #  }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
@@ -89,20 +89,31 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "ConnectionStrings__HippoBookingDbContext"
-    #value     = "Server=${aws_db_instance.hippo-booking-db.endpoint};Database=HippoBooking_Test;User Id=${aws_db_instance.hippo-booking-db.username};Password=${aws_db_instance.hippo-booking-db.password};TrustServerCertificate=True"
-    value = "Server=hippo-booking-db.cjx1ea2stfxn.eu-west-1.rds.amazonaws.com;Database=HippoBooking_Test;User Id=admin;Password=password123;TrustServerCertificate=True"
+    value     = "Server=${aws_db_instance.hippo-booking-db.address};Database=HippoBooking_Test;User Id=${aws_db_instance.hippo-booking-db.username};Password=${aws_db_instance.hippo-booking-db.password};TrustServerCertificate=True"
   }
 
   setting {
-    name      = "aws:elasticbeanstalk:application:environment"
-    namespace = "Aws__AccessKeyId"
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "Aws__AccessKeyId"
     value     = var.aws_access_key_id
   }
 
   setting {
-    name      = "aws:elasticbeanstalk:application:environment"
-    namespace = "Aws__AccessSecretKey"
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "Aws__AccessSecretKey"
     value     = var.aws_secret_access_key
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "Google__ClientId"
+    value     = var.google_client_id
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "Google__ClientSecret"
+    value     = var.google_client_secret
   }
 
   tags = local.tags
