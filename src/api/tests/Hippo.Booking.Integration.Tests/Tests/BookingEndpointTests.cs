@@ -134,6 +134,7 @@ public class BookingEndpointTests : IntegrationTestBase
         {
             expectedBookings.Add(new UserBookingsResponse
             {
+                BookingId = booking.Id,
                 Date = booking.Date,
                 BookableObject = new IdName<int>(id: booking.BookableObjectId, name: booking.BookableObject.Name),
                 Location = new IdName<int>(id: booking.BookableObject.Area.LocationId,
