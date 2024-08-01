@@ -1,6 +1,7 @@
 using FluentAssertions;
 using FluentValidation;
 using Hippo.Booking.Application.Commands.Location;
+using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.EF;

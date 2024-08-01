@@ -1,3 +1,4 @@
+using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;

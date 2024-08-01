@@ -38,6 +38,13 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
         Set<TEntity>().Add(entity);
     }
 
+    public void DeleteEntity<TEntity>(TEntity entity) where TEntity : class
+    {
+        // If we do soft delete down the line, we can add it in here.
+        
+        Set<TEntity>().Remove(entity);
+    }
+
     public DbSet<User> Users { get; set; } = null!;
 
     public DbSet<BookableObject> BookableObjects { get; set; } = null!;

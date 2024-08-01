@@ -27,6 +27,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUpsertUserCommand, UserCommands>();
 
         services.AddScoped<ICreateBookingCommand, BookingCommands>();
+        services.AddScoped<IDeleteBookingCommand, BookingCommands>();
         
         services.AddScoped<IValidator<CreateLocationRequest>, CreateLocationRequestValidator>();
         services.AddScoped<IValidator<UpdateLocationRequest>, UpdateLocationRequestValidator>();
@@ -37,6 +38,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<RegisteredUserDto>, RegisteredUserDtoValidator>();
 
         services.AddScoped<IValidator<CreateBookingRequest>, CreateBookingRequestValidator>();
+        services.AddScoped<IValidator<DeleteBookingRequest>, DeleteBookingRequestValidator>();
 
         services
             .AddScoped<ILocationQueries, LocationQueries>()

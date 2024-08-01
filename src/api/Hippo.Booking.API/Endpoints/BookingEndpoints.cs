@@ -39,7 +39,7 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings")
             });
         
         builder.MapPost("location/{locationId:int}/area/{areaId:int}/{date}/bookable-object/{bookableObjectId:int}", 
-            async Task<Results<NoContent, BadRequest<string>, ValidationProblem>> (
+            async Task<Results<NoContent, BadRequest<string>, ForbidHttpResult, ValidationProblem>> (
                 HttpContext httpContext,
                 ICreateBookingCommand createBookingCommand, 
                 int locationId, 
@@ -57,6 +57,25 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings")
 
                 return await HandleResponse(
                     async () => await createBookingCommand.Handle(createBookingRequest));
+            });
+        
+        builder.MapDelete("location/{locationId:int}/area/{areaId:int}/booking/{bookingId:int}", 
+            async Task<Results<NoContent, BadRequest<string>, ForbidHttpResult, ValidationProblem>> (
+                HttpContext httpContext,
+                IDeleteBookingCommand deleteBookingCommand, 
+                int locationId, 
+                int areaId,
+                int bookingId) =>
+            {
+                var deleteBookingRequest = new DeleteBookingRequest
+                {
+                    BookingId = bookingId,
+                    AreaId = areaId,
+                    UserId = httpContext.GetUserId()
+                };
+
+                return await HandleResponse(
+                    async () => await deleteBookingCommand.Handle(deleteBookingRequest));
             });
     }
 }

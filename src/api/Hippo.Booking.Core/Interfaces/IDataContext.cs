@@ -11,4 +11,6 @@ public interface IDataContext
     Task Save();
     
     void AddEntity<TEntity>(TEntity entity) where TEntity : class;
+    
+    void DeleteEntity<TEntity>(TEntity entity) where TEntity : class;
 }

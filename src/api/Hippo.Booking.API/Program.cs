@@ -4,6 +4,7 @@ using Hippo.Booking.API.Extensions;
 using Hippo.Booking.API.HostedServices;
 using Hippo.Booking.API.StartupTasks;
 using Hippo.Booking.Application;
+using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Extensions;
 using Hippo.Booking.Core;
 using Hippo.Booking.Core.Interfaces;

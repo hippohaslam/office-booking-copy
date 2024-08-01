@@ -7,13 +7,30 @@ namespace Hippo.Booking.Application.Queries.Bookings;
 
 public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTimeProvider) : IBookingQueries
 {
+    public Task<BookingResponse?> GetBookingById(int bookingId)
+    {
+        return dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
+            .Include(i => i.BookableObject)
+            .ThenInclude(i => i.Area)
+            .Where(x => x.Id == bookingId)
+            .Select(x => new BookingResponse
+            {
+                Id = x.Id,
+                Date = x.Date,
+                BookableObjectId = x.BookableObjectId,
+                AreaId = x.BookableObject.AreaId,
+                LocationId = x.BookableObject.Area.LocationId,
+            })
+            .SingleOrDefaultAsync();
+    }
+
     public Task<List<UserBookingsResponse>> GetUpcomingBookingsForUser(string userId)
     {
         return dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
             .Include(i => i.BookableObject)
             .ThenInclude(i => i.Area)
             .ThenInclude(i => i.Location)
-            .Where(x => x.Date >= dateTimeProvider.Today)
+            .Where(x => x.Date >= dateTimeProvider.Today && x.UserId == userId)
             .OrderBy(x => x.Date)
             .Select(x => new UserBookingsResponse
             {

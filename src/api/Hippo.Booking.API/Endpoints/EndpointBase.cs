@@ -1,6 +1,8 @@
 using FluentValidation;
 using Hippo.Booking.Application;
+using Hippo.Booking.Application.Exceptions;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hippo.Booking.API.Endpoints;
 
@@ -20,7 +22,7 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
         MapEndpoints(grouping);
     }
     
-    protected async Task<Results<Created, BadRequest<string>, ValidationProblem>> HandleCreatedResponse<TResponse>(
+    protected async Task<Results<Created, BadRequest<string>, ForbidHttpResult, ValidationProblem>> HandleCreatedResponse<TResponse>(
         Func<Task<TResponse>> handle,
         Func<TResponse, string> createdUrl)
     {
@@ -30,6 +32,7 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
         {
             Ok<TResponse> ok => TypedResults.Created($"/{createdUrl(ok.Value!)}"),
             BadRequest<string> badRequest => badRequest,
+            ForbidHttpResult forbid => forbid,
             ValidationProblem validationProblem => validationProblem,
             _ => throw new InvalidOperationException()
         };
@@ -56,7 +59,7 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
         }
     }
 
-    protected async Task<Results<NoContent, BadRequest<string>, ValidationProblem>> HandleResponse(Func<Task> handle)
+    protected async Task<Results<NoContent, BadRequest<string>, ForbidHttpResult, ValidationProblem>> HandleResponse(Func<Task> handle)
     {
         try
         {
@@ -66,6 +69,10 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
         catch (ClientException ex)
         {
             return TypedResults.BadRequest(ex.Message);
+        }
+        catch (ClientForbiddenException)
+        {
+            return TypedResults.Forbid();
         }
         catch (ValidationException ex)
         {
