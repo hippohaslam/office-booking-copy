@@ -1,5 +1,3 @@
-using Amazon;
-using Amazon.CloudWatchLogs;
 using FluentValidation;
 using Hippo.Booking.API.Endpoints;
 using Hippo.Booking.API.Extensions;
@@ -20,9 +18,7 @@ using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SlackNet.AspNetCore;
-
-const string googleClientId = "287640824547-7jf3a50aklmis16bh1uptkius9nibkga.apps.googleusercontent.com";
-
+using SlackNet.Blocks;
 
 Log.Logger = new LoggerConfiguration()
     .ConfigureLogging(Environment.GetEnvironmentVariable("Aws__AccessKey"),
@@ -108,8 +104,17 @@ try
                 optionsBuilder.ConfigureWarnings(x => x.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
             }
         });
+    
+    var slackSettings = builder.Configuration.GetSection("Slack").Get<SlackSettings>() ?? new SlackSettings();
 
-    builder.Services.AddSlackNet(x => { x.UseApiToken(builder.Configuration["Slack:Token"]); });
+    builder.Services.AddSlackNet(c => c
+        .UseApiToken(slackSettings.Token)
+        .UseSigningSecret(slackSettings.SigningSecret)
+        .RegisterBlockActionHandler<ButtonAction, InteractionEvent>()
+    );
+
+    builder.Services.AddOptions<SlackSettings>().BindConfiguration("Slack");
+    builder.Services.AddSingleton<ISlackClient, SlackClient>();
 
     builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
     builder.Services.AddScoped<IDataContext, HippoBookingDbContext>();
@@ -135,16 +140,12 @@ try
                 return Task.CompletedTask;
             };
         })
-        .AddJwtBearer("Google", options => { options.UseGoogle(googleClientId); });
+        .AddJwtBearer("Google", options => { options.UseGoogle(builder.Configuration.GetValue<string>("Google:ClientId") ?? ""); });
 
-    builder.Services.AddAuthorization(x => x.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build());
+    builder.Services.AddAuthorization();
 
     builder.Services.AddScoped<IExclusiveLockProvider, NullExclusiveLockProvider>();
-
-    builder.Services.AddSingleton<SlackClient>();
-
+    
     builder.Services.AddScheduledTask<TestScheduledTask>();
     builder.Services.AddScheduledTask<SlackBookingTomorrowAlert>();
 
@@ -180,7 +181,8 @@ try
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.OAuthClientId(googleClientId);
+        options.OAuthClientId(app.Configuration.GetValue<string>("Google:ClientId"));
+        options.OAuthClientSecret(app.Configuration.GetValue<string>("Google:ClientSecret"));
         options.OAuthScopes("profile", "openid", "email");
         options.OAuthUsePkce();
     });

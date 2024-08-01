@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Hippo.Booking.Core\Hippo.Booking.Core.csproj" />
+      <ProjectReference Include="..\Hippo.Booking.Infrastructure.EF\Hippo.Booking.Infrastructure.EF.csproj" />
     </ItemGroup>
 
     <ItemGroup>

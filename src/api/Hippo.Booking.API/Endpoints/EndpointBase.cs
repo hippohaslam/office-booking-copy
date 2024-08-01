@@ -14,7 +14,8 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
         }
         
         var grouping = app.MapGroup(routePath)
-            .WithTags(swaggerGroupName);
+            .WithTags(swaggerGroupName)
+            .RequireAuthorization();
         
         MapEndpoints(grouping);
     }

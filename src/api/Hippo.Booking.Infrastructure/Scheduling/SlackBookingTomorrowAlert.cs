@@ -7,7 +7,7 @@ namespace Hippo.Booking.Infrastructure.Scheduling;
 
 public class SlackBookingTomorrowAlert(
     IDataContext dataContext, 
-    SlackClient slackClient,
+    ISlackClient slackClient,
     IDateTimeProvider dateTimeProvider,
     ILogger<SlackBookingTomorrowAlert> logger) : BaseSlackConfirmationNotification(slackClient), IScheduledTask
 {
@@ -20,6 +20,7 @@ public class SlackBookingTomorrowAlert(
             .Where(x => x.Date == tomorrow)
             .Select(x => new
             {
+                Id = x.Id,
                 User = x.User,
                 Location =
                     $"{x.BookableObject.Name} - {x.BookableObject.Area.Name} - {x.BookableObject.Area.Location.Name}"
@@ -37,7 +38,10 @@ public class SlackBookingTomorrowAlert(
                 continue;
             }
 
-            await SendConfirmationMessage("Don't forget you have a booking *tomorrow*!", booking.Location, userId);
+            await SendConfirmationMessage("Don't forget you have a booking *tomorrow*!", 
+                booking.Location, 
+                userId,
+                booking.Id);
         }
     }
 }

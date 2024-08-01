@@ -4,44 +4,46 @@ using SlackNet.WebApi;
 
 namespace Hippo.Booking.Infrastructure.Scheduling;
 
-public abstract class BaseSlackConfirmationNotification(SlackClient slackClient)
+public abstract class BaseSlackConfirmationNotification(ISlackClient slackClient)
 {
-    protected SlackClient SlackClient => slackClient;
+    protected ISlackClient SlackClient => slackClient;
     
-    public async Task SendConfirmationMessage(string messageTitleMarkdown, string location, string userId)
+    public async Task SendConfirmationMessage(string messageTitleMarkdown, string location, string userId, int bookingId)
     {
         var message = new Message
         {
             Channel = userId,
             Blocks = new List<Block>
             {
-                new SectionBlock()
+                new SectionBlock
                 {
                     Text = new Markdown(messageTitleMarkdown),
                 },
-                new SectionBlock()
+                new SectionBlock
                 {
                     Text = new Markdown($"You have booked: *{location}*"),
                 },
-                new SectionBlock()
+                new SectionBlock
                 {
                     Text = new Markdown("Please confirm if you still require this booking"),
                 },
-                new ActionsBlock()
+                new ActionsBlock
                 {
-                    Elements = new List<IActionElement>()
+                    Elements = new List<IActionElement>
                     {
-                        new Button()
+                        new Button
                         {
                             Text = new PlainText("Confirm"),
                             Style = ButtonStyle.Primary,
-                            ActionId = "confirm_booking"
+                            ActionId = "confirm_booking",
+                            Value = bookingId.ToString()
                         },
-                        new Button()
+                        new Button
                         {
                             Text = new PlainText("Cancel"),
                             Style = ButtonStyle.Danger,
-                            ActionId = "cancel_booking"
+                            ActionId = "cancel_booking",
+                            Value = bookingId.ToString()
                         }
                     }
                 }
