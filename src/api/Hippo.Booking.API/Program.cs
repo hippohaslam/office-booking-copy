@@ -101,6 +101,8 @@ try
         .RegisterBlockActionHandler<ButtonAction, InteractionEvent>()
     );
 
+    builder.Services.AddCors();
+
     builder.Services.AddOptions<SlackSettings>().BindConfiguration("Slack");
     builder.Services.AddSingleton<ISlackClient, SlackClient>();
 
@@ -149,6 +151,10 @@ try
     if (app.Environment.IsDevelopment())
     {
         new TestEndpoints().Map(app);
+    }
+
+    if (!app.Environment.IsEnvironment("IntegrationTest"))
+    {
         app.UseCors(policyBuilder =>
         {
             var origins = app.Configuration.GetValue<string>("AllowedOrigins")?.Split(",") ?? [];

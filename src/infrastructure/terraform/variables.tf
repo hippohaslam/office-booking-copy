@@ -22,16 +22,33 @@ variable "google_client_secret" {
   sensitive   = true
 }
 
+variable "github_repo" {
+  description = "Github repository URL"
+  type        = string
+}
+
+variable "github_access_token" {
+  description = "Github access token"
+  type        = string
+  sensitive   = true
+}
+
 variable "s3_terraform_bucket" {
   description = "S3 bucket to store Terraform state"
   type        = string
   default     = "hippo-booking-terraform-test"
 }
 
+variable "frontend_subdomain" {
+  description = "Frontend Subdomain"
+  type        = string
+  default     = "bookingtest"
+}
+
 variable "backend_subdomain" {
   description = "Backend Subdomain"
   type        = string
-  default     = "bookingtestapi"
+  default     = "bookingapitest"
 }
 
 variable "hosted_zone_url" {
