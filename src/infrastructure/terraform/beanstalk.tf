@@ -142,7 +142,7 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
   setting {
     namespace = "aws:ec2:vpc"
     name      = "AssociatePublicIpAddress"
-    value     =  "True"
+    value     = "True"
   }
 
   setting {
