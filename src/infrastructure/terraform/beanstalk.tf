@@ -21,6 +21,35 @@ resource "aws_route_table_association" "hippo-booking-api-subnet-b-routing" {
   route_table_id = aws_route_table.route_table.id
 }
 
+resource "aws_security_group" "beanstalk_sg" {
+  name        = "beanstalk-sg"
+  description = "Security group for Elastic Beanstalk"
+  vpc_id      = aws_vpc.hippo-booking-vpc.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = local.tags
+}
+
 resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
   name                = "hippo-booking-api-env"
   application         = aws_elastic_beanstalk_application.hippo-booking-api.name
@@ -33,9 +62,45 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
   }
 
   setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "SecurityGroups"
+    value     = aws_security_group.beanstalk_sg.id
+  }
+
+  setting {
     namespace = "aws:elasticbeanstalk:environment"
-    name      = "EnvironmentType"
-    value     = "SingleInstance"
+    name      = "LoadBalancerType"
+    value     = "application"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment:process:default"
+    name      = "Port"
+    value     = "80"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment:process:default"
+    name      = "Protocol"
+    value     = "HTTP"
+  }
+
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "ListenerEnabled"
+    value     = "true"
+  }
+
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "Protocol"
+    value     = "HTTPS"
+  }
+
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "SSLCertificateArns"
+    value     = aws_acm_certificate.backend_certificate.arn
   }
 
   setting {
@@ -61,18 +126,6 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
     name      = "Subnets"
     value     = join(",", [aws_subnet.hippo-booking-api-subnet-a.id, aws_subnet.hippo-booking-api-subnet-b.id])
   }
-  #
-  #  setting {
-  #    namespace = "aws:elasticbeanstalk:environment:process:default"
-  #    name      = "Port"
-  #    value     = "80"
-  #  }
-  #
-  #  setting {
-  #    namespace = "aws:elasticbeanstalk:environment:process:default"
-  #    name      = "Protocol"
-  #    value     = "HTTP"
-  #  }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
@@ -84,6 +137,12 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "ASPNETCORE_ENVIRONMENT"
     value     = "Test"
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "AssociatePublicIpAddress"
+    value     =  "True"
   }
 
   setting {
@@ -127,6 +186,12 @@ resource "aws_iam_instance_profile" "eb_instance_profile" {
 
 resource "aws_iam_role" "eb_instance_role" {
   name = "eb-instance-role"
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier",
+    "arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker",
+    "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier",
+  ]
 
   assume_role_policy = <<EOF
 {

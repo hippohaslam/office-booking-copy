@@ -27,3 +27,15 @@ variable "s3_terraform_bucket" {
   type        = string
   default     = "hippo-booking-terraform-test"
 }
+
+variable "backend_subdomain" {
+  description = "Backend Subdomain"
+  type        = string
+  default     = "bookingtestapi"
+}
+
+variable "hosted_zone_url" {
+  description = "Hosted Zone URL"
+  type        = string
+  default     = "internal.hippodigital.cloud"
+}
