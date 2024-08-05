@@ -151,7 +151,7 @@ try
         new TestEndpoints().Map(app);
         app.UseCors(policyBuilder =>
         {
-            var origins = app.Configuration.GetValue<string>("AllowedHosts")?.Split(",") ?? [];
+            var origins = app.Configuration.GetValue<string>("AllowedOrigins")?.Split(",") ?? [];
             policyBuilder
                 .WithOrigins(origins)
                 .AllowAnyHeader()
