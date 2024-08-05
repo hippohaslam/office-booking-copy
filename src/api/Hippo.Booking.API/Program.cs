@@ -39,18 +39,6 @@ try
             builder.Configuration.GetValue<string>("Aws:AccessKeyId"),
             builder.Configuration.GetValue<string>("Aws:AccessSecretKey")));
 
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowLocalhost",
-            builder =>
-            {
-                builder.WithOrigins("http://localhost:5173", "https://localhost:5173")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
-            });
-    });
-
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
     {
@@ -161,7 +149,15 @@ try
     if (app.Environment.IsDevelopment())
     {
         new TestEndpoints().Map(app);
-        app.UseCors("AllowLocalhost");
+        app.UseCors(policyBuilder =>
+        {
+            var origins = app.Configuration.GetValue<string>("AllowedHosts")?.Split(",") ?? [];
+            policyBuilder
+                .WithOrigins(origins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
     }
 
     app.MapGet("/", [AllowAnonymous]() => TypedResults.Redirect("/swagger/index.html"));
