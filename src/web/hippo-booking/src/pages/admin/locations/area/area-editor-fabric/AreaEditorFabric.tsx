@@ -152,6 +152,7 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current.on("mouse:down", (e) => {
         const selectedFabricObject = e.target as CustomFabricObject;
         if (selectedFabricObject) {
+          console.log(selectedFabricObject.type);
           if (selectedFabricObject.type === "text") {
             setTextState({ hidden: false, text: (selectedFabricObject as fabric.Text).text ?? "" });
           } else {
@@ -168,7 +169,6 @@ const FloorplanEditor = () => {
           }
           // Perform other operations as needed
         } else {
-          setTextState({ hidden: true, text: "" });
           setSelectedObject(null);
         }
       });
@@ -343,7 +343,9 @@ const FloorplanEditor = () => {
         left: 100,
         top: 100,
         fill: "black",
+
       });
+      text.bringForward();
       fabricCanvasRef.current.add(text);
       fabricCanvasRef.current.renderAll();
     }
@@ -444,6 +446,21 @@ const FloorplanEditor = () => {
   const handleAddNewBookableObject = () => createNewBookableOBjectMutation.mutate(newBookableObject);
   const handleAddNewBookableObjectDisplay = () => setShowCreateNewBookableObject(!showCreateNewBookableObject);
 
+  const handleSendToPosition = (position: 'back' | 'front') => {
+    if (fabricCanvasRef.current) {
+      const activeObject = fabricCanvasRef.current.getActiveObject();
+      if (activeObject) {
+        if (position === 'back') {
+          fabricCanvasRef.current.sendToBack(activeObject);
+        } else if (position === 'front') {
+          fabricCanvasRef.current.bringToFront(activeObject);
+        }
+        fabricCanvasRef.current.discardActiveObject();
+        fabricCanvasRef.current.renderAll();
+      }
+    }
+  };
+
   const isLoading = isPending || locationMutation.isPending || locationObjectsMutation.isPending;
   const hasSuccess = locationMutation.isSuccess || locationObjectsMutation.isSuccess;
 
@@ -490,6 +507,9 @@ const FloorplanEditor = () => {
           <button type="button" onClick={handleCopy}>
             Copy
           </button>
+          <br />
+          <button type="button" onClick={() => handleSendToPosition('back')}>Send to back</button>
+          <button type="button" onClick={() => handleSendToPosition('front')}>Send to front</button>
 
           <div className="canvas__container">
             <canvas width={800} height={600} ref={canvasElRef} />

@@ -187,6 +187,10 @@ const DeskBooking = () => {
           }
 
           if (isCustomFabricObject(object)) {
+            if(object.type === "text"){
+              object.selectable = false;
+              object.evented = false;
+            }
             handleObjectColours(null);
           }
         }
