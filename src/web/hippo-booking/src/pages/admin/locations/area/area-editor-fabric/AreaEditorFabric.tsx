@@ -59,12 +59,7 @@ const FloorplanEditor = () => {
     setErrors(errors.filter((error) => error.key !== key));
   }, [errors]);
 
-  const {
-    isPending,
-    data: locationData,
-    isError,
-    error,
-  } = useQuery({
+  const {isPending,data: locationData,isError,error} = useQuery({
     queryKey: ["area-edit", locationId, areaId],
     queryFn: () => getLocationAreaAsync(locationId as string, areaId as string),
     enabled: !!locationId,
@@ -99,15 +94,29 @@ const FloorplanEditor = () => {
       onError: () => handleAddError(errorKeys.saveFabricObjects, "Error saving bookable objects"),
   });
 
+  // Bit of a hack until I can think of how a better way.
+  // We need to split the bookable objects out of the location data ideally. Not a showstopper though.
+  const getBookableObjects = useMutation({
+    mutationFn: () => getLocationAreaAsync(locationId as string, areaId as string),
+    onSuccess: (data) => {
+      if (data) {
+        const bookableObjects = data.bookableObjects ?? [];
+        setArea((prev) => {
+          if (prev) {
+            return {...prev,bookableObjects: bookableObjects};
+          }
+        });
+      }
+    },
+  })
+
   const createNewBookableOBjectMutation = useMutation({
     mutationFn: (bookableObject: BookableObject) => postBookableObjectAsync(Number.parseInt(locationId!), Number.parseInt(areaId!), bookableObject),
     onSuccess: () => {
       setShowCreateNewBookableObject(false);
       handleRemoveError(errorKeys.saveBookableObjects);
       setNewBookableObject({name: '', description: '', id: 0});
-      queryClient.invalidateQueries({
-        queryKey: ["area-edit", locationId, areaId],
-      });
+      getBookableObjects.mutate();
     },
     onError: () => handleAddError(errorKeys.saveBookableObjects, "Error saving bookable objects"),
   });
