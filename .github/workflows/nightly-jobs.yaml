@@ -27,7 +27,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          git config --global user.name 'Nightly Build Bot
+          git config --global user.name 'Nightly Build Bot'
           git config --global user.email 'nightly-build-bot@users.noreply.github.com'
           git commit -am "Automated Nightly Jobs"
           git push
