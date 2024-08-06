@@ -168,7 +168,9 @@ const DeskBooking = () => {
         height: 600,
       };
       const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
+      fabricCanvas.allowTouchScrolling = true;
       adjustCanvasSize();
+      fabricCanvas.selection = false;
 
       // Make all objects non-selectable (but still emits events when clicked on)
       fabricCanvas.forEachObject((object: CustomFabricObject) => {
@@ -191,7 +193,7 @@ const DeskBooking = () => {
       });
       fabricCanvas.renderAll();
 
-      fabricCanvas.on("mouse:down", (e) => {
+      fabricCanvas.on("mouse:down", (e: fabric.IEvent<Event>) => {
         const selectedFabricObject = e.target as CustomFabricObject;
         if (selectedFabricObject) {
           // check if data contains an id matching the selected object
@@ -219,7 +221,10 @@ const DeskBooking = () => {
 
       initializeCanvasZoom(fabricCanvas);
       initializeCanvasDragging(fabricCanvas);
+      
     }
+
+    
 
     return () => {
       fabricCanvasRef.current?.dispose();

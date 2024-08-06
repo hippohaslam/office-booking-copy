@@ -189,7 +189,7 @@ const FloorplanEditor = () => {
       fabricCanvas.selection = true;
 
       initializeCanvasZoom(fabricCanvas);
-      initializeCanvasDragging(fabricCanvas);
+      initializeCanvasDragging(fabricCanvas, true);
     }
 
     // Cleanup function to dispose the canvas when component unmounts

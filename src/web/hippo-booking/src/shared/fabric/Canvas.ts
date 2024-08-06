@@ -38,14 +38,85 @@ const initializeCanvasZoom = (canvas: fabric.Canvas) => {
     });
   };
   
-  const initializeCanvasDragging = (canvas: fabric.Canvas) => {
-    canvas.on("mouse:down", function (this: ExtendedCanvas, opt) {
-      const evt = opt.e;
-      if (evt.altKey === true) {
+  const initializeCanvasDragging = (canvas: fabric.Canvas, requireAltKeyForMouse = false) => {
+
+    canvas.on('touchstart', function(this: ExtendedCanvas, opt) {
+      console.log('touchstart');
+      const evt = opt.e as TouchEvent;
+      if (evt.touches && evt.touches.length === 1) {
         this.isDragging = true;
         this.selection = false;
-        this.lastPosX = evt.clientX;
-        this.lastPosY = evt.clientY;
+        this.lastPosX = evt.touches[0].clientX;
+        this.lastPosY = evt.touches[0].clientY;
+      }
+    });
+
+    canvas.on('touchmove', function(this: ExtendedCanvas, opt) {
+      console.log('touchmove');
+      const evt = opt.e as TouchEvent;
+      if (this.isDragging && this.lastPosX !== undefined && this.lastPosY !== undefined) {
+        const vpt = this.viewportTransform;
+        if (vpt !== undefined) {
+          vpt[4] += evt.touches[0].clientX - this.lastPosX;
+          vpt[5] += evt.touches[0].clientY - this.lastPosY;
+          this.requestRenderAll();
+          this.lastPosX = evt.touches[0].clientX;
+          this.lastPosY = evt.touches[0].clientY;
+        }
+      }
+    });
+
+    canvas.on('touchend', function(this: ExtendedCanvas) {
+      console.log('touchend');
+      if (this.viewportTransform) {
+        this.setViewportTransform(this.viewportTransform);
+        this.isDragging = false;
+        this.selection = true;
+      }
+    });
+
+    function handleTouchDown(this: ExtendedCanvas, opt: fabric.IEvent) {
+      console.log('handleTouchDown');
+      const evt = opt.e as TouchEvent;
+      if (evt.touches && evt.touches.length === 1) {
+        this.isDragging = true;
+        this.selection = false;
+        this.lastPosX = evt.touches[0].clientX;
+        this.lastPosY = evt.touches[0].clientY;
+      }
+    }
+
+    function handleTouchMove(this: ExtendedCanvas, opt: fabric.IEvent) {
+      console.log('handleTouchMove');
+      const evt = opt.e as TouchEvent;
+      if (this.isDragging && this.lastPosX !== undefined && this.lastPosY !== undefined) {
+        const vpt = this.viewportTransform;
+        if (vpt !== undefined) {
+          vpt[4] += evt.touches[0].clientX - this.lastPosX;
+          vpt[5] += evt.touches[0].clientY - this.lastPosY;
+          this.requestRenderAll();
+          this.lastPosX = evt.touches[0].clientX;
+          this.lastPosY = evt.touches[0].clientY;
+        }
+      }
+    }
+
+    canvas.on("mouse:down", function (this: ExtendedCanvas, opt) {
+      const evt = opt.e;
+      console.log(evt);
+      if(evt.type === 'touchstart') {
+        handleTouchDown.call(this, opt);
+      } else {
+        const drag = () => {
+          this.isDragging = true;
+          this.selection = false;
+          this.lastPosX = evt.clientX;
+          this.lastPosY = evt.clientY;
+        }
+
+        if(evt.altKey || !requireAltKeyForMouse) {
+          drag();
+        }
       }
     });
     canvas.on("mouse:move", function (this: ExtendedCanvas, opt) {
@@ -54,15 +125,20 @@ const initializeCanvasZoom = (canvas: fabric.Canvas) => {
         this.lastPosX !== undefined &&
         this.lastPosY !== undefined
       ) {
-        const e = opt.e;
-        const vpt = this.viewportTransform;
-        if (vpt !== undefined) {
-          vpt[4] += e.clientX - this.lastPosX;
-          vpt[5] += e.clientY - this.lastPosY;
-          this.requestRenderAll();
-          this.lastPosX = e.clientX;
-          this.lastPosY = e.clientY;
+        const evt = opt.e;
+        if(evt.type === 'touchmove') {
+          handleTouchMove.call(this, opt);
+        } else {
+          const vpt = this.viewportTransform;
+          if (vpt !== undefined) {
+            vpt[4] += evt.clientX - this.lastPosX;
+            vpt[5] += evt.clientY - this.lastPosY;
+            this.requestRenderAll();
+            this.lastPosX = evt.clientX;
+            this.lastPosY = evt.clientY;
+          }
         }
+        
       }
     });
     canvas.on("mouse:up", function (this: ExtendedCanvas) {
