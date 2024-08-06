@@ -71,19 +71,19 @@ jobs:
         run: corepack enable
 
       - name: Run install
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v5
         with:
           cmd: install
           dir: ./src/web/hippo-booking
 
       - name: Build production bundle
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v5
         with:
           cmd: build
           dir: ./src/web/hippo-booking
 
       - name: Test the app
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v5
         with:
           cmd: ci-test
           dir: ./src/web/hippo-booking
