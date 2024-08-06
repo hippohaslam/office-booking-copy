@@ -85,7 +85,7 @@ try
     builder.Services.AddDbContext<HippoBookingDbContext>(
         optionsBuilder =>
         {
-            optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("HippoBookingDbContext"));
+            optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("HippoBookingDbContext"));
 
             if (builder.Environment.IsDevelopment())
             {
