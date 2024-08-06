@@ -168,6 +168,7 @@ const FloorplanEditor = () => {
           }
           // Perform other operations as needed
         } else {
+          setTextState({ hidden: true, text: "" });
           setSelectedObject(null);
         }
       });
@@ -200,7 +201,6 @@ const FloorplanEditor = () => {
   }, [locationData]);
 
   const addCircle = () => {
-    console.log('fabricCanvasRef.current', fabricCanvasRef.current)
     if (fabricCanvasRef.current) {
       const circle = new CustomCircle({
         radius: 50,
@@ -494,6 +494,12 @@ const FloorplanEditor = () => {
           <div className="canvas__container">
             <canvas width={800} height={600} ref={canvasElRef} />
           </div>
+          {textState.hidden ? null : (
+            <div>
+              <label>Text: </label>
+              <input type="text" value={textState.text} onChange={(e) => handleChangeText(e.target.value)} />
+            </div>
+          )}
         </div>
 
         <div className="floorplan__desk-list">
@@ -566,10 +572,7 @@ const FloorplanEditor = () => {
           </ul>
         </div>
       </div>
-      <div className={textState.hidden ? "hide-node" : ""}>
-        <label>Text: </label>
-        <input type="text" value={textState.text} onChange={(e) => handleChangeText(e.target.value)} />
-      </div>
+      
       <br />
       
     </div>
