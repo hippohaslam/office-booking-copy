@@ -59,7 +59,7 @@ resource "aws_amplify_branch" "main_branch" {
 
 resource "aws_amplify_domain_association" "example" {
   app_id      = aws_amplify_app.react_app.id
-  domain_name = "${var.backend_subdomain}.${var.hosted_zone_url}"
+  domain_name = "${var.frontend_subdomain}.${var.hosted_zone_url}"
 
   sub_domain {
     branch_name = aws_amplify_branch.main_branch.branch_name
