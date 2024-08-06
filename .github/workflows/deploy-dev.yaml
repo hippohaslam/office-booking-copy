@@ -178,7 +178,7 @@ jobs:
 
       - name: Get Amplify App Id
         run: |
-          APPID=$(aws amplify list-apps | jq '.apps[] | select(.name == "hippo-way")'.appId)
+          APPID=$(aws amplify list-apps | jq '.apps[] | select(.name == "hippo-booking-front-end-app")'.appId)
           echo "APP_ID=$APPID" >>${GITHUB_ENV}
 
       - name: Running Amplify Deployment Job
