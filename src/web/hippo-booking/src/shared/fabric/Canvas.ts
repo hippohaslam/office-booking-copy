@@ -41,7 +41,6 @@ const initializeCanvasZoom = (canvas: fabric.Canvas) => {
   const initializeCanvasDragging = (canvas: fabric.Canvas, requireAltKeyForMouse = false) => {
 
     canvas.on('touchstart', function(this: ExtendedCanvas, opt) {
-      console.log('touchstart');
       const evt = opt.e as TouchEvent;
       if (evt.touches && evt.touches.length === 1) {
         this.isDragging = true;
@@ -52,7 +51,6 @@ const initializeCanvasZoom = (canvas: fabric.Canvas) => {
     });
 
     canvas.on('touchmove', function(this: ExtendedCanvas, opt) {
-      console.log('touchmove');
       const evt = opt.e as TouchEvent;
       if (this.isDragging && this.lastPosX !== undefined && this.lastPosY !== undefined) {
         const vpt = this.viewportTransform;
@@ -67,7 +65,6 @@ const initializeCanvasZoom = (canvas: fabric.Canvas) => {
     });
 
     canvas.on('touchend', function(this: ExtendedCanvas) {
-      console.log('touchend');
       if (this.viewportTransform) {
         this.setViewportTransform(this.viewportTransform);
         this.isDragging = false;
@@ -76,7 +73,6 @@ const initializeCanvasZoom = (canvas: fabric.Canvas) => {
     });
 
     function handleTouchDown(this: ExtendedCanvas, opt: fabric.IEvent) {
-      console.log('handleTouchDown');
       const evt = opt.e as TouchEvent;
       if (evt.touches && evt.touches.length === 1) {
         this.isDragging = true;
@@ -87,7 +83,6 @@ const initializeCanvasZoom = (canvas: fabric.Canvas) => {
     }
 
     function handleTouchMove(this: ExtendedCanvas, opt: fabric.IEvent) {
-      console.log('handleTouchMove');
       const evt = opt.e as TouchEvent;
       if (this.isDragging && this.lastPosX !== undefined && this.lastPosY !== undefined) {
         const vpt = this.viewportTransform;
@@ -103,7 +98,6 @@ const initializeCanvasZoom = (canvas: fabric.Canvas) => {
 
     canvas.on("mouse:down", function (this: ExtendedCanvas, opt) {
       const evt = opt.e;
-      console.log(evt);
       if(evt.type === 'touchstart') {
         handleTouchDown.call(this, opt);
       } else {
