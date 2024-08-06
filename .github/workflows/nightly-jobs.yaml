@@ -1,0 +1,33 @@
+name: Deploy To Dev
+
+on:
+  workflow_dispatch:
+#  schedule:
+#    - cron: '0 0 * * 0'
+
+jobs:
+
+  run-jobs:
+    name: 'Run Jobs'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -recursive
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'Nightly Build Bot
+          git config --global user.email 'nightly-build-bot@users.noreply.github.com'
+          git commit -am "Automated Nightly Jobs"
+          git push
