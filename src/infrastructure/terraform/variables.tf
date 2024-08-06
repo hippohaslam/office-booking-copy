@@ -22,6 +22,18 @@ variable "google_client_secret" {
   sensitive   = true
 }
 
+variable "slack_token" {
+  description = "Slack Token"
+  type        = string
+  sensitive   = true
+}
+
+variable "slack_signing_secret" {
+  description = "Slack Signing Secret"
+  type        = string
+  sensitive   = true
+}
+
 variable "github_repo" {
   description = "Github repository URL"
   type        = string

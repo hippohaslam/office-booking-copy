@@ -197,6 +197,20 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
     resource  = ""
   }
 
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "Slack__Token"
+    value     = var.slack_token
+    resource  = ""
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "Slack__SigningSecret"
+    value     = var.slack_signing_secret
+    resource  = ""
+  }
+
   tags = local.tags
 }
 

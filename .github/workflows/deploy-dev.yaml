@@ -132,6 +132,8 @@ jobs:
           TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           TF_VAR_github_repo: https://github.com/${{ github.repository }}
           TF_VAR_github_access_token: ${{ secrets.FRONTEND_DEPLOY_TOKEN }}
+          TF_VAR_slack_token: ${{ secrets.SLACK_TOKEN }}
+          TF_VAR_slack_signing_secret: ${{ secrets.SLACK_SIGNING_SECRET }}
 
       - name: Terraform Apply
         id: apply
