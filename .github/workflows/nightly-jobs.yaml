@@ -1,4 +1,4 @@
-name: Deploy To Dev
+name: Nightly Jobs
 
 on:
   workflow_dispatch:
