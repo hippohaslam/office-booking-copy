@@ -13,6 +13,14 @@ updates:
       prefix: "[terraform] "
     open-pull-requests-limit: 10
 
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "[github actions] "
+    open-pull-requests-limit: 10
+
   # - package-ecosystem: "npm"
   #   directory: "/src/web/hippo-booking"
   #   schedule:
