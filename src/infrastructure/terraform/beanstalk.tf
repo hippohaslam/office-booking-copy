@@ -59,120 +59,140 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
     value     = "t3.micro"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "SecurityGroups"
     value     = aws_security_group.beanstalk_sg.id
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:environment"
     name      = "LoadBalancerType"
     value     = "application"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:environment:process:default"
     name      = "Port"
     value     = "80"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:environment:process:default"
     name      = "Protocol"
     value     = "HTTP"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elbv2:listener:443"
     name      = "ListenerEnabled"
     value     = "true"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elbv2:listener:443"
     name      = "Protocol"
     value     = "HTTPS"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elbv2:listener:443"
     name      = "SSLCertificateArns"
     value     = aws_acm_certificate.backend_certificate.arn
+    resource  = ""
   }
 
   setting {
     namespace = "aws:autoscaling:asg"
     name      = "MinSize"
     value     = "1"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:autoscaling:asg"
     name      = "MaxSize"
     value     = "1"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:ec2:vpc"
     name      = "VPCId"
     value     = aws_vpc.hippo-booking-vpc.id
+    resource  = ""
   }
 
   setting {
     namespace = "aws:ec2:vpc"
     name      = "Subnets"
     value     = join(",", [aws_subnet.hippo-booking-api-subnet-a.id, aws_subnet.hippo-booking-api-subnet-b.id])
+    resource  = ""
   }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
     value     = aws_iam_instance_profile.eb_instance_profile.name
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "ASPNETCORE_ENVIRONMENT"
     value     = "Test"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:ec2:vpc"
     name      = "AssociatePublicIpAddress"
     value     = "True"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "ConnectionStrings__HippoBookingDbContext"
     value     = "Server=${aws_db_instance.hippo-booking-db.address};Port=${aws_db_instance.hippo-booking-db.port};User Id=${aws_db_instance.hippo-booking-db.username};Password=${aws_db_instance.hippo-booking-db.password};Database=HippoBooking_Test"
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "Aws__AccessKeyId"
     value     = var.aws_access_key_id
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "Aws__AccessSecretKey"
     value     = var.aws_secret_access_key
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "Google__ClientId"
     value     = var.google_client_id
+    resource  = ""
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "Google__ClientSecret"
     value     = var.google_client_secret
+    resource  = ""
   }
 
   tags = local.tags
