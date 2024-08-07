@@ -1,23 +1,22 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { fabric } from "fabric";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
 import {
   getLocationAreaAsync,
   putObjectsAsync,
   putLocationAsync,
   postBookableObjectAsync,
 } from "../../../../../services/Apis";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useWindowSize } from "../../../../../hooks/WindowSizeHook";
 import { CustomCircle, CustomFabricObject, CustomRect } from "../../../../../shared/fabric/CustomObjects";
 import { ErrorBannerMultiple, SuccessBanner } from "../../../../../components";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../../../shared/fabric/Canvas";
-
-import "./AreaEditorFabric.scss";
 import { AccordionItem } from "../../../../../components/accordion/Accordion";
 import { isNullOrEmpty } from "../../../../../helpers/StringHelpers";
 import { CtaButton } from "../../../../../components/buttons/Buttons";
+import "./AreaEditorFabric.scss";
 
 const generateUniqueId = () => {
   return uuidv4();
