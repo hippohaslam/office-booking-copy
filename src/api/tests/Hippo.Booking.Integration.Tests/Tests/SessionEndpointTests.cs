@@ -14,12 +14,12 @@ public class SessionEndpointTests : IntegrationTestBase
         var response = await client.GetAsync("/session");
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
-        var user = JsonSerializer.Deserialize<RegisteredUserDto>(content, new JsonSerializerOptions
+        var user = JsonSerializer.Deserialize<RegisteredUserRequest>(content, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
 
-        user.Should().BeEquivalentTo(new RegisteredUserDto
+        user.Should().BeEquivalentTo(new RegisteredUserRequest
         {
             Email = "testuser@hippodigital.co.uk",
             FirstName = "Test",

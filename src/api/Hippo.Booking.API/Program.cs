@@ -2,6 +2,7 @@ using FluentValidation;
 using Hippo.Booking.API.Endpoints;
 using Hippo.Booking.API.Extensions;
 using Hippo.Booking.API.HostedServices;
+using Hippo.Booking.API.Services;
 using Hippo.Booking.API.StartupTasks;
 using Hippo.Booking.Application;
 using Hippo.Booking.Application.Exceptions;
@@ -109,6 +110,9 @@ try
     builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
     builder.Services.AddScoped<IDataContext, HippoBookingDbContext>();
 
+    builder.Services.AddScoped<IUserNotifier, SlackUserNotifier>();
+    builder.Services.AddScoped<IUserProvider, HttpUserProvider>();
+
     builder.Services.AddHostedService<StartupTaskExecutor>();
 
     builder.Services.AddStartupTask<MigrateDatabaseStartupTask>();
@@ -140,6 +144,8 @@ try
     builder.Services.AddScheduledTask<SlackBookingTomorrowAlert>();
 
     builder.Services.AddHostedService<SchedulingWorkerService>();
+
+    builder.Services.AddHttpContextAccessor();
 
     var app = builder.Build();
 

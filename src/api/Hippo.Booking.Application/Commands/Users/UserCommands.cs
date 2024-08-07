@@ -1,33 +1,36 @@
+using FluentValidation;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Application.Commands.Users;
 
-public class UserCommands(IDataContext dataContext) : IUpsertUserCommand
+public class UserCommands(IDataContext dataContext, IValidator<RegisteredUserRequest> registeredUserRequestValidator) : IUpsertUserCommand
 {
-    public async Task UpsertUser(RegisteredUserDto registeredUserDto)
+    public async Task UpsertUser(RegisteredUserRequest registeredUserRequest)
     {
+        await registeredUserRequestValidator.ValidateAndThrowAsync(registeredUserRequest);
+        
         var user = await dataContext.Query<User>()
-            .SingleOrDefaultAsync(x => x.Id == registeredUserDto.UserId);
+            .SingleOrDefaultAsync(x => x.Id == registeredUserRequest.UserId);
 
         if (user == null)
         {
             user = new User
             {
-                Id = registeredUserDto.UserId,
-                Email = registeredUserDto.Email,
-                FirstName = registeredUserDto.FirstName,
-                LastName = registeredUserDto.LastName
+                Id = registeredUserRequest.UserId,
+                Email = registeredUserRequest.Email,
+                FirstName = registeredUserRequest.FirstName,
+                LastName = registeredUserRequest.LastName
             };
 
             dataContext.AddEntity(user);
         }
         else
         {
-            user.Email = registeredUserDto.Email;
-            user.FirstName = registeredUserDto.FirstName;
-            user.LastName = registeredUserDto.LastName;
+            user.Email = registeredUserRequest.Email;
+            user.FirstName = registeredUserRequest.FirstName;
+            user.LastName = registeredUserRequest.LastName;
         }
 
         await dataContext.Save();

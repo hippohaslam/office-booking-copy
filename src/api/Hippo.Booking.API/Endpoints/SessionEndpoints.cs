@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using Hippo.Booking.Application.Commands.Users;
+using Hippo.Booking.Core.Interfaces;
+using Hippo.Booking.Core.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,20 +12,14 @@ public class SessionEndpoints() : EndpointBase("session", "Sessions")
 {
     public override void MapEndpoints(RouteGroupBuilder builder)
     {
-        builder.MapGet("", Results<Ok<RegisteredUserDto>, UnauthorizedHttpResult>
-            (HttpContext httpContext) =>
+        builder.MapGet("", Results<Ok<RegisteredUserModel>, UnauthorizedHttpResult>
+            (IUserProvider userProvider) =>
         {
-            var user = httpContext.User;
+            var user = userProvider.GetCurrentUser();
 
-            var registeredUserDto = new RegisteredUserDto
-            {
-                UserId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
-                FirstName = user.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
-                LastName = user.FindFirstValue(ClaimTypes.Surname) ?? string.Empty,
-                Email = user.FindFirstValue(ClaimTypes.Email) ?? string.Empty
-            };
-
-            return TypedResults.Ok(registeredUserDto);
+            return user == null
+                ? TypedResults.Unauthorized()
+                : TypedResults.Ok(user);
         });
 
         builder.MapPost("google",
@@ -31,7 +27,7 @@ public class SessionEndpoints() : EndpointBase("session", "Sessions")
             {
                 var user = httpContext.User;
 
-                var registeredUserDto = new RegisteredUserDto
+                var registeredUserDto = new RegisteredUserRequest
                 {
                     UserId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
                     FirstName = user.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,

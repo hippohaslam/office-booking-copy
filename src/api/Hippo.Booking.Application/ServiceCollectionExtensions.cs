@@ -7,6 +7,7 @@ using Hippo.Booking.Application.Commands.Users;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Application.Queries.Locations;
 using Hippo.Booking.Application.Queries.Scheduling;
+using Hippo.Booking.Application.Queries.Users;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Hippo.Booking.Application;
@@ -35,7 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IValidator<CreateAreaRequest>, CreateAreaRequestValidator>();
         services.AddScoped<IValidator<UpdateAreaRequest>, UpdateAreaRequestValidator>();
 
-        services.AddScoped<IValidator<RegisteredUserDto>, RegisteredUserDtoValidator>();
+        services.AddScoped<IValidator<RegisteredUserRequest>, RegisteredUserDtoValidator>();
 
         services.AddScoped<IValidator<CreateBookingRequest>, CreateBookingRequestValidator>();
         services.AddScoped<IValidator<DeleteBookingRequest>, DeleteBookingRequestValidator>();
@@ -45,6 +46,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IBookingQueries, BookingQueries>()
             .AddScoped<IAreaQueries, AreaQueries>()
             .AddScoped<IScheduledTaskQueries, ScheduledTaskQueries>()
+            .AddScoped<IUserQueries, UserQueries>()
             ;
 
         return services;

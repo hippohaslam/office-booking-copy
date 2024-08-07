@@ -7,6 +7,8 @@ namespace Hippo.Booking.Application.Commands.Bookings;
 
 public class BookingCommands(
     IDataContext dataContext,
+    IUserNotifier userNotifier,
+    IUserProvider userProvider,
     IValidator<CreateBookingRequest> createBookingValidator,
     IValidator<DeleteBookingRequest> deleteBookingValidator) : ICreateBookingCommand, IDeleteBookingCommand
 {
@@ -34,6 +36,9 @@ public class BookingCommands(
         dataContext.AddEntity(booking);
 
         await dataContext.Save();
+
+        await userNotifier.NotifyUser(request.UserId,
+            $"You're new booking on *{request.Date}* has been created");
     }
 
     public async Task Handle(DeleteBookingRequest request)
@@ -48,17 +53,28 @@ public class BookingCommands(
 
         if (booking != null)
         {
-            if (!string.IsNullOrEmpty(request.UserId))
+            var currentUser = userProvider.GetCurrentUser();
+            
+            if (currentUser == null)
             {
-                // if we do an admin check here, we can allow admins to delete any booking
-                if (request.UserId != booking.UserId)
-                {
-                    throw new ClientForbiddenException();
-                }
+                throw new ClientForbiddenException();
+            }
+
+            var currentUserId = currentUser.UserId;
+
+            // if we do an admin check here, we can allow admins to delete any booking
+            if (currentUserId != booking.UserId)
+            {
+                throw new ClientForbiddenException();
             }
 
             dataContext.DeleteEntity(booking);
             await dataContext.Save();
+
+            var forSomeBodyElse = currentUserId != booking.UserId ? $" by {currentUser.FullName}" : string.Empty;
+            
+            await userNotifier.NotifyUser(booking.UserId,
+                $"You're booking for *{booking.BookableObject.Name}* on *{booking.Date}* has been cancelled.{forSomeBodyElse}");
         }
     }
 }

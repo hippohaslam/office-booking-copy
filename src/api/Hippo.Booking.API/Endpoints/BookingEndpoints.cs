@@ -70,8 +70,7 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings")
                 var deleteBookingRequest = new DeleteBookingRequest
                 {
                     BookingId = bookingId,
-                    AreaId = areaId,
-                    UserId = httpContext.GetUserId()
+                    AreaId = areaId
                 };
 
                 return await HandleResponse(

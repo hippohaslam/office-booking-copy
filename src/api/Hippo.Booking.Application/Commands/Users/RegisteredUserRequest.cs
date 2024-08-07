@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Hippo.Booking.Application.Commands.Users;
 
-public class RegisteredUserDto
+public class RegisteredUserRequest
 {
     public string UserId { get; set; } = string.Empty;
 
@@ -15,7 +15,7 @@ public class RegisteredUserDto
     public string FullName => FirstName + " " + LastName;
 }
 
-public class RegisteredUserDtoValidator : AbstractValidator<RegisteredUserDto>
+public class RegisteredUserDtoValidator : AbstractValidator<RegisteredUserRequest>
 {
     public RegisteredUserDtoValidator()
     {

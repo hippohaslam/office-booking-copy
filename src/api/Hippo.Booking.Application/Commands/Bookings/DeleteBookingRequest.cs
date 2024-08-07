@@ -7,8 +7,6 @@ public class DeleteBookingRequest
     public int BookingId { get; set; }
 
     public int AreaId { get; set; }
-
-    public string UserId { get; set; } = string.Empty;
 }
 
 public class DeleteBookingRequestValidator : AbstractValidator<DeleteBookingRequest>

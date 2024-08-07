@@ -46,8 +46,7 @@ public class InteractionEvent(
             await deleteBookingCommand.Handle(new DeleteBookingRequest
             {
                 AreaId = booking.AreaId,
-                BookingId = booking.Id,
-                UserId = booking.UserId
+                BookingId = booking.Id
             });
 
             await slackClient.RespondToInteraction(request.ResponseUrl, new MessageResponse
