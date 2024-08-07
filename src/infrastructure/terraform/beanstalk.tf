@@ -185,13 +185,6 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "Google__ClientId"
-    value     = var.google_client_id
-    resource  = ""
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
     name      = "Google__ClientSecret"
     value     = var.google_client_secret
     resource  = ""
