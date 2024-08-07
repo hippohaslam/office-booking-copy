@@ -119,9 +119,14 @@ const DeskBooking = () => {
     if (fabricCanvasRef.current) {
       if (windowWidth < 900 && showCanvas) {
         fabricCanvasRef.current.setWidth(windowWidth - 70);
-        fabricCanvasRef.current.setHeight(600);
+        
       } else if (showCanvas) {
         fabricCanvasRef.current.setWidth(800);
+      }
+
+      if(windowWidth < 600){
+        fabricCanvasRef.current.setHeight(250);
+      } else {
         fabricCanvasRef.current.setHeight(600);
       }
 
