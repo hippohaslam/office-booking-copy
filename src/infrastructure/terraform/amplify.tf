@@ -10,9 +10,9 @@ resource "aws_amplify_app" "react_app" {
   #  }
 
   custom_rule {
-    source = "/*"
+    source = "/<*>"
     target = "/index.html"
-    status = "200"
+    status = "404-200"
   }
 
 
@@ -39,7 +39,6 @@ frontend:
 BUILD_SPEC
 
   enable_branch_auto_build = false
-
 
   tags = local.tags
 }
