@@ -1,23 +1,26 @@
 using Hippo.Booking.Core.Interfaces;
+using Hippo.Booking.Core.Models;
 using Hippo.Booking.Infrastructure.Slack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Hippo.Booking.Infrastructure.Scheduling;
 
-public class SlackBookingTomorrowAlert(
+public class SlackConfirmationScheduledTask(
     IDataContext dataContext,
     ISlackClient slackClient,
     IDateTimeProvider dateTimeProvider,
-    ILogger<SlackBookingTomorrowAlert> logger) : BaseSlackConfirmationNotification(slackClient), IScheduledTask
+    ILogger<SlackConfirmationScheduledTask> logger) : BaseSlackConfirmationNotification(slackClient), IScheduledTask
 {
-    public async Task RunTask()
+    public async Task RunTask(ScheduleContext scheduleContext)
     {
-        var tomorrow = dateTimeProvider.Today.AddDays(1);
+        var settings = scheduleContext.GetPayload<SlackAlertParameters>();
+        
+        var dateToCheck = dateTimeProvider.Today.AddDays(settings.DayOffset);
 
-        var usersBookedTomorrow = await dataContext.Query<Core.Entities.Booking>()
+        var usersToNotify = await dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.User)
-            .Where(x => x.Date == tomorrow)
+            .Where(x => x.Date == dateToCheck)
             .Select(x => new
             {
                 Id = x.Id,
@@ -27,9 +30,9 @@ public class SlackBookingTomorrowAlert(
             })
             .ToListAsync();
 
-        logger.LogDebug("Found {0} bookings for tomorrow", usersBookedTomorrow.Count);
+        logger.LogDebug("Found {0} bookings for task", usersToNotify.Count);
 
-        foreach (var booking in usersBookedTomorrow)
+        foreach (var booking in usersToNotify)
         {
             var userId = await SlackClient.GetUserIdByEmail(booking.User.Email);
             if (userId == null)
@@ -38,7 +41,7 @@ public class SlackBookingTomorrowAlert(
                 continue;
             }
 
-            await SendConfirmationMessage("Don't forget you have a booking *tomorrow*!",
+            await SendConfirmationMessage(settings.Message,
                 booking.Location,
                 userId,
                 booking.Id);

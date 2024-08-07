@@ -149,9 +149,8 @@ try
     builder.Services.AddAuthorization();
 
     builder.Services.AddScoped<IExclusiveLockProvider, NullExclusiveLockProvider>();
-
-    builder.Services.AddScheduledTask<TestScheduledTask>();
-    builder.Services.AddScheduledTask<SlackBookingTomorrowAlert>();
+    
+    builder.Services.AddScheduledTask<SlackConfirmationScheduledTask>();
 
     builder.Services.AddHostedService<SchedulingWorkerService>();
 

@@ -1,6 +1,7 @@
 using Cronos;
 using Hippo.Booking.Application.Queries.Scheduling;
 using Hippo.Booking.Core.Interfaces;
+using Hippo.Booking.Core.Models;
 
 namespace Hippo.Booking.API.HostedServices;
 
@@ -46,33 +47,34 @@ public class SchedulingWorkerService(
 
             await Task.Delay(timeSpan, cancellationToken);
 
-            await RunTask(nextSchedule.Task, exclusiveLockProvider, cancellationToken);
+            await RunTask(nextSchedule, exclusiveLockProvider, cancellationToken);
         }
 
         logger.LogWarning("Scheduled worker has stopped");
     }
 
-    private async Task RunTask(string task, IExclusiveLockProvider exclusiveLockProvider, CancellationToken cancellationToken)
+    private async Task RunTask(ScheduledTaskResponse schedule, IExclusiveLockProvider exclusiveLockProvider, CancellationToken cancellationToken)
     {
-        if (!await exclusiveLockProvider.GetExclusiveLock(task, TimeSpan.FromMinutes(5), cancellationToken))
+        if (!await exclusiveLockProvider.GetExclusiveLock(schedule.Task, TimeSpan.FromMinutes(5), cancellationToken))
         {
-            logger.LogWarning("Could not acquire lock for task {0}", task);
+            logger.LogWarning("Could not acquire lock for task {0}", schedule.Task);
             return;
         }
 
         using var scope = serviceProvider.CreateScope();
 
-        var scheduledTask = scope.ServiceProvider.GetKeyedService<IScheduledTask>(task);
+        var scheduledTask = scope.ServiceProvider.GetKeyedService<IScheduledTask>(schedule.Task);
 
         if (scheduledTask == null)
         {
-            throw new InvalidOperationException("Scheduled task not found");
+            logger.LogError("Scheduled task {Task} not found", schedule.Task);
+            return;
         }
 
-        logger.LogInformation("Running scheduled task {0}", task);
+        logger.LogInformation("Running scheduled task {0}", schedule.Task);
 
-        await scheduledTask.RunTask();
+        await scheduledTask.RunTask(new ScheduleContext(schedule.PayloadJson));
 
-        await exclusiveLockProvider.ReleaseExclusiveLock(task, cancellationToken);
+        await exclusiveLockProvider.ReleaseExclusiveLock(schedule.Task, cancellationToken);
     }
 }

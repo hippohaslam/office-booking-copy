@@ -12,7 +12,9 @@ public class ScheduledTaskQueries(IDataContext dataContext) : IScheduledTaskQuer
             .Select(x => new ScheduledTaskResponse
             {
                 Task = x.Task,
-                CronExpression = x.CronExpression
+                CronExpression = x.CronExpression,
+                TimeZoneId = x.TimeZoneId,
+                PayloadJson = x.PayloadJson
             })
             .ToListAsync();
     }

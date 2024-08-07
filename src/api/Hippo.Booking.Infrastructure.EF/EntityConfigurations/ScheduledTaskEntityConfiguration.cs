@@ -8,6 +8,9 @@ public class ScheduledTaskEntityConfiguration : IEntityTypeConfiguration<Schedul
 {
     public void Configure(EntityTypeBuilder<ScheduledTask> builder)
     {
-        builder.HasKey(x => x.Task);
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.PayloadJson)
+            .HasColumnType("jsonb");
     }
 }
