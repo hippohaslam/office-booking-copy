@@ -69,6 +69,10 @@ const postBookingForDateAsync = async(locationId: number, areaId: number, date: 
   return response.data
 }
 
+const deleteBookingAsync = async(locationId: number, areaId: number, bookingId : number) => {
+  return await axiosInstance.delete(`/booking/location/${locationId}/area/${areaId}/booking/${bookingId}`);
+}
+
 // BookableObjects
 /** Request to create a new bookable object  */
 const postBookableObjectAsync = async (locationId: number, areaId: number, bookableObject: BookableObject) => {
@@ -107,6 +111,7 @@ export {
   getUpcomingBookingsAsync,
   getBookingsForDateAsync,
   postBookingForDateAsync,
+  deleteBookingAsync,
   // BookableObjects
   postBookableObjectAsync,
   // AUTH

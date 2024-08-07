@@ -5,6 +5,7 @@ import ErrorPage from "../pages/error/Error";
 import ProtectedRoute from "../ProtectedRoute";
 import { Params } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
+import Bookings from "../pages/bookings/Bookings";
 
 const locationRoutes = (queryClient: QueryClient) => [
     {
@@ -42,6 +43,16 @@ const locationRoutes = (queryClient: QueryClient) => [
             </Suspense>
         ),
     },
+    {
+        path: "/bookings",
+        element: (
+            <Suspense fallback={<div>Loading...</div>}>
+                <ProtectedRoute>
+                    <Bookings/>
+                </ProtectedRoute>
+            </Suspense>
+        )
+    }
 ]
 
 export default locationRoutes;

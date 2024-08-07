@@ -5,7 +5,8 @@ import "@testing-library/jest-dom";
 import { UserProvider } from "../../contexts/UserContext";
 
 const links = [
-  { text: "Booking", link: "/locations" },
+  { text: "Make a new booking", link: "/locations" },
+  { text: "My bookings", link: "/bookings" },
   { text: "Admin", link: "/admin" },
 ];
 

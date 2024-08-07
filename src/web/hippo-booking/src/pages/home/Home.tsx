@@ -55,7 +55,7 @@ const Home = () => {
                     areaName={nextBooking.area.name}
                     locationName={nextBooking.location.name}
                     />
-                    <Link className='with-arrow' to="/locations">Manage this and other bookings</Link>
+                    <Link className='with-arrow' to="/bookings">Manage this and other bookings</Link>
                 </div>;
         } else {
             // This should never happen
@@ -84,7 +84,14 @@ const Home = () => {
                     <h2>Our offices</h2>
                     <p>Some content about our offices will go in here.</p>
                     <h3>Some more content</h3>
-                    <p>Filling this page with more content to force the height to go beyond 100vh on mobile devices</p>
+                    <p>
+                        Filling this page with more content to force the height to go beyond 100vh on mobile devices. 
+                        Filling this page with more content to force the height to go beyond 100vh on mobile devices.
+                        Filling this page with more content to force the height to go beyond 100vh on mobile devices.
+                        Filling this page with more content to force the height to go beyond 100vh on mobile devices.
+                        Filling this page with more content to force the height to go beyond 100vh on mobile devices
+                        .Filling this page with more content to force the height to go beyond 100vh on mobile devices
+                    </p>
                     <h4>Why</h4>
                     <p>Because safari on mobile doesn't respect 100vh with it's fancy floating search bar</p>
                 </div>

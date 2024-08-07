@@ -1,6 +1,8 @@
+@import "../../styles/variables.scss";
+
 header {
-    color: var(--hippo-brand-navy);
-    background-color: var(--hippo-brand-grey);
+    color: $hippo-brand-navy;
+    background-color: $hippo-brand-grey;
 }
 
 .nav-container {
@@ -36,7 +38,7 @@ header {
 nav {
     padding: 0 1.5rem;
     a {
-        color: var(--hippo-brand-navy);
+        color: $hippo-brand-navy;
         text-decoration: none;
         padding: 0.5rem;
         font-weight: normal;
@@ -79,24 +81,30 @@ header {
         margin: 5px auto;
         -webkit-transition: all 0.3s ease-in-out;
         transition: all 0.3s ease-in-out;
-        background-color: var(--hippo-brand-navy);
+        background-color: $hippo-brand-navy;
     }
 
     .nav-menu a {
         font-size: 1.2rem;
     }
+}
 
-    @media only screen and (max-width: 768px)
-    {
+@media only screen and (max-width: 768px)
+{
+    body:has(.nav-menu.active){
+        position: fixed;
+    }
+
+    header {
         .nav-container-logo img {
             height: 50px;
             width: 50px;
         }
-
+    
         .nav-container {
             padding: 0 10px;
         }
-
+    
         .nav-menu {
             position: fixed;
             left: 100%;
@@ -107,46 +115,46 @@ header {
             transition: 0.4s;
             height: calc(100dvh - 6rem);
             z-index: 1;
-            background-color: var(--hippo-brand-light-grey);
+            background-color: $hippo-brand-light-grey;
             padding: 0 25px;
-
+    
             &.active {
                 left: 0;
                 display: block;
                 position: absolute;
             }
-
+    
             li {
                 width: 100%;
                 padding: 25px 0;
-
+    
                 &:not(:last-of-type){
-                    border-bottom: var(--hippo-brand-grey) 1px solid;
+                    border-bottom: $hippo-brand-grey 1px solid;
                 }
             }
-
+    
             a {
                 font-size: 1.5rem;
                 width: 100%;
                 display: block;
             }
         }
-
+    
         .hamburger {
             display: block;
             cursor: pointer;
             background-color: unset;
             border: unset;
         }
-
+    
         .hamburger.active .bar:nth-child(2) {
             opacity: 0;
         }
-
+    
         .hamburger.active .bar:nth-child(1) {
             transform: translateY(8px) rotate(45deg);
         }
-
+    
         .hamburger.active .bar:nth-child(3) {
             transform: translateY(-8px) rotate(-45deg);
         }

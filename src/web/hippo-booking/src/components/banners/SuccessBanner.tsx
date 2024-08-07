@@ -2,7 +2,7 @@
   const SuccessBanner = ({text = "Success"}) => {
     // TODO: Needs styling
     return (
-      <div>
+      <div role="alert">
         <h3>{text}</h3>
       </div>
     );

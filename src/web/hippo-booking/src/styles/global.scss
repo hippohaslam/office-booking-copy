@@ -26,13 +26,15 @@
   --hippo-brand-bluey-grey: #e5ebf0;
   --hippo-brand-light-grey: #EFF3F6;
   --hippo-brand-grey: #dde4e6;
+  --hippo-brand-dark-grey: #c3cacc;
   --hippo-brand-green: #005e5d;
   --hippo-brand-navy: #0c2340;
   --hippo-brand-purple: #3c1053;
   --hippo-brand-light-green: #a0dab3;
   --hippo-brand-light-blue: #88dbdf;
   --hippo-brand-pink: #ffa3b5;
-  --hippo-brand-yellow: #f9a502
+  --hippo-brand-yellow: #f9a502;
+  --hippo-brand-violet: #4d57a3;
 }
 
 
@@ -46,7 +48,7 @@ html {
 }
 
 body {
-  font-size: calc(16px + 0.3vw);
+  font-size: 1rem;
   color: var(--hippo-dark-blue);
   margin: 0;
   padding: 0;
@@ -109,6 +111,10 @@ h4,
 h5,
 h6 {
   font-weight: bold;
+}
+
+h2,h3,h4,h5,h6,p {
+  max-width: 600px;
 }
 
 /* */
@@ -208,8 +214,9 @@ a.cta, button.cta{
   text-decoration: none;
   font-size: 16px;
   display: inline-flex;
-  transition: .4s ease;
+  transition: .2s ease;
   border: none;
+  text-wrap: nowrap;
 
   &:hover {
     cursor: pointer;
@@ -217,15 +224,22 @@ a.cta, button.cta{
 
   &:hover, &:active{
     text-decoration: underline;
-    opacity: 100%;
 
     &.cta-with-arrow::after{
       margin-left: 20px;
     }
   }
 
+  + .cta {
+    margin-left: 10px;
+  }
+
   &.cta-green{
     background-color: var(--hippo-brand-green);
+
+    &:hover{
+      background-color: #004443;
+    }
   }
 
   &.cta-navy{
@@ -236,6 +250,19 @@ a.cta, button.cta{
     background-color: var(--hippo-brand-yellow);
   }
 
+  &.cta-violet{
+    background-color: var(--hippo-brand-violet);
+  }
+
+  &.cta-grey{
+    background-color: var(--hippo-brand-dark-grey);
+    color: var(--hippo-brand-navy);
+
+    &:hover{
+      background-color: #a5aaac;
+    }
+  }
+
   &.cta-pink{
     background-color: var(--hippo-brand-pink);
     color: var(--hippo-brand-navy);
@@ -243,6 +270,24 @@ a.cta, button.cta{
     &.with-arrow::after{
       background-image: url(../assets/cta-arrow-navy.svg);
     }
+
+    &:hover{
+      background-color: #ffa3b5;
+    }
+  }
+
+  &.cta-red{
+    background-color: #d20000;
+  }
+
+  &.cta-red-outline{
+    border: 3px solid #d20000;
+    color: #d20000;
+    font-weight: 400;
+  }
+
+  &.cta-compact{
+    padding: 10px 15px
   }
 }
 

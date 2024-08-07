@@ -49,8 +49,12 @@ const Nav = () => {
                    </button>
                    <nav id="main-navigation" aria-label="primary">
                        <ul className={showMobileMenu ? "nav-menu active" : "nav-menu"}>
+ 
                            <li>
-                               <Link to="/locations" onClick={closeMenuOnMobile}>Booking</Link>
+                               <Link to="/locations" onClick={closeMenuOnMobile}>Make a new booking</Link>
+                           </li>
+                           <li>
+                               <Link to="/bookings" onClick={closeMenuOnMobile}>My bookings</Link>
                            </li>
                            <li>
                                <Link to="/admin" onClick={closeMenuOnMobile}>Admin</Link>

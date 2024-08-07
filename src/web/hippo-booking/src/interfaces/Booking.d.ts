@@ -1,4 +1,5 @@
 interface Booking {
+    bookingId: number;
     date: Date;
     bookableObject: BookableObject;
     location: BookingLocation;

@@ -1,0 +1,40 @@
+@import "../../../styles/variables.scss";
+
+.modal-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 50;
+    background-color: rgba(0, 0, 0, 0.546);
+}
+
+body:has(.modal-overlay) {
+    overflow: hidden;
+}
+
+.modal-booking {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: $hippo-brand-bluey-grey;
+    padding: 20px;
+    z-index: 100;
+    border-radius: 20px;
+
+    & h2 {
+        margin-top: 0;
+    }
+    
+    & .booking-card{
+        margin-bottom: 30px
+    }
+}
+
+@media only screen and (max-width: 768px){
+    .modal-booking{
+        width: calc(100% - 20px);
+    }
+}

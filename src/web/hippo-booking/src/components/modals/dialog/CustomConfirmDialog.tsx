@@ -3,17 +3,18 @@ import './CustomConfirmDialog.scss';
 type CustomConfirmDialogProps = {
   isOpen: boolean;
   onConfirm: () => void;
+  confirmButtonLabel: string;
   onCancel: () => void;
+  cancelButtonLabel: string;
   message: string;
 };
-const CustomConfirmDialog = ({ isOpen, onConfirm, onCancel, message }: CustomConfirmDialogProps) => {
+const CustomConfirmDialog = ({ isOpen, onConfirm, confirmButtonLabel, onCancel, cancelButtonLabel, message }: CustomConfirmDialogProps) => {
   if (!isOpen) return null;
-  // TODO: Style the dialog. Currently looks terrible. Ideally move this to a separate component and style it properly.
   return (
     <div className="modal-dialog">
       <p>{message}</p>
-      <button onClick={onConfirm}>Yes</button>
-      <button onClick={onCancel}>No</button>
+      <button onClick={onConfirm}>{confirmButtonLabel}</button>
+      <button onClick={onCancel}>{cancelButtonLabel}</button>
     </div>
   );
 };

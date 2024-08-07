@@ -1,12 +1,17 @@
+@import "../../styles/variables.scss";
+
 .booking-card{
-    background-color: var(--hippo-brand-grey);
+    background-color: $hippo-brand-grey;
     padding: 20px;
     margin: 10px 0;
-    color: var(--hippo-brand-navy);
+    color: $hippo-brand-navy;
     border-radius: 26px;
     min-width: 500px;
 
-    table li{
+    ul {
+        padding-left: 0;
+    }
+    ul li{
         list-style: none;
     }
 
@@ -20,5 +25,14 @@
     .booking-card{
         min-width: 0;
         width: 100%;
+    }
+}
+
+@media only screen and (max-width: 500px){
+    
+    .booking-item-container{
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
     }
 }
