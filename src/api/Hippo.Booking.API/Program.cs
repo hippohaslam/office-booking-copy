@@ -109,8 +109,18 @@ try
 
     builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
     builder.Services.AddScoped<IDataContext, HippoBookingDbContext>();
-
-    builder.Services.AddScoped<IUserNotifier, SlackUserNotifier>();
+    
+    var slackToken = builder.Configuration.GetValue<string>("Slack:Token");
+    if (string.IsNullOrWhiteSpace(slackToken))
+    {
+        Log.Logger.Warning("Slack token not found, Registering null user notifier");
+        builder.Services.AddScoped<IUserNotifier, NullUserNotifier>();
+    }
+    else
+    {
+        builder.Services.AddScoped<IUserNotifier, SlackUserNotifier>();
+    }
+    
     builder.Services.AddScoped<IUserProvider, HttpUserProvider>();
 
     builder.Services.AddHostedService<StartupTaskExecutor>();
