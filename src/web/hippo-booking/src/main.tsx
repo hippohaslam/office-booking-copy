@@ -1,145 +1,14 @@
-import React, { Suspense } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Dashboard, FloorplanEditor, Booking, Locations, BookingAreas, SvgAreaEditor, CreateLocation, CreateArea } from "./imports";
-import ErrorPage from "./pages/error/Error.tsx";
-import Home from "./pages/home/Home.tsx";
-import ProtectedRoute from "./ProtectedRoute.tsx";
-import SignIn from "./pages/signin/SignIn.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { UserProvider } from "./contexts/UserContext.tsx";
-import { FullContentPageLayout, BaseLayout, SignInLayout } from "./layouts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {BookingAreaParams, bookingAreasLoader} from "./loaders/BookingAreaLoader.ts";
-import App from "./App.tsx";
+import routes from './routes';
 
 const queryClient = new QueryClient();
 
-const router =  createBrowserRouter([
-    {
-        element: <App/>,
-        children: [
-            {
-                path: "/",
-                element: <BaseLayout/>,
-                errorElement: <ErrorPage/>,
-                children: [
-                    {
-                        path: "/",
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <ProtectedRoute>
-                                    <Home/>
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
-                    {
-                        path: "/admin/locations/:locationId/area/:areaId",
-                        element: (
-                            <Suspense fallback={<div>Loading editor...</div>}>
-                                <ProtectedRoute>
-                                    <FloorplanEditor/>
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
-                ],
-            },
-            {
-                element: <FullContentPageLayout/>,
-                children: [
-                    {
-                        path: "/locations/:locationId/areas",
-                        errorElement: <ErrorPage />,
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <ProtectedRoute>
-                                    <BookingAreas/>
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                        loader: async ({ params }) => {
-                            return bookingAreasLoader(queryClient)(params as BookingAreaParams);
-                        }
-                    },
-                    {
-                        path: "/locations/:locationId/areas/:areaId",
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <ProtectedRoute>
-                                    <Booking/>
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
-                    {
-                        path: "/locations",
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <ProtectedRoute>
-                                    <Locations/>
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
-                    {
-                        path: "/admin",
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <ProtectedRoute>
-                                    <Dashboard/>
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
-                    {
-                        path: "/admin/locations/new",
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <ProtectedRoute>
-                                    <CreateLocation />
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
-                    {
-                        path: "/admin/locations/:locationId/areas/new",
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <ProtectedRoute>
-                                    <CreateArea />
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
-                    {
-                        // Experimental route
-                        path: "/admin/locations/:locationId/area/:areaId/svg-editor",
-                        element: (
-                            <Suspense fallback={<div>Loading editor...</div>}>
-                                <ProtectedRoute>
-                                    <SvgAreaEditor/>
-                                </ProtectedRoute>
-                            </Suspense>
-                        ),
-                    },
-                ]
-            },
-            {
-                element: <SignInLayout/>,
-                children: [
-                    {
-                        path: "/signin",
-                        element: (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <SignIn/>
-                            </Suspense>
-                        ),
-                    }
-                ]
-            }]
-    }]
+const router =  createBrowserRouter([...routes(queryClient)]
 );
 
 const root = document.getElementById("root");
