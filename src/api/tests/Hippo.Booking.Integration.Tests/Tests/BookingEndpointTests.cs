@@ -25,7 +25,7 @@ public class BookingEndpointTests : IntegrationTestBase
             Email = "testuser@hippodigital.co.uk"
         });
     }
-    
+
     [Test]
     public async Task CreateNewBookingIsSuccessful()
     {
@@ -34,7 +34,7 @@ public class BookingEndpointTests : IntegrationTestBase
         var location = await SetUpLocation();
         var area = await SetUpArea(location);
         var bookableObject = await SetUpBookableObject(area);
-        
+
         var createBookingRequest = new CreateBookingRequest
         {
             BookableObjectId = bookableObject.Id,
@@ -52,13 +52,13 @@ public class BookingEndpointTests : IntegrationTestBase
         response.EnsureSuccessStatusCode();
 
         var dbBookings = DbContext.Bookings.Where(x =>
-            x.UserId == "testuser" 
-            && x.Date == DateOnly.FromDateTime(DateTime.Now) 
+            x.UserId == "testuser"
+            && x.Date == DateOnly.FromDateTime(DateTime.Now)
             && x.BookableObjectId == bookableObject.Id);
-        
+
         dbBookings.Should().HaveCount(1, "only 1 booking should exist that matches those details");
     }
-    
+
     [Test]
     public async Task CreateNewBookingForABookedObjectOnTheSameDateReturns400()
     {
@@ -90,8 +90,8 @@ public class BookingEndpointTests : IntegrationTestBase
             "a bookable object cannot be booked more than once on the same date");
 
         var dbBookings = DbContext.Bookings.Where(x =>
-            x.UserId == "testuser" 
-            && x.Date == DateOnly.FromDateTime(DateTime.Now) 
+            x.UserId == "testuser"
+            && x.Date == DateOnly.FromDateTime(DateTime.Now)
             && x.BookableObjectId == bookableObject.Id);
         dbBookings.Should().HaveCount(1, "only 1 booking should exist that matches those details");
     }
@@ -111,18 +111,18 @@ public class BookingEndpointTests : IntegrationTestBase
         await SetUpBooking(bookableObjects.First(), DateOnly.FromDateTime(DateTime.Now.AddDays(3)));
         await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(DateTime.Now));
         await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(DateTime.Now.AddDays(1)));
-        
+
         //Act
         var response = await client.GetAsync("booking/upcoming");
-        
+
         //Assert
         response.EnsureSuccessStatusCode();
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseBookings = JsonSerializer.Deserialize<List<UserBookingsResponse>>(responseContent, new JsonSerializerOptions 
+        var responseBookings = JsonSerializer.Deserialize<List<UserBookingsResponse>>(responseContent, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
-        
+
         var dbBookings = DbContext.Bookings
             .OrderBy(x => x.Date)
             .Include(booking => booking.BookableObject)
@@ -163,16 +163,16 @@ public class BookingEndpointTests : IntegrationTestBase
             await SetUpBooking(bookableObjects.First(), DateOnly.FromDateTime(DateTime.Now)),
             await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(DateTime.Now))
         };
-        
+
         //Act
         var response =
             await client.GetAsync(
                 $"/booking/location/{location.Id}/area/{area.Id}/{DateOnly.FromDateTime(DateTime.Now).ToString("yyyy-MM-dd")}");
-        
+
         //Assert
         response.EnsureSuccessStatusCode();
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseBooking = JsonSerializer.Deserialize<BookingDayResponse>(responseContent, new JsonSerializerOptions 
+        var responseBooking = JsonSerializer.Deserialize<BookingDayResponse>(responseContent, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });

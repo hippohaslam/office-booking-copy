@@ -7,7 +7,7 @@ namespace Hippo.Booking.Infrastructure.Scheduling;
 public abstract class BaseSlackConfirmationNotification(ISlackClient slackClient)
 {
     protected ISlackClient SlackClient => slackClient;
-    
+
     public async Task SendConfirmationMessage(string messageTitleMarkdown, string location, string userId, int bookingId)
     {
         var message = new Message

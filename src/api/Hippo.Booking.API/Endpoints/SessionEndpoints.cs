@@ -14,7 +14,7 @@ public class SessionEndpoints() : EndpointBase("session", "Sessions")
             (HttpContext httpContext) =>
         {
             var user = httpContext.User;
-            
+
             var registeredUserDto = new RegisteredUserDto
             {
                 UserId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
@@ -26,7 +26,7 @@ public class SessionEndpoints() : EndpointBase("session", "Sessions")
             return TypedResults.Ok(registeredUserDto);
         });
 
-        builder.MapPost("google", 
+        builder.MapPost("google",
             [Authorize(AuthenticationSchemes = "Google")] async (HttpContext httpContext, IUpsertUserCommand userCommand) =>
             {
                 var user = httpContext.User;
@@ -40,7 +40,7 @@ public class SessionEndpoints() : EndpointBase("session", "Sessions")
                 };
 
                 await userCommand.UpsertUser(registeredUserDto);
-                
+
                 var claims = new List<Claim>
                 {
                     new(ClaimTypes.NameIdentifier, user.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty),
@@ -61,7 +61,7 @@ public class SessionEndpoints() : EndpointBase("session", "Sessions")
         builder.MapPost("sign-out", async (HttpContext httpContext) =>
         {
             await httpContext.SignOutAsync();
-            
+
             return TypedResults.NoContent();
         });
     }

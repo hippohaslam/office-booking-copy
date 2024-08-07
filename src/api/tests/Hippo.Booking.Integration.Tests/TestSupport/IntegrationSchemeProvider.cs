@@ -10,11 +10,11 @@ public class IntegrationSchemeProvider : AuthenticationSchemeProvider
     }
 
     protected IntegrationSchemeProvider(
-        IOptions<AuthenticationOptions> options, 
+        IOptions<AuthenticationOptions> options,
         IDictionary<string, AuthenticationScheme> schemes) : base(options, schemes)
     {
     }
-    
+
     public override Task<AuthenticationScheme?> GetSchemeAsync(string name)
     {
         return Task.FromResult(new AuthenticationScheme(name, name, typeof(IntegrationTestAuthHandler)))!;

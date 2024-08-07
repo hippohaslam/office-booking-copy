@@ -13,24 +13,24 @@ public class BookingCommands(
     public async Task Handle(CreateBookingRequest request)
     {
         await createBookingValidator.ValidateAndThrowAsync(request);
-        
+
         if (await dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
             .Include(i => i.BookableObject)
-            .AnyAsync(x => 
+            .AnyAsync(x =>
                 x.BookableObject.AreaId == request.AreaId &&
-                x.Date == request.Date && 
+                x.Date == request.Date &&
                 x.BookableObjectId == request.BookableObjectId))
         {
             throw new ClientException("Booking already exists");
         }
-        
+
         var booking = new Core.Entities.Booking
         {
             BookableObjectId = request.BookableObjectId,
             Date = request.Date,
             UserId = request.UserId
         };
-        
+
         dataContext.AddEntity(booking);
 
         await dataContext.Save();
@@ -39,7 +39,7 @@ public class BookingCommands(
     public async Task Handle(DeleteBookingRequest request)
     {
         await deleteBookingValidator.ValidateAndThrowAsync(request);
-        
+
         var booking = await dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.BookableObject)
             .SingleOrDefaultAsync(x =>
@@ -56,9 +56,9 @@ public class BookingCommands(
                     throw new ClientForbiddenException();
                 }
             }
-            
+
             dataContext.DeleteEntity(booking);
-            await dataContext.Save();   
+            await dataContext.Save();
         }
     }
 }

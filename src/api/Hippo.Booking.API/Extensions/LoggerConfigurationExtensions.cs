@@ -9,7 +9,7 @@ namespace Hippo.Booking.API.Extensions;
 public static class LoggerConfigurationExtensions
 {
     public static AmazonCloudWatchLogsClient? client = null;
-    
+
     public static LoggerConfiguration ConfigureLogging(this LoggerConfiguration loggerConfig, string? awsAccessKey, string? awsAccessSecret)
     {
         return loggerConfig
@@ -22,10 +22,10 @@ public static class LoggerConfigurationExtensions
             .WriteTo.Console()
             .Enrich.FromLogContext();
     }
-    
+
     public static LoggerConfiguration ConfigureAwsLogging(
         this LoggerConfiguration configuration,
-        string? accessKey, 
+        string? accessKey,
         string? secretKey,
         RegionEndpoint region)
     {
@@ -35,7 +35,7 @@ public static class LoggerConfigurationExtensions
         }
 
         client ??= new AmazonCloudWatchLogsClient(accessKey, secretKey, region);
-            
+
         return configuration
             .WriteTo.AmazonCloudWatch(
                 logGroup: "/dotnet/hippo-booking-logging-demo/serilog",

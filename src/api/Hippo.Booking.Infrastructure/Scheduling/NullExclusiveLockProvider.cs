@@ -8,7 +8,7 @@ public class NullExclusiveLockProvider : IExclusiveLockProvider
     {
         return Task.FromResult(true);
     }
-    
+
     public Task ReleaseExclusiveLock(string lockName, CancellationToken cancellationToken = default)
     {
         return Task.CompletedTask;

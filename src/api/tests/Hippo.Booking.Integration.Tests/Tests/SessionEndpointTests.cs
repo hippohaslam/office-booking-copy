@@ -18,7 +18,7 @@ public class SessionEndpointTests : IntegrationTestBase
         {
             PropertyNameCaseInsensitive = true
         });
-        
+
         user.Should().BeEquivalentTo(new RegisteredUserDto
         {
             Email = "testuser@hippodigital.co.uk",

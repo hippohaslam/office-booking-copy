@@ -8,7 +8,7 @@ using SlackNet.WebApi;
 namespace Hippo.Booking.Infrastructure.Slack;
 
 public class InteractionEvent(
-    ISlackClient slackClient, 
+    ISlackClient slackClient,
     IDeleteBookingCommand deleteBookingCommand,
     IBookingQueries bookingQueries,
     ILogger<InteractionEvent> logger) : IBlockActionHandler<ButtonAction>
@@ -42,14 +42,14 @@ public class InteractionEvent(
         else if (action.ActionId == "cancel_booking")
         {
             logger.LogDebug("Booking {BookingId} cancelled by {User} via Slack", bookingId, request.User);
-            
+
             await deleteBookingCommand.Handle(new DeleteBookingRequest
             {
                 AreaId = booking.AreaId,
                 BookingId = booking.Id,
                 UserId = booking.UserId
             });
-            
+
             await slackClient.RespondToInteraction(request.ResponseUrl, new MessageResponse
             {
                 ReplaceOriginal = true,

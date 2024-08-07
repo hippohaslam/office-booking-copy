@@ -7,9 +7,9 @@ namespace Hippo.Booking.Integration.Tests.Tests;
 public class IntegrationTestBase
 {
     public HttpClient GetClient() => WebFixture.GetClient();
-    
+
     public HippoBookingDbContext DbContext => WebFixture.DbContext;
-    
+
     public async Task<T> GetResponseContent<T>(HttpResponseMessage response)
     {
         var content = await response.Content.ReadAsStringAsync();
@@ -18,13 +18,13 @@ public class IntegrationTestBase
             PropertyNameCaseInsensitive = true
         })!;
     }
-    
+
     public async Task AddEntity<T>(T entity) where T : class
     {
         DbContext.Set<T>().Add(entity);
         await DbContext.SaveChangesAsync();
     }
-    
+
     protected async Task<Location> SetUpLocation(string name = "Booking Test Location")
     {
         var location = new Location

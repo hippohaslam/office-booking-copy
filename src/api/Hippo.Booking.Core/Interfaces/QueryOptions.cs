@@ -5,7 +5,7 @@ public class QueryOptions
     public bool NoTracking { get; private set; }
 
     public bool SplitQuery { get; private set; }
-    
+
 
     public QueryOptions WithNoTracking()
     {

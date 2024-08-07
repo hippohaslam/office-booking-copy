@@ -22,9 +22,9 @@ public class LocationEndpointTests : IntegrationTestBase
             Name = "Create Test Location",
             Description = "Test Location"
         };
-        
+
         //Act
-        
+
         var response = await client.PostAsJsonAsync("location", createLocation);
 
         // Assert
@@ -33,7 +33,7 @@ public class LocationEndpointTests : IntegrationTestBase
         var value = response.Headers.Location!.ToString().Split('/').Last();
 
         var location = DbContext.Locations.SingleOrDefault(x => x.Name == "Create Test Location");
-        
+
         location.Should().NotBeNull();
         location.Should().BeEquivalentTo(new Location
         {
@@ -42,7 +42,7 @@ public class LocationEndpointTests : IntegrationTestBase
             Description = "Test Location"
         }, "the content from the request should be added to the database");
     }
-    
+
     [Test]
     public async Task CreatingALocationWithTheSameNameReturns400()
     {
@@ -58,7 +58,7 @@ public class LocationEndpointTests : IntegrationTestBase
             Name = "Test Location",
             Description = "Test Location"
         };
-        
+
         //Act
         var response = await client.PostAsJsonAsync("location", createLocation);
 
@@ -66,7 +66,7 @@ public class LocationEndpointTests : IntegrationTestBase
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest, "locations cannot share the same name");
         var responseContent = await response.Content.ReadAsStringAsync();
         responseContent.Should().Be("\"Location already exists\"", "locations cannot share the same name");
-        
+
         var location = DbContext.Locations.Where(x => x.Name == "Test Location");
         location.Should().HaveCount(1, "the duplicate location should not have been added");
     }
@@ -77,19 +77,19 @@ public class LocationEndpointTests : IntegrationTestBase
         //Arrange
         var client = GetClient();
         var location = await SetUpLocation("Location Test Location 1");
-        
+
         var updateLocation = new UpdateLocationRequest
         {
             Name = "Location Test Location 1 - updated",
             Description = "Location Test Location 1 - updated"
         };
-        
+
         //Act
         var response = await client.PutAsJsonAsync("location/" + location.Id, updateLocation);
-        
+
         //Assert
         response.EnsureSuccessStatusCode();
-        
+
         var dbLocation = await DbContext.Locations
             .AsNoTracking()
             .SingleOrDefaultAsync(l => l.Id == location.Id);
@@ -100,7 +100,7 @@ public class LocationEndpointTests : IntegrationTestBase
             Description = "Location Test Location 1 - updated"
         }, "the updates to the location should be reflected in the database");
     }
-    
+
     [OneTimeSetUp]
     public async Task LocationEndpointTestsSetup()
     {
@@ -122,20 +122,20 @@ public class LocationEndpointTests : IntegrationTestBase
         await SetUpLocation("Location Test location 2");
         await SetUpLocation("Location Test Location 3");
         await SetUpLocation("Location Test Location 4");
-        
+
         //Act
         var response = await client.GetAsync("location");
-        
+
         //Assert
         response.EnsureSuccessStatusCode();
-        
+
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseLocations = JsonSerializer.Deserialize<List<LocationQueryResponse>>(responseContent, new JsonSerializerOptions 
+        var responseLocations = JsonSerializer.Deserialize<List<LocationQueryResponse>>(responseContent, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
         var dbLocations = DbContext.Locations.ToList();
-        var expectedLocations = dbLocations.Select(l => new LocationQueryResponse {Id = l.Id, Name = l.Name}).ToList();
+        var expectedLocations = dbLocations.Select(l => new LocationQueryResponse { Id = l.Id, Name = l.Name }).ToList();
 
         responseLocations.Should()
             .BeEquivalentTo(expectedLocations, "the returned locations should match the existing locations");
@@ -152,24 +152,24 @@ public class LocationEndpointTests : IntegrationTestBase
             await SetUpLocation("Location Test Location 6"),
             await SetUpLocation("Location Test Location 7")
         };
-        
+
         //Act
         var response = await client.GetAsync("location/" + locations.First().Id);
-        
+
         //Assert
         response.EnsureSuccessStatusCode();
-        
+
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseLocation = JsonSerializer.Deserialize<LocationQueryResponse>(responseContent, new JsonSerializerOptions 
+        var responseLocation = JsonSerializer.Deserialize<LocationQueryResponse>(responseContent, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
-        
+
         responseLocation.Should().BeEquivalentTo(new LocationQueryResponse
-            {
-                Id = locations.First().Id, 
-                Name = locations.First().Name
-            },
+        {
+            Id = locations.First().Id,
+            Name = locations.First().Name
+        },
             "the correct location should be returned");
     }
 }

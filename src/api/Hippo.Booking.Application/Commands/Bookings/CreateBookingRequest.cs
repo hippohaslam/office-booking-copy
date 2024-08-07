@@ -7,7 +7,7 @@ public class CreateBookingRequest
     public int BookableObjectId { get; set; }
 
     public int AreaId { get; set; }
-    
+
     public DateOnly Date { get; set; }
 
     public string UserId { get; set; } = string.Empty;

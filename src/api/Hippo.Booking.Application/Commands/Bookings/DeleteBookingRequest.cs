@@ -5,7 +5,7 @@ namespace Hippo.Booking.Application.Commands.Bookings;
 public class DeleteBookingRequest
 {
     public int BookingId { get; set; }
-    
+
     public int AreaId { get; set; }
 
     public string UserId { get; set; } = string.Empty;

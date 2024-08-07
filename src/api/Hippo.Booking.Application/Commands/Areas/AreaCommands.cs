@@ -16,7 +16,7 @@ public class AreaCommands(
     public async Task<int> Handle(int locationId, CreateAreaRequest request)
     {
         await createAreaRequestValidator.ValidateAndThrowAsync(request);
-        
+
         var locationExists = await dataContext.Query<Core.Entities.Location>()
             .AnyAsync(x => x.Id == locationId);
 
@@ -24,7 +24,7 @@ public class AreaCommands(
         {
             throw new ClientException($"Location id {locationId} not found.");
         }
-        
+
         var isExistingLocation = await dataContext
             .Query<Area>(x => x.WithNoTracking())
             .AnyAsync(x => x.Name == request.Name && x.LocationId == locationId);
@@ -51,7 +51,7 @@ public class AreaCommands(
     public async Task Handle(int locationId, int id, UpdateAreaRequest request)
     {
         await updateAreaRequestValidator.ValidateAndThrowAsync(request);
-        
+
         var location = await dataContext.Query<Area>()
             .SingleOrDefaultAsync(x => x.Id == id && x.LocationId == locationId);
 
@@ -63,7 +63,7 @@ public class AreaCommands(
         location.Name = request.Name;
         location.Description = request.Description;
         location.FloorPlanJson = request.FloorPlanJson;
-        
+
         await dataContext.Save();
     }
 }

@@ -14,7 +14,7 @@ public class DbDriver
             return await db.QueryAsync<T>($"select * from {table} {whereQuery}");
         }
     }
-    
+
     public async Task Execute(string sqlQuery)
     {
         using (var db = new SqlConnection(Config.DatabaseConnectionString))

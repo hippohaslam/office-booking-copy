@@ -30,17 +30,17 @@ public class SlackClient(IOptions<SlackSettings> slackOptions, ISlackApiClient s
             throw;
         }
     }
-    
+
     public async Task RespondToInteraction(
         string responseUrl,
-        MessageResponse responseMessage, 
+        MessageResponse responseMessage,
         CancellationToken ct = default)
     {
         try
         {
             await slackApiClient.Respond(
                 responseUrl,
-                new MessageUpdateResponse(responseMessage), 
+                new MessageUpdateResponse(responseMessage),
                 ct);
         }
         catch (SlackException e)

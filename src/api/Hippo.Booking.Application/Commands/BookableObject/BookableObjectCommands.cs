@@ -17,12 +17,12 @@ public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableO
         {
             throw new ClientException("Area not found");
         }
-        
+
         if (area.BookableObjects.Any(x => x.Name == request.Name))
         {
             throw new ClientException("Bookable object with this name already exists in this area.");
         }
-        
+
         var bookableObject = new Core.Entities.BookableObject
         {
             Name = request.Name,
@@ -30,7 +30,7 @@ public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableO
             FloorplanObjectId = request.FloorPlanObjectId,
             AreaId = areaId
         };
-        
+
         area.BookableObjects.Add(bookableObject);
 
         await dataContext.Save();
@@ -50,16 +50,16 @@ public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableO
         }
 
         var bookableObject = area.BookableObjects.SingleOrDefault(x => x.Id == bookableObjectId);
-        
+
         if (bookableObject == null)
         {
             throw new ClientException("Bookable object with this name already exists in this location.");
         }
-        
+
         bookableObject.Name = request.Name;
         bookableObject.Description = request.Description;
         bookableObject.FloorplanObjectId = request.FloorPlanObjectId;
-        
+
         await dataContext.Save();
     }
 }

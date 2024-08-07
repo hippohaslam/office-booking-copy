@@ -12,10 +12,10 @@ public class SchedulingWorkerService(
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         using var backgroundTaskScope = serviceProvider.CreateScope();
-        
+
         var scheduledTaskQueries = backgroundTaskScope.ServiceProvider.GetRequiredService<IScheduledTaskQueries>();
         var exclusiveLockProvider = backgroundTaskScope.ServiceProvider.GetRequiredService<IExclusiveLockProvider>();
-        
+
         while (!cancellationToken.IsCancellationRequested)
         {
             var schedules = await scheduledTaskQueries.GetScheduledTasks();
@@ -26,29 +26,29 @@ public class SchedulingWorkerService(
                 await Task.Delay(TimeSpan.FromHours(1), cancellationToken);
                 continue;
             }
-            
+
             var nowUtc = DateTime.UtcNow;
 
             var nextSchedule = schedules
                 .OrderBy(x => CronExpression.Parse(x.CronExpression).GetNextOccurrence(nowUtc))
                 .First();
-            
+
             var timeUntilNextRun = CronExpression.Parse(nextSchedule.CronExpression).GetNextOccurrence(nowUtc);
 
             if (timeUntilNextRun == null)
             {
                 throw new InvalidOperationException("Cron expression is invalid");
             }
-            
+
             var timeSpan = timeUntilNextRun.Value - nowUtc;
-            
+
             logger.LogInformation("Scheduled task {0} is set to run in {1}. Waiting for next run.", nextSchedule.Task, timeSpan);
-            
+
             await Task.Delay(timeSpan, cancellationToken);
 
             await RunTask(nextSchedule.Task, exclusiveLockProvider, cancellationToken);
         }
-        
+
         logger.LogWarning("Scheduled worker has stopped");
     }
 
@@ -59,9 +59,9 @@ public class SchedulingWorkerService(
             logger.LogWarning("Could not acquire lock for task {0}", task);
             return;
         }
-        
+
         using var scope = serviceProvider.CreateScope();
-        
+
         var scheduledTask = scope.ServiceProvider.GetKeyedService<IScheduledTask>(task);
 
         if (scheduledTask == null)
@@ -70,7 +70,7 @@ public class SchedulingWorkerService(
         }
 
         logger.LogInformation("Running scheduled task {0}", task);
-        
+
         await scheduledTask.RunTask();
 
         await exclusiveLockProvider.ReleaseExclusiveLock(task, cancellationToken);

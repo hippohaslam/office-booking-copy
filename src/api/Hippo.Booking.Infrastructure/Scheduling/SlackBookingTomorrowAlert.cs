@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace Hippo.Booking.Infrastructure.Scheduling;
 
 public class SlackBookingTomorrowAlert(
-    IDataContext dataContext, 
+    IDataContext dataContext,
     ISlackClient slackClient,
     IDateTimeProvider dateTimeProvider,
     ILogger<SlackBookingTomorrowAlert> logger) : BaseSlackConfirmationNotification(slackClient), IScheduledTask
@@ -26,9 +26,9 @@ public class SlackBookingTomorrowAlert(
                     $"{x.BookableObject.Name} - {x.BookableObject.Area.Name} - {x.BookableObject.Area.Location.Name}"
             })
             .ToListAsync();
-        
+
         logger.LogDebug("Found {0} bookings for tomorrow", usersBookedTomorrow.Count);
-        
+
         foreach (var booking in usersBookedTomorrow)
         {
             var userId = await SlackClient.GetUserIdByEmail(booking.User.Email);
@@ -38,8 +38,8 @@ public class SlackBookingTomorrowAlert(
                 continue;
             }
 
-            await SendConfirmationMessage("Don't forget you have a booking *tomorrow*!", 
-                booking.Location, 
+            await SendConfirmationMessage("Don't forget you have a booking *tomorrow*!",
+                booking.Location,
                 userId,
                 booking.Id);
         }

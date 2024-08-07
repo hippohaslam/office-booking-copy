@@ -6,7 +6,7 @@ namespace Hippo.Booking.Application.Commands.Location;
 public class UpdateLocationRequest
 {
     public string Name { get; set; } = string.Empty;
-    
+
     public string Description { get; set; } = string.Empty;
 }
 

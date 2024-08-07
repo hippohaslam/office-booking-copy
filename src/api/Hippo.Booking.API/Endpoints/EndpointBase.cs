@@ -14,20 +14,20 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
         {
             routePath = $"/{routePath}";
         }
-        
+
         var grouping = app.MapGroup(routePath)
             .WithTags(swaggerGroupName)
             .RequireAuthorization();
-        
+
         MapEndpoints(grouping);
     }
-    
+
     protected async Task<Results<Created, BadRequest<string>, ForbidHttpResult, ValidationProblem>> HandleCreatedResponse<TResponse>(
         Func<Task<TResponse>> handle,
         Func<TResponse, string> createdUrl)
     {
         var response = await HandleResponse(handle);
-        
+
         return response.Result switch
         {
             Ok<TResponse> ok => TypedResults.Created($"/{createdUrl(ok.Value!)}"),
@@ -37,7 +37,7 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
             _ => throw new InvalidOperationException()
         };
     }
-    
+
     protected async Task<Results<Ok<TResponse>, BadRequest<string>, ValidationProblem>> HandleResponse<TResponse>(Func<Task<TResponse>> handle)
     {
         try
@@ -54,7 +54,7 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
             var errors = ex.Errors
                 .GroupBy(x => x.PropertyName)
                 .ToDictionary(k => k.Key, v => v.Select(x => x.ErrorMessage).ToArray());
-                
+
             return TypedResults.ValidationProblem(errors);
         }
     }
@@ -79,10 +79,10 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
             var errors = ex.Errors
                 .GroupBy(x => x.PropertyName)
                 .ToDictionary(k => k.Key, v => v.Select(x => x.ErrorMessage).ToArray());
-                
+
             return TypedResults.ValidationProblem(errors);
         }
     }
-    
+
     public abstract void MapEndpoints(RouteGroupBuilder builder);
 }

@@ -31,7 +31,7 @@ try
     Log.Logger.Information("Starting application");
 
     var builder = WebApplication.CreateBuilder(args);
-    
+
     Log.Logger.Information("Environment: {0}", builder.Environment.EnvironmentName);
 
     builder.Services.AddSerilog((services, lc) => lc
@@ -92,7 +92,7 @@ try
                 optionsBuilder.ConfigureWarnings(x => x.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
             }
         });
-    
+
     var slackSettings = builder.Configuration.GetSection("Slack").Get<SlackSettings>() ?? new SlackSettings();
 
     builder.Services.AddSlackNet(c => c
@@ -135,7 +135,7 @@ try
     builder.Services.AddAuthorization();
 
     builder.Services.AddScoped<IExclusiveLockProvider, NullExclusiveLockProvider>();
-    
+
     builder.Services.AddScheduledTask<TestScheduledTask>();
     builder.Services.AddScheduledTask<SlackBookingTomorrowAlert>();
 
@@ -166,20 +166,20 @@ try
         });
     }
 
-    app.MapGet("/", [AllowAnonymous]() => TypedResults.Redirect("/swagger/index.html"));
+    app.MapGet("/", [AllowAnonymous] () => TypedResults.Redirect("/swagger/index.html"));
 
     app.UseSerilogRequestLogging(options =>
     {
         options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms (User: {User})";
-        
+
         options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
         {
             var name = httpContext.User.Identity?.IsAuthenticated == true ? httpContext.GetUserName() : "anonymous";
-            
+
             diagnosticContext.Set("User", name);
         };
     });
-    
+
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {

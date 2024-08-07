@@ -55,18 +55,18 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
                 Date = date,
                 BookableObjects = x.BookableObjects
                     .Select(y => new BookingDayResponse.BookableObjectResponse
-                {
-                    Id = y.Id,
-                    Name = y.Name,
-                    Description = y.Description,
-                    ExistingBooking = y.Bookings.Where(z => z.Date == date)
+                    {
+                        Id = y.Id,
+                        Name = y.Name,
+                        Description = y.Description,
+                        ExistingBooking = y.Bookings.Where(z => z.Date == date)
                         .Select(z => new BookingDayResponse.BookableObjectResponse.Booking
                         {
                             Id = z.Id,
                             Name = z.User.FirstName + " " + z.User.LastName
                         })
                         .SingleOrDefault()
-                }).ToList()
+                    }).ToList()
             })
             .SingleOrDefaultAsync();
 

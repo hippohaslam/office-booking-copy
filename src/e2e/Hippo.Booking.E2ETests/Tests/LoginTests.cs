@@ -13,7 +13,7 @@ public class LoginTests : PageTest
     {
         Browsers.InstallRequiredBrowsers();
     }
-    
+
     [Test]
     public async Task NavigateToAndAssertHomePage()
     {

@@ -23,7 +23,7 @@ public class IntegrationTestAuthHandler(
             new(ClaimTypes.NameIdentifier, "testuser"),
             new(ClaimTypes.Email, "testuser@hippodigital.co.uk")
         };
-        
+
         var identity = new ClaimsIdentity(claims, "Test");
         var principal = new ClaimsPrincipal(identity);
         var ticket = new AuthenticationTicket(principal, "Test");

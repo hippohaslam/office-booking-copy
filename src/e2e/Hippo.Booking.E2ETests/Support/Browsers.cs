@@ -4,7 +4,7 @@ public static class Browsers
 {
     public static void InstallRequiredBrowsers()
     {
-        var exitCode = Microsoft.Playwright.Program.Main(new[] {"install"});
+        var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });
         if (exitCode != 0)
         {
             throw new Exception($"Playwright exited with code {exitCode}");

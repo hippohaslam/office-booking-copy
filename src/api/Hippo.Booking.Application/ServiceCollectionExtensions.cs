@@ -23,15 +23,15 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ICreateAreaCommand, AreaCommands>();
         services.AddScoped<IUpdateAreaCommand, AreaCommands>();
-        
+
         services.AddScoped<IUpsertUserCommand, UserCommands>();
 
         services.AddScoped<ICreateBookingCommand, BookingCommands>();
         services.AddScoped<IDeleteBookingCommand, BookingCommands>();
-        
+
         services.AddScoped<IValidator<CreateLocationRequest>, CreateLocationRequestValidator>();
         services.AddScoped<IValidator<UpdateLocationRequest>, UpdateLocationRequestValidator>();
-        
+
         services.AddScoped<IValidator<CreateAreaRequest>, CreateAreaRequestValidator>();
         services.AddScoped<IValidator<UpdateAreaRequest>, UpdateAreaRequestValidator>();
 
@@ -46,7 +46,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IAreaQueries, AreaQueries>()
             .AddScoped<IScheduledTaskQueries, ScheduledTaskQueries>()
             ;
-        
+
         return services;
     }
 }

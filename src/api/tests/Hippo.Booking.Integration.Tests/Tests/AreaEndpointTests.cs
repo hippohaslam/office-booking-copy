@@ -30,7 +30,7 @@ public class AreaEndpointTests : IntegrationTestBase
 
         //Assert
         response.EnsureSuccessStatusCode();
-        
+
         var areaId = response.Headers.Location!.ToString().Split('/').Last();
         var dbArea = DbContext.Locations.Include(l => l.Areas)
             .SingleOrDefault(x => x.Name == location.Name)?.Areas
@@ -74,7 +74,7 @@ public class AreaEndpointTests : IntegrationTestBase
             .Where(x => x.Name == area.Name);
         dbArea.Should().HaveCount(1, "the duplicate area should not have been added to the database");
     }
-    
+
     [Test]
     public async Task UpdatingExistingAreaIsSuccessful()
     {
@@ -89,13 +89,13 @@ public class AreaEndpointTests : IntegrationTestBase
             Description = "Test Area 7 - updated",
             FloorPlanJson = "[]"
         };
-        
+
         //Act
         var response = await client.PutAsJsonAsync($"location/{location.Id}/area/{area.Id}", updateAreaRequest);
 
         //Assert
         response.EnsureSuccessStatusCode();
-        
+
         var dbArea = await DbContext.Areas
             .AsNoTracking()
             .SingleOrDefaultAsync(a => a.Id == area.Id);
@@ -122,7 +122,7 @@ public class AreaEndpointTests : IntegrationTestBase
             Email = "areatestuser@hippodigital.co.uk"
         });
     }
-    
+
     [Test]
     public async Task GetAreasShouldReturnAllExistingAreasForLocationSuccessfully()
     {
@@ -135,20 +135,20 @@ public class AreaEndpointTests : IntegrationTestBase
             await SetUpArea(location, "Test Area 4"),
             await SetUpArea(location, "Test Area 5")
         };
-        
+
         //Act
         var response = await client.GetAsync($"location/{location.Id}/area");
-        
+
         //Assert
         response.EnsureSuccessStatusCode();
-        
+
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseAreas = JsonSerializer.Deserialize<List<AreaQueryResponse>>(responseContent, new JsonSerializerOptions 
+        var responseAreas = JsonSerializer.Deserialize<List<AreaQueryResponse>>(responseContent, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
         responseAreas.Should()
-            .BeEquivalentTo(areas.Select(a => new AreaQueryResponse {Id = a.Id, Name = a.Name}).ToList(),
+            .BeEquivalentTo(areas.Select(a => new AreaQueryResponse { Id = a.Id, Name = a.Name }).ToList(),
                 "the returned areas should match the areas created");
     }
 
@@ -163,24 +163,24 @@ public class AreaEndpointTests : IntegrationTestBase
             await SetUpArea(location, "Test Area 5"),
             await SetUpArea(location, "Test Area 6"),
         };
-        
+
         //Act
         var response = await client.GetAsync($"location/{location.Id}/area/{areas.First().Id}");
-        
+
         //Assert
         response.EnsureSuccessStatusCode();
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseArea = JsonSerializer.Deserialize<AreaQueryResponse>(responseContent, new JsonSerializerOptions 
+        var responseArea = JsonSerializer.Deserialize<AreaQueryResponse>(responseContent, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
 
         responseArea.Should().BeEquivalentTo(new AreaQueryResponse
-            {
-                Id = areas.First().Id, 
-                Name = areas.First().Name,
-                FloorPlanJson = "[]",
-            },
+        {
+            Id = areas.First().Id,
+            Name = areas.First().Name,
+            FloorPlanJson = "[]",
+        },
             "the correct area should be returned");
     }
 }

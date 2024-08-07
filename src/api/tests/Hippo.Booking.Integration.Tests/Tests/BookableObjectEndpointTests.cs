@@ -24,14 +24,14 @@ public class BookableObjectEndpointTests : IntegrationTestBase
             Description = "Bookable Object Test Object 1",
             FloorPlanObjectId = "1"
         };
-        
+
         //Act
         var response = await client.PostAsJsonAsync($"location/{location.Id}/area/{area.Id}/bookable-object",
             createBookableObjectRequest);
-        
+
         //Assert
         response.EnsureSuccessStatusCode();
-        
+
         var bookableObjectId = response.Headers.Location!.ToString().Split('/').Last();
 
         var dbObject = DbContext.BookableObjects.SingleOrDefault(b => b.Name == createBookableObjectRequest.Name);
@@ -78,7 +78,7 @@ public class BookableObjectEndpointTests : IntegrationTestBase
         dbBookableObject.Should()
             .HaveCount(1, "the duplicate bookable object should not have been added to the database");
     }
-    
+
     [Test]
     public async Task UpdatingExistingBookableObjectIsSuccessful()
     {
@@ -94,11 +94,11 @@ public class BookableObjectEndpointTests : IntegrationTestBase
             Description = "Bookable Object Test Object 2 - updated",
             FloorPlanObjectId = "2"
         };
-        
+
         //Act
         var response = await client.PutAsJsonAsync($"location/{location.Id}/area/{area.Id}/bookable-object/{bookableObject.Id}",
             updateBookableObjectRequest);
-        
+
         //Assert
         response.EnsureSuccessStatusCode();
 

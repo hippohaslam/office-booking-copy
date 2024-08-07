@@ -15,7 +15,7 @@ public class LocationCommands(
     public async Task<int> Handle(CreateLocationRequest request)
     {
         await createLocationRequestValidator.ValidateAndThrowAsync(request);
-        
+
         var isExistingLocation = await dataContext
             .Query<Core.Entities.Location>(x => x.WithNoTracking())
             .AnyAsync(x => x.Name == request.Name);
@@ -41,7 +41,7 @@ public class LocationCommands(
     public async Task Handle(int id, UpdateLocationRequest request)
     {
         await updateLocationRequestValidator.ValidateAndThrowAsync(request);
-        
+
         var location = await dataContext.Query<Core.Entities.Location>()
             .SingleOrDefaultAsync(x => x.Id == id);
 
@@ -52,7 +52,7 @@ public class LocationCommands(
 
         location.Name = request.Name;
         location.Description = request.Description;
-        
+
         await dataContext.Save();
     }
 }

@@ -7,8 +7,8 @@ public class IdName<TId> where TId : struct
         Id = id;
         Name = name;
     }
-    
+
     public TId Id { get; }
-    
+
     public string Name { get; }
 }

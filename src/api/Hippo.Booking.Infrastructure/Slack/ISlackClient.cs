@@ -9,7 +9,7 @@ public interface ISlackClient
 
     Task RespondToInteraction(
         string responseUrl,
-        MessageResponse responseMessage, 
+        MessageResponse responseMessage,
         CancellationToken ct = default);
 
     Task SendMessage(Message slackMessage, CancellationToken ct = default);

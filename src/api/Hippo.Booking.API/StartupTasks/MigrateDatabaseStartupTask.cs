@@ -11,7 +11,7 @@ public class MigrateDatabaseStartupTask(HippoBookingDbContext dbContext, IWebHos
         {
             await dbContext.Database.EnsureDeletedAsync();
         }
-        
+
         await dbContext.Database.MigrateAsync();
     }
 }

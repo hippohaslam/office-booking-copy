@@ -14,12 +14,12 @@ public class IntegrationTestWebFactory : WebApplicationFactory<Program>
     public HippoBookingDbContext DbContext { get; private set; } = null!;
 
     public ISlackClient SlackClientMock { get; set; } = Substitute.For<ISlackClient>();
-    
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("IntegrationTest");
         base.ConfigureWebHost(builder);
-        
+
         builder.ConfigureServices(services =>
         {
             services.AddAuthentication(options =>
@@ -27,7 +27,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<Program>
                 options.DefaultAuthenticateScheme = "Test";
                 options.DefaultChallengeScheme = "Test";
             }).AddScheme<AuthenticationSchemeOptions, IntegrationTestAuthHandler>("Test", options => { });
-            
+
             // replace SlackClient
             var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(ISlackClient));
 

@@ -8,9 +8,9 @@ namespace Hippo.Booking.Infrastructure.EF;
 public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> options) : DbContext(options), IDataContext
 {
     public IQueryable<TEntity> Query<TEntity>(Action<QueryOptions>? options = null) where TEntity : class
-    { 
+    {
         var queryOptions = new QueryOptions();
-        
+
         options?.Invoke(queryOptions);
 
         var query = Set<TEntity>().AsQueryable();
@@ -41,7 +41,7 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
     public void DeleteEntity<TEntity>(TEntity entity) where TEntity : class
     {
         // If we do soft delete down the line, we can add it in here.
-        
+
         Set<TEntity>().Remove(entity);
     }
 
@@ -52,11 +52,11 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
     public DbSet<Core.Entities.Booking> Bookings { get; set; } = null!;
 
     public DbSet<Location> Locations { get; set; } = null!;
-    
+
     public DbSet<Area> Areas { get; set; } = null!;
-    
+
     public DbSet<ScheduledTask>? ScheduledTasks { get; set; }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var assembly = Assembly.GetAssembly(GetType());

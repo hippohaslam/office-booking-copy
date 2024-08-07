@@ -29,13 +29,13 @@ public class CreateLocationCommandTests
         });
 
         await dataContext.Save();
-        
+
         _sut = new LocationCommands(
             dataContext,
             Substitute.For<IValidator<CreateLocationRequest>>(),
             Substitute.For<IValidator<UpdateLocationRequest>>());
     }
-    
+
     [Test]
     public async Task CanCreateLocation()
     {
@@ -43,12 +43,12 @@ public class CreateLocationCommandTests
         {
             Name = "Test Location"
         };
-        
+
         var result = await _sut.Handle(request);
-        
+
         result.Should().NotBe(0);
     }
-    
+
     [Test]
     public void CannotCreateDuplicateLocation()
     {
@@ -56,7 +56,7 @@ public class CreateLocationCommandTests
         {
             Name = "Existing Location"
         };
-        
+
         Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(request));
     }
 }
