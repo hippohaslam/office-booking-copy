@@ -8,31 +8,31 @@ updates:
   - package-ecosystem: "terraform"
     directory: "/src/infrastructure/terraform"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     commit-message:
       prefix: "[terraform] "
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     commit-message:
       prefix: "[github actions] "
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
 
   # - package-ecosystem: "npm"
   #   directory: "/src/web/hippo-booking"
   #   schedule:
-  #     interval: "weekly"
+  #     interval: "daily"
   #   commit-message:
   #     prefix: "[npm] "
-  #   open-pull-requests-limit: 10
+  #   open-pull-requests-limit: 3
 
   - package-ecosystem: "nuget"
     directory: "/src"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     commit-message:
       prefix: "[nuget] "
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
