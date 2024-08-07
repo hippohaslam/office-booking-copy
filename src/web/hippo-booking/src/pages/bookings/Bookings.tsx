@@ -117,8 +117,10 @@ const Bookings = () => {
             isOpen={isModalVisible} 
             childElement={bookingInfoElement()}
             confirmButtonLabel="Yes. Cancel it"
+            confirmButtonColor="cta-red"
             onConfirm={handleConfirmCancel}
             cancelButtonLabel="No. Keep it"
+            cancelButtonColor="cta-green"
             onCancel={handleCloseModal}/>
         </div>
     )

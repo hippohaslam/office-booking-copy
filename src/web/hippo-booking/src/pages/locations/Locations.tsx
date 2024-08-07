@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getLocationsAsync } from "../../services/Apis";
-import { Link } from "react-router-dom";
 import { ErrorBanner } from '../../components';
+import { ActionTile, ActionTileList } from "../../components/tile/ActionTile";
 
 // TODO: Add location type so we know what's parking and whats an office.
 
@@ -11,6 +11,16 @@ const Locations = () => {
     queryFn: getLocationsAsync,
     //staleTime: 1000 * 60 * 60, // 1 hour. TODO: Set for production use, extend time to a day?
   });
+
+  const listItems = 
+    data?.map(location => (
+    <ActionTile 
+      title={location.name} 
+      primaryLinkText="Book at this location" 
+      primaryLinkHref={`/locations/${location.id}/areas`} 
+      secondaryLinkText="View more details" 
+      secondaryLinkHref=""/>
+    )) || [];
 
   if (error) {
     return <div><ErrorBanner text="Unable to get locations, please refresh the page" /></div>;
@@ -22,14 +32,9 @@ const Locations = () => {
 
   return (
       <div>
-        <h1>Locations</h1>
-        <ul className="locations-list">
-          {data?.map((location) => (
-            <li key={location.id}>
-              <Link to={`/locations/${location.id}/areas`}>{location.name}</Link>
-            </li>
-          ))}
-        </ul>
+        <span>Make a new booking</span>
+        <h1>Choose a location</h1>
+        <ActionTileList listItems={listItems} />
       </div>
   );
 };

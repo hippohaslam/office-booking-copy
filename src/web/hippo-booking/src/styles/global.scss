@@ -79,22 +79,22 @@ h1 {
 
 h2 {
   margin-bottom: 30px;
-  font-size: 2em;
+  font-size: 2rem;
 }
 
 h3 {
   margin-bottom: 20px;
-  font-size: 1.5em;
+  font-size: 1.5rem;
 }
 
 h4 {
   margin-bottom: 16px;
-  font-size: 1.3em;
+  font-size: 1.3rem;
 }
 
 h5 {
   margin-bottom: 10px;
-  font-size: 1.1em;
+  font-size: 1.1rem;
   color: var(--hippo-purple);
 }
 
@@ -147,7 +147,6 @@ a {
   text-underline-offset: 7px;
   text-decoration-color: var(--hippo-brand-green);
   margin: 1em 0;
-  font-size: 15pt;
 
   &:visited {
     color: var(--hippo-dark-green);
@@ -217,6 +216,7 @@ a.cta, button.cta{
   transition: .2s ease;
   border: none;
   text-wrap: nowrap;
+  width: fit-content;
 
   &:hover {
     cursor: pointer;

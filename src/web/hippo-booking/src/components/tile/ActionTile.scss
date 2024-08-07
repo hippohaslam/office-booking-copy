@@ -1,0 +1,55 @@
+@import "../../styles/variables.scss";
+
+.action-tile__list{
+    margin-top: 20px;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 15px;
+
+    & li {
+        list-style: none;
+        flex-grow: 1;
+        min-width: 400px;
+    }
+}
+
+.action-tile {
+    background-color: $hippo-brand-bluey-grey;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+
+    & h2 {
+        font-weight: normal;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    & .secondary-link{
+        margin-top: 0;
+    }
+}
+
+@media only screen and (max-width: 1017px){
+    .action-tile__list li {
+        min-width: 329px;
+    }
+}
+
+@media only screen and (max-width: 768px){
+    .action-tile__list li {
+        min-width: 0;
+    }
+
+    .action-tile {
+        padding: 5px 20px;
+
+        & .secondary-link{
+            margin-bottom: 0;
+        }
+    }
+}
