@@ -21,13 +21,13 @@ updates:
       prefix: "[github actions] "
     open-pull-requests-limit: 5
 
-  # - package-ecosystem: "npm"
-  #   directory: "/src/web/hippo-booking"
-  #   schedule:
-  #     interval: "daily"
-  #   commit-message:
-  #     prefix: "[npm] "
-  #   open-pull-requests-limit: 3
+  - package-ecosystem: "npm"
+    directory: "/src/web/hippo-booking"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "[npm] "
+    open-pull-requests-limit: 3
 
   - package-ecosystem: "nuget"
     directory: "/src"
