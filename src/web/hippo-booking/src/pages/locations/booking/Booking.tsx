@@ -263,6 +263,23 @@ const DeskBooking = () => {
     return bookedBy ? `Booked by: ${bookedBy}` : null;
   };
 
+  const adjustDate = (direction: 'next' | 'previous' | 'today') => {
+    setSelectedDate(prev => {
+      if(direction === 'today') {
+        return new Date();
+      }
+      const newDate = new Date(prev);
+      if(direction === 'previous') {
+        newDate.setDate(newDate.getDate() - 1);
+      }
+      else {
+        newDate.setDate(newDate.getDate() + 1);
+      }
+      
+      return newDate;
+    });
+  };
+
   return (
     <div>
       <h1>Desk Booking</h1>
@@ -292,6 +309,13 @@ const DeskBooking = () => {
               mask="url(#ipSApplication0)"
             ></path>
           </svg>} />
+      </div>
+      <div>
+      <button type="button" onClick={() =>  adjustDate('previous')}>Previous</button>
+        <button type="button" onClick={() => adjustDate('today')}>
+          Today
+        </button>
+        <button type="button" onClick={() => adjustDate('next')}>Next</button>
       </div>
         <br />
       <button type="button" onClick={handleToggleCanvas}>
