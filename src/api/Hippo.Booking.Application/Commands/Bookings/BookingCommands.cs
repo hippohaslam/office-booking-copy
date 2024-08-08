@@ -54,7 +54,7 @@ public class BookingCommands(
         if (booking != null)
         {
             var currentUser = userProvider.GetCurrentUser();
-            
+
             if (currentUser == null)
             {
                 throw new ClientForbiddenException();
@@ -72,7 +72,7 @@ public class BookingCommands(
             await dataContext.Save();
 
             var forSomeBodyElse = currentUserId != booking.UserId ? $" by {currentUser.FullName}" : string.Empty;
-            
+
             await userNotifier.NotifyUser(booking.UserId,
                 $"You're booking for *{booking.BookableObject.Name}* on *{booking.Date}* has been cancelled.{forSomeBodyElse}");
         }

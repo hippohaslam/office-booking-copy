@@ -15,7 +15,7 @@ public class SlackConfirmationScheduledTask(
     public async Task RunTask(ScheduleContext scheduleContext)
     {
         var settings = scheduleContext.GetPayload<SlackAlertParameters>();
-        
+
         var dateToCheck = dateTimeProvider.Today.AddDays(settings.DayOffset);
 
         var usersToNotify = await dataContext.Query<Core.Entities.Booking>()

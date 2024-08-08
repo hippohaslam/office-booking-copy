@@ -109,7 +109,7 @@ try
 
     builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
     builder.Services.AddScoped<IDataContext, HippoBookingDbContext>();
-    
+
     var slackToken = builder.Configuration.GetValue<string>("Slack:Token");
     if (string.IsNullOrWhiteSpace(slackToken))
     {
@@ -120,7 +120,7 @@ try
     {
         builder.Services.AddScoped<IUserNotifier, SlackUserNotifier>();
     }
-    
+
     builder.Services.AddScoped<IUserProvider, HttpUserProvider>();
 
     builder.Services.AddHostedService<StartupTaskExecutor>();
@@ -149,7 +149,7 @@ try
     builder.Services.AddAuthorization();
 
     builder.Services.AddScoped<IExclusiveLockProvider, NullExclusiveLockProvider>();
-    
+
     builder.Services.AddScheduledTask<SlackConfirmationScheduledTask>();
 
     builder.Services.AddHostedService<SchedulingWorkerService>();

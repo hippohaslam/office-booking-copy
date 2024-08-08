@@ -10,7 +10,7 @@ public class UserCommands(IDataContext dataContext, IValidator<RegisteredUserReq
     public async Task UpsertUser(RegisteredUserRequest registeredUserRequest)
     {
         await registeredUserRequestValidator.ValidateAndThrowAsync(registeredUserRequest);
-        
+
         var user = await dataContext.Query<User>()
             .SingleOrDefaultAsync(x => x.Id == registeredUserRequest.UserId);
 
