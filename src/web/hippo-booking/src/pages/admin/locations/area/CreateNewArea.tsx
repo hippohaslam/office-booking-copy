@@ -42,7 +42,7 @@ const CreateArea = () => {
     return (
         <div>
             <Link to="/admin">Back to locations</Link>
-            <h2>Create a new area {locationData?.data?.name}</h2>
+            <h2>Create a new area {locationData?.name}</h2>
             {hasErrors && <ErrorBanner />}
             {hasSuccess && <SuccessBanner text="Saved successfully. Go back to see it in locations" />}
             <form onSubmit={handleSubmit}>

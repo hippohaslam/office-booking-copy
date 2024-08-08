@@ -6,8 +6,9 @@ const axiosInstance = axios.create({
   withCredentials: true
 });
 
-const getLocationAsync = async (locationId: string) => {
-  return await axiosInstance.get(`/location/${locationId}`);
+const getLocationAsync = async (locationId: string): Promise<BookingLocation> => {
+  const response = await axiosInstance.get(`/location/${locationId}`);
+  return response.data;
 }
 
 const getLocationAreaAsync = async (locationId: string, areaId: string): Promise<BookingLocation> => {

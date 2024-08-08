@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { getLocationAreasAsync } from "../services/Apis";
+import { getLocationAreasAsync, getLocationAsync } from "../services/Apis";
 
 export type BookingAreaParams = {
   locationId: string;
@@ -9,10 +9,13 @@ export type BookingAreaParams = {
 // Used in the routing loader
 export const bookingAreasLoader = (queryClient: QueryClient) => async (params: BookingAreaParams) => {
   const locationId = Number.parseInt(params.locationId);
-  const data = await queryClient.fetchQuery({
+  const areaData = await queryClient.fetchQuery({
     queryKey: ["booking-areas", locationId],
     queryFn: () => getLocationAreasAsync(locationId),
-    staleTime: 1000 * 60 * 5, // 5 minutes
   });
-  return data;
+  const locationData = await queryClient.fetchQuery({
+    queryKey: ["location", locationId],
+    queryFn: () => getLocationAsync(params.locationId),
+  })
+  return { areaData, locationData };
 };
