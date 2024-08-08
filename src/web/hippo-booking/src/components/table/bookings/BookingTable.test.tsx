@@ -1,4 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { render } from "@testing-library/react"
+import { screen } from '@testing-library/dom'
+import userEvent from '@testing-library/user-event'
 import BookingTable from "./BookingTable"
 
 const bookings : Booking[] = [
@@ -74,7 +76,7 @@ test("OnClick is called once when button is clicked", async () => {
 
     // Act
     const cancelButton = screen.getAllByText("Cancel booking")[0];
-    fireEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
 
     // Assert
     expect(onClick).toHaveBeenCalledOnce();

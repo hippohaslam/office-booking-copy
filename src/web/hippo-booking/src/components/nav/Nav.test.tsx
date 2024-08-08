@@ -1,6 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import Nav from "./Nav";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react"
+import { screen } from '@testing-library/dom'
 import "@testing-library/jest-dom";
 import { UserProvider } from "../../contexts/UserContext";
 

@@ -1,4 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { render } from "@testing-library/react"
+import { screen } from '@testing-library/dom'
+import userEvent from '@testing-library/user-event'
 import ConfirmModal from "./ConfirmModal"
 
 test("Modal is not shown when isOpen is set to false", async () => {
@@ -51,7 +53,7 @@ test("Correct function is called when confirm button is clicked", async () => {
 
     // Act
     const confirmButton = screen.getByText("Yes. Cancel it");
-    fireEvent.click(confirmButton);
+    await userEvent.click(confirmButton);
 
     // Assert
     expect(onConfirm).toHaveBeenCalledOnce();
@@ -67,7 +69,7 @@ test("Correct function is called when cancel button is clicked", async () => {
 
     // Act
     const cancelButton = screen.getByText("No. Keep it");
-    fireEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
 
     // Assert
     expect(onCancel).toHaveBeenCalledOnce();
@@ -83,7 +85,7 @@ test("Cancel function is called when outside of modal is clicked", async () => {
 
     // Act
     const overlay = screen.getByTestId("modal-page-overlay");
-    fireEvent.mouseDown(overlay);
+    await userEvent.click(overlay);
 
     // Assert
     expect(onCancel).toHaveBeenCalledOnce();
@@ -98,13 +100,8 @@ test("Cancel function is called when escape key is pressed", async () => {
     )
 
     // Act
-    const modal = screen.getByRole("alertdialog");
-    fireEvent.keyDown(modal, {
-        key: "Escape",
-        code: "Escape",
-        keyCode: 27,
-        charCode: 27
-    })
+    await screen.findByText("Yes. Cancel it");
+    await userEvent.keyboard('{Escape}');
 
     // Assert
     expect(onCancel).toHaveBeenCalledOnce();
