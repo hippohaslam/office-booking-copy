@@ -1,5 +1,6 @@
-import { Link,useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { ActionTile, ActionTileList } from "../../../components/tile/ActionTile";
 
 const BookingAreas = () => {
     // prefetch to see if we can skip this page. It works!! a bit abstracty but does the job
@@ -13,15 +14,19 @@ const BookingAreas = () => {
         }
     }, [loaderData, locationId, navigate]);
 
+    const listItems = 
+    loaderData?.map(area => (
+    <ActionTile 
+      title={area.name} 
+      primaryLink={{show: true, text: "Book in this area", to: `/locations/${locationId}/areas/${area.id}`}}
+      secondaryLink={{show: false}} 
+    />
+    )) || [];
 
     return (
         <div>
-            <h3>Areas you can book</h3>
-            {loaderData && loaderData.length > 1 && loaderData.map(area => (
-                <div key={area.id}>
-                    <Link to={`/locations/${locationId}/areas/${area.id}`}>{area.name}</Link>
-                </div>
-            ))}
+            <h1>What would you like to book?</h1>
+            <ActionTileList listItems={listItems} />
         </div>
     )
 };

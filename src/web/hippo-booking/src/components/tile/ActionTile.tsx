@@ -1,20 +1,26 @@
 import { Link } from "react-router-dom";
 import "./ActionTile.scss"
 
+type LinkDisplayProps = 
+    | { show: true, text: string, to: string}
+    | { show: false | undefined | null}
+
 type ActionTileProps = {
     title : string;
-    primaryLinkText: string;
-    primaryLinkHref: string;
-    secondaryLinkText: string;
-    secondaryLinkHref: string;
+    primaryLink: LinkDisplayProps;
+    secondaryLink: LinkDisplayProps;
 };
 
-const ActionTile = ({title, primaryLinkText, primaryLinkHref, secondaryLinkText, secondaryLinkHref} : ActionTileProps) => {
+const ActionTile = ({title, primaryLink, secondaryLink} : ActionTileProps) => {
     return (
         <div className="action-tile">
             <h2>{title}</h2>
-            <Link to={secondaryLinkHref} className="secondary-link">{secondaryLinkText}</Link>
-            <Link to={primaryLinkHref} className="cta cta-green with-arrow">{primaryLinkText}</Link>
+            {secondaryLink.show ? (
+                <Link to={secondaryLink.to} className="secondary-link">{secondaryLink.text}</Link>
+            ) : null}
+            {primaryLink.show ? (
+                <Link to={primaryLink.to} className="cta cta-green with-arrow">{primaryLink.text}</Link>
+            ) : null}
         </div>
     )
 }

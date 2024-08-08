@@ -16,10 +16,8 @@ const Locations = () => {
     data?.map(location => (
     <ActionTile 
       title={location.name} 
-      primaryLinkText="Book at this location" 
-      primaryLinkHref={`/locations/${location.id}/areas`} 
-      secondaryLinkText="View more details" 
-      secondaryLinkHref=""/>
+      primaryLink={{show: true, to: `/locations/${location.id}/areas`, text: "Book at this location"}}
+      secondaryLink={{show: true, to: "", text: "View more details" }}/>
     )) || [];
 
   if (error) {
