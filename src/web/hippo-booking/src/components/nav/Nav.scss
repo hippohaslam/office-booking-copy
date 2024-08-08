@@ -103,20 +103,21 @@ header {
     
         .nav-container {
             padding: 0 10px;
+            height: 4rem;
         }
     
         .nav-menu {
             position: fixed;
             left: 100%;
-            top: 6rem;
+            top: 4rem;
             flex-direction: column;
             width: 100%;
-            border-radius: 10px;
-            transition: 0.4s;
-            height: calc(100dvh - 6rem);
+            transition: 0.5s ease-in-out;
+            height: calc(100dvh - 4rem);
             z-index: 1;
             background-color: $hippo-brand-light-grey;
             padding: 0 25px;
+            display: block;
     
             &.active {
                 left: 0;
