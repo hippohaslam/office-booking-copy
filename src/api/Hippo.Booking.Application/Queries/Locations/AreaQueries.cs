@@ -7,18 +7,23 @@ namespace Hippo.Booking.Application.Queries.Locations;
 
 public interface IAreaQueries
 {
-    Task<List<IdName<int>>> GetAreas(int locationId);
+    Task<List<AreaListResponse>> GetAreas(int locationId);
 
     Task<AreaQueryResponse?> GetAreaById(int locationId, int id);
 }
 
 public class AreaQueries(IDataContext dataContext) : IAreaQueries
 {
-    public Task<List<IdName<int>>> GetAreas(int locationId)
+    public Task<List<AreaListResponse>> GetAreas(int locationId)
     {
         return dataContext.Query<Area>(x => x.WithNoTracking())
             .Where(x => x.LocationId == locationId)
-            .Select(x => new IdName<int>(x.Id, x.Name))
+            .Select(x => new AreaListResponse
+            {
+                Id = x.Id,
+                Name = x.Name,
+                AreaTypeId = x.AreaTypeId
+            })
             .ToListAsync();
     }
 
@@ -31,6 +36,7 @@ public class AreaQueries(IDataContext dataContext) : IAreaQueries
             {
                 Id = x.Id,
                 Name = x.Name,
+                AreaTypeId = x.AreaTypeId,
                 FloorPlanJson = x.FloorPlanJson,
                 BookableObjects = x.BookableObjects.Select(y => new BookableObjectDto
                 {
