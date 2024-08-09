@@ -56,7 +56,7 @@ body {
 }
 
 main {
-  min-height: calc(100dvh - (4rem + 4rem)); // = full height - (header height - footer height)
+  min-height: calc(100dvh - (6rem + 4rem)); // = full height - (header height - footer height)
   background-color: var(--hippo-brand-grey);
 }
 
@@ -382,6 +382,9 @@ section.full-width-navy{
 }
 
 @media only screen and (max-width: 768px){
+  main {
+    min-height: calc(100dvh - (4rem + 4rem)); //100dvh - (header + footer)
+  }
   .login-container {
     padding: 20px;
   }
