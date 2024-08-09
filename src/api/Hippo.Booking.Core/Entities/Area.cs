@@ -1,3 +1,5 @@
+using Hippo.Booking.Core.Enums;
+
 namespace Hippo.Booking.Core.Entities;
 
 public class Area : BaseEntity<int>
@@ -10,6 +12,9 @@ public class Area : BaseEntity<int>
 
     public int LocationId { get; set; }
     public Location Location { get; set; } = null!;
+    
+    public AreaTypeEnum AreaTypeId { get; set; }
+    public AreaType AreaType { get; set; } = null!;
 
     public List<BookableObject> BookableObjects { get; set; } = new();
 }

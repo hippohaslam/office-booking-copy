@@ -3,11 +3,14 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ErrorBanner, SuccessBanner } from "../../../../components";
 import { getLocationAsync, postLocationAreaAsync } from "../../../../services/Apis";
+import {AreaTypeEnum, AreaTypeEnumLabels} from "../../../../enums/AreaTypeEnum.ts";
+import {NewArea} from "../../../../interfaces/Area";
 
 const CreateArea = () => {
     const initialArea = {
         name: '',
         description: '',
+        areaTypeId: AreaTypeEnum.Desks
     };
     const { locationId } = useParams();
     const [area, setArea] = useState<NewArea>(initialArea);
@@ -20,7 +23,7 @@ const CreateArea = () => {
 
     const createArea = useMutation({
         mutationFn: async () => postLocationAreaAsync(Number.parseInt(locationId as string), area),
-        onSuccess: () =>  setArea({name: '', description: ''}),
+        onSuccess: () =>  setArea({name: '', description: '', areaTypeId: AreaTypeEnum.Desks}),
     });
 
 
@@ -29,10 +32,17 @@ const CreateArea = () => {
         createArea.mutate();
     }
 
-    const handleLocationUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAreaUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
         setArea({
             ...area,
             [e.target.name]: e.target.value,
+        });
+    }
+
+    const handleAreaTypeUpdate = (e: any) => {
+        setArea({
+            ...area,
+            ["areaTypeId"]: parseInt(e.target.value),
         });
     }
 
@@ -48,21 +58,32 @@ const CreateArea = () => {
             <form onSubmit={handleSubmit}>
                 <table>
                     <tbody>
-                        <tr>
-                            <td><label htmlFor="name">Name</label></td>
-                            <td>
-                                <input type="text" name="name" value={area.name} onChange={handleLocationUpdate} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label htmlFor="description">Description</label></td>
-                            <td>
-                                <input type="text" name="description" value={area.description} onChange={handleLocationUpdate} />
-                            </td>
-                        </tr>
+                    <tr>
+                        <td><label htmlFor="name">Name</label></td>
+                        <td>
+                            <input type="text" name="name" value={area.name} onChange={handleAreaUpdate}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label htmlFor="description">Description</label></td>
+                        <td>
+                            <input type="text" name="description" value={area.description}
+                                   onChange={handleAreaUpdate}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label htmlFor="areaTypeId">Area Type</label></td>
+                        <td>
+                            <select name="areaTypeId" value={area.areaTypeId} onChange={handleAreaTypeUpdate}>
+                                {Object.keys(AreaTypeEnumLabels).map((key, _) => {
+                                    return <option key={key} value={key}>{AreaTypeEnumLabels[key]}</option>
+                                })}
+                            </select>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
-                <br />
+                <br/>
                 <button>Submit</button>
             </form>
         </div>

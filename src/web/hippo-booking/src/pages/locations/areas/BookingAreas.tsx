@@ -2,6 +2,7 @@ import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { ActionTile, ActionTileList } from "../../../components/tile/ActionTile";
 import { ErrorBanner } from "../../../components";
+import { Area } from "../../../interfaces/Area";
 
 const BookingAreas = () => {
     // prefetch to see if we can skip this page. It works!! a bit abstracty but does the job

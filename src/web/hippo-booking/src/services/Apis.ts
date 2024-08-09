@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {Area, NewArea} from "../interfaces/Area";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const axiosInstance = axios.create({

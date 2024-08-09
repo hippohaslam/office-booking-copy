@@ -38,7 +38,8 @@ public class AreaCommands(
         {
             Name = request.Name,
             Description = request.Description,
-            LocationId = locationId
+            LocationId = locationId,
+            AreaTypeId = request.AreaTypeId
         };
 
         dataContext.AddEntity(area);
@@ -52,17 +53,18 @@ public class AreaCommands(
     {
         await updateAreaRequestValidator.ValidateAndThrowAsync(request);
 
-        var location = await dataContext.Query<Area>()
+        var area = await dataContext.Query<Area>()
             .SingleOrDefaultAsync(x => x.Id == id && x.LocationId == locationId);
 
-        if (location is null)
+        if (area is null)
         {
-            throw new ClientException("Location not found");
+            throw new ClientException("Area not found");
         }
 
-        location.Name = request.Name;
-        location.Description = request.Description;
-        location.FloorPlanJson = request.FloorPlanJson;
+        area.Name = request.Name;
+        area.Description = request.Description;
+        area.FloorPlanJson = request.FloorPlanJson;
+        area.AreaTypeId = request.AreaTypeId;
 
         await dataContext.Save();
     }

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Hippo.Booking.Core.Entities;
+using Hippo.Booking.Core.Enums;
 using Hippo.Booking.Infrastructure.EF;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
@@ -44,7 +45,8 @@ public class IntegrationTestBase
             Description = "Test area",
             FloorPlanJson = "[]",
             LocationId = location.Id,
-            Location = location
+            Location = location,
+            AreaTypeId = AreaTypeEnum.Desks
         };
         await AddEntity(area);
         return area;

@@ -5,6 +5,7 @@ using FluentAssertions;
 using Hippo.Booking.Application.Commands.Areas;
 using Hippo.Booking.Application.Queries.Locations;
 using Hippo.Booking.Core.Entities;
+using Hippo.Booking.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
@@ -22,7 +23,8 @@ public class AreaEndpointTests : IntegrationTestBase
         var createAreaRequest = new CreateAreaRequest
         {
             Name = "Test Area 1",
-            Description = "Test Area 1"
+            Description = "Test Area 1",
+            AreaTypeId = AreaTypeEnum.Desks
         };
 
         //Act
@@ -42,7 +44,8 @@ public class AreaEndpointTests : IntegrationTestBase
             Name = "Test Area 1",
             Description = "Test Area 1",
             LocationId = location.Id,
-            Location = location
+            Location = location,
+            AreaTypeId = AreaTypeEnum.Desks
         }, "the data sent in the request should be added to the database");
     }
 
@@ -57,7 +60,8 @@ public class AreaEndpointTests : IntegrationTestBase
         var createAreaRequest = new CreateAreaRequest
         {
             Name = "Test Area 2",
-            Description = "Test Area 2"
+            Description = "Test Area 2",
+            AreaTypeId = AreaTypeEnum.Desks
         };
 
         //Act
@@ -87,7 +91,8 @@ public class AreaEndpointTests : IntegrationTestBase
         {
             Name = "Test Area 7 - updated",
             Description = "Test Area 7 - updated",
-            FloorPlanJson = "[]"
+            FloorPlanJson = "[]",
+            AreaTypeId = AreaTypeEnum.CarPark
         };
 
         //Act
@@ -106,7 +111,8 @@ public class AreaEndpointTests : IntegrationTestBase
             Name = "Test Area 7 - updated",
             Description = "Test Area 7 - updated",
             FloorPlanJson = "[]",
-            LocationId = location.Id
+            LocationId = location.Id,
+            AreaTypeId = AreaTypeEnum.CarPark
         }, "updates sent in the request should be reflected in the database");
     }
 

@@ -1,5 +1,6 @@
 using FluentValidation;
 using Hippo.Booking.Application.Models;
+using Hippo.Booking.Core.Enums;
 
 namespace Hippo.Booking.Application.Commands.Areas;
 
@@ -11,6 +12,8 @@ public class UpdateAreaRequest
 
     public string FloorPlanJson { get; set; } = string.Empty;
 
+    public AreaTypeEnum AreaTypeId { get; set; }
+
     public List<BookableObjectDto> BookableObjects { get; set; } = new();
 
 }
@@ -21,5 +24,6 @@ public class UpdateAreaRequestValidator : AbstractValidator<UpdateAreaRequest>
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(ValidationConstants.NameMaxLength);
         RuleFor(x => x.Description).MaximumLength(ValidationConstants.DescriptionMaxLength);
+        RuleFor(x => x.AreaTypeId).IsInEnum();
     }
 }
