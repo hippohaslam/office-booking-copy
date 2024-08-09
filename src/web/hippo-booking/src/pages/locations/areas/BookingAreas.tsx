@@ -3,6 +3,9 @@ import { useEffect } from "react";
 import { ActionTile, ActionTileList } from "../../../components/tile/ActionTile";
 import { ErrorBanner } from "../../../components";
 import { Area } from "../../../interfaces/Area";
+import DeskIcon from "../../../assets/desk-icon.svg";
+import ParkingIcon from "../../../assets/parking-icon.svg"
+import { AreaTypeEnum } from "../../../enums/AreaTypeEnum";
 
 const BookingAreas = () => {
     // prefetch to see if we can skip this page. It works!! a bit abstracty but does the job
@@ -28,7 +31,8 @@ const BookingAreas = () => {
     const listItems = 
     areaData?.map(area => (
     <ActionTile 
-      title={area.name} 
+      title={area.name}
+      iconSrc={area.areaTypeId === AreaTypeEnum.Desks ? DeskIcon : area.areaTypeId === AreaTypeEnum.CarPark ? ParkingIcon : undefined}
       primaryLink={{show: true, text: "Book in this area", to: `/locations/${locationId}/areas/${area.id}`}}
       secondaryLink={{show: false}} 
     />

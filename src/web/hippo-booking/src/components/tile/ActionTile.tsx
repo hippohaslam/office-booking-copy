@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import "./ActionTile.scss"
+import "./ActionTile.scss";
+import { isNullOrEmpty } from "../../helpers/StringHelpers";
 
 type LinkDisplayProps = 
     | { show: true, text: string, to: string}
@@ -7,14 +8,21 @@ type LinkDisplayProps =
 
 type ActionTileProps = {
     title : string;
+    iconSrc?: string;
     primaryLink: LinkDisplayProps;
     secondaryLink: LinkDisplayProps;
 };
 
-const ActionTile = ({title, primaryLink, secondaryLink} : ActionTileProps) => {
+const ActionTile = ({title, iconSrc, primaryLink, secondaryLink} : ActionTileProps) => {
     return (
         <div className="action-tile">
-            <h2>{title}</h2>
+            <div className="tile-content">
+                {!isNullOrEmpty(iconSrc) ? (
+                    <img src={iconSrc} alt=""/>
+                ) : null}
+                <h2>{title}</h2>
+            </div>
+            
             {secondaryLink.show ? (
                 <Link to={secondaryLink.to} className="secondary-link">{secondaryLink.text}</Link>
             ) : null}
