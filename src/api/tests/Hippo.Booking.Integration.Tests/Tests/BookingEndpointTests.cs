@@ -6,6 +6,7 @@ using Hippo.Booking.Application.Commands.Bookings;
 using Hippo.Booking.Application.Models;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Core.Entities;
+using Hippo.Booking.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
@@ -118,10 +119,7 @@ public class BookingEndpointTests : IntegrationTestBase
         //Assert
         response.EnsureSuccessStatusCode();
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseBookings = JsonSerializer.Deserialize<List<UserBookingsResponse>>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var responseBookings = responseContent.FromJson<List<UserBookingsResponse>>();
 
         var dbBookings = DbContext.Bookings
             .OrderBy(x => x.Date)
@@ -172,10 +170,7 @@ public class BookingEndpointTests : IntegrationTestBase
         //Assert
         response.EnsureSuccessStatusCode();
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseBooking = JsonSerializer.Deserialize<BookingDayResponse>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var responseBooking = responseContent.FromJson<BookingDayResponse>();
 
         responseBooking.Should().BeEquivalentTo(new BookingDayResponse
         {

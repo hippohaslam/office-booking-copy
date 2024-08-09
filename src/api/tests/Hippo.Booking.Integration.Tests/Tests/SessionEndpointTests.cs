@@ -1,6 +1,7 @@
 using System.Text.Json;
 using FluentAssertions;
 using Hippo.Booking.Application.Commands.Users;
+using Hippo.Booking.Core.Extensions;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
 
@@ -14,10 +15,7 @@ public class SessionEndpointTests : IntegrationTestBase
         var response = await client.GetAsync("/session");
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
-        var user = JsonSerializer.Deserialize<RegisteredUserRequest>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var user = content.FromJson<RegisteredUserRequest>();
 
         user.Should().BeEquivalentTo(new RegisteredUserRequest
         {

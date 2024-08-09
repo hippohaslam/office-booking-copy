@@ -5,6 +5,7 @@ using FluentAssertions;
 using Hippo.Booking.Application.Commands.Location;
 using Hippo.Booking.Application.Queries.Locations;
 using Hippo.Booking.Core.Entities;
+using Hippo.Booking.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
@@ -130,10 +131,7 @@ public class LocationEndpointTests : IntegrationTestBase
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseLocations = JsonSerializer.Deserialize<List<LocationQueryResponse>>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var responseLocations = responseContent.FromJson<List<LocationQueryResponse>>();
         var dbLocations = DbContext.Locations.ToList();
         var expectedLocations = dbLocations.Select(l => new LocationQueryResponse { Id = l.Id, Name = l.Name }).ToList();
 
@@ -160,10 +158,7 @@ public class LocationEndpointTests : IntegrationTestBase
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseLocation = JsonSerializer.Deserialize<LocationQueryResponse>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var responseLocation = responseContent.FromJson<LocationQueryResponse>();
 
         responseLocation.Should().BeEquivalentTo(new LocationQueryResponse
         {

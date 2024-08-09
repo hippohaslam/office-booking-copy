@@ -6,6 +6,7 @@ using Hippo.Booking.Application.Commands.Areas;
 using Hippo.Booking.Application.Queries.Locations;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Enums;
+using Hippo.Booking.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
@@ -149,12 +150,15 @@ public class AreaEndpointTests : IntegrationTestBase
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseAreas = JsonSerializer.Deserialize<List<AreaQueryResponse>>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var responseAreas = responseContent.FromJson<List<AreaQueryResponse>>();
+
         responseAreas.Should()
-            .BeEquivalentTo(areas.Select(a => new AreaQueryResponse { Id = a.Id, Name = a.Name }).ToList(),
+            .BeEquivalentTo(areas.Select(a => new AreaQueryResponse
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    AreaTypeId = a.AreaTypeId
+                }).ToList(),
                 "the returned areas should match the areas created");
     }
 
@@ -176,17 +180,15 @@ public class AreaEndpointTests : IntegrationTestBase
         //Assert
         response.EnsureSuccessStatusCode();
         var responseContent = await response.Content.ReadAsStringAsync();
-        var responseArea = JsonSerializer.Deserialize<AreaQueryResponse>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var responseArea = responseContent.FromJson<AreaQueryResponse>();
 
         responseArea.Should().BeEquivalentTo(new AreaQueryResponse
-        {
-            Id = areas.First().Id,
-            Name = areas.First().Name,
-            FloorPlanJson = "[]",
-        },
+            {
+                Id = areas.First().Id,
+                Name = areas.First().Name,
+                FloorPlanJson = "[]",
+                AreaTypeId = AreaTypeEnum.Desks
+            },
             "the correct area should be returned");
     }
 }

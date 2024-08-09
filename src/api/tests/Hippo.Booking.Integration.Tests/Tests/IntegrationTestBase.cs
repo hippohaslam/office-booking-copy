@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Enums;
+using Hippo.Booking.Core.Extensions;
 using Hippo.Booking.Infrastructure.EF;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
@@ -14,10 +15,7 @@ public class IntegrationTestBase
     public async Task<T> GetResponseContent<T>(HttpResponseMessage response)
     {
         var content = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<T>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        })!;
+        return content.FromJson<T>() ?? throw new Exception("Failed to deserialize response content");
     }
 
     public async Task AddEntity<T>(T entity) where T : class
