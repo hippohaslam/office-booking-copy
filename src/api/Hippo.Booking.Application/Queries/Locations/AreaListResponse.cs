@@ -6,7 +6,7 @@ public class AreaListResponse
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     public AreaTypeEnum AreaTypeId { get; set; }
 }
