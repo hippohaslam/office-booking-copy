@@ -18,7 +18,7 @@ public class AreaEntityConfiguration :
     public void Configure(EntityTypeBuilder<AreaType> builder)
     {
         builder.HasKey(x => x.Id);
-        
+
         var enumData = Enum.GetValues<AreaTypeEnum>();
         builder.HasData(enumData.Select(x => new AreaType
         {

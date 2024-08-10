@@ -154,11 +154,11 @@ public class AreaEndpointTests : IntegrationTestBase
 
         responseAreas.Should()
             .BeEquivalentTo(areas.Select(a => new AreaQueryResponse
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    AreaTypeId = a.AreaTypeId
-                }).ToList(),
+            {
+                Id = a.Id,
+                Name = a.Name,
+                AreaTypeId = a.AreaTypeId
+            }).ToList(),
                 "the returned areas should match the areas created");
     }
 
@@ -183,12 +183,12 @@ public class AreaEndpointTests : IntegrationTestBase
         var responseArea = responseContent.FromJson<AreaQueryResponse>();
 
         responseArea.Should().BeEquivalentTo(new AreaQueryResponse
-            {
-                Id = areas.First().Id,
-                Name = areas.First().Name,
-                FloorPlanJson = "[]",
-                AreaTypeId = AreaTypeEnum.Desks
-            },
+        {
+            Id = areas.First().Id,
+            Name = areas.First().Name,
+            FloorPlanJson = "[]",
+            AreaTypeId = AreaTypeEnum.Desks
+        },
             "the correct area should be returned");
     }
 }

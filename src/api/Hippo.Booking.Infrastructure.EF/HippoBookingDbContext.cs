@@ -54,7 +54,7 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
     public DbSet<Location> Locations { get; set; } = null!;
 
     public DbSet<Area> Areas { get; set; } = null!;
-    
+
     public DbSet<AreaType> AreaTypes { get; set; } = null!;
 
     public DbSet<ScheduledTask>? ScheduledTasks { get; set; }
