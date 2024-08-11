@@ -9,7 +9,6 @@
 .date-control {
     border: none;
     font-size: 12pt;
-    border-left: 1px solid rgb(175, 175, 175);
     background-color: $hippo-brand-light-grey;
     box-shadow: 0 1px 1px 0 rgba(175, 175, 175, 0.61);
     flex-basis: 0;
@@ -97,20 +96,10 @@
 
 @media only screen and (max-width: 768px) {
     .date-control {
-        border: none;
         font-size: 12pt;
     }
 
-    .date-input {
-        max-width: 150px;
-    }
-
-    .date-input-icon {
-        left: 65%;
-    }
-
     .date-button.today {
-        padding-left: auto;
-        padding-right: auto;
+        display: none;
     }
 }
