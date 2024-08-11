@@ -287,7 +287,7 @@ const DeskBooking = () => {
 
   return (
     <div>
-      <h1>Desk Booking</h1>
+      <h1>Choose a space</h1>
       <CustomDatePicker adjustDate={adjustDate} inputOnChange={(date) => setSelectedDate(date!)} selectedDate={selectedDate}/>
       <div>
 
