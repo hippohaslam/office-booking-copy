@@ -39,26 +39,27 @@ variable "github_access_token" {
   sensitive   = true
 }
 
-variable "s3_terraform_bucket" {
-  description = "S3 bucket to store Terraform state"
+variable "env_suffix" {
+  description = "Environment Suffix"
   type        = string
-  default     = "hippo-booking-terraform-test"
 }
 
 variable "frontend_subdomain" {
   description = "Frontend Subdomain"
   type        = string
-  default     = "bookingtest"
 }
 
 variable "backend_subdomain" {
   description = "Backend Subdomain"
   type        = string
-  default     = "bookingapitest"
 }
 
 variable "hosted_zone_url" {
   description = "Hosted Zone URL"
   type        = string
-  default     = "internal.hippodigital.cloud"
+}
+
+variable "db_instance_size" {
+  description = "DB Instance Size"
+  type        = string
 }

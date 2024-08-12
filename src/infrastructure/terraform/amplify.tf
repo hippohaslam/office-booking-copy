@@ -1,5 +1,5 @@
-resource "aws_amplify_app" "react_app" {
-  name         = "hippo-booking-front-end-app"
+resource "aws_amplify_app" "frontend_app" {
+  name         = "hippo-booking-front-end-${var.env_suffix}"
   repository   = var.github_repo
   access_token = var.github_access_token
 
@@ -44,7 +44,7 @@ BUILD_SPEC
 }
 
 resource "aws_amplify_branch" "main_branch" {
-  app_id      = aws_amplify_app.react_app.id
+  app_id      = aws_amplify_app.frontend_app.id
   branch_name = "main" # Replace with your branch name
 
   stage = "PRODUCTION"
@@ -57,11 +57,15 @@ resource "aws_amplify_branch" "main_branch" {
 }
 
 resource "aws_amplify_domain_association" "example" {
-  app_id      = aws_amplify_app.react_app.id
+  app_id      = aws_amplify_app.frontend_app.id
   domain_name = "${var.frontend_subdomain}.${var.hosted_zone_url}"
 
   sub_domain {
     branch_name = aws_amplify_branch.main_branch.branch_name
     prefix      = ""
   }
+}
+
+output "amplify_app_name" {
+  value = aws_amplify_app.frontend_app.name
 }

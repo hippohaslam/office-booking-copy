@@ -24,7 +24,7 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init --backend-config="bucket=hippo-booking-terraform" --backend-config="key=terraform.Development.tfstate" --backend-config="region=eu-west-1"
+        run: terraform init --backend-config="bucket=hippo-booking-terraform" --backend-config="key=terraform.Test.tfstate" --backend-config="region=eu-west-1"
 
       - name: Terraform Destroy
         id: destroy

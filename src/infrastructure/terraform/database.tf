@@ -1,9 +1,9 @@
 resource "aws_db_instance" "hippo-booking-db" {
-  identifier           = "hippo-booking-db-test"
+  identifier           = "hippo-booking-db-${var.env_suffix}"
   allocated_storage    = 20 # Minimum storage for RDS instances
   engine               = "postgres"
   engine_version       = "16.3"
-  instance_class       = "db.t3.micro"
+  instance_class       = var.db_instance_size
   username             = "postgres"
   password             = "postgres" # Use a more secure password
   parameter_group_name = "default.postgres16"
@@ -17,7 +17,7 @@ resource "aws_db_instance" "hippo-booking-db" {
 }
 
 resource "aws_db_subnet_group" "db-subnet" {
-  name       = "booking-db-subnet"
+  name       = "booking-db-subnet-group-${var.env_suffix}"
   subnet_ids = [aws_subnet.hippo-booking-subnet-db-a.id, aws_subnet.hippo-booking-subnet-db-b.id, aws_subnet.hippo-booking-subnet-db-c.id]
 
   tags = local.tags

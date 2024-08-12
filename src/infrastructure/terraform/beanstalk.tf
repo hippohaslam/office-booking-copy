@@ -1,5 +1,5 @@
 resource "aws_elastic_beanstalk_application" "hippo-booking-api" {
-  name        = "hippo-booking-api"
+  name        = "hippo-booking-api-${var.env_suffix}"
   description = "Elastic Beanstalk application for .NET API"
 }
 
@@ -24,7 +24,7 @@ resource "aws_route_table_association" "hippo-booking-api-subnet-b-routing" {
 }
 
 resource "aws_security_group" "beanstalk_sg" {
-  name        = "beanstalk-sg"
+  name        = "beanstalk-sg-${var.env_suffix}"
   description = "Security group for Elastic Beanstalk"
   vpc_id      = aws_vpc.hippo-booking-vpc.id
 
@@ -53,7 +53,7 @@ resource "aws_security_group" "beanstalk_sg" {
 }
 
 resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
-  name                = "hippo-booking-api-env"
+  name                = "hippo-booking-api-env-${var.env_suffix}"
   application         = aws_elastic_beanstalk_application.hippo-booking-api.name
   solution_stack_name = "64bit Amazon Linux 2023 v3.1.3 running .NET 8"
 
@@ -208,13 +208,13 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
 }
 
 resource "aws_iam_instance_profile" "eb_instance_profile" {
-  name = "hippo-booking-api-eb-instance-profile"
+  name = "hippo-booking-api-eb-instance-profile-${var.env_suffix}"
 
   role = aws_iam_role.eb_instance_role.name
 }
 
 resource "aws_iam_role" "eb_instance_role" {
-  name = "eb-instance-role"
+  name = "eb-instance-role-${var.env_suffix}"
 
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier",
@@ -236,4 +236,12 @@ resource "aws_iam_role" "eb_instance_role" {
   ]
 }
 EOF
+}
+
+output "elastic_beanstalk_application_name" {
+  value = aws_elastic_beanstalk_application.hippo-booking-api.name
+}
+
+output "elastic_beanstalk_environment_name" {
+  value = aws_elastic_beanstalk_environment.hippo-booking-api-env.name
 }

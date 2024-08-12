@@ -1,0 +1,5 @@
+env_suffix         = "test"
+frontend_subdomain = "bookingtest"
+backend_subdomain  = "bookingapitest"
+hosted_zone_url    = "internal.hippodigital.cloud"
+db_instance_size   = "db.t3.micro"

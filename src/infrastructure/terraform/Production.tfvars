@@ -1,0 +1,5 @@
+env_suffix         = "prod"
+frontend_subdomain = "booking"
+backend_subdomain  = "bookingapi"
+hosted_zone_url    = "internal.hippodigital.cloud"
+db_instance_size   = "db.t3.micro"
