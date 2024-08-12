@@ -148,8 +148,6 @@ try
 
     builder.Services.AddAuthorization();
 
-    builder.Services.AddScoped<IExclusiveLockProvider, NullExclusiveLockProvider>();
-
     builder.Services.AddScheduledTask<SlackConfirmationScheduledTask>();
 
     builder.Services.AddHostedService<SchedulingWorkerService>();

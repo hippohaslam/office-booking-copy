@@ -12,5 +12,7 @@ public class ScheduledTaskEntityConfiguration : IEntityTypeConfiguration<Schedul
 
         builder.Property(x => x.PayloadJson)
             .HasColumnType("jsonb");
+
+        builder.Property(x => x.LastRunDate).IsConcurrencyToken();
     }
 }

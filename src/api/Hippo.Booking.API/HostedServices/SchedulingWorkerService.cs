@@ -1,25 +1,27 @@
-using Cronos;
-using Hippo.Booking.Application.Queries.Scheduling;
+using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.API.HostedServices;
 
 public class SchedulingWorkerService(
     ILogger<SchedulingWorkerService> logger,
-    IServiceProvider serviceProvider)
+    IServiceProvider serviceProvider,
+    IDateTimeProvider dateTimeProvider)
     : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         using var backgroundTaskScope = serviceProvider.CreateScope();
 
-        var scheduledTaskQueries = backgroundTaskScope.ServiceProvider.GetRequiredService<IScheduledTaskQueries>();
-        var exclusiveLockProvider = backgroundTaskScope.ServiceProvider.GetRequiredService<IExclusiveLockProvider>();
+        var dataContext = backgroundTaskScope.ServiceProvider.GetRequiredService<IDataContext>();
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var schedules = await scheduledTaskQueries.GetScheduledTasks();
+            var schedules = await dataContext
+                .Query<ScheduledTask>(x => x.WithNoTracking())
+                .ToListAsync(cancellationToken);
 
             if (schedules.Count == 0)
             {
@@ -28,53 +30,67 @@ public class SchedulingWorkerService(
                 continue;
             }
 
-            var nowUtc = DateTime.UtcNow;
+            // Everything is UK time on purpose so the schedules don't shift during daylight savings
+            // we can revisit if Hippo go Global :D
+            var nowUkLocal =
+                TimeZoneInfo.ConvertTimeFromUtc(dateTimeProvider.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Europe/London"));
 
             var nextSchedule = schedules
-                .OrderBy(x => CronExpression.Parse(x.CronExpression).GetNextOccurrence(nowUtc))
+                .OrderBy(x => (x.TimeToRun - TimeOnly.FromDateTime(nowUkLocal)))
                 .First();
-
-            var timeUntilNextRun = CronExpression.Parse(nextSchedule.CronExpression).GetNextOccurrence(nowUtc);
-
-            if (timeUntilNextRun == null)
-            {
-                throw new InvalidOperationException("Cron expression is invalid");
-            }
-
-            var timeSpan = timeUntilNextRun.Value - nowUtc;
+            
+            var timeSpan = nextSchedule.TimeToRun - TimeOnly.FromDateTime(nowUkLocal);
 
             logger.LogInformation("Scheduled task {0} is set to run in {1}. Waiting for next run.", nextSchedule.Task, timeSpan);
 
             await Task.Delay(timeSpan, cancellationToken);
 
-            await RunTask(nextSchedule, exclusiveLockProvider, cancellationToken);
+            await RunTask(nextSchedule.Id, dataContext, cancellationToken);
         }
 
         logger.LogWarning("Scheduled worker has stopped");
     }
 
-    private async Task RunTask(ScheduledTaskResponse schedule, IExclusiveLockProvider exclusiveLockProvider, CancellationToken cancellationToken)
+    private async Task RunTask(int taskId, IDataContext dataContext, CancellationToken cancellationToken)
     {
-        if (!await exclusiveLockProvider.GetExclusiveLock(schedule.Task, TimeSpan.FromMinutes(5), cancellationToken))
+        var scheduledTaskEntry = await dataContext.Query<ScheduledTask>()
+            .SingleOrDefaultAsync(x => x.Id == taskId, cancellationToken: cancellationToken);
+        
+        if (scheduledTaskEntry == null)
         {
-            logger.LogWarning("Could not acquire lock for task {0}", schedule.Task);
+            logger.LogError("Scheduled task {Task} not found", taskId);
             return;
         }
 
+        if (scheduledTaskEntry.LastRunDate >= dateTimeProvider.Today)
+        {
+            logger.LogWarning("Scheduled task {Task} has already run today", scheduledTaskEntry.Task);
+            return;
+        }
+
+        try
+        {
+            scheduledTaskEntry.LastRunDate = dateTimeProvider.Today;
+            await dataContext.Save();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            logger.LogWarning("Scheduled task {Task} has already run today. Another service picked it up before this service could claim it.", scheduledTaskEntry.Task);
+            return;
+        }
+        
         using var scope = serviceProvider.CreateScope();
 
-        var scheduledTask = scope.ServiceProvider.GetKeyedService<IScheduledTask>(schedule.Task);
+        var scheduledTask = scope.ServiceProvider.GetKeyedService<IScheduledTask>(scheduledTaskEntry.Task);
 
         if (scheduledTask == null)
         {
-            logger.LogError("Scheduled task {Task} not found", schedule.Task);
+            logger.LogError("Scheduled task {Task} not found", scheduledTaskEntry.Task);
             return;
         }
 
-        logger.LogInformation("Running scheduled task {0}", schedule.Task);
+        logger.LogInformation("Running scheduled task {0}", scheduledTaskEntry.Task);
 
-        await scheduledTask.RunTask(new ScheduleContext(schedule.PayloadJson));
-
-        await exclusiveLockProvider.ReleaseExclusiveLock(schedule.Task, cancellationToken);
+        await scheduledTask.RunTask(new ScheduleContext(scheduledTaskEntry.PayloadJson));
     }
 }
