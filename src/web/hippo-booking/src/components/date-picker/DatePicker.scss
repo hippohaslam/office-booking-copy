@@ -1,9 +1,14 @@
 @import "../../styles/variables.scss";
 
-.date-picker-container {
+.date-container {
+    padding: 10px 0;
+}
+
+.date-controls {
     display: flex;
     flex-wrap: wrap;
     row-gap: 2px;
+    margin-top: 5px;
 }
 
 .date-control {

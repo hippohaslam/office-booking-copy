@@ -396,4 +396,9 @@ section.full-width-navy{
   .hero-graphic{
     display: none;
   }
+
+  a.cta {
+    width: 100%;
+    justify-content: space-between;
+  }
 }

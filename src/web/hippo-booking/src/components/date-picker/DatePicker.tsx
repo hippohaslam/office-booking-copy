@@ -9,9 +9,9 @@ type datePickerProps = {
 
 const CustomDatePicker = ({selectedDate, inputOnChange, adjustDate} : datePickerProps) => {
     return (
-        <div>
+        <div className="date-container">
             <label id="date-picker-label">Choose a date: </label>
-            <div className="date-picker-container">
+            <div className="date-controls">
                 <button type="button" className="date-control date-button previous" aria-label="previous date" title="Previous date" onClick={() => adjustDate('previous')}/>
                 <button type="button" className="date-control date-button today" aria-label="today" title="Today" onClick={() => adjustDate('today')}>Today</button>
                 <DatePicker 
