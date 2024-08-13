@@ -10,6 +10,7 @@ namespace Hippo.Booking.Infrastructure.Slack;
 public class InteractionEvent(
     ISlackClient slackClient,
     IDeleteBookingCommand deleteBookingCommand,
+    IConfirmBookingCommand confirmBookingCommand,
     IBookingQueries bookingQueries,
     ILogger<InteractionEvent> logger) : IBlockActionHandler<ButtonAction>
 {
@@ -29,7 +30,9 @@ public class InteractionEvent(
         if (action.ActionId == "confirm_booking")
         {
             logger.LogDebug("Booking {BookingId} confirmed by {User} via Slack", bookingId, request.User);
-            //Confirm booking once this is a thing
+            
+            await confirmBookingCommand.Handle(bookingId);
+            
             await slackClient.RespondToInteraction(request.ResponseUrl, new MessageResponse
             {
                 ReplaceOriginal = true,

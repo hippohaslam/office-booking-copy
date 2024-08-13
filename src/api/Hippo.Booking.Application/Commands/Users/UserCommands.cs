@@ -1,13 +1,14 @@
 using FluentValidation;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
+using Hippo.Booking.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Application.Commands.Users;
 
 public class UserCommands(IDataContext dataContext, IValidator<RegisteredUserRequest> registeredUserRequestValidator) : IUpsertUserCommand
 {
-    public async Task UpsertUser(RegisteredUserRequest registeredUserRequest)
+    public async Task<RegisteredUserModel> UpsertUser(RegisteredUserRequest registeredUserRequest)
     {
         await registeredUserRequestValidator.ValidateAndThrowAsync(registeredUserRequest);
 
@@ -34,5 +35,14 @@ public class UserCommands(IDataContext dataContext, IValidator<RegisteredUserReq
         }
 
         await dataContext.Save();
+
+        return new RegisteredUserModel
+        {
+            UserId = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            IsAdmin = user.IsAdmin
+        };
     }
 }

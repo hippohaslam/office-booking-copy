@@ -27,7 +27,7 @@ public class SessionEndpoints() : EndpointBase("session", "Sessions")
             {
                 var user = httpContext.User;
 
-                var registeredUserDto = new RegisteredUserRequest
+                var registeredUserRequest = new RegisteredUserRequest
                 {
                     UserId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
                     FirstName = user.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
@@ -35,7 +35,7 @@ public class SessionEndpoints() : EndpointBase("session", "Sessions")
                     Email = user.FindFirstValue(ClaimTypes.Email) ?? string.Empty
                 };
 
-                await userCommand.UpsertUser(registeredUserDto);
+                var registeredUser = await userCommand.UpsertUser(registeredUserRequest);
 
                 var claims = new List<Claim>
                 {
@@ -46,12 +46,17 @@ public class SessionEndpoints() : EndpointBase("session", "Sessions")
                     new(ClaimTypes.Email, user.FindFirstValue(ClaimTypes.Email) ?? string.Empty)
                 };
 
+                if (registeredUser.IsAdmin)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                }
+
                 var claimsIdentity = new ClaimsIdentity(claims, "Cookie");
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
                 await httpContext.SignInAsync(claimsPrincipal);
 
-                return TypedResults.Ok(registeredUserDto);
+                return TypedResults.Ok(registeredUser);
             });
 
         builder.MapPost("sign-out", async (HttpContext httpContext) =>

@@ -20,7 +20,7 @@ public class SlackConfirmationScheduledTask(
 
         var usersToNotify = await dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.User)
-            .Where(x => x.Date == dateToCheck)
+            .Where(x => x.Date == dateToCheck && !x.IsConfirmed)
             .Select(x => new
             {
                 Id = x.Id,

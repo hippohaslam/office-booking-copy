@@ -7,6 +7,8 @@ public class Booking : BaseEntity<int>
 
     public int BookableObjectId { get; set; }
     public BookableObject BookableObject { get; set; } = null!;
+    
+    public bool IsConfirmed { get; set; }
 
     public DateOnly Date { get; set; }
 }

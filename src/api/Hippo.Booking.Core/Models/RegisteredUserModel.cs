@@ -1,3 +1,5 @@
+using Hippo.Booking.Core.Entities;
+
 namespace Hippo.Booking.Core.Models;
 
 public class RegisteredUserModel
@@ -11,4 +13,6 @@ public class RegisteredUserModel
     public string LastName { get; set; } = string.Empty;
 
     public string FullName => FirstName + " " + LastName;
+    
+    public bool IsAdmin { get; set; }
 }

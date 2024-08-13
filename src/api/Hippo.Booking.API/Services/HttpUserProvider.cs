@@ -20,7 +20,8 @@ public class HttpUserProvider(IHttpContextAccessor httpContextAccessor) : IUserP
             UserId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
             FirstName = user.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
             LastName = user.FindFirstValue(ClaimTypes.Surname) ?? string.Empty,
-            Email = user.FindFirstValue(ClaimTypes.Email) ?? string.Empty
+            Email = user.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
+            IsAdmin = user.IsInRole("Admin")
         };
 
         return registeredUserModel;

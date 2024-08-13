@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hippo.Booking.API.Endpoints;
 
-public abstract class EndpointBase(string routePath, string swaggerGroupName)
+public abstract class EndpointBase(string routePath, string swaggerGroupName, bool isAdmin = false)
 {
     public void Map(WebApplication app)
     {
@@ -16,8 +16,11 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName)
         }
 
         var grouping = app.MapGroup(routePath)
-            .WithTags(swaggerGroupName)
-            .RequireAuthorization();
+            .WithTags(swaggerGroupName);
+
+        grouping = isAdmin
+            ? grouping.RequireAuthorization(x => x.RequireRole("Admin"))
+            : grouping.RequireAuthorization();
 
         MapEndpoints(grouping);
     }

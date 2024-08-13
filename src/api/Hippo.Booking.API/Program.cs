@@ -137,6 +137,9 @@ try
                 options.Cookie.SecurePolicy = CookieSecurePolicy.None;
                 options.Cookie.SameSite = SameSiteMode.Lax;
             }
+            
+            options.ExpireTimeSpan = TimeSpan.FromHours(1);
+            options.SlidingExpiration = false;
 
             options.Events.OnRedirectToLogin = context =>
             {
@@ -160,6 +163,7 @@ try
     new HealthEndpoints().Map(app);
     new BookingEndpoints().Map(app);
     new SessionEndpoints().Map(app);
+    new UserManagementEndpoints().Map(app);
 
     if (app.Environment.IsDevelopment())
     {
