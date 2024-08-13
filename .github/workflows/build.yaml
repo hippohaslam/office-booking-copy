@@ -2,7 +2,8 @@ name: Main CI
 
 on:
   push:
-   branches: [ "main", "feat/ci-test" ]
+#    branches: [ "main", "feat/ci-test" ]
+   branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -18,13 +19,10 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-          cache: true
-          cache-dependency-path: |
-            src/**/packages.lock.json
 
       - name: Restore dependencies
         working-directory: ./src
-        run: dotnet restore --locked-mode
+        run: dotnet restore
 
       - name: Build API
         working-directory: ./src
