@@ -96,6 +96,7 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
     namespace = "aws:elasticbeanstalk:environment:process:default"
     name      = "HealthCheckPath"
     value     = "/health"
+    resource  = ""
   }
 
   setting {
