@@ -208,6 +208,13 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
     value     = var.slack_signing_secret
     resource  = ""
   }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "AllowedOrigins"
+    value     = "https://${var.frontend_subdomain}.${var.hosted_zone_url}"
+    resource  = ""
+  }
 }
 
 resource "aws_iam_instance_profile" "eb_instance_profile" {

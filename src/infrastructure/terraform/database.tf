@@ -76,7 +76,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_hippo_office_ipv4" {
   from_port         = 5432
   ip_protocol       = "tcp"
   to_port           = 5432
-  description       = "Leeds Hippo office"
+  description       = "Leeds Hippo Office"
 }
 
 resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {

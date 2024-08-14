@@ -10,7 +10,7 @@ public class AwsLoggingConfig
 
     public required string EnvironmentName { get; set; }
 
-    public string LogGroup => $"booking/{EnvironmentName}/logs";
+    public string LogGroup => $"booking/{EnvironmentName.ToLower()}/logs";
 
     public RegionEndpoint Region => RegionEndpoint.EUWest1;
 
