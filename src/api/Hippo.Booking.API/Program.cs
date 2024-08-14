@@ -23,8 +23,7 @@ using SlackNet.AspNetCore;
 using SlackNet.Blocks;
 
 Log.Logger = new LoggerConfiguration()
-    .ConfigureLogging(Environment.GetEnvironmentVariable("Aws__AccessKeyId"),
-            Environment.GetEnvironmentVariable("Aws__AccessSecretKey"))
+    .ConfigureLogging(AwsLoggingConfig.FromEnvironmentVariables())
         .CreateBootstrapLogger();
 
 try
@@ -36,9 +35,7 @@ try
     Log.Logger.Information("Environment: {0}", builder.Environment.EnvironmentName);
 
     builder.Services.AddSerilog((services, lc) => lc
-        .ConfigureLogging(
-            builder.Configuration.GetValue<string>("Aws:AccessKeyId"),
-            builder.Configuration.GetValue<string>("Aws:AccessSecretKey")));
+        .ConfigureLogging(AwsLoggingConfig.FromWebApplicationBuilder(builder)));
 
     builder.Services.AddHealthChecks();
     

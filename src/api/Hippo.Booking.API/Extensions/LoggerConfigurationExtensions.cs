@@ -8,55 +8,29 @@ namespace Hippo.Booking.API.Extensions;
 
 public static class LoggerConfigurationExtensions
 {
-    public static AmazonCloudWatchLogsClient? client = null;
+    public static AmazonCloudWatchLogsClient? Client = null;
 
-    public static LoggerConfiguration ConfigureLogging(this LoggerConfiguration loggerConfig, string? awsAccessKey, string? awsAccessSecret)
+    public static LoggerConfiguration ConfigureLogging(this LoggerConfiguration loggerConfig, AwsLoggingConfig? awsLoggingConfig = null)
     {
-        return loggerConfig
+        var config = loggerConfig
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .MinimumLevel.Override("System", LogEventLevel.Warning)
             .MinimumLevel.Override("EntityFrameworkCore", LogEventLevel.Information)
-            .ConfigureAwsLogging(
-                awsAccessKey,
-                awsAccessSecret,
-                RegionEndpoint.EUWest1)
             .Filter.ByExcluding(x =>
                 x.Properties.Any(y => y.Key == "RequestPath" && y.Value.ToString().Contains("/health")))
             .WriteTo.Console()
             .Enrich.FromLogContext();
-    }
-
-    public static LoggerConfiguration ConfigureAwsLogging(
-        this LoggerConfiguration configuration,
-        string? accessKey,
-        string? secretKey,
-        RegionEndpoint region)
-    {
-        if (string.IsNullOrEmpty(accessKey) || string.IsNullOrEmpty(secretKey))
+        
+        if (awsLoggingConfig != null)
         {
-            return configuration;
-        }
+            Client ??= new AmazonCloudWatchLogsClient(awsLoggingConfig.AccessKeyId, awsLoggingConfig.AccessSecretKey, awsLoggingConfig.Region);
 
-        client ??= new AmazonCloudWatchLogsClient(accessKey, secretKey, region);
-
-        return configuration
-            .WriteTo.AmazonCloudWatch(
-                logGroup: "/dotnet/hippo-booking-logging-demo/serilog",
+            config.WriteTo.AmazonCloudWatch(
+                logGroup: awsLoggingConfig.LogGroup,
                 logStreamPrefix: DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"),
-                cloudWatchClient: client);
-    }
-    
-    public static bool IsHealthCheckEndpoint(this HttpContext ctx)
-    {
-        var endpoint = ctx.GetEndpoint();
-        if (endpoint is object) // same as !(endpoint is null)
-        {
-            return string.Equals(
-                endpoint.DisplayName, 
-                "Health checks",
-                StringComparison.Ordinal);
+                cloudWatchClient: Client);
         }
-        // No endpoint, so not a health check endpoint
-        return false;
+
+        return config;
     }
 }
