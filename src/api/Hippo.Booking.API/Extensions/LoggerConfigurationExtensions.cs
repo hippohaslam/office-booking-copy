@@ -28,7 +28,7 @@ public static class LoggerConfigurationExtensions
                 awsLoggingConfig.AccessSecretKey,
                 awsLoggingConfig.Region);
 
-            config.WriteTo.AmazonCloudWatch(
+            config = config.WriteTo.AmazonCloudWatch(
                 logGroup: awsLoggingConfig.LogGroup,
                 logStreamPrefix: DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"),
                 cloudWatchClient: Client);
