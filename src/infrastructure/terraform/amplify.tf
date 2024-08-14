@@ -64,6 +64,11 @@ resource "aws_amplify_domain_association" "example" {
     branch_name = aws_amplify_branch.main_branch.branch_name
     prefix      = ""
   }
+
+  lifecycle {
+    # Hack to fix until this PR is merged on AWS provider - https://github.com/hashicorp/terraform-provider-aws/pull/38410
+    ignore_changes = [certificate_settings]
+  }
 }
 
 output "amplify_app_name" {
