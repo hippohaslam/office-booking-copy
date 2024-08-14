@@ -2,11 +2,12 @@ using Hippo.Booking.Application.Commands.Areas;
 using Hippo.Booking.Application.Commands.BookableObject;
 using Hippo.Booking.Application.Commands.Location;
 using Hippo.Booking.Application.Queries.Locations;
+using Hippo.Booking.Core.Enums;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hippo.Booking.API.Endpoints;
 
-public class LocationEndpoints() : EndpointBase("location", "Locations")
+public class LocationEndpoints() : EndpointBase("location", "Locations", AccessLevelEnum.User)
 {
     public override void MapEndpoints(RouteGroupBuilder builder)
     {

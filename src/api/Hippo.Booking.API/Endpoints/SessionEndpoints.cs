@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Hippo.Booking.Application.Commands.Users;
+using Hippo.Booking.Core.Enums;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Core.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hippo.Booking.API.Endpoints;
 
-public class SessionEndpoints() : EndpointBase("session", "Sessions")
+public class SessionEndpoints() : EndpointBase("session", "Sessions", AccessLevelEnum.User)
 {
     public override void MapEndpoints(RouteGroupBuilder builder)
     {

@@ -1,12 +1,13 @@
 using Hippo.Booking.API.Extensions;
 using Hippo.Booking.Application.Commands.Bookings;
 using Hippo.Booking.Application.Queries.Bookings;
+using Hippo.Booking.Core.Enums;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hippo.Booking.API.Endpoints;
 
-public class BookingEndpoints() : EndpointBase("booking", "Bookings")
+public class BookingEndpoints() : EndpointBase("booking", "Bookings", AccessLevelEnum.User)
 {
     public override void MapEndpoints(RouteGroupBuilder builder)
     {

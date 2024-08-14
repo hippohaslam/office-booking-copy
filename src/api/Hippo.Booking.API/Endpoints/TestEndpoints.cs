@@ -1,10 +1,11 @@
 using System.Security.Claims;
 using Hippo.Booking.API.Extensions;
+using Hippo.Booking.Core.Enums;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hippo.Booking.API.Endpoints;
 
-public class TestEndpoints() : EndpointBase("test", "Test")
+public class TestEndpoints() : EndpointBase("test", "Test", AccessLevelEnum.Anonymous)
 {
     public override void MapEndpoints(RouteGroupBuilder builder)
     {

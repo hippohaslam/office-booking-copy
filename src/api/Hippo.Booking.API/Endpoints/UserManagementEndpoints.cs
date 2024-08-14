@@ -1,4 +1,5 @@
 using Hippo.Booking.Application.Queries.Users;
+using Hippo.Booking.Core.Enums;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Core.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hippo.Booking.API.Endpoints;
 
-public class UserManagementEndpoints() : EndpointBase("users", "User Management", true)
+public class UserManagementEndpoints() : EndpointBase("users", "User Management", AccessLevelEnum.Admin)
 {
     public override void MapEndpoints(RouteGroupBuilder builder)
     {
