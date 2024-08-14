@@ -23,7 +23,10 @@ public static class LoggerConfigurationExtensions
         
         if (awsLoggingConfig != null)
         {
-            Client ??= new AmazonCloudWatchLogsClient(awsLoggingConfig.AccessKeyId, awsLoggingConfig.AccessSecretKey, awsLoggingConfig.Region);
+            Client ??= new AmazonCloudWatchLogsClient(
+                awsLoggingConfig.AccessKeyId, 
+                awsLoggingConfig.AccessSecretKey,
+                awsLoggingConfig.Region);
 
             config.WriteTo.AmazonCloudWatch(
                 logGroup: awsLoggingConfig.LogGroup,

@@ -5,13 +5,18 @@ resource "aws_db_instance" "hippo-booking-db" {
   engine_version       = "16.3"
   instance_class       = var.db_instance_size
   username             = "postgres"
-  password             = "postgres" # Use a more secure password
+  password             = random_password.db_password.result
   parameter_group_name = "default.postgres16"
   publicly_accessible  = true
   skip_final_snapshot  = true
 
   db_subnet_group_name   = aws_db_subnet_group.db-subnet.name
   vpc_security_group_ids = [aws_security_group.db-security-group.id]
+}
+
+resource "random_password" "db_password" {
+  length  = 16
+  special = true
 }
 
 resource "aws_db_subnet_group" "db-subnet" {
