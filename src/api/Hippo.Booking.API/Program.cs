@@ -40,6 +40,8 @@ try
             builder.Configuration.GetValue<string>("Aws:AccessKeyId"),
             builder.Configuration.GetValue<string>("Aws:AccessSecretKey")));
 
+    builder.Services.AddHealthChecks();
+    
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
     {
@@ -160,7 +162,6 @@ try
     var app = builder.Build();
 
     new LocationEndpoints().Map(app);
-    new HealthEndpoints().Map(app);
     new BookingEndpoints().Map(app);
     new SessionEndpoints().Map(app);
     new UserManagementEndpoints().Map(app);
@@ -196,6 +197,8 @@ try
             diagnosticContext.Set("User", name);
         };
     });
+    
+    app.MapHealthChecks("/health");
 
     app.UseSwagger();
     app.UseSwaggerUI(options =>
