@@ -1,3 +1,4 @@
+environment        = "Test"
 env_suffix         = "test"
 frontend_subdomain = "bookingtest"
 backend_subdomain  = "bookingapitest"

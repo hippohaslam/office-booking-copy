@@ -12,15 +12,11 @@ resource "aws_db_instance" "hippo-booking-db" {
 
   db_subnet_group_name   = aws_db_subnet_group.db-subnet.name
   vpc_security_group_ids = [aws_security_group.db-security-group.id]
-
-  tags = local.tags
 }
 
 resource "aws_db_subnet_group" "db-subnet" {
   name       = "booking-db-subnet-group-${var.env_suffix}"
   subnet_ids = [aws_subnet.hippo-booking-subnet-db-a.id, aws_subnet.hippo-booking-subnet-db-b.id, aws_subnet.hippo-booking-subnet-db-c.id]
-
-  tags = local.tags
 }
 
 resource "aws_subnet" "hippo-booking-subnet-db-a" {
@@ -58,8 +54,6 @@ resource "aws_security_group" "db-security-group" {
   description = "Allow database traffic"
 
   vpc_id = aws_vpc.hippo-booking-vpc.id
-
-  tags = local.tags
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {

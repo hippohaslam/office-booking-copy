@@ -39,21 +39,19 @@ frontend:
 BUILD_SPEC
 
   enable_branch_auto_build = false
-
-  tags = local.tags
 }
 
 resource "aws_amplify_branch" "main_branch" {
   app_id      = aws_amplify_app.frontend_app.id
-  branch_name = "main" # Replace with your branch name
+  branch_name = "main"
 
   stage = "PRODUCTION"
 
   enable_auto_build = false
 
-  tags = merge(local.tags, {
+  tags = {
     Name = "MainBranch"
-  })
+  }
 }
 
 resource "aws_amplify_domain_association" "example" {

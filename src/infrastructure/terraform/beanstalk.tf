@@ -48,8 +48,6 @@ resource "aws_security_group" "beanstalk_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = local.tags
 }
 
 resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
@@ -210,8 +208,6 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
     value     = var.slack_signing_secret
     resource  = ""
   }
-
-  tags = local.tags
 }
 
 resource "aws_iam_instance_profile" "eb_instance_profile" {

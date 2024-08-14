@@ -39,6 +39,11 @@ variable "github_access_token" {
   sensitive   = true
 }
 
+variable "environment" {
+  description = "Environment"
+  type        = string
+}
+
 variable "env_suffix" {
   description = "Environment Suffix"
   type        = string

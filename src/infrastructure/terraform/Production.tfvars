@@ -1,3 +1,4 @@
+environment        = "Production"
 env_suffix         = "prod"
 frontend_subdomain = "booking"
 backend_subdomain  = "bookingapi"
