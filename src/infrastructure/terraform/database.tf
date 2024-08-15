@@ -17,6 +17,7 @@ resource "aws_db_instance" "hippo-booking-db" {
 resource "random_password" "db_password" {
   length  = 16
   special = true
+  override_special = "_%"
 }
 
 resource "aws_db_subnet_group" "db-subnet" {
