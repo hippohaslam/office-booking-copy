@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {Area, NewArea} from "../interfaces/Area";
+import { BookingLocation, NewLocation } from '../interfaces/Location';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const axiosInstance = axios.create({
@@ -12,7 +13,7 @@ const getLocationAsync = async (locationId: string): Promise<BookingLocation> =>
   return response.data;
 }
 
-const getLocationAreaAsync = async (locationId: string, areaId: string): Promise<BookingLocation> => {
+const getLocationAreaAsync = async (locationId: string, areaId: string): Promise<Area> => {
   const response = await axiosInstance.get(`/location/${locationId}/area/${areaId}`);
   return response.data;
 }
@@ -26,10 +27,6 @@ const postNewLocationAsync = async (location: NewLocation) => {
   return await axiosInstance.post(`/location`, location);
 }
 
-const putLocationAsync = async (locationId: string, location: BookingLocation, areaId: string) => {
-  return await axiosInstance.put(`/location/${locationId}/area/${areaId}`, location);
-}
-
 const putObjectsAsync = async (locationId: string, areaId: string, bookableObjects: BookableObject[]) => {
     return await Promise.all(
         bookableObjects.map((bookableObject) =>
@@ -41,6 +38,10 @@ const putObjectsAsync = async (locationId: string, areaId: string, bookableObjec
 // AREAS
 const postLocationAreaAsync = async (locationId: number, area: NewArea) => {
   return await axiosInstance.post(`/location/${locationId}/area`, area);
+}
+
+const putAreaAsync = async (locationId: string, area: Area, areaId: string) => {
+  return await axiosInstance.put(`/location/${locationId}/area/${areaId}`, area);
 }
 
 /** Combines the locationId with the area data */ 
@@ -104,11 +105,11 @@ export {
   postNewLocationAsync,
   getLocationAreaAsync,
   getLocationsAsync, 
-  putLocationAsync, 
   putObjectsAsync,
   // AREAS
   getLocationAreasAsync,
   postLocationAreaAsync,
+  putAreaAsync, 
   // BOOKINGS
   getUpcomingBookingsAsync,
   getBookingsForDateAsync,

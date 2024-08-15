@@ -1,5 +1,5 @@
 import { describe, expect } from 'vitest';
-import { isNullOrEmpty } from './StringHelpers';
+import { isNullOrEmpty, sanitiseForId } from './StringHelpers';
 
 describe('isNullOrEmpty', () => {
     const testCases: { input: string | null | undefined, expected: boolean }[] = [
@@ -15,3 +15,10 @@ describe('isNullOrEmpty', () => {
         expect(isNullOrEmpty(input)).toBe(expected);
     });
   });
+
+describe('sanitiseForId', () => {
+    test('should correctly format string from unformatted label', () => {
+        const inputLabel = "This I*£@&^%`!s Tab 2";
+        expect(sanitiseForId(inputLabel)).toBe("this-is-tab-2");
+    })
+})

@@ -114,8 +114,10 @@ const Bookings = () => {
             <Link to="/locations" className="cta cta-green with-arrow">Make a new booking</Link>
 
             <ConfirmModal 
+            title="Are you sure you want to cancel this booking?"
             isOpen={isModalVisible} 
             childElement={bookingInfoElement()}
+            showConfirmButton
             confirmButtonLabel="Yes. Cancel it"
             confirmButtonColor="cta-red"
             onConfirm={handleConfirmCancel}

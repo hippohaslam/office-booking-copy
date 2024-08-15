@@ -7,7 +7,14 @@ test("Modal is not shown when isOpen is set to false", async () => {
 
     // Arrange
     render(
-        <ConfirmModal isOpen={false} onConfirm={() => {}} confirmButtonLabel="Yes. Cancel it" onCancel={() => {}} cancelButtonLabel="No. Keep it"/>
+        <ConfirmModal 
+        title="Are you sure you want to cancel this booking?" 
+        isOpen={false} 
+        onConfirm={() => {}} 
+        showConfirmButton
+        confirmButtonLabel="Yes. Cancel it" 
+        onCancel={() => {}} 
+        cancelButtonLabel="No. Keep it"/>
     )
 
     // Assert
@@ -18,7 +25,14 @@ test("Modal is not shown when isOpen is set to false", async () => {
 test("Modal is shown when isOpen is set to true", async () => {
     // Arrange
     render(
-        <ConfirmModal isOpen={true} onConfirm={() => {}} confirmButtonLabel="Yes. Cancel it" onCancel={() => {}} cancelButtonLabel="No. Keep it"/>
+        <ConfirmModal 
+        title="Are you sure you want to cancel this booking?" 
+        isOpen={true} 
+        showConfirmButton
+        onConfirm={() => {}} 
+        confirmButtonLabel="Yes. Cancel it" 
+        onCancel={() => {}} 
+        cancelButtonLabel="No. Keep it"/>
     )
 
     // Assert
@@ -29,7 +43,13 @@ test("Modal is shown when isOpen is set to true", async () => {
 test("Modal has correct content", async () => {
     // Arrange
     render(
-        <ConfirmModal isOpen={true} onConfirm={() => {}} confirmButtonLabel="Yes. Cancel it" onCancel={() => {}} cancelButtonLabel="No. Keep it"/>
+        <ConfirmModal 
+        title="Are you sure you want to cancel this booking?" 
+        isOpen={true} onConfirm={() => {}} 
+        showConfirmButton
+        confirmButtonLabel="Yes. Cancel it" 
+        onCancel={() => {}} 
+        cancelButtonLabel="No. Keep it"/>
     )
 
     // Assert
@@ -48,7 +68,13 @@ test("Correct function is called when confirm button is clicked", async () => {
     const onConfirm = vi.fn();
 
     render(
-        <ConfirmModal isOpen={true} onConfirm={onConfirm} confirmButtonLabel="Yes. Cancel it" onCancel={() => {}} cancelButtonLabel="No. Keep it"/>
+        <ConfirmModal 
+        title="Are you sure you want to cancel this booking?" 
+        isOpen={true} onConfirm={onConfirm} 
+        showConfirmButton
+        confirmButtonLabel="Yes. Cancel it" 
+        onCancel={() => {}} 
+        cancelButtonLabel="No. Keep it"/>
     )
 
     // Act
@@ -64,7 +90,14 @@ test("Correct function is called when cancel button is clicked", async () => {
     const onCancel = vi.fn();
 
     render(
-        <ConfirmModal isOpen={true} onConfirm={() => {}} confirmButtonLabel="Yes. Cancel it" onCancel={onCancel} cancelButtonLabel="No. Keep it"/>
+        <ConfirmModal 
+        title="Are you sure you want to cancel this booking?" 
+        isOpen={true} 
+        showConfirmButton
+        onConfirm={() => {}} 
+        confirmButtonLabel="Yes. Cancel it" 
+        onCancel={onCancel} 
+        cancelButtonLabel="No. Keep it"/>
     )
 
     // Act
@@ -80,7 +113,14 @@ test("Cancel function is called when outside of modal is clicked", async () => {
     const onCancel = vi.fn();
 
     render(
-        <ConfirmModal isOpen={true} onConfirm={() => {}} confirmButtonLabel="Yes. Cancel it" onCancel={onCancel} cancelButtonLabel="No. Keep it"/>
+        <ConfirmModal 
+        title="Are you sure you want to cancel this booking?" 
+        isOpen={true} 
+        showConfirmButton
+        onConfirm={() => {}} 
+        confirmButtonLabel="Yes. Cancel it" 
+        onCancel={onCancel} 
+        cancelButtonLabel="No. Keep it"/>
     )
 
     // Act
@@ -96,7 +136,14 @@ test("Cancel function is called when escape key is pressed", async () => {
     const onCancel = vi.fn();
 
     render(
-        <ConfirmModal isOpen={true} onConfirm={() => {}} confirmButtonLabel="Yes. Cancel it" onCancel={onCancel} cancelButtonLabel="No. Keep it"/>
+        <ConfirmModal 
+        title="Are you sure you want to cancel this booking?" 
+        isOpen={true} 
+        showConfirmButton
+        onConfirm={() => {}} 
+        confirmButtonLabel="Yes. Cancel it" 
+        onCancel={onCancel} 
+        cancelButtonLabel="No. Keep it"/>
     )
 
     // Act

@@ -5,6 +5,8 @@ interface Area {
     name: string;
     locationId: number;
     areaTypeId: AreaTypeEnum;
+    floorPlanJson: string;
+    bookableObjects: Array<BookableObject>;
 }
 
 interface NewArea {

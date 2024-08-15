@@ -3,17 +3,19 @@ import { CtaButton } from "../../buttons/Buttons";
 import { useEffect, useRef } from "react";
 
 type BookingCancelModalProps = {
+    title: string;
     isOpen: boolean;
     childElement?: JSX.Element;
-    onConfirm: () => void;
-    confirmButtonLabel: string;
+    showConfirmButton: boolean;
+    onConfirm?: () => void;
+    confirmButtonLabel?: string;
     confirmButtonColor?: 'cta-green' | "cta-red";
     onCancel: () => void;
     cancelButtonLabel: string;
     cancelButtonColor?: 'cta-green' | "cta-red";
 }
 
-const BookingCancelModal = ({isOpen, childElement, onConfirm, confirmButtonLabel, confirmButtonColor = 'cta-green', onCancel, cancelButtonLabel, cancelButtonColor = 'cta-red'} : BookingCancelModalProps) => {
+const BookingCancelModal = ({title, isOpen, childElement, showConfirmButton, onConfirm, confirmButtonLabel, confirmButtonColor = 'cta-green', onCancel, cancelButtonLabel, cancelButtonColor = 'cta-red'} : BookingCancelModalProps) => {
     const firstButtonRef = useRef<HTMLButtonElement>(null);
     const overlayRef = useRef(null);
     
@@ -52,9 +54,11 @@ const BookingCancelModal = ({isOpen, childElement, onConfirm, confirmButtonLabel
     return (
         <div className="modal-overlay" ref={overlayRef} data-testid="modal-page-overlay">
             <div className="modal-booking" id="cancel-booking-modal" role="alertdialog" aria-labelledby="cancel-modal-heading" aria-describedby="cancel-modal-booking-info" aria-modal="true">
-                <h2 id="cancel-modal-heading">Are you sure you want to cancel this booking?</h2>
+                <h2 id="cancel-modal-heading">{title}</h2>
                 {childElement}
-                <CtaButton ref={firstButtonRef} text={confirmButtonLabel} color={confirmButtonColor} onClick={onConfirm} />
+                {showConfirmButton ? (
+                    <CtaButton ref={firstButtonRef} text={confirmButtonLabel ?? ""} color={confirmButtonColor} onClick={onConfirm} />
+                ) : null}
                 <CtaButton text={cancelButtonLabel} color={cancelButtonColor} onClick={onCancel} />
             </div>
         </div>

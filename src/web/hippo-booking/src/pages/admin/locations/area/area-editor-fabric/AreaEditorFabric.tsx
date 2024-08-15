@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import {
   getLocationAreaAsync,
   putObjectsAsync,
-  putLocationAsync,
+  putAreaAsync,
   postBookableObjectAsync,
 } from "../../../../../services/Apis";
 import { useWindowSize } from "../../../../../hooks/WindowSizeHook";
@@ -17,6 +17,7 @@ import { AccordionItem } from "../../../../../components/accordion/Accordion";
 import { isNullOrEmpty } from "../../../../../helpers/StringHelpers";
 import { CtaButton } from "../../../../../components/buttons/Buttons";
 import "./AreaEditorFabric.scss";
+import { Area } from "../../../../../interfaces/Area";
 
 const generateUniqueId = () => {
   return uuidv4();
@@ -37,7 +38,7 @@ const errorKeys = {
 const FloorplanEditor = () => {
   const { locationId, areaId } = useParams();
   const [errors, setErrors] = useState<ErrorObjects[]>([]);
-  const [area, setArea] = useState<BookingLocation>();
+  const [area, setArea] = useState<Area>();
   const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
   const [editMode, setEditMode] = useState<boolean>(true);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
@@ -75,16 +76,16 @@ const FloorplanEditor = () => {
   }, [error, errors, handleRemoveError, isError]);
   
 
-  const locationMutation = useMutation({
-    mutationFn: (nextAreaData: BookingLocation) =>
-      putLocationAsync(locationId as string, nextAreaData, areaId as string),
+  const areaMutation = useMutation({
+    mutationFn: (nextAreaData: Area) =>
+      putAreaAsync(locationId as string, nextAreaData, areaId as string),
       onSuccess: () => {
         handleRemoveError(errorKeys.areaSave);
       },
       onError: () => handleAddError(errorKeys.areaSave, "Failed to save area"),
   });
 
-  const locationObjectsMutation = useMutation({
+  const bookableObjectsMutation = useMutation({
     mutationFn: (bookableObjects: BookableObject[]) =>
       putObjectsAsync(locationId as string, areaId as string, bookableObjects),
       onSuccess: () => {
@@ -300,8 +301,8 @@ const FloorplanEditor = () => {
         floorPlanJson: JSON.stringify(fabricCanvasRef.current.toJSON(["id"])),
       };
       Promise.all([
-        locationMutation.mutateAsync(nextLocation),
-        locationObjectsMutation.mutateAsync(area.bookableObjects),
+        areaMutation.mutateAsync(nextLocation),
+        bookableObjectsMutation.mutateAsync(area.bookableObjects),
       ]).finally(() => {
         if (locationId) {
           queryClient.invalidateQueries({
@@ -460,8 +461,8 @@ const FloorplanEditor = () => {
     }
   };
 
-  const isLoading = isPending || locationMutation.isPending || locationObjectsMutation.isPending;
-  const hasSuccess = locationMutation.isSuccess || locationObjectsMutation.isSuccess;
+  const isLoading = isPending || areaMutation.isPending || bookableObjectsMutation.isPending;
+  const hasSuccess = areaMutation.isSuccess || bookableObjectsMutation.isSuccess;
 
   // RENDERS
   // Must always have a canvas element, adding conditional logic to hide the canvas if the location is not loaded will break the fabric.js canvas

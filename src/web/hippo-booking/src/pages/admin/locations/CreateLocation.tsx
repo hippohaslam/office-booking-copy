@@ -3,6 +3,7 @@ import { useState } from "react";
 import { postNewLocationAsync } from "../../../services/Apis";
 import { ErrorBanner, SuccessBanner } from "../../../components";
 import { Link } from "react-router-dom";
+import { NewLocation } from "../../../interfaces/Location";
 
 const CreateLocation = () => {
     const initialLocation = {

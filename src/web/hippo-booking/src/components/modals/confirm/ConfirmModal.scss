@@ -26,10 +26,15 @@ body:has(.modal-overlay) {
 
     & h2 {
         margin-top: 0;
+        margin-bottom: 15px;
     }
     
     & .booking-card{
         margin-bottom: 30px
+    }
+
+    .cta {
+        margin-top: 15px;
     }
 }
 

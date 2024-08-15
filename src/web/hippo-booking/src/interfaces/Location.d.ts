@@ -1,8 +1,9 @@
+import { Area } from "./Area";
+
 interface BookingLocation {
     id: number;
     name: string;
-    floorPlanJson: string;
-    bookableObjects: Array<BookableObject>;
+    areas: Area[];
 }
 
 interface NewLocation {

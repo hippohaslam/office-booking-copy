@@ -6,6 +6,7 @@ import { Area } from "../../../interfaces/Area";
 import OfficeIcon from "../../../assets/office-icon.svg";
 import ParkingIcon from "../../../assets/parking-icon.svg"
 import { AreaTypeEnum, AreaTypeEnumLabels } from "../../../enums/AreaTypeEnum";
+import { BookingLocation } from "../../../interfaces/Location";
 
 const BookingAreas = () => {
     // prefetch to see if we can skip this page. It works!! a bit abstracty but does the job
