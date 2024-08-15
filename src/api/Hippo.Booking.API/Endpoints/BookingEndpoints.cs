@@ -40,7 +40,7 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings", AccessLeve
             });
 
         builder.MapPost("location/{locationId:int}/area/{areaId:int}/{date}/bookable-object/{bookableObjectId:int}",
-            async Task<Results<Created, BadRequest<string>, ForbidHttpResult, ValidationProblem>> (
+            async Task<Results<Created<int>, BadRequest<string>, ForbidHttpResult, ValidationProblem>> (
                 HttpContext httpContext,
                 ICreateBookingCommand createBookingCommand,
                 int locationId,
