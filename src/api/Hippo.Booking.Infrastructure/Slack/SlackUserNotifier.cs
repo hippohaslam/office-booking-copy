@@ -22,7 +22,7 @@ public class SlackUserNotifier(
 
         var slackUserId = await slackClient.GetUserIdByEmail(user.Email);
 
-        if (slackUserId == null)
+        if (string.IsNullOrEmpty(slackUserId))
         {
             logger.LogError("Slack user not found for email {Email}", user.Email);
             return;
