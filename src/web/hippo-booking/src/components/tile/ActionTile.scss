@@ -10,6 +10,10 @@
 
     & li {
         list-style: none;
+
+        & .action-tile {
+            height: 100%;
+        }
     }
 }
 
@@ -19,6 +23,7 @@
     border-radius: 12px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 
     & .tile-content{
         display: inline-flex;
