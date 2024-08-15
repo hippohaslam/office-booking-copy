@@ -14,9 +14,9 @@ public class BookingDayResponse
 
         public string Description { get; set; } = string.Empty;
 
-        public Booking? ExistingBooking { get; set; }
+        public BookingResponse? ExistingBooking { get; set; }
 
-        public class Booking
+        public class BookingResponse
         {
             public int? Id { get; set; }
 

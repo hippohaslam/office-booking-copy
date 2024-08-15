@@ -40,7 +40,7 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings", AccessLeve
             });
 
         builder.MapPost("location/{locationId:int}/area/{areaId:int}/{date}/bookable-object/{bookableObjectId:int}",
-            async Task<Results<NoContent, BadRequest<string>, ForbidHttpResult, ValidationProblem>> (
+            async Task<Results<Created, BadRequest<string>, ForbidHttpResult, ValidationProblem>> (
                 HttpContext httpContext,
                 ICreateBookingCommand createBookingCommand,
                 int locationId,
@@ -56,8 +56,9 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings", AccessLeve
                     UserId = httpContext.GetUserId()
                 };
 
-                return await HandleResponse(
-                    async () => await createBookingCommand.Handle(createBookingRequest));
+                return await HandleCreatedResponse(
+                    async () => await createBookingCommand.Handle(createBookingRequest),
+                    x => $"location/{locationId}/area/{areaId}/booking/{x}");
             });
 
         builder.MapDelete("location/{locationId:int}/area/{areaId:int}/booking/{bookingId:int}",

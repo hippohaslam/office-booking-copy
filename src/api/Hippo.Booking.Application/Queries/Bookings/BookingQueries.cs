@@ -60,7 +60,7 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
                         Name = y.Name,
                         Description = y.Description,
                         ExistingBooking = y.Bookings.Where(z => z.Date == date)
-                        .Select(z => new BookingDayResponse.BookableObjectResponse.Booking
+                        .Select(z => new BookingDayResponse.BookableObjectResponse.BookingResponse
                         {
                             Id = z.Id,
                             Name = z.User.FirstName + " " + z.User.LastName

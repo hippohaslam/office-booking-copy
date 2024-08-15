@@ -182,7 +182,7 @@ public class BookingEndpointTests : IntegrationTestBase
                     Id = bookableObjects.First().Id,
                     Name = bookableObjects.First().Name,
                     Description = bookableObjects.First().Description,
-                    ExistingBooking = new BookingDayResponse.BookableObjectResponse.Booking
+                    ExistingBooking = new BookingDayResponse.BookableObjectResponse.BookingResponse
                     {
                         Id = bookings.First().Id,
                         Name = "Test User"
@@ -193,7 +193,7 @@ public class BookingEndpointTests : IntegrationTestBase
                     Id = bookableObjects.Last().Id,
                     Name = bookableObjects.Last().Name,
                     Description = bookableObjects.Last().Description,
-                    ExistingBooking = new BookingDayResponse.BookableObjectResponse.Booking
+                    ExistingBooking = new BookingDayResponse.BookableObjectResponse.BookingResponse
                     {
                         Id = bookings.Last().Id,
                         Name = "Test User"

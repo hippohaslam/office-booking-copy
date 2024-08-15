@@ -13,9 +13,6 @@ public class UpdateAreaRequest
     public string FloorPlanJson { get; set; } = string.Empty;
 
     public AreaTypeEnum AreaTypeId { get; set; }
-
-    public List<BookableObjectDto> BookableObjects { get; set; } = new();
-
 }
 
 public class UpdateAreaRequestValidator : AbstractValidator<UpdateAreaRequest>

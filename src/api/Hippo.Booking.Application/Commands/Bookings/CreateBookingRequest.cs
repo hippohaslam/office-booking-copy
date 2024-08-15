@@ -1,4 +1,5 @@
 using FluentValidation;
+using Hippo.Booking.Core.Interfaces;
 
 namespace Hippo.Booking.Application.Commands.Bookings;
 
@@ -15,11 +16,11 @@ public class CreateBookingRequest
 
 public class CreateBookingRequestValidator : AbstractValidator<CreateBookingRequest>
 {
-    public CreateBookingRequestValidator()
+    public CreateBookingRequestValidator(IDateTimeProvider dateTimeProvider)
     {
         RuleFor(x => x.BookableObjectId).NotEmpty();
         RuleFor(x => x.AreaId).NotEmpty();
-        RuleFor(x => x.Date).NotEmpty();
+        RuleFor(x => x.Date).NotEmpty().GreaterThanOrEqualTo(dateTimeProvider.Today);
         RuleFor(x => x.UserId).NotEmpty();
     }
 }

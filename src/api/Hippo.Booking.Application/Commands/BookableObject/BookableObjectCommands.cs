@@ -40,20 +40,16 @@ public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableO
 
     public async Task Handle(int bookableObjectId, int locationId, int areaId, UpdateBookableObjectRequest request)
     {
-        var area = await dataContext.Query<Area>()
-            .Include(i => i.BookableObjects)
-            .SingleOrDefaultAsync(x => x.Id == areaId && x.LocationId == locationId);
-
-        if (area == null)
-        {
-            throw new ClientException("Location not found");
-        }
-
-        var bookableObject = area.BookableObjects.SingleOrDefault(x => x.Id == bookableObjectId);
-
+        var bookableObject = await dataContext.Query<Core.Entities.BookableObject>()
+            .Include(i => i.Area)
+            .SingleOrDefaultAsync(x =>
+                x.Id == bookableObjectId &&
+                x.AreaId == areaId &&
+                x.Area.LocationId == locationId);
+        
         if (bookableObject == null)
         {
-            throw new ClientException("Bookable object with this name already exists in this location.");
+            throw new ClientException("Bookable object does not exist.");
         }
 
         bookableObject.Name = request.Name;

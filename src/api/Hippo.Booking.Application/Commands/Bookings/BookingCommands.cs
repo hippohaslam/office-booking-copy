@@ -12,16 +12,25 @@ public class BookingCommands(
     IValidator<CreateBookingRequest> createBookingValidator,
     IValidator<DeleteBookingRequest> deleteBookingValidator) : ICreateBookingCommand, IDeleteBookingCommand, IConfirmBookingCommand
 {
-    public async Task Handle(CreateBookingRequest request)
+    public async Task<int> Handle(CreateBookingRequest request)
     {
         await createBookingValidator.ValidateAndThrowAsync(request);
 
+        var bookableObjectExists = await dataContext.Query<Core.Entities.BookableObject>()
+            .AnyAsync(x => x.Id == request.BookableObjectId
+                           && x.AreaId == request.AreaId);
+
+        if (!bookableObjectExists)
+        {
+            throw new ClientException($"Area id {request.BookableObjectId} not found.");
+        }
+
         if (await dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
-            .Include(i => i.BookableObject)
-            .AnyAsync(x =>
-                x.BookableObject.AreaId == request.AreaId &&
-                x.Date == request.Date &&
-                x.BookableObjectId == request.BookableObjectId))
+                .Include(i => i.BookableObject)
+                .AnyAsync(x =>
+                    x.BookableObject.AreaId == request.AreaId &&
+                    x.Date == request.Date &&
+                    x.BookableObjectId == request.BookableObjectId))
         {
             throw new ClientException("Booking already exists");
         }
@@ -39,6 +48,8 @@ public class BookingCommands(
 
         await userNotifier.NotifyUser(request.UserId,
             $"You're new booking on *{request.Date}* has been created");
+
+        return booking.Id;
     }
 
     public async Task Handle(DeleteBookingRequest request)
@@ -63,7 +74,7 @@ public class BookingCommands(
             var currentUserId = currentUser.UserId;
 
             // if we do an admin check here, we can allow admins to delete any booking
-            if (currentUserId != booking.UserId)
+            if (currentUserId != booking.UserId && !currentUser.IsAdmin)
             {
                 throw new ClientForbiddenException();
             }
