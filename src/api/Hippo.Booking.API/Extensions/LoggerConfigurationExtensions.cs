@@ -20,11 +20,11 @@ public static class LoggerConfigurationExtensions
                 x.Properties.Any(y => y.Key == "RequestPath" && y.Value.ToString().Contains("/health")))
             .WriteTo.Console()
             .Enrich.FromLogContext();
-        
+
         if (awsLoggingConfig != null)
         {
             Client ??= new AmazonCloudWatchLogsClient(
-                awsLoggingConfig.AccessKeyId, 
+                awsLoggingConfig.AccessKeyId,
                 awsLoggingConfig.AccessSecretKey,
                 awsLoggingConfig.Region);
 

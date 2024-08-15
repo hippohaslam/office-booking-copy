@@ -18,7 +18,7 @@ public class SchedulingService(
         {
             using var scope = serviceProvider.CreateScope();
             var dataContext = scope.ServiceProvider.GetRequiredService<IDataContext>();
-            
+
             var schedules = await dataContext
                 .Query<ScheduledTask>(x => x.WithNoTracking())
                 .ToListAsync(cancellationToken);
@@ -38,7 +38,7 @@ public class SchedulingService(
             var nextSchedule = schedules
                 .OrderBy(x => (x.TimeToRun - TimeOnly.FromDateTime(nowUkLocal)))
                 .First();
-            
+
             var timeSpan = nextSchedule.TimeToRun - TimeOnly.FromDateTime(nowUkLocal);
 
             logger.LogInformation("Scheduled task {0} is set to run in {1}. Waiting for next run.", nextSchedule.Task, timeSpan);
@@ -58,7 +58,7 @@ public class SchedulingService(
 
         var scheduledTaskEntry = await dataContext.Query<ScheduledTask>()
             .SingleOrDefaultAsync(x => x.Id == taskId, cancellationToken: cancellationToken);
-        
+
         if (scheduledTaskEntry == null)
         {
             logger.LogError("Scheduled task {Task} not found", taskId);
@@ -81,7 +81,7 @@ public class SchedulingService(
             logger.LogWarning("Scheduled task {Task} has already run today. Another service picked it up before this service could claim it.", scheduledTaskEntry.Task);
             return;
         }
-        
+
         var scheduledTask = scope.ServiceProvider.GetKeyedService<IScheduledTask>(scheduledTaskEntry.Task);
 
         if (scheduledTask == null)

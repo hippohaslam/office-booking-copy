@@ -9,7 +9,7 @@ public abstract class ValidatorTest<TInstance, TValidator>(TValidator validator)
     public abstract List<TInstance> PositiveTestCases { get; }
 
     public abstract List<TInstance> NegativeTestCases { get; }
-    
+
     [Test]
     public void TestPositiveCases()
     {
@@ -24,7 +24,7 @@ public abstract class ValidatorTest<TInstance, TValidator>(TValidator validator)
             }
         }
     }
-    
+
     [Test]
     public void TestNegativeCases()
     {

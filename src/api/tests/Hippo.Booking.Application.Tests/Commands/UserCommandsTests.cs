@@ -20,7 +20,7 @@ public class UserCommandsTests : CommandTest
     {
         _dataContext = GetDbContext(nameof(UserCommandsTests));
         _registeredUserRequestValidator = Substitute.For<IValidator<RegisteredUserRequest>>();
-        
+
         _dataContext.AddEntity(new User
         {
             Id = "1",
@@ -30,7 +30,7 @@ public class UserCommandsTests : CommandTest
         });
 
         await _dataContext.Save();
-        
+
         _sut = new UserCommands(_dataContext, _registeredUserRequestValidator);
     }
 
@@ -48,12 +48,12 @@ public class UserCommandsTests : CommandTest
         var result = await _sut.UpsertUser(registerRequest);
 
         result.Should().BeEquivalentTo(registerRequest);
-        
+
         var existingUserCount = await _dataContext.Query<User>().Where(x => x.Id == "1" || x.Id == "2")
             .ToListAsync();
-        
+
         existingUserCount.Count.Should().Be(2);
-        
+
         var newUser = existingUserCount.Single(x => x.Id == "2");
 
         using (new AssertionScope())
@@ -74,13 +74,13 @@ public class UserCommandsTests : CommandTest
             FirstName = "Test2",
             LastName = "User2"
         };
-        
+
         var existingUserCount = await _dataContext.Query<User>().CountAsync();
 
         await _sut.UpsertUser(registerRequest);
-        
+
         var actualUserCount = await _dataContext.Query<User>().CountAsync();
-        
+
         actualUserCount.Should().Be(existingUserCount, "User count should not change");
 
         var user = await _dataContext.Query<User>().SingleAsync(x => x.Id == "1");

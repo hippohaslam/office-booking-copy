@@ -19,7 +19,7 @@ public class LocationCommandsTest : CommandTest
     public async Task Setup()
     {
         _dataContext = GetDbContext(nameof(LocationCommandsTest));
-        
+
         _dataContext.AddEntity(new Location
         {
             Name = "Existing Location",
@@ -46,7 +46,7 @@ public class LocationCommandsTest : CommandTest
         var result = await _sut.Handle(request);
 
         result.Should().NotBe(0);
-        
+
         var existingLocation = await _dataContext.Query<Location>()
             .FirstOrDefaultAsync(x => x.Id == result);
 
@@ -68,7 +68,7 @@ public class LocationCommandsTest : CommandTest
 
         Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(request));
     }
-    
+
     [Test]
     public async Task CanUpdateLocation()
     {
@@ -93,7 +93,7 @@ public class LocationCommandsTest : CommandTest
             updatedLocation.Description.Should().Be(request.Description, "Description should match request");
         }
     }
-    
+
     [Test]
     public void CannotUpdateNonExistingLocation()
     {

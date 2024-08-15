@@ -19,7 +19,7 @@ public class AwsLoggingConfig
         var accessKeyId = builder.Configuration.GetValue<string>("Aws:AccessKeyId");
         var accessSecret = builder.Configuration.GetValue<string>("Aws:AccessSecretKey");
         var environment = builder.Environment.EnvironmentName;
-        
+
         if (string.IsNullOrEmpty(accessKeyId) || string.IsNullOrEmpty(accessSecret) || string.IsNullOrEmpty(environment))
         {
             return null;
@@ -32,13 +32,13 @@ public class AwsLoggingConfig
             EnvironmentName = environment
         };
     }
-    
+
     public static AwsLoggingConfig? FromEnvironmentVariables()
     {
         var accessKeyId = Environment.GetEnvironmentVariable("Aws__AccessKeyId");
         var accessSecret = Environment.GetEnvironmentVariable("Aws__AccessSecretKey");
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        
+
         if (string.IsNullOrEmpty(accessKeyId) || string.IsNullOrEmpty(accessSecret) || string.IsNullOrEmpty(environment))
         {
             return null;

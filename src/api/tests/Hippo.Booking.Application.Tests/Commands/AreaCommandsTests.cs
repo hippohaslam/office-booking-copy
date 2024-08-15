@@ -15,15 +15,15 @@ public class AreaCommandsTests : CommandTest
 {
     private AreaCommands _sut;
     private IDataContext _dataContext;
-    
+
     private IValidator<CreateAreaRequest> _createAreaRequestValidator;
     private IValidator<UpdateAreaRequest> _updateAreaRequestValidator;
-    
+
     [OneTimeSetUp]
     public async Task Setup()
     {
         _dataContext = GetDbContext(nameof(AreaCommandsTests));
-        
+
         _dataContext.AddEntity(new Area
         {
             Name = "Existing Area",
@@ -36,7 +36,7 @@ public class AreaCommandsTests : CommandTest
         });
 
         await _dataContext.Save();
-        
+
         _createAreaRequestValidator = Substitute.For<IValidator<CreateAreaRequest>>();
         _updateAreaRequestValidator = Substitute.For<IValidator<UpdateAreaRequest>>();
 
@@ -45,7 +45,7 @@ public class AreaCommandsTests : CommandTest
             _createAreaRequestValidator,
             _updateAreaRequestValidator);
     }
-    
+
     [Test]
     public async Task CanCreateArea()
     {
@@ -59,7 +59,7 @@ public class AreaCommandsTests : CommandTest
         var result = await _sut.Handle(1, request);
 
         result.Should().NotBe(0);
-        
+
         var existingArea = await _dataContext.Query<Area>()
             .FirstOrDefaultAsync(x => x.Id == result);
 
@@ -72,7 +72,7 @@ public class AreaCommandsTests : CommandTest
 
         await AssertValidatorCalled(_createAreaRequestValidator, request);
     }
-    
+
     [Test]
     public void CannotCreateDuplicateArea()
     {
@@ -83,7 +83,7 @@ public class AreaCommandsTests : CommandTest
 
         Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(1, request));
     }
-    
+
     [Test]
     public void CannotCreateAreaWithInvalidLocation()
     {
@@ -92,10 +92,10 @@ public class AreaCommandsTests : CommandTest
             Name = "Test Area",
             Description = "Test Area Description"
         };
-        
+
         Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(5, request));
     }
-    
+
     [Test]
     public async Task CanUpdateArea()
     {
@@ -124,7 +124,7 @@ public class AreaCommandsTests : CommandTest
 
         await AssertValidatorCalled(_updateAreaRequestValidator, request);
     }
-    
+
     [Test]
     public async Task CannotUpdateAreaThatDoesntExist()
     {
@@ -140,7 +140,7 @@ public class AreaCommandsTests : CommandTest
 
         Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(5, existingArea!.LocationId, request));
     }
-    
+
     [Test]
     public async Task CannotUpdateAreaWithInvalidLocation()
     {

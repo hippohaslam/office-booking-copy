@@ -1,10 +1,11 @@
-using System.Security.Claims;
+using System.Diagnostics.CodeAnalysis;
 using Hippo.Booking.API.Extensions;
 using Hippo.Booking.Core.Enums;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hippo.Booking.API.Endpoints;
 
+[ExcludeFromCodeCoverage(Justification = "Dummy endpoints for testing")]
 public class TestEndpoints() : EndpointBase("test", "Test", AccessLevelEnum.Anonymous)
 {
     public override void MapEndpoints(RouteGroupBuilder builder)

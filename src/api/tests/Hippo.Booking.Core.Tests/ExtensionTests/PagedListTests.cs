@@ -25,14 +25,14 @@ public class PagedListTests
             .Options;
 
         var dbContext = new TestDbContext(dbOptions);
-        
+
         foreach (var i in Enumerable.Range(1, 10))
         {
             dbContext.TestEntities.Add(new TestEntity { Id = i });
         }
 
         await dbContext.SaveChangesAsync();
-        
+
         var pagedList = await dbContext.TestEntities
             .ToPagedListAsync(2, 3);
 

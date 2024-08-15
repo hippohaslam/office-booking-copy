@@ -17,7 +17,7 @@ public class InteractionEventTests
     private IConfirmBookingCommand _confirmBookingCommand;
     private IBookingQueries _bookingQueries;
     private ILogger<InteractionEvent> _logger;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -31,15 +31,15 @@ public class InteractionEventTests
         {
             Id = 1
         });
-        
+
         _sut = new InteractionEvent(
-            _slackClient, 
-            _deleteBookingCommand, 
-            _confirmBookingCommand, 
-            _bookingQueries, 
+            _slackClient,
+            _deleteBookingCommand,
+            _confirmBookingCommand,
+            _bookingQueries,
             _logger);
     }
-    
+
     [Test]
     public async Task HandleBookingNotFound()
     {
@@ -48,7 +48,7 @@ public class InteractionEventTests
             ActionId = "confirm_booking",
             Value = "2"
         };
-        
+
         var request = new BlockActionRequest
         {
             User = new User
@@ -56,14 +56,14 @@ public class InteractionEventTests
                 Id = "123"
             }
         };
-        
+
         await _sut.Handle(action, request);
-        
+
         await _bookingQueries.Received(1).GetBookingById(2);
         await _confirmBookingCommand.DidNotReceive().Handle(Arg.Any<int>());
         await _deleteBookingCommand.DidNotReceive().Handle(Arg.Any<DeleteBookingRequest>());
     }
-    
+
     [Test]
     public async Task HandleConfirmBooking()
     {
@@ -72,7 +72,7 @@ public class InteractionEventTests
             ActionId = "confirm_booking",
             Value = "1"
         };
-        
+
         var request = new BlockActionRequest
         {
             User = new User
@@ -80,14 +80,14 @@ public class InteractionEventTests
                 Id = "123"
             }
         };
-        
+
         await _sut.Handle(action, request);
-        
+
         await _bookingQueries.Received(1).GetBookingById(1);
         await _confirmBookingCommand.Received(1).Handle(1);
         await _deleteBookingCommand.DidNotReceive().Handle(Arg.Any<DeleteBookingRequest>());
     }
-    
+
     [Test]
     public async Task HandleCancelBooking()
     {
@@ -96,7 +96,7 @@ public class InteractionEventTests
             ActionId = "cancel_booking",
             Value = "1"
         };
-        
+
         var request = new BlockActionRequest
         {
             User = new User
@@ -104,14 +104,14 @@ public class InteractionEventTests
                 Id = "123"
             }
         };
-        
+
         await _sut.Handle(action, request);
-        
+
         await _bookingQueries.Received(1).GetBookingById(1);
         await _confirmBookingCommand.DidNotReceive().Handle(Arg.Any<int>());
         await _deleteBookingCommand.Received(1).Handle(Arg.Is<DeleteBookingRequest>(x => x.BookingId == 1));
     }
-    
+
     [Test]
     public async Task HandleInvalidAction()
     {
@@ -120,7 +120,7 @@ public class InteractionEventTests
             ActionId = "dfdsfsdf",
             Value = "1"
         };
-        
+
         var request = new BlockActionRequest
         {
             User = new User
@@ -128,9 +128,9 @@ public class InteractionEventTests
                 Id = "123"
             }
         };
-        
+
         await _sut.Handle(action, request);
-        
+
         await _bookingQueries.Received(1).GetBookingById(1);
         await _confirmBookingCommand.DidNotReceive().Handle(Arg.Any<int>());
         await _deleteBookingCommand.DidNotReceive().Handle(Arg.Is<DeleteBookingRequest>(x => x.BookingId == 1));

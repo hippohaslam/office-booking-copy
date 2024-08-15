@@ -94,14 +94,14 @@ public class BookingCommands(
         var booking = await dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.BookableObject)
             .SingleOrDefaultAsync(x => x.Id == bookingId);
-        
+
         if (booking == null)
         {
             throw new ClientException("Booking not found");
         }
-        
+
         booking.IsConfirmed = true;
-        
+
         await dataContext.Save();
     }
 }

@@ -12,7 +12,7 @@ public class BookableObjectCommandTests : CommandTest
 {
     private BookableObjectCommands _sut;
     private IDataContext _dataContext;
-    
+
     [OneTimeSetUp]
     public async Task Setup()
     {
@@ -35,10 +35,10 @@ public class BookableObjectCommandTests : CommandTest
         });
 
         await _dataContext.Save();
-        
+
         _sut = new BookableObjectCommands(_dataContext);
     }
-    
+
     [Test]
     public async Task CanCreateBookableObject()
     {
@@ -52,7 +52,7 @@ public class BookableObjectCommandTests : CommandTest
         var result = await _sut.Handle(1, 1, request);
 
         result.Should().NotBe(0);
-        
+
         var existingBookableObject = await _dataContext.Query<BookableObject>()
             .FirstOrDefaultAsync(x => x.Id == result);
 
@@ -63,7 +63,7 @@ public class BookableObjectCommandTests : CommandTest
             existingBookableObject.Description.Should().Be(request.Description, "Description should match request");
         }
     }
-    
+
     [Test]
     public async Task CannotCreateDuplicateBookableObject()
     {
@@ -71,13 +71,13 @@ public class BookableObjectCommandTests : CommandTest
         {
             Name = "Existing BookableObject",
         };
-        
+
         var area = await _dataContext.Query<Area>()
             .SingleAsync(x => x.Name == "Existing Area");
 
         Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(area.LocationId, area.Id, request));
     }
-    
+
     [Test]
     public void CannotCreateBookableObjectWithInvalidArea()
     {
@@ -86,10 +86,10 @@ public class BookableObjectCommandTests : CommandTest
             Name = "Test BookableObject",
             Description = "Test BookableObject Description"
         };
-        
+
         Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(1, 5, request));
     }
-    
+
     [Test]
     public void CannotCreateBookableObjectWithInvalidLocation()
     {
@@ -98,16 +98,16 @@ public class BookableObjectCommandTests : CommandTest
             Name = "Test BookableObject",
             Description = "Test BookableObject Description"
         };
-        
+
         Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(5, 1, request));
     }
-    
+
     [Test]
     public async Task CanUpdateBookableObject()
     {
         var existingBookableObject = await _dataContext.Query<BookableObject>()
             .SingleAsync(x => x.Name == "Existing BookableObject");
-        
+
         var request = new UpdateBookableObjectRequest
         {
             Name = "Updated BookableObject",
@@ -116,11 +116,11 @@ public class BookableObjectCommandTests : CommandTest
         };
 
         await _sut.Handle(
-            existingBookableObject.Id, 
+            existingBookableObject.Id,
             1,
             existingBookableObject.AreaId,
             request);
-        
+
         var updatedBookableObject = await _dataContext.Query<BookableObject>()
             .FirstOrDefaultAsync(x => x.Id == existingBookableObject!.Id);
 
@@ -131,7 +131,7 @@ public class BookableObjectCommandTests : CommandTest
             updatedBookableObject.Description.Should().Be(request.Description, "Description should match request");
         }
     }
-    
+
     [Test]
     public void CannotUpdateBookableObjectThatDoesntExist()
     {
@@ -140,7 +140,7 @@ public class BookableObjectCommandTests : CommandTest
             Name = "Updated BookableObject",
             Description = "Updated BookableObject Description"
         };
-        
+
         Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(5, 1, 1, request));
     }
 }

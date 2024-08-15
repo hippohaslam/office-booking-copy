@@ -17,7 +17,7 @@ public class CommandTest
 
         return new HippoBookingDbContext(dbOptions);
     }
-    
+
     public async Task AssertValidatorCalled<T>(IValidator<T> validator, T instance)
     {
         await validator.Received().ValidateAsync(

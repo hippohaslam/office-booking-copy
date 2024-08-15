@@ -12,12 +12,6 @@ public class IntegrationTestBase
 
     public HippoBookingDbContext DbContext => WebFixture.DbContext;
 
-    public async Task<T> GetResponseContent<T>(HttpResponseMessage response)
-    {
-        var content = await response.Content.ReadAsStringAsync();
-        return content.FromJson<T>() ?? throw new Exception("Failed to deserialize response content");
-    }
-
     public async Task AddEntity<T>(T entity) where T : class
     {
         DbContext.Set<T>().Add(entity);

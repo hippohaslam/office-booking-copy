@@ -38,7 +38,7 @@ try
         .ConfigureLogging(AwsLoggingConfig.FromWebApplicationBuilder(builder)));
 
     builder.Services.AddHealthChecks();
-    
+
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
     {
@@ -136,7 +136,7 @@ try
                 options.Cookie.SecurePolicy = CookieSecurePolicy.None;
                 options.Cookie.SameSite = SameSiteMode.Lax;
             }
-            
+
             options.ExpireTimeSpan = TimeSpan.FromHours(1);
             options.SlidingExpiration = false;
 
@@ -195,7 +195,7 @@ try
             diagnosticContext.Set("User", name);
         };
     });
-    
+
     app.MapHealthChecks("/health");
 
     app.UseSwagger();

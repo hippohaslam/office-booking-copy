@@ -30,9 +30,9 @@ public class InteractionEvent(
         if (action.ActionId == "confirm_booking")
         {
             logger.LogDebug("Booking {BookingId} confirmed by {User} via Slack", bookingId, request.User);
-            
+
             await confirmBookingCommand.Handle(bookingId);
-            
+
             await slackClient.RespondToInteraction(request.ResponseUrl, new MessageResponse
             {
                 ReplaceOriginal = true,

@@ -3,7 +3,7 @@ using Hippo.Booking.Application.Commands.Location;
 namespace Hippo.Booking.Application.Tests.Validators;
 
 [TestFixture]
-public class UpdateLocationValidationTests() : 
+public class UpdateLocationValidationTests() :
     ValidatorTest<UpdateLocationRequest, UpdateLocationRequestValidator>(new UpdateLocationRequestValidator())
 {
     public override List<UpdateLocationRequest> PositiveTestCases { get; } = new()

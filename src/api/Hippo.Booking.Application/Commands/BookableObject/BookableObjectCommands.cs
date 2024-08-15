@@ -46,7 +46,7 @@ public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableO
                 x.Id == bookableObjectId &&
                 x.AreaId == areaId &&
                 x.Area.LocationId == locationId);
-        
+
         if (bookableObject == null)
         {
             throw new ClientException("Bookable object does not exist.");

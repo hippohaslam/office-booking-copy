@@ -11,7 +11,7 @@ public class EnumExtensionsTests
         TestValue1,
         TestValue2
     }
-    
+
     [TestCase(TestEnum.TestValue1, "Test Description 1")]
     [TestCase(TestEnum.TestValue2, "TestValue2")]
     public void TestGetEnumDescriptionInputOutput(TestEnum enumVal, string expectedVal)

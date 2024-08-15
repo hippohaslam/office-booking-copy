@@ -95,7 +95,7 @@ public class BookingCommandsTests : CommandTest
             existingBooking.Date.Should().Be(request.Date);
             existingBooking.UserId.Should().Be(request.UserId);
         }
-        
+
         await AssertValidatorCalled(_createBookingValidator, request);
     }
 
@@ -158,7 +158,7 @@ public class BookingCommandsTests : CommandTest
         confirmedBooking.Should().NotBeNull("The booking should have been confirmed");
         confirmedBooking!.IsConfirmed.Should().BeTrue("The booking should be confirmed");
     }
-    
+
     [Test]
     public void CannotConfirmBookingThatDoesNotExist()
     {
@@ -174,26 +174,26 @@ public class BookingCommandsTests : CommandTest
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(5)),
             BookableObject = await _dataContext.Query<BookableObject>().SingleAsync()
         };
-        
+
         _dataContext.AddEntity(bookingToDelete);
         await _dataContext.Save();
-        
+
         var request = new DeleteBookingRequest
         {
             AreaId = bookingToDelete.BookableObject.AreaId,
             BookingId = bookingToDelete.Id
         };
-        
+
         await _sut.Handle(request);
-        
+
         var deletedBooking = await _dataContext.Query<Core.Entities.Booking>()
             .FirstOrDefaultAsync(x => x.Id == bookingToDelete.Id);
 
         deletedBooking.Should().BeNull("The booking should have been deleted");
-        
+
         await AssertValidatorCalled(_deleteBookingValidator, request);
     }
-    
+
     [Test]
     public async Task DeletingABookingThatDoesNotExistIsANoop()
     {
@@ -207,68 +207,68 @@ public class BookingCommandsTests : CommandTest
             .CountAsync();
 
         await _sut.Handle(request);
-        
+
         var actualCount = await _dataContext.Query<Core.Entities.Booking>()
             .CountAsync();
-        
+
         actualCount.Should().Be(existingCount, "No bookings should have been deleted");
     }
-    
+
     [Test]
     public async Task DeletingWithoutAValidUserIsForbidden()
     {
         var existingBooking = await _dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.BookableObject)
             .SingleAsync(x => x.Date == DateOnly.FromDateTime(DateTime.Now));
-        
+
         var userProvider = Substitute.For<IUserProvider>();
         userProvider.GetCurrentUser().Returns((RegisteredUserModel?)null);
-        
+
         var sut = new BookingCommands(
             _dataContext,
             _userNotifier,
             userProvider,
             _createBookingValidator,
             _deleteBookingValidator);
-        
+
         var request = new DeleteBookingRequest
         {
             AreaId = existingBooking.BookableObject.AreaId,
             BookingId = existingBooking.Id
         };
-        
+
         Assert.ThrowsAsync<ClientForbiddenException>(async () => await sut.Handle(request));
     }
-    
+
     [Test]
     public async Task DeletingABookingThatIsNotUsersAsAStandardUserIsForbidden()
     {
         var existingBooking = await _dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.BookableObject)
             .SingleAsync(x => x.Date == DateOnly.FromDateTime(DateTime.Now));
-        
+
         var userProvider = Substitute.For<IUserProvider>();
         userProvider.GetCurrentUser().Returns(new RegisteredUserModel
         {
             UserId = "2"
         });
-        
+
         var sut = new BookingCommands(
             _dataContext,
             _userNotifier,
             userProvider,
             _createBookingValidator,
             _deleteBookingValidator);
-        
+
         var request = new DeleteBookingRequest
         {
             AreaId = existingBooking.BookableObject.AreaId,
             BookingId = existingBooking.Id
         };
-        
+
         Assert.ThrowsAsync<ClientForbiddenException>(async () => await sut.Handle(request));
     }
-    
+
     [Test]
     public async Task DeletingABookingForSomebodyElseAsAnAdminIsSuccessful()
     {
@@ -278,32 +278,32 @@ public class BookingCommandsTests : CommandTest
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(5)),
             BookableObject = await _dataContext.Query<BookableObject>().SingleAsync()
         };
-        
+
         _dataContext.AddEntity(bookingToDelete);
         await _dataContext.Save();
-        
+
         var userProvider = Substitute.For<IUserProvider>();
         userProvider.GetCurrentUser().Returns(new RegisteredUserModel
         {
             UserId = "2",
             IsAdmin = true
         });
-        
+
         var sut = new BookingCommands(
             _dataContext,
             _userNotifier,
             userProvider,
             _createBookingValidator,
             _deleteBookingValidator);
-        
+
         var request = new DeleteBookingRequest
         {
             AreaId = bookingToDelete.BookableObject.AreaId,
             BookingId = bookingToDelete.Id
         };
-        
+
         await _sut.Handle(request);
-        
+
         var deletedBooking = await _dataContext.Query<Core.Entities.Booking>()
             .FirstOrDefaultAsync(x => x.Id == bookingToDelete.Id);
 
