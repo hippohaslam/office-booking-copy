@@ -152,6 +152,7 @@ try
 
     builder.Services.AddScheduledTask<SlackConfirmationScheduledTask>();
 
+    builder.Services.AddSingleton<SchedulingService>();
     builder.Services.AddHostedService<SchedulingWorkerService>();
 
     builder.Services.AddHttpContextAccessor();

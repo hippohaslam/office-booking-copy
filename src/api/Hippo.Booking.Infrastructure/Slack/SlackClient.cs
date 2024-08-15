@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Options;
 using SlackNet;
 using SlackNet.Interaction;
@@ -6,6 +7,7 @@ using MessageUpdateResponse = SlackNet.Interaction.MessageUpdateResponse;
 
 namespace Hippo.Booking.Infrastructure.Slack;
 
+[ExcludeFromCodeCoverage(Justification = "Can't test as it relies on Slack API")]
 public class SlackClient(IOptions<SlackSettings> slackOptions, ISlackApiClient slackApiClient) : ISlackClient
 {
     private readonly SlackSettings _slackSettings = slackOptions.Value;
