@@ -1134,7 +1134,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@octokit/rest@npm:^20.0.2":
+"@octokit/rest@npm:^20.1.1":
   version: 20.1.1
   resolution: "@octokit/rest@npm:20.1.1"
   dependencies:
@@ -2094,17 +2094,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.8":
-  version: 1.7.2
-  resolution: "axios@npm:1.7.2"
-  dependencies:
-    follow-redirects: "npm:^1.15.6"
-    form-data: "npm:^4.0.0"
-    proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/cbd47ce380fe045313364e740bb03b936420b8b5558c7ea36a4563db1258c658f05e40feb5ddd41f6633fdd96d37ac2a76f884dad599c5b0224b4c451b3fa7ae
-  languageName: node
-  linkType: hard
-
 "axios@npm:^1.7.4":
   version: 1.7.4
   resolution: "axios@npm:1.7.4"
@@ -2755,7 +2744,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^4.3.5":
+"debug@npm:^4.3.5, debug@npm:^4.3.6":
   version: 4.3.6
   resolution: "debug@npm:4.3.6"
   dependencies:
@@ -3953,7 +3942,7 @@ __metadata:
     typescript: "npm:^5.5.4"
     uuid: "npm:^10.0.0"
     vite: "npm:^5.4.1"
-    vite-plugin-mkcert: "npm:^1.17.5"
+    vite-plugin-mkcert: "npm:^1.17.6"
     vitest: "npm:^2.0.5"
   languageName: unknown
   linkType: soft
@@ -6474,17 +6463,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-mkcert@npm:^1.17.5":
-  version: 1.17.5
-  resolution: "vite-plugin-mkcert@npm:1.17.5"
+"vite-plugin-mkcert@npm:^1.17.6":
+  version: 1.17.6
+  resolution: "vite-plugin-mkcert@npm:1.17.6"
   dependencies:
-    "@octokit/rest": "npm:^20.0.2"
-    axios: "npm:^1.6.8"
-    debug: "npm:^4.3.4"
-    picocolors: "npm:^1.0.0"
+    "@octokit/rest": "npm:^20.1.1"
+    axios: "npm:^1.7.4"
+    debug: "npm:^4.3.6"
+    picocolors: "npm:^1.0.1"
   peerDependencies:
     vite: ">=3"
-  checksum: 10c0/f228e44c6070da1a6a13fb4c3d488cb1fcbb2c236121b097937f5dcbf3a7604185577bcd6c1d157b7dceb08037c12a03be7930016da6b8babd1bf2bce94f7a9d
+  checksum: 10c0/f533e1862311fc29709f67f7b6b3da4cce4e5f5ad336fbd5e03d2441c532dcb3ddf6fc368afa89bbe26b8c95af68ed444720b739bc7ad900e4f8b2ebc6e1b769
   languageName: node
   linkType: hard
 
