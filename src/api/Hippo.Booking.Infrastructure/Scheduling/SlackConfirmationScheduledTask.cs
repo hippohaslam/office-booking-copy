@@ -30,14 +30,14 @@ public class SlackConfirmationScheduledTask(
             })
             .ToListAsync();
 
-        logger.LogDebug("Found {0} bookings for task", usersToNotify.Count);
+        logger.LogDebug("Found {Count} bookings for task", usersToNotify.Count);
 
         foreach (var booking in usersToNotify)
         {
             var userId = await SlackClient.GetUserIdByEmail(booking.User.Email);
             if (userId == null)
             {
-                logger.LogWarning("User {0} not found in Slack", booking.User.Email);
+                logger.LogWarning("User {Email} not found in Slack", booking.User.Email);
                 continue;
             }
 

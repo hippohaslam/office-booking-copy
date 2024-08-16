@@ -23,7 +23,14 @@ public class InteractionEvent(
         if (booking == null)
         {
             logger.LogWarning("Booking {BookingId} not found. User: {User}", bookingId, request.User);
-            await RespondWithError(request.ResponseUrl);
+            await slackClient.RespondToInteraction(request.ResponseUrl, new MessageResponse
+            {
+                ReplaceOriginal = true,
+                Message = new Message
+                {
+                    Text = "Your booking was not found. It may have already been cancelled."
+                }
+            });
             return;
         }
 
@@ -64,18 +71,13 @@ public class InteractionEvent(
         else
         {
             logger.LogWarning("Unknown action sent from Slack. User: {0}", request.User);
-            await RespondWithError(request.ResponseUrl);
-        }
-    }
-
-    private async Task RespondWithError(string responseUrl)
-    {
-        await slackClient.RespondToInteraction(responseUrl, new MessageResponse
-        {
-            Message = new Message
+            await slackClient.RespondToInteraction(request.ResponseUrl, new MessageResponse
             {
-                Text = "Something went wrong when confirming your booking. Please try again."
-            }
-        });
+                Message = new Message
+                {
+                    Text = "Something went wrong when confirming your booking. Please try again."
+                }
+            });
+        }
     }
 }
