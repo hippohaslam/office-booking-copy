@@ -58,6 +58,9 @@ public class BookingEndpointTests : IntegrationTestBase
             && x.BookableObjectId == bookableObject.Id);
 
         dbBookings.Should().HaveCount(1, "only 1 booking should exist that matches those details");
+        
+        response.Headers.Location.Should().Be($"/location/{location.Id}/area/{area.Id}/booking/{dbBookings.Single().Id}", 
+            "the location header should be set to the location endpoint");
     }
 
     [Test]

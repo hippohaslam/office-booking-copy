@@ -42,6 +42,8 @@ public class LocationEndpointTests : IntegrationTestBase
             Name = "Create Test Location",
             Description = "Test Location"
         }, "the content from the request should be added to the database");
+
+        response.Headers.Location.Should().Be($"/location/{location!.Id}", "the location header should be set to the location endpoint");
     }
 
     [Test]
