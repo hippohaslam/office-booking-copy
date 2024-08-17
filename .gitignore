@@ -368,4 +368,3 @@ FodyWeavers.xsd
 src/infrastructure/docker/postgres-data
 
 .terraform/
-.terraform.lock.hcl
