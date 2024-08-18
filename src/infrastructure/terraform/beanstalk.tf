@@ -16,11 +16,11 @@ resource "aws_subnet" "hippo-booking-api-subnet-b" {
 }
 resource "aws_route_table_association" "hippo-booking-api-subnet-a-routing" {
   subnet_id      = aws_subnet.hippo-booking-api-subnet-a.id
-  route_table_id = aws_route_table.route_table.id
+  route_table_id = aws_route_table.public_route_table.id
 }
 resource "aws_route_table_association" "hippo-booking-api-subnet-b-routing" {
   subnet_id      = aws_subnet.hippo-booking-api-subnet-b.id
-  route_table_id = aws_route_table.route_table.id
+  route_table_id = aws_route_table.public_route_table.id
 }
 
 resource "aws_security_group" "beanstalk_sg" {

@@ -1,3 +1,7 @@
+locals {
+  db_subnet_routing_table_id = aws_route_table.public_route_table.id
+}
+
 resource "aws_db_instance" "hippo-booking-db" {
   identifier           = "hippo-booking-db-${var.env_suffix}"
   allocated_storage    = 20 # Minimum storage for RDS instances
@@ -32,7 +36,7 @@ resource "aws_subnet" "hippo-booking-subnet-db-a" {
 }
 resource "aws_route_table_association" "hippo-booking-subnet-db-a-routing" {
   subnet_id      = aws_subnet.hippo-booking-subnet-db-a.id
-  route_table_id = aws_route_table.route_table.id
+  route_table_id = local.db_subnet_routing_table_id
 }
 
 resource "aws_subnet" "hippo-booking-subnet-db-b" {
@@ -42,7 +46,7 @@ resource "aws_subnet" "hippo-booking-subnet-db-b" {
 }
 resource "aws_route_table_association" "hippo-booking-subnet-db-b-routing" {
   subnet_id      = aws_subnet.hippo-booking-subnet-db-b.id
-  route_table_id = aws_route_table.route_table.id
+  route_table_id = local.db_subnet_routing_table_id
 }
 
 resource "aws_subnet" "hippo-booking-subnet-db-c" {
@@ -52,7 +56,7 @@ resource "aws_subnet" "hippo-booking-subnet-db-c" {
 }
 resource "aws_route_table_association" "hippo-booking-subnet-c-routing" {
   subnet_id      = aws_subnet.hippo-booking-subnet-db-c.id
-  route_table_id = aws_route_table.route_table.id
+  route_table_id = local.db_subnet_routing_table_id
 }
 
 resource "aws_security_group" "db-security-group" {
