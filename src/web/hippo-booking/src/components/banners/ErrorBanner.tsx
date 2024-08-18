@@ -1,19 +1,40 @@
-const ErrorBanner = ({text = "Error"}) => {
-    return (
-      <div>
-        <h2>{text}</h2>
-      </div>
-    );
-  };
+import Banner from "./Banner";
+import ErrorIcon from "../../assets/error-icon.svg";
 
-const ErrorBannerMultiple = ({errors}: {errors: ErrorObjects[]}) => {
+type ErrorBannerSingleProps = {
+  isShown: boolean;
+  title: string;
+  errorMessage: string;
+  allowClose: boolean;
+};
+
+type ErrorBannerMultipleProps = {
+  isShown: boolean;
+  title: string;
+  errors: ErrorObjects[];
+  allowClose: boolean;
+};
+
+const ErrorBanner = ({isShown, title, errorMessage, allowClose} : ErrorBannerSingleProps) => {
+  const descriptionElement = (<p className="alert-description">{errorMessage}</p>);
+
   return (
-    <div>
-      {errors.map((error) => {
-        return <h2 key={error.key}>{error.message}</h2>
-      } )}
-    </div>
+    <Banner isShown={isShown} containerClass={"error-banner"} title={title} descriptionElement={descriptionElement} iconSrc={ErrorIcon} allowClose={allowClose} />
   );
 }
 
-export {ErrorBanner, ErrorBannerMultiple};
+const MultiErrorBanner = ({isShown, title, errors, allowClose} : ErrorBannerMultipleProps) => {
+  const descriptionElement = (
+    <ul>
+    {errors.map((error) => {
+      return <li>{error.message}</li>
+    } )}
+    </ul>
+  );
+
+  return (
+    <Banner isShown={isShown} containerClass={"error-banner"} title={title} descriptionElement={descriptionElement} iconSrc={ErrorIcon} allowClose={allowClose} />
+  );
+}
+
+export {ErrorBanner, MultiErrorBanner};

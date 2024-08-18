@@ -21,7 +21,7 @@ const Locations = () => {
     )) || [];
 
   if (error) {
-    return <div><ErrorBanner text="Unable to get locations, please refresh the page" /></div>;
+    return <ErrorBanner isShown={true} title="Error" errorMessage="Unable to get locations, please refresh the page" allowClose={false} />;
   }
 
   if (isFetching) {

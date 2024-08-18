@@ -42,7 +42,7 @@ const Admin = () => {
   if (error || locationDetailsQueries.some((query) => query.isError)) {
     return (
       <div>
-        <ErrorBanner text="Unable to get locations, please try again" />
+        <ErrorBanner isShown={true} title="Error" errorMessage="Unable to get locations, please try again" allowClose={false} />
       </div>
     );
   }

@@ -51,10 +51,10 @@ const CreateArea = () => {
 
     return (
         <div>
+            {hasErrors && <ErrorBanner isShown={hasErrors} title="Error" errorMessage={createArea.error.message} allowClose={true}/>}
+            {hasSuccess && <SuccessBanner isShown={hasSuccess} title="Saved successfully" description="Go back to see it in locations" />}
             <Link to="/admin">Back to locations</Link>
             <h2>Create a new area {locationData?.name}</h2>
-            {hasErrors && <ErrorBanner />}
-            {hasSuccess && <SuccessBanner text="Saved successfully. Go back to see it in locations" />}
             <form onSubmit={handleSubmit}>
                 <table>
                     <tbody>

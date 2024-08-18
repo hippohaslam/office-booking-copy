@@ -11,7 +11,7 @@ import {
 } from "../../../../../services/Apis";
 import { useWindowSize } from "../../../../../hooks/WindowSizeHook";
 import { CustomCircle, CustomFabricObject, CustomRect } from "../../../../../shared/fabric/CustomObjects";
-import { ErrorBannerMultiple, SuccessBanner } from "../../../../../components";
+import { MultiErrorBanner, SuccessBanner } from "../../../../../components";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../../../shared/fabric/Canvas";
 import { AccordionItem } from "../../../../../components/accordion/Accordion";
 import { isNullOrEmpty } from "../../../../../helpers/StringHelpers";
@@ -468,9 +468,9 @@ const FloorplanEditor = () => {
   // Must always have a canvas element, adding conditional logic to hide the canvas if the location is not loaded will break the fabric.js canvas
   return (
     <div className="content-container">
+      {errors.length > 0 && <MultiErrorBanner isShown={errors.length > 0} title="Error" errors={errors} allowClose={true} />}
+      {hasSuccess && errors.length < 1 && <SuccessBanner isShown={hasSuccess} title="Saved successfully" />}
       <h1>{!area && isLoading ? "Location loading..." : area?.name}</h1>
-      {errors.length > 0 && <ErrorBannerMultiple errors={errors} />}
-      {hasSuccess && errors.length < 1 && <SuccessBanner text="Saved successfully" />}
       <div>
         <label htmlFor="location-name">Location name: </label>
         <input id="location-name" type="text" value={area?.name || ""} onChange={handleLocationUpdate} />

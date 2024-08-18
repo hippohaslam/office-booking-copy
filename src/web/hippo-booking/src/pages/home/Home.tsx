@@ -38,7 +38,7 @@ const Home = () => {
             return <p>Fetching bookings...</p>;
         }
         else if (isError) {
-            return <ErrorBanner text="Unable to get bookings, please refresh the page" />;
+            return <ErrorBanner isShown={true} title="Error" errorMessage="Unable to get bookings, please refresh the page" allowClose={false} />;
         }
         
         else if(isSuccess && data) {

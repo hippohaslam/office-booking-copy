@@ -33,6 +33,7 @@ const Bookings = () => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+    const [cancelledBooking, setCancelledBooking] = useState<Booking | null>(null);
     const [showSuccessBanner, setSuccessBannerVisibility] = useState(false);
 
     const deleteBooking = useMutation({
@@ -66,6 +67,7 @@ const Bookings = () => {
     const handleConfirmCancel = () => {
         if (selectedBooking) {
             deleteBooking.mutate(selectedBooking);
+            setCancelledBooking(selectedBooking);
             handleCloseModal();
         } else {
             console.error('No booking selected for cancellation');
@@ -91,7 +93,7 @@ const Bookings = () => {
     }
 
     if (isError) {
-        return <ErrorBanner text="Unable to get locations, please refresh the page" />;
+        return <ErrorBanner isShown={isError} title="Error" errorMessage="Unable to get locations, please refresh the page" allowClose={false} />;
     }
 
      if (isFetching) {
@@ -100,8 +102,14 @@ const Bookings = () => {
 
     return (
         <div>
-            {(showSuccessBanner) && 
-            <SuccessBanner text="Booking cancelled"/>}
+            <SuccessBanner
+            isShown={showSuccessBanner} 
+            title="Booking cancelled" 
+            description={
+                "Your booking of " + cancelledBooking?.bookableObject.name + " at " + cancelledBooking?.area.name + ", " 
+                + cancelledBooking?.location.name + " on " + new Date(cancelledBooking?.date || "").toLocaleDateString('en-GB', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'}) 
+                + " has been cancelled."
+                } />
             <h1>My bookings</h1>
             <h2>Upcoming</h2>
             {data?.length === 0 && 

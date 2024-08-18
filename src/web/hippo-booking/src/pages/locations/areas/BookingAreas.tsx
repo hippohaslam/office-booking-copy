@@ -23,7 +23,7 @@ const BookingAreas = () => {
     if (areaData.length === 0) {
         return (
             <div>
-                <ErrorBanner text="Oops. No areas found for this location"/>
+                <ErrorBanner isShown={true} title="Error" errorMessage="No areas found for this location. Please speak to facilities about this error." allowClose={false} />
                 <Link to="/locations">Back to Choose a location</Link>
             </div>
         )
