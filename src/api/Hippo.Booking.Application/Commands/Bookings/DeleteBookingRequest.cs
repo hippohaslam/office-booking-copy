@@ -5,8 +5,6 @@ namespace Hippo.Booking.Application.Commands.Bookings;
 public class DeleteBookingRequest
 {
     public int BookingId { get; set; }
-
-    public int AreaId { get; set; }
 }
 
 public class DeleteBookingRequestValidator : AbstractValidator<DeleteBookingRequest>
@@ -14,6 +12,5 @@ public class DeleteBookingRequestValidator : AbstractValidator<DeleteBookingRequ
     public DeleteBookingRequestValidator()
     {
         RuleFor(x => x.BookingId).NotEmpty();
-        RuleFor(x => x.AreaId).NotEmpty();
     }
 }

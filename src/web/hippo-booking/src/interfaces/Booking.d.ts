@@ -6,6 +6,12 @@ interface Booking {
     area: Area;
 }
 
+interface NewBooking {
+    date: string;
+    bookableObjectId: number;
+    areaId: number;
+}
+
 interface BookedObject {
     id: number;
     name: string;

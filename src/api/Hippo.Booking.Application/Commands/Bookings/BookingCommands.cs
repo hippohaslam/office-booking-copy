@@ -1,5 +1,6 @@
 using FluentValidation;
 using Hippo.Booking.Application.Exceptions;
+using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +10,11 @@ public class BookingCommands(
     IDataContext dataContext,
     IUserNotifier userNotifier,
     IUserProvider userProvider,
+    IBookingQueries bookingQueries,
     IValidator<CreateBookingRequest> createBookingValidator,
     IValidator<DeleteBookingRequest> deleteBookingValidator) : ICreateBookingCommand, IDeleteBookingCommand, IConfirmBookingCommand
 {
-    public async Task<int> Handle(CreateBookingRequest request)
+    public async Task<BookingResponse> Handle(CreateBookingRequest request)
     {
         await createBookingValidator.ValidateAndThrowAsync(request);
 
@@ -22,7 +24,7 @@ public class BookingCommands(
 
         if (!bookableObjectExists)
         {
-            throw new ClientException($"Area id {request.BookableObjectId} not found.");
+            throw new ClientException($"Bookable object id {request.BookableObjectId} not found.");
         }
 
         if (await dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
@@ -48,8 +50,10 @@ public class BookingCommands(
 
         await userNotifier.NotifyUser(request.UserId,
             $"You're new booking on *{request.Date}* has been created");
+        
+        var bookingToReturn = await bookingQueries.GetBookingById(booking.Id);
 
-        return booking.Id;
+        return bookingToReturn!;
     }
 
     public async Task Handle(DeleteBookingRequest request)
@@ -59,8 +63,7 @@ public class BookingCommands(
         var booking = await dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.BookableObject)
             .SingleOrDefaultAsync(x =>
-                x.Id == request.BookingId &&
-                x.BookableObject.AreaId == request.AreaId);
+                x.Id == request.BookingId);
 
         if (booking != null)
         {

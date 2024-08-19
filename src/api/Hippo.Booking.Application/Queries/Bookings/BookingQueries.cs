@@ -12,14 +12,16 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
         return dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
             .Include(i => i.BookableObject)
             .ThenInclude(i => i.Area)
+            .ThenInclude(i => i.Location)
             .Where(x => x.Id == bookingId)
             .Select(x => new BookingResponse
             {
                 Id = x.Id,
                 Date = x.Date,
-                BookableObjectId = x.BookableObjectId,
-                AreaId = x.BookableObject.AreaId,
-                LocationId = x.BookableObject.Area.LocationId,
+                BookableObject = new IdName<int>(x.BookableObjectId, x.BookableObject.Name),
+                Area = new IdName<int>(x.BookableObject.AreaId, x.BookableObject.Area.Name),
+                Location = new IdName<int>(x.BookableObject.Area.LocationId, x.BookableObject.Area.Location.Name),
+                UserId = x.UserId
             })
             .SingleOrDefaultAsync();
     }
@@ -60,7 +62,7 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
                         Name = y.Name,
                         Description = y.Description,
                         ExistingBooking = y.Bookings.Where(z => z.Date == date)
-                        .Select(z => new BookingDayResponse.BookableObjectResponse.BookingResponse
+                        .Select(z => new BookingDayResponse.BookableObjectResponse.DayBookingResponse
                         {
                             Id = z.Id,
                             Name = z.User.FirstName + " " + z.User.LastName

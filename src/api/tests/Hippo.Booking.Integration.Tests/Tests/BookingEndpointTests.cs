@@ -46,11 +46,24 @@ public class BookingEndpointTests : IntegrationTestBase
 
         //Act
         var response = await client.PostAsJsonAsync(
-            $"booking/location/{location.Id}/area/{area.Id}/{createBookingRequest.Date.ToString("yyyy-MM-dd")}/bookable-object/{bookableObject.Id}",
+            $"booking",
             createBookingRequest);
 
         //Assert
         response.EnsureSuccessStatusCode();
+        
+        var responseBody = await response.Content.ReadAsStringAsync();
+        var bookingResponse = responseBody.FromJson<BookingResponse>();
+        
+        bookingResponse.Should().BeEquivalentTo(new BookingResponse
+        {
+            Area = new IdName<int>(area.Id, area.Name),
+            BookableObject = new IdName<int>(bookableObject.Id, bookableObject.Name),
+            Date = DateOnly.FromDateTime(DateTime.Now),
+            Location = new IdName<int>(location.Id, location.Name),
+            UserId = "testuser"
+        }, options => options.Excluding(x => x.Id),
+            "the booking response should be as expected");
 
         var dbBookings = DbContext.Bookings.Where(x =>
             x.UserId == "testuser"
@@ -59,7 +72,7 @@ public class BookingEndpointTests : IntegrationTestBase
 
         dbBookings.Should().HaveCount(1, "only 1 booking should exist that matches those details");
         
-        response.Headers.Location.Should().Be($"/location/{location.Id}/area/{area.Id}/booking/{dbBookings.Single().Id}", 
+        response.Headers.Location.Should().Be($"/booking/{dbBookings.Single().Id}", 
             "the location header should be set to the location endpoint");
     }
 
@@ -75,7 +88,7 @@ public class BookingEndpointTests : IntegrationTestBase
 
         var createBookingRequest = new CreateBookingRequest
         {
-            BookableObjectId = booking.Id,
+            BookableObjectId = bookableObject.Id,
             AreaId = area.Id,
             Date = DateOnly.FromDateTime(DateTime.Now),
             UserId = "testuser"
@@ -83,7 +96,7 @@ public class BookingEndpointTests : IntegrationTestBase
 
         //Act
         var response = await client.PostAsJsonAsync(
-            $"booking/location/{location.Id}/area/{area.Id}/{createBookingRequest.Date.ToString("yyyy-MM-dd")}/bookable-object/{bookableObject.Id}",
+            "booking",
             createBookingRequest);
 
         //Assert
@@ -147,9 +160,9 @@ public class BookingEndpointTests : IntegrationTestBase
         responseBookings.Should().BeEquivalentTo(expectedBookings, options => options.WithStrictOrdering(),
             "the upcoming bookings should be as expected and in the correct order");
     }
-
+    
     [Test]
-    public async Task GetBookingShouldReturnBookingSuccessfully()
+    public async Task GetBookingsForDayShouldReturnBookingsSuccessfully()
     {
         //Arrange
         var client = GetClient();
@@ -185,7 +198,7 @@ public class BookingEndpointTests : IntegrationTestBase
                     Id = bookableObjects.First().Id,
                     Name = bookableObjects.First().Name,
                     Description = bookableObjects.First().Description,
-                    ExistingBooking = new BookingDayResponse.BookableObjectResponse.BookingResponse
+                    ExistingBooking = new BookingDayResponse.BookableObjectResponse.DayBookingResponse
                     {
                         Id = bookings.First().Id,
                         Name = "Test User"
@@ -196,13 +209,44 @@ public class BookingEndpointTests : IntegrationTestBase
                     Id = bookableObjects.Last().Id,
                     Name = bookableObjects.Last().Name,
                     Description = bookableObjects.Last().Description,
-                    ExistingBooking = new BookingDayResponse.BookableObjectResponse.BookingResponse
+                    ExistingBooking = new BookingDayResponse.BookableObjectResponse.DayBookingResponse
                     {
                         Id = bookings.Last().Id,
                         Name = "Test User"
                     }
                 }
             ]
+        });
+    }
+
+    [Test]
+    public async Task GetBookingShouldReturnBookingSuccessfully()
+    {
+        //Arrange
+        var client = GetClient();
+        var location = await SetUpLocation();
+        var area = await SetUpArea(location);
+        var bookableObject = await SetUpBookableObject(area, "Booking Test Desk 1");
+        var booking = await SetUpBooking(bookableObject, DateOnly.FromDateTime(DateTime.Now));
+
+        //Act
+        var response =
+            await client.GetAsync(
+                $"/booking/{booking.Id}");
+
+        //Assert
+        response.EnsureSuccessStatusCode();
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var responseBooking = responseContent.FromJson<BookingResponse>();
+
+        responseBooking.Should().BeEquivalentTo(new BookingResponse
+        {
+            Area = new IdName<int>(area.Id, area.Name),
+            BookableObject = new IdName<int>(bookableObject.Id, bookableObject.Name),
+            Date = DateOnly.FromDateTime(DateTime.Now),
+            Id = booking.Id,
+            Location = new IdName<int>(location.Id, location.Name),
+            UserId = "testuser"
         });
     }
 }

@@ -66,14 +66,13 @@ const getBookingsForDateAsync = async(locationId: number, areaId: number, date: 
   return response.data
 }
 
-const postBookingForDateAsync = async(locationId: number, areaId: number, date: Date, bookableObjectId: number): Promise<Booking> => {
-  const dateString = date.toISOString().split('T')[0];
-  const response = await axiosInstance.post(`/booking/location/${locationId}/area/${areaId}/${dateString}/bookable-object/${bookableObjectId}`);
+const postBookingAsync = async(newBooking: NewBooking): Promise<Booking> => {
+  const response = await axiosInstance.post(`/booking`, newBooking);
   return response.data
 }
 
-const deleteBookingAsync = async(locationId: number, areaId: number, bookingId : number) => {
-  return await axiosInstance.delete(`/booking/location/${locationId}/area/${areaId}/booking/${bookingId}`);
+const deleteBookingAsync = async(bookingId : number) => {
+  return await axiosInstance.delete(`/booking/${bookingId}`);
 }
 
 // BookableObjects
@@ -113,7 +112,7 @@ export {
   // BOOKINGS
   getUpcomingBookingsAsync,
   getBookingsForDateAsync,
-  postBookingForDateAsync,
+  postBookingAsync,
   deleteBookingAsync,
   // BookableObjects
   postBookableObjectAsync,

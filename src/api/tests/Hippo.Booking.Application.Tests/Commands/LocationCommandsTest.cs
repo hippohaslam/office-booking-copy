@@ -10,7 +10,7 @@ using NSubstitute;
 
 namespace Hippo.Booking.Application.Tests.Commands;
 
-public class LocationCommandsTest : CommandTest
+public class LocationCommandsTest
 {
     private LocationCommands _sut;
     private IDataContext _dataContext;
@@ -18,7 +18,7 @@ public class LocationCommandsTest : CommandTest
     [OneTimeSetUp]
     public async Task Setup()
     {
-        _dataContext = GetDbContext(nameof(LocationCommandsTest));
+        _dataContext = TestHelpers.GetDbContext(nameof(LocationCommandsTest));
 
         _dataContext.AddEntity(new Location
         {

@@ -39,7 +39,7 @@ const Bookings = () => {
     const deleteBooking = useMutation({
         mutationFn: async (booking : Booking) => {
             if (booking) {
-                await deleteBookingAsync(booking.location.id, booking.area.id, booking.bookingId);
+                await deleteBookingAsync(booking.bookingId);
             } else {
                 throw new Error('No booking selected');
             }

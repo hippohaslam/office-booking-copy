@@ -11,7 +11,7 @@ using NSubstitute;
 
 namespace Hippo.Booking.Application.Tests.Commands;
 
-public class AreaCommandsTests : CommandTest
+public class AreaCommandsTests
 {
     private AreaCommands _sut;
     private IDataContext _dataContext;
@@ -22,7 +22,7 @@ public class AreaCommandsTests : CommandTest
     [OneTimeSetUp]
     public async Task Setup()
     {
-        _dataContext = GetDbContext(nameof(AreaCommandsTests));
+        _dataContext = TestHelpers.GetDbContext(nameof(AreaCommandsTests));
 
         _dataContext.AddEntity(new Area
         {
@@ -70,7 +70,7 @@ public class AreaCommandsTests : CommandTest
             existingArea.Description.Should().Be(request.Description, "Description should match request");
         }
 
-        await AssertValidatorCalled(_createAreaRequestValidator, request);
+        await TestHelpers.AssertValidatorCalled(_createAreaRequestValidator, request);
     }
 
     [Test]
@@ -122,7 +122,7 @@ public class AreaCommandsTests : CommandTest
             updatedArea.Description.Should().Be(request.Description, "Description should match request");
         }
 
-        await AssertValidatorCalled(_updateAreaRequestValidator, request);
+        await TestHelpers.AssertValidatorCalled(_updateAreaRequestValidator, request);
     }
 
     [Test]

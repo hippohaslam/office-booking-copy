@@ -1,4 +1,5 @@
 using Hippo.Booking.Application.Commands.Bookings;
+using Hippo.Booking.Application.Models;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Infrastructure.Slack;
 using Microsoft.Extensions.Logging;
@@ -29,7 +30,10 @@ public class InteractionEventTests
 
         _bookingQueries.GetBookingById(1).Returns(new BookingResponse
         {
-            Id = 1
+            Id = 1,
+            BookableObject = new IdName<int>(1, "BookableObject"),
+            Area = new IdName<int>(1, "Area"),
+            Location = new IdName<int>(1, "Location")
         });
 
         _sut = new InteractionEvent(

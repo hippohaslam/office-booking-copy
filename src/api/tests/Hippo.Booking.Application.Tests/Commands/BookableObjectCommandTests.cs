@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Application.Tests.Commands;
 
-public class BookableObjectCommandTests : CommandTest
+public class BookableObjectCommandTests
 {
     private BookableObjectCommands _sut;
     private IDataContext _dataContext;
@@ -16,7 +16,7 @@ public class BookableObjectCommandTests : CommandTest
     [OneTimeSetUp]
     public async Task Setup()
     {
-        _dataContext = GetDbContext(nameof(BookableObjectCommands));
+        _dataContext = TestHelpers.GetDbContext(nameof(BookableObjectCommands));
 
         _dataContext.AddEntity(new BookableObject
         {

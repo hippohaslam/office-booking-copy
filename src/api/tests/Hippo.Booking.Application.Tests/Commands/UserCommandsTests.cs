@@ -9,7 +9,7 @@ using NSubstitute;
 
 namespace Hippo.Booking.Application.Tests.Commands;
 
-public class UserCommandsTests : CommandTest
+public class UserCommandsTests
 {
     private UserCommands _sut;
     private IDataContext _dataContext;
@@ -18,7 +18,7 @@ public class UserCommandsTests : CommandTest
     [OneTimeSetUp]
     public async Task Setup()
     {
-        _dataContext = GetDbContext(nameof(UserCommandsTests));
+        _dataContext = TestHelpers.GetDbContext(nameof(UserCommandsTests));
         _registeredUserRequestValidator = Substitute.For<IValidator<RegisteredUserRequest>>();
 
         _dataContext.AddEntity(new User

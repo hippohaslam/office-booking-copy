@@ -10,7 +10,6 @@ public class DeleteBookingRequestValidatorTests() :
     {
         new DeleteBookingRequest
         {
-            AreaId = 1,
             BookingId = 1
         }
     };
@@ -19,12 +18,6 @@ public class DeleteBookingRequestValidatorTests() :
     {
         new DeleteBookingRequest
         {
-            AreaId = 0,
-            BookingId = 1
-        },
-        new DeleteBookingRequest
-        {
-            AreaId = 1,
             BookingId = 0
         }
     };

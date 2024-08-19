@@ -55,7 +55,6 @@ public class InteractionEvent(
 
             await deleteBookingCommand.Handle(new DeleteBookingRequest
             {
-                AreaId = booking.AreaId,
                 BookingId = booking.Id
             });
 

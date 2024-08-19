@@ -1,6 +1,8 @@
+using Hippo.Booking.Application.Queries.Bookings;
+
 namespace Hippo.Booking.Application.Commands.Bookings;
 
 public interface ICreateBookingCommand
 {
-    Task<int> Handle(CreateBookingRequest request);
+    Task<BookingResponse> Handle(CreateBookingRequest request);
 }

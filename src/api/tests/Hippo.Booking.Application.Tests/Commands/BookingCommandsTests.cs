@@ -3,7 +3,9 @@ using FluentAssertions.Execution;
 using FluentValidation;
 using Hippo.Booking.Application.Commands.Bookings;
 using Hippo.Booking.Application.Exceptions;
+using Hippo.Booking.Application.Models;
 using Hippo.Booking.Application.Queries.Bookings;
+using Hippo.Booking.Core;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Core.Models;
@@ -12,19 +14,20 @@ using NSubstitute;
 
 namespace Hippo.Booking.Application.Tests.Commands;
 
-public class BookingCommandsTests : CommandTest
+public class BookingCommandsTests
 {
     private BookingCommands _sut;
     private IDataContext _dataContext;
     private IUserNotifier _userNotifier;
     private IUserProvider _userProvider;
+    private IBookingQueries _bookingQueries;
     private IValidator<CreateBookingRequest> _createBookingValidator;
     private IValidator<DeleteBookingRequest> _deleteBookingValidator;
 
     [OneTimeSetUp]
     public async Task Setup()
     {
-        _dataContext = GetDbContext(nameof(BookingCommandsTests));
+        _dataContext = TestHelpers.GetDbContext(nameof(BookingCommandsTests));
 
         _dataContext.AddEntity(new Core.Entities.Booking
         {
@@ -61,11 +64,13 @@ public class BookingCommandsTests : CommandTest
 
         _createBookingValidator = Substitute.For<IValidator<CreateBookingRequest>>();
         _deleteBookingValidator = Substitute.For<IValidator<DeleteBookingRequest>>();
-
+        _bookingQueries = new BookingQueries(_dataContext, new SystemDateTimeProvider());
+        
         _sut = new BookingCommands(
             _dataContext,
             _userNotifier,
             _userProvider,
+            _bookingQueries,
             _createBookingValidator,
             _deleteBookingValidator);
     }
@@ -83,10 +88,18 @@ public class BookingCommandsTests : CommandTest
 
         var result = await _sut.Handle(request);
 
-        result.Should().NotBe(0);
+        result.Should().BeEquivalentTo(new BookingResponse
+        {
+            Id = result.Id,
+            Date = request.Date,
+            BookableObject = new IdName<int>(1, "Existing BookableObject"),
+            Area = new IdName<int>(1, "Existing Area"),
+            Location = new IdName<int>(1, "Existing Location"),
+            UserId = "1"
+        });
 
         var existingBooking = await _dataContext.Query<Core.Entities.Booking>()
-            .FirstOrDefaultAsync(x => x.Id == result);
+            .FirstOrDefaultAsync(x => x.Id == result.Id);
 
         using (new AssertionScope())
         {
@@ -96,7 +109,7 @@ public class BookingCommandsTests : CommandTest
             existingBooking.UserId.Should().Be(request.UserId);
         }
 
-        await AssertValidatorCalled(_createBookingValidator, request);
+        await TestHelpers.AssertValidatorCalled(_createBookingValidator, request);
     }
 
     [Test]
@@ -180,7 +193,6 @@ public class BookingCommandsTests : CommandTest
 
         var request = new DeleteBookingRequest
         {
-            AreaId = bookingToDelete.BookableObject.AreaId,
             BookingId = bookingToDelete.Id
         };
 
@@ -191,7 +203,7 @@ public class BookingCommandsTests : CommandTest
 
         deletedBooking.Should().BeNull("The booking should have been deleted");
 
-        await AssertValidatorCalled(_deleteBookingValidator, request);
+        await TestHelpers.AssertValidatorCalled(_deleteBookingValidator, request);
     }
 
     [Test]
@@ -199,7 +211,6 @@ public class BookingCommandsTests : CommandTest
     {
         var request = new DeleteBookingRequest
         {
-            AreaId = 1,
             BookingId = 10
         };
 
@@ -228,12 +239,12 @@ public class BookingCommandsTests : CommandTest
             _dataContext,
             _userNotifier,
             userProvider,
+            _bookingQueries,
             _createBookingValidator,
             _deleteBookingValidator);
 
         var request = new DeleteBookingRequest
         {
-            AreaId = existingBooking.BookableObject.AreaId,
             BookingId = existingBooking.Id
         };
 
@@ -257,12 +268,12 @@ public class BookingCommandsTests : CommandTest
             _dataContext,
             _userNotifier,
             userProvider,
+            _bookingQueries,
             _createBookingValidator,
             _deleteBookingValidator);
 
         var request = new DeleteBookingRequest
         {
-            AreaId = existingBooking.BookableObject.AreaId,
             BookingId = existingBooking.Id
         };
 
@@ -293,16 +304,16 @@ public class BookingCommandsTests : CommandTest
             _dataContext,
             _userNotifier,
             userProvider,
+            _bookingQueries,
             _createBookingValidator,
             _deleteBookingValidator);
 
         var request = new DeleteBookingRequest
         {
-            AreaId = bookingToDelete.BookableObject.AreaId,
             BookingId = bookingToDelete.Id
         };
 
-        await _sut.Handle(request);
+        await sut.Handle(request);
 
         var deletedBooking = await _dataContext.Query<Core.Entities.Booking>()
             .FirstOrDefaultAsync(x => x.Id == bookingToDelete.Id);

@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { getBookingsForDateAsync, getLocationAreaAsync, getLocationAsync, postBookingForDateAsync } from "../../../services/Apis";
+import { getBookingsForDateAsync, getLocationAreaAsync, getLocationAsync, postBookingAsync } from "../../../services/Apis";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas";
@@ -57,7 +57,7 @@ const DeskBooking = () => {
   });
 
   const handleBooking = useMutation({
-    mutationFn: (objectId: number) => postBookingForDateAsync(Number.parseInt(locationId!), Number.parseInt(areaId!), selectedDate, objectId),
+    mutationFn: (booking: NewBooking) => postBookingAsync(booking),
     onSuccess: () => refetch()
   })
 
@@ -244,7 +244,11 @@ const DeskBooking = () => {
 
   const handleConfirmBooking = () => {
     if (selectedObject) {
-      handleBooking.mutate(selectedObject.id);
+      handleBooking.mutate({
+        date: selectedDate.toISOString().split('T')[0],
+        bookableObjectId: selectedObject.id,
+        areaId: Number.parseInt(areaId!),
+      });
       handleCloseModal();
       navigate("/bookings");
     }
