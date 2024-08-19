@@ -164,7 +164,7 @@ try
     new SessionEndpoints().Map(app);
     new UserManagementEndpoints().Map(app);
 
-    if (app.Environment.IsDevelopment())
+    if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("IntegrationTest"))
     {
         new TestEndpoints().Map(app);
     }
