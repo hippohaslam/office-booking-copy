@@ -16,7 +16,7 @@ const Locations = () => {
     <ActionTile 
       title={location.name} 
       primaryLink={{show: true, to: `/locations/${location.id}/areas`, text: "Book at this location"}}
-      secondaryLink={{show: true, to: "", text: "View more details" }}/>
+      secondaryLink={{show: true, to: `/location/${location.id}`, text: "View more details" }}/>
     )) || [];
 
   if (error) {

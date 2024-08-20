@@ -7,6 +7,7 @@ import { Params } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
 import Bookings from "../pages/bookings/Bookings";
 import BookingConfirmed from "../pages/bookings/bookingConfirmed/BookingConfirmed";
+import LocationDetails from "../pages/locations/locationDetails/LocationDetails";
 
 const locationRoutes = (queryClient: QueryClient) => [
     {
@@ -40,6 +41,16 @@ const locationRoutes = (queryClient: QueryClient) => [
             <Suspense fallback={<div>Loading...</div>}>
                 <ProtectedRoute>
                     <Locations/>
+                </ProtectedRoute>
+            </Suspense>
+        ),
+    },
+    {
+        path: "/location/:locationId",
+        element: (
+            <Suspense fallback={<div>Loading...</div>}>
+                <ProtectedRoute>
+                    <LocationDetails/>
                 </ProtectedRoute>
             </Suspense>
         ),

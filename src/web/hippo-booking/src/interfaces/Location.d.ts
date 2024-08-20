@@ -3,6 +3,7 @@ import { Area } from "./Area";
 interface BookingLocation {
     id: number;
     name: string;
+    description: string;
     areas: Area[];
 }
 
