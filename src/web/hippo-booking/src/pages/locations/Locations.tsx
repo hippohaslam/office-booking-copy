@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getLocationsAsync } from "../../services/Apis";
-import { ErrorBanner } from '../../components';
-import { ActionTile, ActionTileList } from "../../components/tile/ActionTile";
+import { ActionTile, ActionTileList, ErrorBanner } from '../../components';
 
 // TODO: Add location type so we know what's parking and whats an office.
 

@@ -6,6 +6,7 @@ import ProtectedRoute from "../ProtectedRoute";
 import { Params } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
 import Bookings from "../pages/bookings/Bookings";
+import BookingConfirmed from "../pages/bookings/bookingConfirmed/BookingConfirmed";
 
 const locationRoutes = (queryClient: QueryClient) => [
     {
@@ -49,6 +50,16 @@ const locationRoutes = (queryClient: QueryClient) => [
             <Suspense fallback={<div>Loading...</div>}>
                 <ProtectedRoute>
                     <Bookings/>
+                </ProtectedRoute>
+            </Suspense>
+        )
+    },
+    {
+        path: "/bookings/:bookingId/confirmed",
+        element: (
+            <Suspense fallback={<div>Loading...</div>}>
+                <ProtectedRoute>
+                    <BookingConfirmed/>
                 </ProtectedRoute>
             </Suspense>
         )

@@ -6,9 +6,10 @@ type BookingCardProps = {
     areaName: string;
     locationName: string;
     elementId?: string;
+    color?: "hippo-brand-grey" | "hippo-brand-bluey-grey" | "hippo-brand-light-grey"
 };
 
-const BookingCardStacked = ({date, bookableObjectName, areaName, locationName, elementId} : BookingCardProps) => {
+const BookingCardStacked = ({date, bookableObjectName, areaName, locationName, elementId, color = "hippo-brand-grey"} : BookingCardProps) => {
 
     if (date === undefined){
         return;
@@ -18,7 +19,7 @@ const BookingCardStacked = ({date, bookableObjectName, areaName, locationName, e
 
 
     return (
-    <div className="booking-card" id={elementId}>
+    <div className={"booking-card " + "booking-card-" + color} id={elementId}>
         <ul>
             <li aria-label='date'>{formattedDateTime}</li>
             <li className='bookable-object-item' aria-label='space'>{bookableObjectName}</li>

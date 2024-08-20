@@ -1,7 +1,6 @@
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { ActionTile, ActionTileList } from "../../../components/tile/ActionTile";
-import { ErrorBanner } from "../../../components";
+import { ActionTile, ActionTileList, ErrorBanner } from "../../../components";
 import { Area } from "../../../interfaces/Area";
 import OfficeIcon from "../../../assets/office-icon.svg";
 import ParkingIcon from "../../../assets/parking-icon.svg"

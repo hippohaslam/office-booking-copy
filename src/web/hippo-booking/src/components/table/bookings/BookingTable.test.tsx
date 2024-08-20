@@ -5,7 +5,7 @@ import BookingTable from "./BookingTable"
 
 const bookings : Booking[] = [
     {
-    bookingId: 1,
+    id: 1,
     date: new Date(),
     location: {
         name: "Location 1",
@@ -22,7 +22,7 @@ const bookings : Booking[] = [
         locationId: 1,        
     }},
     {
-        bookingId: 1,
+        id: 1,
         date: new Date(),
         location: {
             name: "Location 1",

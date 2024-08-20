@@ -79,22 +79,20 @@ const Home = () => {
                     <img className="hero-graphic" alt="" src={graphicSrc}/>
                 </div>
             </section>
-            <section className="full-width-grey">
-                <div className="content-container">
-                    <h2>Our offices</h2>
-                    <p>Some content about our offices will go in here.</p>
-                    <h3>Some more content</h3>
-                    <p>
-                        Filling this page with more content to force the height to go beyond 100vh on mobile devices. 
-                        Filling this page with more content to force the height to go beyond 100vh on mobile devices.
-                        Filling this page with more content to force the height to go beyond 100vh on mobile devices.
-                        Filling this page with more content to force the height to go beyond 100vh on mobile devices.
-                        Filling this page with more content to force the height to go beyond 100vh on mobile devices
-                        .Filling this page with more content to force the height to go beyond 100vh on mobile devices
-                    </p>
-                    <h4>Why</h4>
-                    <p>Because safari on mobile doesn't respect 100vh with it's fancy floating search bar</p>
-                </div>
+            <section className="text-content-container">
+                <h2>Our offices</h2>
+                <p>Some content about our offices will go in here.</p>
+                <h3>Some more content</h3>
+                <p>
+                    Filling this page with more content to force the height to go beyond 100vh on mobile devices. 
+                    Filling this page with more content to force the height to go beyond 100vh on mobile devices.
+                    Filling this page with more content to force the height to go beyond 100vh on mobile devices.
+                    Filling this page with more content to force the height to go beyond 100vh on mobile devices.
+                    Filling this page with more content to force the height to go beyond 100vh on mobile devices
+                    .Filling this page with more content to force the height to go beyond 100vh on mobile devices
+                </p>
+                <h4>Why</h4>
+                <p>Because safari on mobile doesn't respect 100vh with it's fancy floating search bar</p>
             </section>
         </div>
     );

@@ -27,7 +27,7 @@ const indexRoutes = (queryClient: QueryClient) => [
                                 </ProtectedRoute>
                             </Suspense>
                         ),
-                    },
+                    }
                 ],
             },
             {

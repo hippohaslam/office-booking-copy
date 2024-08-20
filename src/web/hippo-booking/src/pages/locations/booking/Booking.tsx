@@ -10,8 +10,9 @@ import { useWindowSize } from "../../../hooks/WindowSizeHook";
 import "react-datepicker/dist/react-datepicker.css";
 import './Booking.scss';
 import CustomDatePicker from "../../../components/date-picker/DatePicker";
-import { ConfirmModal, TabItem, TabList } from "../../../components";
+import { ConfirmModal, ErrorBanner, TabItem, TabList } from "../../../components";
 import BookingCardStacked from "../../../components/booking/BookingCardStacked";
+import { AxiosError } from "axios";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
@@ -35,6 +36,7 @@ const DeskBooking = () => {
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const { windowWidth, windowHeight } = useWindowSize();
   const navigate = useNavigate();
+  const [error, setError] = useState<AxiosError | null>(null);
 
   const { data: areaData } = useQuery({
     queryKey: ["area", areaId],
@@ -58,8 +60,11 @@ const DeskBooking = () => {
 
   const handleBooking = useMutation({
     mutationFn: (booking: NewBooking) => postBookingAsync(booking),
-    onSuccess: () => refetch()
-  })
+    onSuccess: (data) => {
+      refetch();
+      return data;
+    }
+  });
 
   useEffect(() => {
     if(selectedDate){
@@ -248,9 +253,17 @@ const DeskBooking = () => {
         date: selectedDate.toISOString().split('T')[0],
         bookableObjectId: selectedObject.id,
         areaId: Number.parseInt(areaId!),
+      },
+      {
+        onSuccess: (bookingData) => {
+          navigate(`/bookings/${bookingData.id}/confirmed`);
+        },
+        onError: (error) => {
+          handleCloseModal();
+          console.log(error);
+            setError(error as AxiosError);
+        }
       });
-      handleCloseModal();
-      navigate("/bookings");
     }
   };
 
@@ -338,6 +351,10 @@ const DeskBooking = () => {
 
   return (
     <div>
+      {error !== null ? (
+        <ErrorBanner isShown={error !== null} allowClose={false} title="There was an error when placing your booking" errorMessage={error.response?.data as string}/>
+      ) : null}
+      
       <h1>Pick a space</h1>
       <CustomDatePicker adjustDate={adjustDate} inputOnChange={(date) => setSelectedDate(date!)} selectedDate={selectedDate}/>
       <br />

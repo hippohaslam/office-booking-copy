@@ -55,6 +55,11 @@ const getLocationAreasAsync = async (locationId: number): Promise<Area[]> => {
 
 // BOOKINGS
 
+const getBookingAsync = async(bookingId: number): Promise<Booking> => {
+  const response = await axiosInstance.get(`/booking/${bookingId}`);
+  return response.data
+}
+
 const getUpcomingBookingsAsync = async(): Promise<Booking[]> => {
   const response = await axiosInstance.get(`/booking/upcoming`);
   return response.data
@@ -110,6 +115,7 @@ export {
   postLocationAreaAsync,
   putAreaAsync, 
   // BOOKINGS
+  getBookingAsync,
   getUpcomingBookingsAsync,
   getBookingsForDateAsync,
   postBookingAsync,

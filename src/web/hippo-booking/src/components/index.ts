@@ -7,6 +7,9 @@ import TabItem from './tabs/TabItem';
 import TabList from './tabs/TabList';
 import ConfirmModal from './modals/confirm/ConfirmModal';
 import WarningBanner from './banners/WarningBanner';
+import InfoTile from './tile/info-tile/InfoTile';
+import InfoTileList from './tile/info-tile/InfoTileList';
+import { ActionTile, ActionTileList } from './tile/action-tile/ActionTile';
 
 
 export { 
@@ -19,5 +22,9 @@ export {
     CustomConfirmDialog,
     TabItem,
     TabList,
-    ConfirmModal
+    ConfirmModal,
+    InfoTile,
+    InfoTileList,
+    ActionTile,
+    ActionTileList
 }

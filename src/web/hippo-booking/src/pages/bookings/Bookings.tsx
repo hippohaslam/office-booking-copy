@@ -6,6 +6,7 @@ import BookingTable from "../../components/table/bookings/BookingTable.tsx";
 import BookingCardStacked from "../../components/booking/BookingCardStacked.tsx";
 import { deleteBookingAsync, getUpcomingBookingsAsync } from "../../services/Apis.ts";
 import ConfirmModal from "../../components/modals/confirm/ConfirmModal.tsx";
+import { AxiosError } from "axios";
 
 const Bookings = () => {
     const queryClient = useQueryClient();
@@ -35,19 +36,23 @@ const Bookings = () => {
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
     const [cancelledBooking, setCancelledBooking] = useState<Booking | null>(null);
     const [showSuccessBanner, setSuccessBannerVisibility] = useState(false);
+    const [deleteError, setDeleteError] = useState<AxiosError | null>(null);
 
     const deleteBooking = useMutation({
         mutationFn: async (booking : Booking) => {
             if (booking) {
-                await deleteBookingAsync(booking.bookingId);
+                await deleteBookingAsync(booking.id);
             } else {
                 throw new Error('No booking selected');
             }
         },
         onSuccess: async () => { 
             await handleDeleteSuccess();
+        },
+        onError: (error) => {
+            setDeleteError(error as AxiosError);
         }
-    })
+    });
 
     const handleDeleteSuccess = async () => {
         setSuccessBannerVisibility(true);
@@ -110,6 +115,10 @@ const Bookings = () => {
                 + cancelledBooking?.location.name + " on " + new Date(cancelledBooking?.date || "").toLocaleDateString('en-GB', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'}) 
                 + " has been cancelled."
                 } />
+            {deleteError !== null ? (
+                <ErrorBanner isShown={true} title="There is a problem" errorMessage={deleteError.message} allowClose={false}/>
+                ) : null}
+
             <h1>My bookings</h1>
             <h2>Upcoming</h2>
             {data?.length === 0 && 

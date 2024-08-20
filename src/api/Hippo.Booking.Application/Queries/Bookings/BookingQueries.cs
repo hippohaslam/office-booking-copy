@@ -36,7 +36,7 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
             .OrderBy(x => x.Date)
             .Select(x => new UserBookingsResponse
             {
-                BookingId = x.Id,
+                Id = x.Id,
                 Date = x.Date,
                 BookableObject = new IdName<int>(x.BookableObjectId, x.BookableObject.Name),
                 Area = new IdName<int>(x.BookableObject.AreaId, x.BookableObject.Area.Name),
