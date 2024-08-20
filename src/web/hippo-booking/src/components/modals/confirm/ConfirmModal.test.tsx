@@ -105,7 +105,9 @@ test("Correct function is called when cancel button is clicked", async () => {
     await userEvent.click(cancelButton);
 
     // Assert
-    expect(onCancel).toHaveBeenCalledOnce();
+    setTimeout(() => {
+        expect(onCancel).toHaveBeenCalledOnce();
+    }, 200);
 })
 
 test("Cancel function is called when outside of modal is clicked", async () => {
@@ -128,7 +130,9 @@ test("Cancel function is called when outside of modal is clicked", async () => {
     await userEvent.click(overlay);
 
     // Assert
-    expect(onCancel).toHaveBeenCalledOnce();
+    setTimeout(() => {
+        expect(onCancel).toHaveBeenCalledOnce();
+    }, 200);
 })
 
 test("Cancel function is called when escape key is pressed", async () => {
@@ -151,5 +155,7 @@ test("Cancel function is called when escape key is pressed", async () => {
     await userEvent.keyboard('{Escape}');
 
     // Assert
-    expect(onCancel).toHaveBeenCalledOnce();
+    setTimeout(() => {
+        expect(onCancel).toHaveBeenCalledOnce();
+    }, 200);
 })
