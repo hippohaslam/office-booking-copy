@@ -2,8 +2,8 @@ name: Nightly Jobs
 
 on:
   workflow_dispatch:
-#  schedule:
-#    - cron: '0 0 * * *'
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
 
@@ -16,10 +16,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
+#      - name: Setup .NET
+#        uses: actions/setup-dotnet@v4
+#        with:
+#          dotnet-version: 8.0.x
 
       - name: Install Terraform Docs
         env:
@@ -33,13 +33,13 @@ jobs:
       - name: Generate TF Documentation
         run: terraform-docs markdown table src/infrastructure/terraform --output-file ../../../docs/Terraform.md
 
-      - name: Dotnet Format
-        working-directory: ./src
-        run: dotnet format
-
-      - name: Terraform fmt
-        id: fmt
-        run: terraform fmt -recursive
+#      - name: Dotnet Format
+#        working-directory: ./src
+#        run: dotnet format
+#
+#      - name: Terraform fmt
+#        id: fmt
+#        run: terraform fmt -recursive
 
       - name: Commit changes
         run: |
