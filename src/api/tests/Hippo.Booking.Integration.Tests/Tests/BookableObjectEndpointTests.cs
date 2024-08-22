@@ -26,7 +26,7 @@ public class BookableObjectEndpointTests : IntegrationTestBase
         };
 
         //Act
-        var response = await client.PostAsJsonAsync($"location/{location.Id}/area/{area.Id}/bookable-object",
+        var response = await client.PostAsJsonAsync($"admin/location/{location.Id}/area/{area.Id}/bookable-object",
             createBookableObjectRequest);
 
         //Assert
@@ -63,7 +63,7 @@ public class BookableObjectEndpointTests : IntegrationTestBase
         };
 
         //Act
-        var response = await client.PostAsJsonAsync($"location/{location.Id}/area/{area.Id}/bookable-object",
+        var response = await client.PostAsJsonAsync($"admin/location/{location.Id}/area/{area.Id}/bookable-object",
             createBookableObjectRequest);
 
         //Assert
@@ -96,7 +96,7 @@ public class BookableObjectEndpointTests : IntegrationTestBase
         };
 
         //Act
-        var response = await client.PutAsJsonAsync($"location/{location.Id}/area/{area.Id}/bookable-object/{bookableObject.Id}",
+        var response = await client.PutAsJsonAsync($"admin/location/{location.Id}/area/{area.Id}/bookable-object/{bookableObject.Id}",
             updateBookableObjectRequest);
 
         //Assert

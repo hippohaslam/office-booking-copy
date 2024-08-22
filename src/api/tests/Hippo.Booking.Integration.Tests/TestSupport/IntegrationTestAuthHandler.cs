@@ -21,7 +21,8 @@ public class IntegrationTestAuthHandler(
             new(ClaimTypes.GivenName, "Test"),
             new(ClaimTypes.Surname, "User"),
             new(ClaimTypes.NameIdentifier, "testuser"),
-            new(ClaimTypes.Email, "testuser@hippodigital.co.uk")
+            new(ClaimTypes.Email, "testuser@hippodigital.co.uk"),
+            new(ClaimTypes.Role, "Admin")
         };
 
         var identity = new ClaimsIdentity(claims, "Test");
