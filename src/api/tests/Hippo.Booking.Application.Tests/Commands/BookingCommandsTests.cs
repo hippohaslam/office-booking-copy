@@ -32,7 +32,7 @@ public class BookingCommandsTests
         _dataContext.AddEntity(new Core.Entities.Booking
         {
             UserId = "1",
-            Date = DateOnly.FromDateTime(DateTime.Now),
+            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
             BookableObject = new BookableObject
             {
                 Name = "Existing BookableObject",
@@ -71,6 +71,7 @@ public class BookingCommandsTests
             _userNotifier,
             _userProvider,
             _bookingQueries,
+            new SystemDateTimeProvider(),
             _createBookingValidator,
             _deleteBookingValidator);
     }
@@ -107,6 +108,45 @@ public class BookingCommandsTests
             existingBooking!.BookableObjectId.Should().Be(request.BookableObjectId);
             existingBooking.Date.Should().Be(request.Date);
             existingBooking.UserId.Should().Be(request.UserId);
+            existingBooking.IsConfirmed.Should().BeFalse();
+        }
+
+        await TestHelpers.AssertValidatorCalled(_createBookingValidator, request);
+    }
+    
+    [Test]
+    public async Task CanCreateBookingTodayAndIsAutomaticallyConfirmed()
+    {
+        var request = new CreateBookingRequest
+        {
+            AreaId = 1,
+            BookableObjectId = 1,
+            Date = DateOnly.FromDateTime(DateTime.Now),
+            UserId = "1"
+        };
+
+        var result = await _sut.Handle(request);
+
+        result.Should().BeEquivalentTo(new BookingResponse
+        {
+            Id = result.Id,
+            Date = request.Date,
+            BookableObject = new IdName<int>(1, "Existing BookableObject"),
+            Area = new IdName<int>(1, "Existing Area"),
+            Location = new IdName<int>(1, "Existing Location"),
+            UserId = "1"
+        });
+
+        var existingBooking = await _dataContext.Query<Core.Entities.Booking>()
+            .FirstOrDefaultAsync(x => x.Id == result.Id);
+
+        using (new AssertionScope())
+        {
+            existingBooking.Should().NotBeNull();
+            existingBooking!.BookableObjectId.Should().Be(request.BookableObjectId);
+            existingBooking.Date.Should().Be(request.Date);
+            existingBooking.UserId.Should().Be(request.UserId);
+            existingBooking.IsConfirmed.Should().BeTrue();
         }
 
         await TestHelpers.AssertValidatorCalled(_createBookingValidator, request);
@@ -160,12 +200,12 @@ public class BookingCommandsTests
     [Test]
     public async Task CanConfirmBooking()
     {
-        var existingBooking = await _dataContext.Query<Core.Entities.Booking>()
-            .SingleAsync(x => x.Date == DateOnly.FromDateTime(DateTime.Now));
+        var existingBooking = await _dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
+            .SingleAsync(x => x.Date == DateOnly.FromDateTime(DateTime.Now.AddDays(2)));
 
         await _sut.Handle(existingBooking.Id);
 
-        var confirmedBooking = await _dataContext.Query<Core.Entities.Booking>()
+        var confirmedBooking = await _dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
             .FirstOrDefaultAsync(x => x.Id == existingBooking.Id);
 
         confirmedBooking.Should().NotBeNull("The booking should have been confirmed");
@@ -240,6 +280,7 @@ public class BookingCommandsTests
             _userNotifier,
             userProvider,
             _bookingQueries,
+            new SystemDateTimeProvider(),
             _createBookingValidator,
             _deleteBookingValidator);
 
@@ -269,6 +310,7 @@ public class BookingCommandsTests
             _userNotifier,
             userProvider,
             _bookingQueries,
+            new SystemDateTimeProvider(),
             _createBookingValidator,
             _deleteBookingValidator);
 
@@ -305,6 +347,7 @@ public class BookingCommandsTests
             _userNotifier,
             userProvider,
             _bookingQueries,
+            new SystemDateTimeProvider(),
             _createBookingValidator,
             _deleteBookingValidator);
 

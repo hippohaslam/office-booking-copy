@@ -11,6 +11,7 @@ public class BookingCommands(
     IUserNotifier userNotifier,
     IUserProvider userProvider,
     IBookingQueries bookingQueries,
+    IDateTimeProvider dateTimeProvider,
     IValidator<CreateBookingRequest> createBookingValidator,
     IValidator<DeleteBookingRequest> deleteBookingValidator) : ICreateBookingCommand, IDeleteBookingCommand, IConfirmBookingCommand
 {
@@ -41,7 +42,8 @@ public class BookingCommands(
         {
             BookableObjectId = request.BookableObjectId,
             Date = request.Date,
-            UserId = request.UserId
+            UserId = request.UserId,
+            IsConfirmed = dateTimeProvider.Today >= request.Date
         };
 
         dataContext.AddEntity(booking);
