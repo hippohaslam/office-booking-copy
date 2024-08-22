@@ -11,7 +11,7 @@ namespace Hippo.Booking.API.Endpoints;
 
 public class SessionEndpoints() : EndpointBase("session", "Sessions", AccessLevelEnum.User)
 {
-    public override void MapEndpoints(RouteGroupBuilder builder)
+    protected override void MapEndpoints(RouteGroupBuilder builder)
     {
         builder.MapGet("", Results<Ok<RegisteredUserModel>, UnauthorizedHttpResult>
             (IUserProvider userProvider) =>

@@ -160,6 +160,7 @@ try
     var app = builder.Build();
 
     new LocationEndpoints().Map(app);
+    new LocationAdminEndpoints().Map(app);
     new BookingEndpoints().Map(app);
     new SessionEndpoints().Map(app);
     new UserManagementEndpoints().Map(app);

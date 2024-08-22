@@ -1,9 +1,8 @@
 using FluentValidation;
-using Hippo.Booking.Application;
+using Hippo.Booking.API.Extensions;
 using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Enums;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Hippo.Booking.API.Endpoints;
 
@@ -17,24 +16,13 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName, Ac
         }
 
         var grouping = app.MapGroup(routePath)
-            .WithTags(swaggerGroupName);
-
-        switch (accessLevel)
-        {
-            case AccessLevelEnum.Anonymous:
-                break;
-            case AccessLevelEnum.User:
-                grouping.RequireAuthorization();
-                break;
-            case AccessLevelEnum.Admin:
-                grouping.RequireAuthorization(x => x.RequireRole("Admin"));
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(accessLevel), accessLevel, null);
-        }
+            .WithTags(swaggerGroupName)
+            .WithAccessLevel(accessLevel);
 
         MapEndpoints(grouping);
     }
+    
+    protected abstract void MapEndpoints(RouteGroupBuilder builder);
 
     protected async Task<Results<Created<TResponse>, BadRequest<string>, ForbidHttpResult, ValidationProblem>> HandleCreatedResponse<TResponse>(
         Func<Task<TResponse>> handle,
@@ -97,6 +85,4 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName, Ac
             return TypedResults.ValidationProblem(errors);
         }
     }
-
-    public abstract void MapEndpoints(RouteGroupBuilder builder);
 }

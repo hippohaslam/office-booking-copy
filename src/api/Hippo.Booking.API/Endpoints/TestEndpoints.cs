@@ -11,7 +11,7 @@ namespace Hippo.Booking.API.Endpoints;
 [ExcludeFromCodeCoverage(Justification = "Dummy endpoints for testing")]
 public class TestEndpoints() : EndpointBase("test", "Test", AccessLevelEnum.Anonymous)
 {
-    public override void MapEndpoints(RouteGroupBuilder builder)
+    protected override void MapEndpoints(RouteGroupBuilder builder)
     {
         builder.MapGet("session/userid", Results<Ok<string>, UnauthorizedHttpResult>
             (HttpContext httpContext) =>

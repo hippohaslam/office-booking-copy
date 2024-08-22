@@ -9,7 +9,7 @@ namespace Hippo.Booking.API.Endpoints;
 
 public class UserManagementEndpoints() : EndpointBase("users", "User Management", AccessLevelEnum.Admin)
 {
-    public override void MapEndpoints(RouteGroupBuilder builder)
+    protected override void MapEndpoints(RouteGroupBuilder builder)
     {
         builder.MapGet("", async Task<Results<Ok<PagedList<UserListResponse>>, ForbidHttpResult, UnauthorizedHttpResult>>
              (IUserQueries userQueries,
