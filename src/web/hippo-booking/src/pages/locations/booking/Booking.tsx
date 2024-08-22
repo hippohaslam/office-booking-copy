@@ -272,11 +272,9 @@ const DeskBooking = () => {
     setSelectedObject(null);
   };
 
-  const hasBooking = (bookableObject: BookableObject) => {
-    const isBookable = bookingsData?.bookableObjects.find((obj) => obj.id === bookableObject.id);
-    const isBooked = isBookable?.existingBooking;
-    return isBooked !== undefined && isBooked !== null;
-  };
+  const getExistingBookingName = (bookableObject: BookableObject) => {
+    return bookingsData?.bookableObjects.find((obj) => obj.id === bookableObject.id)?.existingBooking?.name ?? null;
+  }
 
   // Returns the name of the person who booked the desk or null if it's available
   const getBookedBy = (selectedObject: BookableObject): string | null => {
@@ -371,12 +369,11 @@ const DeskBooking = () => {
           {areaData?.bookableObjects
             .filter((obj) => !isNullOrEmpty(obj.floorPlanObjectId))
             .map((bookableObject) => {
-              const isBooked = hasBooking(bookableObject);
               return (
                 <BookableObjectDisplay
                   key={bookableObject.id}
                   bookableObject={bookableObject}
-                  isBooked={isBooked}
+                  existingBookingName={getExistingBookingName(bookableObject)}
                   onObjectSelected={handleObjectSelected}
                 />
               );
@@ -393,20 +390,20 @@ const DeskBooking = () => {
 
 const BookableObjectDisplay = ({
   bookableObject,
-  isBooked,
+  existingBookingName,
   onObjectSelected,
 }: {
   bookableObject: BookableObject;
-  isBooked: boolean;
+  existingBookingName: string | null;
   onObjectSelected: (floorPlanObjectId: string) => void;
 }) => {
   return (
     <div
-      className={`booking-list-item ` + (isBooked ? "booking-list-item__booked" : "booking-list-item__available")}
+      className={`booking-list-item ` + (existingBookingName != null  ? "booking-list-item__booked" : "booking-list-item__available")}
       key={bookableObject.id}
       onClick={() => onObjectSelected(bookableObject.floorPlanObjectId!)}
     >
-      {bookableObject.name} {" - " + (isBooked ? "Unavailable" : "Available")}
+      {bookableObject.name} {" - " + (existingBookingName != null ? "Booked by " + existingBookingName : "Available")}
     </div>
   );
 };
