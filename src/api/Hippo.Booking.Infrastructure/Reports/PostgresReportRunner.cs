@@ -1,7 +1,10 @@
 using System.Text.Json;
 using Dapper;
 using Hippo.Booking.Application.Commands.Reports;
-using Hippo.Booking.Infrastructure.EF;
+using Hippo.Booking.Core.Entities;
+using Hippo.Booking.Core.Enums;
+using Hippo.Booking.Core.Extensions;
+using Hippo.Booking.Core.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
@@ -10,38 +13,44 @@ namespace Hippo.Booking.Infrastructure.Reports;
 
 public class PostgresReportRunner(IConfiguration configuration, ILogger<PostgresReportRunner> logger) : IReportRunner
 {
-    public async Task<ReportResponse> RunReport(string reportQuery, Dictionary<string, JsonElement> parameters)
+    public async Task<ReportResponse> RunReport(Report report, Dictionary<string, JsonElement> parameters)
     {
         try
         {
             await using var postgresSqlConnection = new NpgsqlConnection(configuration.GetConnectionString("HippoBookingDbContext"));
             
-            logger.LogInformation("Running report: {reportQuery} with parameters {parameters}", reportQuery, parameters);
+            logger.LogInformation("Running report: {reportQuery} with parameters {parameters}", report.ReportQuery, parameters);
             
             var dynamicParameters = new DynamicParameters();
+
+            var definitions = report.ParametersJson.FromJson<List<ReportingParameterDefinition>>() ?? [];
+            
             foreach (var parameter in parameters)
             {
-                switch (parameter.Value.ValueKind)
+                var definition = definitions.SingleOrDefault(x => x.Id == parameter.Key)
+                    ?? new ReportingParameterDefinition
+                    {
+                        Id = parameter.Key,
+                        FieldType = FieldTypeEnum.Text
+                    };
+
+                switch (definition.FieldType)
                 {
-                    case JsonValueKind.String:
+                    case FieldTypeEnum.Date:
+                        dynamicParameters.Add(parameter.Key, parameter.Value.GetDateTime());
+                        break;
+                    case FieldTypeEnum.Number:
+                        dynamicParameters.Add(parameter.Key, parameter.Value.GetDecimal());
+                        break;
+                    case FieldTypeEnum.Text:
                         dynamicParameters.Add(parameter.Key, parameter.Value.GetString());
-                        break;
-                    case JsonValueKind.Number:
-                        dynamicParameters.Add(parameter.Key, parameter.Value.GetInt32());
-                        break;
-                    case JsonValueKind.True:
-                        dynamicParameters.Add(parameter.Key, true);
-                        break;
-                    case JsonValueKind.False:
-                        dynamicParameters.Add(parameter.Key, false);
                         break;
                     default:
-                        dynamicParameters.Add(parameter.Key, parameter.Value.GetString());
-                        break;
+                        throw new ArgumentOutOfRangeException();
                 }
             }
 
-            var response = await postgresSqlConnection.QueryAsync(reportQuery, dynamicParameters);
+            var response = await postgresSqlConnection.QueryAsync(report.ReportQuery, dynamicParameters);
             
             return new ReportResponse
             {

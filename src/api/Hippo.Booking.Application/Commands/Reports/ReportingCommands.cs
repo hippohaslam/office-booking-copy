@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Entities;
-using Hippo.Booking.Core.Extensions;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +17,8 @@ public class ReportingCommands(IDataContext dataContext, IReportRunner reportRun
         {
             throw new ClientException($"Report id {reportId} not found");
         }
-
-        // var parameters = parametersJson.FromJson<Dictionary<string, object>>();
         
-        var result = await reportRunner.RunReport(report.ReportQuery, parametersJson);
+        var result = await reportRunner.RunReport(report, parametersJson);
 
         return result;
     }
