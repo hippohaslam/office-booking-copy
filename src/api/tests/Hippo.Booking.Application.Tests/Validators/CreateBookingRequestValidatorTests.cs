@@ -15,6 +15,13 @@ public class CreateBookingRequestValidatorTests() :
             Date = DateOnly.FromDateTime(DateTime.Now),
             AreaId = 1,
             BookableObjectId = 1
+        },
+        new CreateBookingRequest
+        {
+            UserId = "1",
+            Date = DateOnly.FromDateTime(DateTime.Now.AddMonths(1)),
+            AreaId = 1,
+            BookableObjectId = 1
         }
     };
 
@@ -55,5 +62,19 @@ public class CreateBookingRequestValidatorTests() :
             AreaId = 1,
             BookableObjectId = 0
         },
+        new CreateBookingRequest
+        {
+            UserId = "1",
+            Date = DateOnly.FromDateTime(DateTime.Now.AddMonths(1).AddDays(1)),
+            AreaId = 1,
+            BookableObjectId = 1
+        },
+        new CreateBookingRequest
+        {
+            UserId = "1",
+            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
+            AreaId = 1,
+            BookableObjectId = 1
+        }
     };
 }

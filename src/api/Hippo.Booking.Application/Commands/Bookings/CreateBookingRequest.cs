@@ -20,7 +20,9 @@ public class CreateBookingRequestValidator : AbstractValidator<CreateBookingRequ
     {
         RuleFor(x => x.BookableObjectId).NotEmpty();
         RuleFor(x => x.AreaId).NotEmpty();
-        RuleFor(x => x.Date).NotEmpty().GreaterThanOrEqualTo(dateTimeProvider.Today);
+        RuleFor(x => x.Date).NotEmpty()
+            .GreaterThanOrEqualTo(dateTimeProvider.Today)
+            .LessThanOrEqualTo(dateTimeProvider.Today.AddMonths(1));
         RuleFor(x => x.UserId).NotEmpty();
     }
 }

@@ -5,9 +5,22 @@ type datePickerProps = {
   selectedDate: Date;
   inputOnChange: (date: Date | null) => void;
   adjustDate: (direction: "next" | "previous" | "today") => void;
+  minDate?: Date | undefined;
+  maxDate?: Date | undefined;
 };
 
-const CustomDatePicker = ({ selectedDate, inputOnChange, adjustDate }: datePickerProps) => {
+const CustomDatePicker = ({ selectedDate, inputOnChange, adjustDate, minDate, maxDate }: datePickerProps) => {
+  const changeDate = (direction: "next" | "previous" | "today") => {
+      if (direction === "next" &&
+          maxDate != null &&
+          selectedDate >= new Date(maxDate.setDate(new Date().getDate() - 1))) {
+          return;
+      }
+      if (direction === "previous" && minDate != null && selectedDate <= minDate) {
+          return;
+      }
+      adjustDate(direction);
+  }
   return (
     <div className='date-container'>
       <label id='date-picker-label'>Choose a date: </label>
@@ -17,18 +30,20 @@ const CustomDatePicker = ({ selectedDate, inputOnChange, adjustDate }: datePicke
           className='date-control date-button previous'
           aria-label='previous date'
           title='Previous date'
-          onClick={() => adjustDate("previous")}
+          onClick={() => changeDate("previous")}
         />
         <button
           type='button'
           className='date-control date-button today'
           aria-label='today'
           title='Today'
-          onClick={() => adjustDate("today")}
+          onClick={() => changeDate("today")}
         >
           Today
         </button>
         <DatePicker
+          minDate={minDate}
+          maxDate={maxDate}
           wrapperClassName="date-input-wrapper"
           selected={selectedDate}
           onChange={inputOnChange}
@@ -50,7 +65,7 @@ const CustomDatePicker = ({ selectedDate, inputOnChange, adjustDate }: datePicke
           className='date-control date-button next'
           aria-label='next date'
           title='Next date'
-          onClick={() => adjustDate("next")}
+          onClick={() => changeDate("next")}
         />
       </div>
     </div>

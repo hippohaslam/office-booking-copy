@@ -350,7 +350,13 @@ const DeskBooking = () => {
       ) : null}
 
       <h1>Pick a space</h1>
-      <CustomDatePicker adjustDate={adjustDate} inputOnChange={(date) => setSelectedDate(date!)} selectedDate={selectedDate} />
+      <CustomDatePicker
+          adjustDate={adjustDate}
+          inputOnChange={(date) => setSelectedDate(date!)}
+          selectedDate={selectedDate}
+          minDate={new Date()}
+          maxDate={new Date(new Date().setMonth(new Date().getMonth() + 1))}
+      />
       <br />
 
       <TabList activeTabIndex={activeTab} onChange={handleTabChange}>
