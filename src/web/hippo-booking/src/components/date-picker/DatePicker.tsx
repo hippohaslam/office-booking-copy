@@ -29,6 +29,7 @@ const CustomDatePicker = ({ selectedDate, inputOnChange, adjustDate }: datePicke
           Today
         </button>
         <DatePicker
+          wrapperClassName="date-input-wrapper"
           selected={selectedDate}
           onChange={inputOnChange}
           ariaLabelledBy='date-picker-label'

@@ -15,7 +15,6 @@
   border: none;
   font-size: 12pt;
   background-color: $hippo-brand-light-grey;
-  box-shadow: 0 1px 1px 0 rgba(175, 175, 175, 0.61);
   flex-basis: 0;
   flex-grow: 1;
   border-left: 1px rgba(164, 164, 164, 0.472) solid;
@@ -23,12 +22,20 @@
 
 .date-input {
   padding: 17px 20px !important;
+  width: 9rem;
+}
+
+.date-input-wrapper div {
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    background-color: $hippo-brand-light-grey;
+    box-shadow: 0 1px 1px 0 rgba(175, 175, 175, 0.61);
 }
 
 .date-input-icon {
-  left: 75%;
+  position: unset !important;
   padding: 17px 20px !important;
-  z-index: 1;
 
   :hover {
     cursor: pointer;
@@ -40,6 +47,7 @@
   max-width: 75px;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 1px 1px 0 rgba(175, 175, 175, 0.61);
 
   &.previous {
     border-top-left-radius: 26px;
@@ -105,4 +113,10 @@
   .date-button.today {
     display: none;
   }
+}
+
+@media only screen and (max-width: 430px) {
+    .date-input {
+        width: auto;
+    }
 }
