@@ -2202,6 +2202,7 @@
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
+          "Dapper": "[2.1.35, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
           "SlackNet": "[0.13.2, )"

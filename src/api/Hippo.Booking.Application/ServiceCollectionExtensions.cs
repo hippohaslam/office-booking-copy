@@ -3,9 +3,11 @@ using Hippo.Booking.Application.Commands.Areas;
 using Hippo.Booking.Application.Commands.BookableObject;
 using Hippo.Booking.Application.Commands.Bookings;
 using Hippo.Booking.Application.Commands.Location;
+using Hippo.Booking.Application.Commands.Reports;
 using Hippo.Booking.Application.Commands.Users;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Application.Queries.Locations;
+using Hippo.Booking.Application.Queries.Reports;
 using Hippo.Booking.Application.Queries.Users;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,6 +32,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDeleteBookingCommand, BookingCommands>();
         services.AddScoped<IConfirmBookingCommand, BookingCommands>();
 
+        services.AddScoped<IRunReportCommand, ReportingCommands>();
+
         services.AddScoped<IValidator<CreateLocationRequest>, CreateLocationRequestValidator>();
         services.AddScoped<IValidator<UpdateLocationRequest>, UpdateLocationRequestValidator>();
 
@@ -46,6 +50,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IBookingQueries, BookingQueries>()
             .AddScoped<IAreaQueries, AreaQueries>()
             .AddScoped<IUserQueries, UserQueries>()
+            .AddScoped<IReportQueries, ReportQueries>()
             ;
 
         return services;

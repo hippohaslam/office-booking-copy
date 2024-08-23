@@ -58,6 +58,8 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
     public DbSet<AreaType> AreaTypes { get; set; } = null!;
 
     public DbSet<ScheduledTask>? ScheduledTasks { get; set; }
+    
+    public DbSet<Report> Reports { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

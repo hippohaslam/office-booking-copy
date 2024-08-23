@@ -5,11 +5,13 @@ using Hippo.Booking.API.HostedServices;
 using Hippo.Booking.API.Services;
 using Hippo.Booking.API.StartupTasks;
 using Hippo.Booking.Application;
+using Hippo.Booking.Application.Commands.Reports;
 using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Extensions;
 using Hippo.Booking.Core;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.EF;
+using Hippo.Booking.Infrastructure.Reports;
 using Hippo.Booking.Infrastructure.Scheduling;
 using Hippo.Booking.Infrastructure.Slack;
 using Microsoft.AspNetCore.Authorization;
@@ -109,6 +111,8 @@ try
     builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
     builder.Services.AddScoped<IDataContext, HippoBookingDbContext>();
 
+    builder.Services.AddScoped<IReportRunner, PostgresReportRunner>();
+
     var slackToken = builder.Configuration.GetValue<string>("Slack:Token");
     if (string.IsNullOrWhiteSpace(slackToken))
     {
@@ -164,6 +168,7 @@ try
     new BookingEndpoints().Map(app);
     new SessionEndpoints().Map(app);
     new UserManagementEndpoints().Map(app);
+    new ReportingEndpoints().Map(app);
 
     if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("IntegrationTest"))
     {
