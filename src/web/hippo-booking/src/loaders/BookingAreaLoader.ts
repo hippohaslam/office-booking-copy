@@ -5,7 +5,6 @@ export type BookingAreaParams = {
   locationId: string;
 };
 
-
 // Used in the routing loader
 export const bookingAreasLoader = (queryClient: QueryClient) => async (params: BookingAreaParams) => {
   const locationId = Number.parseInt(params.locationId);
@@ -16,6 +15,6 @@ export const bookingAreasLoader = (queryClient: QueryClient) => async (params: B
   const locationData = await queryClient.fetchQuery({
     queryKey: ["location", locationId],
     queryFn: () => getLocationAsync()(params.locationId),
-  })
+  });
   return { areaData, locationData };
 };

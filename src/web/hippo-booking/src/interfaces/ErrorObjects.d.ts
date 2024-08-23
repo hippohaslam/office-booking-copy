@@ -1,4 +1,4 @@
 type ErrorObjects = {
-    key: string;
-    message: string;
+  key: string;
+  message: string;
 };

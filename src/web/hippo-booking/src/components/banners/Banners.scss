@@ -1,52 +1,52 @@
 @import "../../styles/variables.scss";
 
-.alert-banner{
-    padding: 10px 10px;
-    width: 100%;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    display: grid;
-    grid-template-columns: 48px auto 30px;
-    align-items: center;
-    gap: 15px;
+.alert-banner {
+  padding: 10px 10px;
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 48px auto 30px;
+  align-items: center;
+  gap: 15px;
 
-    &.success-banner {
-        background-color: $hippo-brand-light-green;
-        border: 2pt solid $hippo-brand-green;
+  &.success-banner {
+    background-color: $hippo-brand-light-green;
+    border: 2pt solid $hippo-brand-green;
+  }
+
+  &.error-banner {
+    background-color: #ffb4b4;
+    border: 2pt solid #ff0000;
+  }
+
+  &.warning-banner {
+    background-color: #faf8cf;
+    border: 2pt solid $hippo-brand-yellow;
+  }
+
+  .alert-title {
+    font-size: 20pt;
+    margin: 0;
+  }
+
+  .alert-description {
+    margin: 0;
+    max-width: unset;
+  }
+
+  .alert-content:not(:has(+ .banner-close-button)) {
+    grid-column: span 2;
+  }
+
+  .banner-close-button {
+    background-color: unset;
+    border: unset;
+    height: fit-content;
+    width: fit-content;
+
+    &:hover {
+      cursor: pointer;
     }
-
-    &.error-banner {
-        background-color: #ffb4b4;
-        border: 2pt solid #FF0000;
-    }
-
-    &.warning-banner {
-        background-color: #FAF8CF;
-        border: 2pt solid $hippo-brand-yellow;
-    }
-
-    .alert-title {
-        font-size: 20pt;
-        margin: 0;
-    }
-
-    .alert-description {
-        margin: 0;
-        max-width: unset;
-    }
-
-    .alert-content:not(:has(+ .banner-close-button)) {
-        grid-column: span 2;
-    }
-
-    .banner-close-button{
-        background-color: unset;
-        border: unset;
-        height: fit-content;
-        width: fit-content;
-
-        &:hover{
-            cursor: pointer;
-        }
-    }
+  }
 }

@@ -1,72 +1,72 @@
 @import "../../styles/variables.scss";
 
 .tabs {
-    nav{
-        padding: 0;
+  nav {
+    padding: 0;
 
-        ul {
-            padding-left: 0;
-            display: inline-flex;
-            margin-bottom: 0;
-        }
-
-        li {
-            list-style: none;
-        }
-
-        .tab-btn {
-            background-color: $hippo-brand-bluey-grey;
-            padding: 15px 20px;
-            border-top-left-radius: 13pt;
-            border-top-right-radius: 13pt;
-            min-width: 100px;
-            font-size: 12pt;
-            border: 0;
-
-            &:hover{
-                cursor: pointer;
-            }
-        }
-
-        .tab-btn--active{
-            background-color: $hippo-brand-light-grey;
-            color: $hippo-brand-navy;
-            font-weight: 600;
-            text-decoration: underline solid 1pt $hippo-brand-green;
-            text-underline-offset: 7px;
-        }
+    ul {
+      padding-left: 0;
+      display: inline-flex;
+      margin-bottom: 0;
     }
 
-    .tab-list{
-        list-style: none;
+    li {
+      list-style: none;
     }
 
-    .tab-panel{
-        background-color: $hippo-brand-light-grey;
-        padding: 5px;
-        border-top-right-radius: 12px;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
+    .tab-btn {
+      background-color: $hippo-brand-bluey-grey;
+      padding: 15px 20px;
+      border-top-left-radius: 13pt;
+      border-top-right-radius: 13pt;
+      min-width: 100px;
+      font-size: 12pt;
+      border: 0;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
+
+    .tab-btn--active {
+      background-color: $hippo-brand-light-grey;
+      color: $hippo-brand-navy;
+      font-weight: 600;
+      text-decoration: underline solid 1pt $hippo-brand-green;
+      text-underline-offset: 7px;
+    }
+  }
+
+  .tab-list {
+    list-style: none;
+  }
+
+  .tab-panel {
+    background-color: $hippo-brand-light-grey;
+    padding: 5px;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
 }
 
-@media only screen and (max-width: 768px){
-    .tabs {
-        nav {
-            ul {
-                width: 100%;
-            }
-            li {
-                flex-grow: 1;
-            }
+@media only screen and (max-width: 768px) {
+  .tabs {
+    nav {
+      ul {
+        width: 100%;
+      }
+      li {
+        flex-grow: 1;
+      }
 
-            .tab-btn{
-                width: 100%;
-            }
-        }
-        
-        .tab-panel{
-            border-top-right-radius: 0;
-        }
+      .tab-btn {
+        width: 100%;
+      }
     }
+
+    .tab-panel {
+      border-top-right-radius: 0;
+    }
+  }
 }

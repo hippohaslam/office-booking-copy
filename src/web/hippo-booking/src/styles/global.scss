@@ -2,13 +2,13 @@
 
 /* || font */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
 
 @font-face {
-  font-family: 'DM Sans';
-  src: url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+  font-family: "DM Sans";
+  src: url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
   font-display: swap;
   font-weight: normal;
   font-style: normal;
@@ -18,15 +18,15 @@
 
 /* || general */
 
-:root{
+:root {
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --foreground-rgb: 0,0,0;
+  --foreground-rgb: 0, 0, 0;
   --hippo-brand-bluey-grey: #e5ebf0;
-  --hippo-brand-light-grey: #EFF3F6;
+  --hippo-brand-light-grey: #eff3f6;
   --hippo-brand-grey: #dde4e6;
   --hippo-brand-dark-grey: #c3cacc;
   --hippo-brand-green: #005e5d;
@@ -39,10 +39,9 @@
   --hippo-brand-violet: #4d57a3;
 }
 
-
 * {
   box-sizing: border-box;
-  font-family: 'DM Sans', serif;
+  font-family: "DM Sans", serif;
 }
 
 html {
@@ -62,7 +61,7 @@ main {
   background-color: var(--hippo-brand-grey);
 }
 
-.login-page-container{
+.login-page-container {
   display: flex;
   height: 100vh;
 }
@@ -116,7 +115,12 @@ h6 {
   margin-top: 0;
 }
 
-h2,h3,h4,h5,h6,p {
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   max-width: 60rem;
 }
 
@@ -163,14 +167,16 @@ a {
   &:visited {
     color: var(--hippo-dark-green);
   }
-  &:hover, &:active{
+  &:hover,
+  &:active {
     opacity: 90%;
     text-decoration-color: var(--hippo-brand-light-grey);
   }
 
   // External link styling
   &[href^="http://"]:not([href*="localhost"]),
-  &[href^="https://"]:not([href*="officebooking.hippodigital.co.uk"]) {
+  &[href^="https://"]:not([href*="officebooking.hippodigital.co.uk"])
+  {
     &::after {
       content: "";
       display: inline-block;
@@ -218,14 +224,15 @@ a.with-arrow {
 
 /* || cta */
 
-a.cta, button.cta{
+a.cta,
+button.cta {
   color: white;
   padding: 17px 20px;
   border-radius: 28px;
   text-decoration: none;
   font-size: 16px;
   display: inline-flex;
-  transition: .2s ease;
+  transition: 0.2s ease;
   border: none;
   text-wrap: nowrap;
   width: fit-content;
@@ -236,10 +243,11 @@ a.cta, button.cta{
     cursor: pointer;
   }
 
-  &:hover, &:active{
+  &:hover,
+  &:active {
     text-decoration: underline;
 
-    &.cta-with-arrow::after{
+    &.cta-with-arrow::after {
       margin-left: 20px;
     }
   }
@@ -248,60 +256,60 @@ a.cta, button.cta{
     margin-left: 10px;
   }
 
-  &.cta-green{
+  &.cta-green {
     background-color: var(--hippo-brand-green);
 
-    &:hover{
+    &:hover {
       background-color: #004443;
     }
   }
 
-  &.cta-navy{
+  &.cta-navy {
     background-color: var(--hippo-brand-navy);
   }
 
-  &.cta-yellow{
+  &.cta-yellow {
     background-color: var(--hippo-brand-yellow);
   }
 
-  &.cta-violet{
+  &.cta-violet {
     background-color: var(--hippo-brand-violet);
   }
 
-  &.cta-grey{
+  &.cta-grey {
     background-color: var(--hippo-brand-dark-grey);
     color: var(--hippo-brand-navy);
 
-    &:hover{
+    &:hover {
       background-color: #a5aaac;
     }
   }
 
-  &.cta-pink{
+  &.cta-pink {
     background-color: var(--hippo-brand-pink);
     color: var(--hippo-brand-navy);
 
-    &.with-arrow::after{
+    &.with-arrow::after {
       background-image: url(../assets/cta-arrow-navy.svg);
     }
 
-    &:hover{
+    &:hover {
       background-color: #ffa3b5;
     }
   }
 
-  &.cta-red{
+  &.cta-red {
     background-color: #d20000;
   }
 
-  &.cta-red-outline{
+  &.cta-red-outline {
     border: 3px solid #d20000;
     color: #d20000;
     font-weight: 400;
   }
 
-  &.cta-compact{
-    padding: 10px 15px
+  &.cta-compact {
+    padding: 10px 15px;
   }
 }
 
@@ -309,28 +317,28 @@ a.cta, button.cta{
 
 /* Containers and sections */
 
-section.full-width-grey{
+section.full-width-grey {
   background-color: var(--hippo-brand-grey);
   width: 100%;
 }
 
-section.full-width-light-grey{
+section.full-width-light-grey {
   background-color: var(--hippo-brand-light-grey);
   width: 100%;
 }
 
-section.full-width-bluey-grey{
+section.full-width-bluey-grey {
   background-color: var(--hippo-brand-bluey-grey);
   width: 100%;
 }
 
-section.full-width-navy{
+section.full-width-navy {
   background-color: var(--hippo-brand-navy);
   color: white;
   width: 100%;
 }
 
-.content-container{
+.content-container {
   margin: 0 auto;
   max-width: 1512px;
   padding: 0 25px;
@@ -378,7 +386,7 @@ hr {
 
 /* || Hero styling */
 
-.hero-container{
+.hero-container {
   display: flex;
   margin: 0 auto;
   align-items: center;
@@ -387,7 +395,7 @@ hr {
   padding: 0 25px;
 
   // picked 'medium' but can change to anything
-  .hero-container__medium-height{
+  .hero-container__medium-height {
     min-height: 280px;
   }
 
@@ -407,7 +415,7 @@ hr {
   }
 }
 
-@media only screen and (max-width: 768px){
+@media only screen and (max-width: 768px) {
   main {
     min-height: calc(100dvh - (4rem + 4rem)); //100dvh - (header + footer)
   }
@@ -419,7 +427,7 @@ hr {
     width: 100%;
   }
 
-  .hero-graphic{
+  .hero-graphic {
     display: none;
   }
 
@@ -428,7 +436,6 @@ hr {
     justify-content: space-between;
   }
 }
-
 
 // Inputs
 input {
@@ -445,7 +452,9 @@ textarea {
   display: block;
   margin-top: 1em;
 
-  > input, textarea, select {
+  > input,
+  textarea,
+  select {
     display: block;
     margin-bottom: 1em;
   }

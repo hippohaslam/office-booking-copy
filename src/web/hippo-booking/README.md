@@ -1,9 +1,8 @@
 # React + TypeScript + Vite + Yarn@V4
 
 ## Yarn V4
+
 This project uses Yarn V4 with node_modules. Currently there is a bug in typescript where imports are not linked so we cannot use pnp
-
-
 
 ## App
 
@@ -30,11 +29,10 @@ We recommend to keep the local packages up to date with minor versions as freque
 Major versions should be checked and updated when possible. All this to ensure security updates.
 
 A good tool to use in ncu:
+
 - Install with `npm install -g npm-check-updates`
 - run with `ncu` to see possible updates. Then use `ncu -u` to update package.json file. The yarn install to complete.
-- Finally test and smoke test the app. 
-
-
+- Finally test and smoke test the app.
 
 ## Expanding the ESLint configuration
 
@@ -46,12 +44,12 @@ If you are developing a production application, we recommend updating the config
 export default {
   // other rules...
   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
+    ecmaVersion: "latest",
+    sourceType: "module",
+    project: ["./tsconfig.json", "./tsconfig.node.json"],
     tsconfigRootDir: __dirname,
   },
-}
+};
 ```
 
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
@@ -65,7 +63,7 @@ We are using vitest and react testing library to unit and integration tests the 
 
 We also use msw to mock API calls so for simpler and more robust testing.
 
-For Canvas we need to follow `https://www.npmjs.com/package/canvas` install instructions before doing a  `yarn install` otherwise the test runner cannot read the browser canvas.
+For Canvas we need to follow `https://www.npmjs.com/package/canvas` install instructions before doing a `yarn install` otherwise the test runner cannot read the browser canvas.
 This would also be the case for CI/CD pipelines.
 
 ## Cypress component tests

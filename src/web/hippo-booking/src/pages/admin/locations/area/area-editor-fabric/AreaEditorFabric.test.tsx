@@ -1,48 +1,46 @@
-
-import { render } from '@testing-library/react';
-import { http, HttpResponse } from 'msw'
-import { setupServer } from 'msw/node'
-import FloorplanEditor  from './AreaEditorFabric';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render } from "@testing-library/react";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
+import FloorplanEditor from "./AreaEditorFabric";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const assignableObjects: Array<BookableObject> = [
-    { id: 1, name: "Desk 1", floorPlanObjectId: undefined },
-    { id: 2, name: "Desk 2", floorPlanObjectId: undefined },
-    { id: 3, name: "Desk 3", floorPlanObjectId: undefined },
-  ];
- 
+  { id: 1, name: "Desk 1", floorPlanObjectId: undefined },
+  { id: 2, name: "Desk 2", floorPlanObjectId: undefined },
+  { id: 3, name: "Desk 3", floorPlanObjectId: undefined },
+];
+
 // Provide the server-side API with the request handlers.
 const server = setupServer(
   http.get(`${baseUrl}/location/1/area/1`, () => {
     return HttpResponse.json({
-        id: 1,
-        floorPlanJson: "",
-        name: "Location 1",
-        description: 'This is location 1',
-        bookableObjects: assignableObjects
-     })
-  })
-)
+      id: 1,
+      floorPlanJson: "",
+      name: "Location 1",
+      description: "This is location 1",
+      bookableObjects: assignableObjects,
+    });
+  }),
+);
 
-
- const queryClient = new QueryClient();
+const queryClient = new QueryClient();
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-test('displays the data on the screen', async () => {
+test("displays the data on the screen", async () => {
   render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={['/admin/locations/1/area/1']}>
+      <MemoryRouter initialEntries={["/admin/locations/1/area/1"]}>
         <Routes>
-          <Route path="/admin/locations/:locationId/area/:areaId" element={<FloorplanEditor />} />
+          <Route path='/admin/locations/:locationId/area/:areaId' element={<FloorplanEditor />} />
         </Routes>
       </MemoryRouter>
-    </QueryClientProvider>
+    </QueryClientProvider>,
   );
 
   // find desks by text

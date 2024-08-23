@@ -1,7 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import Nav from "./Nav";
-import { render } from "@testing-library/react"
-import { screen } from '@testing-library/dom'
+import { render } from "@testing-library/react";
+import { screen } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import { UserProvider } from "../../contexts/UserContext";
 
@@ -16,7 +16,7 @@ test.each(links)("has common link to $text", async ({ text, link }) => {
       <BrowserRouter>
         <Nav />
       </BrowserRouter>
-    </UserProvider>
+    </UserProvider>,
   );
 
   const linkElement = screen.getByRole("link", { name: text });
@@ -33,7 +33,7 @@ test("Admin link is not visibile for average joe user", async () => {
       <BrowserRouter>
         <Nav />
       </BrowserRouter>
-    </UserProvider>
+    </UserProvider>,
   );
 
   const adminLink = screen.queryByRole("link", { name: "Admin" });
@@ -50,7 +50,7 @@ test("Admin link is visibile for admin user", async () => {
       <BrowserRouter>
         <Nav />
       </BrowserRouter>
-    </UserProvider>
+    </UserProvider>,
   );
 
   const adminLink = screen.getByRole("link", { name: "Admin" });
@@ -67,7 +67,7 @@ test("Navigation shows sign out if user is signed in", async () => {
       <BrowserRouter>
         <Nav />
       </BrowserRouter>
-    </UserProvider>
+    </UserProvider>,
   );
 
   // Check that "Sign out" is not visible
@@ -81,7 +81,7 @@ test("Navigation does not show sign out if user is signed out", async () => {
       <BrowserRouter>
         <Nav />
       </BrowserRouter>
-    </UserProvider>
+    </UserProvider>,
   );
 
   // Check that "Sign out" is not visible

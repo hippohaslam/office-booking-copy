@@ -1,68 +1,68 @@
 @import "../../../styles/variables.scss";
 
-.action-tile__list{
-    margin-top: 20px;
+.action-tile__list {
+  margin-top: 20px;
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+
+  & li {
     list-style: none;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
 
-    & li {
-        list-style: none;
-
-        & .action-tile {
-            height: 100%;
-        }
+    & .action-tile {
+      height: 100%;
     }
+  }
 }
 
 .action-tile {
-    background-color: $hippo-brand-bluey-grey;
-    padding: 20px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  background-color: $hippo-brand-bluey-grey;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
-    & .tile-content{
-        display: inline-flex;
-        gap: 15px;
-    }
+  & .tile-content {
+    display: inline-flex;
+    gap: 15px;
+  }
 
-    & h2 {
-        font-weight: normal;
-        margin-top: 0;
-        margin-bottom: 0;
-    }
+  & h2 {
+    font-weight: normal;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 
-    & p.tile-description {
-        margin: 0;
-    } 
+  & p.tile-description {
+    margin: 0;
+  }
 
-    & .secondary-link{
-        margin-top: 0;
-    }
+  & .secondary-link {
+    margin-top: 0;
+  }
 }
 
-@media only screen and (max-width: 1000px){
-    .action-tile__list{
-        grid-template-columns: repeat(2, 1fr);
-    }
+@media only screen and (max-width: 1000px) {
+  .action-tile__list {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-@media only screen and (max-width: 768px){
-    .action-tile {
-        padding: 5px 20px;
+@media only screen and (max-width: 768px) {
+  .action-tile {
+    padding: 5px 20px;
 
-        & .secondary-link{
-            margin-bottom: 0;
-        }
+    & .secondary-link {
+      margin-bottom: 0;
     }
+  }
 }
 
-@media only screen and (max-width: 600px){
-    .action-tile__list{
-        grid-template-columns: repeat(1, 1fr);
-    }
+@media only screen and (max-width: 600px) {
+  .action-tile__list {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }

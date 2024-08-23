@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Dashboard, CreateLocation, CreateArea, SvgAreaEditor, FloorplanEditor } from "../imports";
-import {AdminProtectedRoute} from "../ProtectedRoute";
+import { AdminProtectedRoute } from "../ProtectedRoute";
 
 const adminRoutes = [
   {

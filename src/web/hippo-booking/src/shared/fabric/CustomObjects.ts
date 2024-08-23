@@ -1,56 +1,56 @@
 import { fabric } from "fabric";
 
 interface CustomFabricObject extends fabric.Object {
-    id?: string;
+  id?: string;
 }
 
 export function isCustomFabricObject(object: fabric.Object): object is CustomFabricObject {
-    return object instanceof fabric.Object && 'id' in object;
-  }
+  return object instanceof fabric.Object && "id" in object;
+}
 
 interface ExtendedCanvas extends fabric.Canvas {
-    isDragging?: boolean;
-    lastPosX?: number;
-    lastPosY?: number;
-  }
+  isDragging?: boolean;
+  lastPosX?: number;
+  lastPosY?: number;
+}
 
 // Extend the fabric.Rect class to include an id property
 class CustomRect extends fabric.Rect {
-    id: string;
+  id: string;
 
-    constructor(options: fabric.IRectOptions & { id: string }) {
-        super(options);
-        this.id = options.id;
-    }
+  constructor(options: fabric.IRectOptions & { id: string }) {
+    super(options);
+    this.id = options.id;
+  }
 }
 
 // Extend the fabric.Svg class to include an id property
 class CustomObject extends fabric.Object {
-    id: string;
+  id: string;
 
-    constructor(options: fabric.Object & { id: string }) {
-        super(options);
-        this.id = options.id;
-    }
+  constructor(options: fabric.Object & { id: string }) {
+    super(options);
+    this.id = options.id;
+  }
 }
 
 // Extend the fabric.Circle class to include an id property
 class CustomCircle extends fabric.Circle {
-    id: string;
+  id: string;
 
-    constructor(options: fabric.ICircleOptions & { id: string }) {
-        super(options);
-        this.id = options.id;
-    }
+  constructor(options: fabric.ICircleOptions & { id: string }) {
+    super(options);
+    this.id = options.id;
+  }
 }
 
 class CustomGroup extends fabric.Group {
-    id: string;
+  id: string;
 
-    constructor(options: fabric.IGroupOptions & { id: string }) {
-        super([], options);
-        this.id = options.id;
-    }
+  constructor(options: fabric.IGroupOptions & { id: string }) {
+    super([], options);
+    this.id = options.id;
+  }
 }
 
 export { CustomRect, CustomCircle, CustomObject, CustomGroup };

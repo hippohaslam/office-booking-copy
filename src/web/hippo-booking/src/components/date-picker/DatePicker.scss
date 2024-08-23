@@ -1,108 +1,108 @@
 @import "../../styles/variables.scss";
 
 .date-container {
-    padding: 10px 0;
+  padding: 10px 0;
 }
 
 .date-controls {
-    display: flex;
-    flex-wrap: wrap;
-    row-gap: 2px;
-    margin-top: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 2px;
+  margin-top: 5px;
 }
 
 .date-control {
-    border: none;
-    font-size: 12pt;
-    background-color: $hippo-brand-light-grey;
-    box-shadow: 0 1px 1px 0 rgba(175, 175, 175, 0.61);
-    flex-basis: 0;
-    flex-grow: 1;
-    border-left: 1px rgba(164, 164, 164, 0.472) solid;
+  border: none;
+  font-size: 12pt;
+  background-color: $hippo-brand-light-grey;
+  box-shadow: 0 1px 1px 0 rgba(175, 175, 175, 0.61);
+  flex-basis: 0;
+  flex-grow: 1;
+  border-left: 1px rgba(164, 164, 164, 0.472) solid;
 }
 
 .date-input {
-    padding: 17px 20px !important;
+  padding: 17px 20px !important;
 }
 
 .date-input-icon {
-    left: 75%;
-    padding: 17px 20px !important;
-    z-index: 1;
+  left: 75%;
+  padding: 17px 20px !important;
+  z-index: 1;
 
-    :hover {
-        cursor: pointer;
-    }
+  :hover {
+    cursor: pointer;
+  }
 }
 
 .date-button {
-    display: inline-flex;
-    max-width: 75px;
-    align-items: center;
-    justify-content: center;
+  display: inline-flex;
+  max-width: 75px;
+  align-items: center;
+  justify-content: center;
 
-    &.previous {
-        border-top-left-radius: 26px;
-        border-bottom-left-radius: 26px;  
+  &.previous {
+    border-top-left-radius: 26px;
+    border-bottom-left-radius: 26px;
 
-        &::before {
-            content: "";
-            display: inline-block;
-            line-height: 500px;
-            width: 16px;
-            height: 16px;
-            margin: auto;
-            position: relative;
-            background-image: url(../../assets/cta-arrow-navy.svg);
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: contain;
-            transition-duration: 0.2s;
-            transform: scaleX(-1);
-        }
+    &::before {
+      content: "";
+      display: inline-block;
+      line-height: 500px;
+      width: 16px;
+      height: 16px;
+      margin: auto;
+      position: relative;
+      background-image: url(../../assets/cta-arrow-navy.svg);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      transition-duration: 0.2s;
+      transform: scaleX(-1);
     }
+  }
 
-    &.today {
-        padding-left: 10px;
-        padding-right: 10px;
+  &.today {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  &.next {
+    border-top-right-radius: 26px;
+    border-bottom-right-radius: 26px;
+
+    &::before {
+      content: "";
+      display: inline-block;
+      line-height: 500px;
+      width: 16px;
+      height: 16px;
+      margin: auto;
+      position: relative;
+      background-image: url(../../assets/cta-arrow-navy.svg);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      transition-duration: 0.2s;
     }
+  }
 
-    &.next {
-        border-top-right-radius: 26px;
-        border-bottom-right-radius: 26px;   
-
-        &::before {
-            content: "";
-            display: inline-block;
-            line-height: 500px;
-            width: 16px;
-            height: 16px;
-            margin: auto;
-            position: relative;
-            background-image: url(../../assets/cta-arrow-navy.svg);
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: contain;
-            transition-duration: 0.2s;
-        }
-    }
-
-    &:hover {
-        cursor: pointer;
-        background-color: $hippo-brand-bluey-grey;
-    }
+  &:hover {
+    cursor: pointer;
+    background-color: $hippo-brand-bluey-grey;
+  }
 }
 
-.date-control:first-child{
-    border-left: none;
+.date-control:first-child {
+  border-left: none;
 }
 
 @media only screen and (max-width: 768px) {
-    .date-control {
-        font-size: 12pt;
-    }
+  .date-control {
+    font-size: 12pt;
+  }
 
-    .date-button.today {
-        display: none;
-    }
+  .date-button.today {
+    display: none;
+  }
 }

@@ -8,13 +8,19 @@ type bannerProps = {
   description?: string;
 };
 
-const SuccessBanner = ({isShown, title, description} : bannerProps) => {
-
-  const descriptionElement = <p className="alert-description">{description}</p>;
+const SuccessBanner = ({ isShown, title, description }: bannerProps) => {
+  const descriptionElement = <p className='alert-description'>{description}</p>;
 
   return (
-    <Banner isShown={isShown} title={title} descriptionElement={descriptionElement} iconSrc={SuccessIcon} containerClass="success-banner" allowClose={true}/>
-  )
+    <Banner
+      isShown={isShown}
+      title={title}
+      descriptionElement={descriptionElement}
+      iconSrc={SuccessIcon}
+      containerClass='success-banner'
+      allowClose={true}
+    />
+  );
 };
 
 export default SuccessBanner;

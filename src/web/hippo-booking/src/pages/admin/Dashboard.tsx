@@ -1,9 +1,9 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { ErrorBanner } from "../../components";
-import {getLocationAreasAsync, getLocationsAsync} from "../../services/Apis";
+import { getLocationAreasAsync, getLocationsAsync } from "../../services/Apis";
 import { Link, useNavigate } from "react-router-dom";
 import { CtaButton } from "../../components/buttons/Buttons";
-import './Dashboard.scss'
+import "./Dashboard.scss";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const Admin = () => {
     data: locationData,
   } = useQuery({
     queryKey: ["admin-locations"],
-    queryFn: () => getLocationsAsync(true)()
+    queryFn: () => getLocationsAsync(true)(),
   });
 
   const locationDetailsQueries = useQueries({
@@ -21,7 +21,6 @@ const Admin = () => {
       locationData?.map((location) => ({
         queryKey: ["locationDetails", location.id],
         queryFn: () => getLocationAreasAsync(true)(location.id),
-        
       })) || [],
   });
 
@@ -41,7 +40,7 @@ const Admin = () => {
   if (error || locationDetailsQueries.some((query) => query.isError)) {
     return (
       <div>
-        <ErrorBanner isShown={true} title="Error" errorMessage="Unable to get locations, please try again" allowClose={false} />
+        <ErrorBanner isShown={true} title='Error' errorMessage='Unable to get locations, please try again' allowClose={false} />
       </div>
     );
   }
@@ -57,12 +56,12 @@ const Admin = () => {
   return (
     <div>
       <h2>Edit locations</h2>
-      <CtaButton text="Add a new location" color="cta-green" onClick={handleAddNewLocation} />
+      <CtaButton text='Add a new location' color='cta-green' onClick={handleAddNewLocation} />
       {locationData?.length === 0 && <p>No locations found. Create a your first location!</p>}
       {locationData?.map((location) => (
-        <div key={location.id} className="location-and-area">
-          <h3 className="location-and-area__header">{location.name}</h3>
-          <button type="button" className="location-and-area__cta" onClick={() => handleAddArea(location.id)}>
+        <div key={location.id} className='location-and-area'>
+          <h3 className='location-and-area__header'>{location.name}</h3>
+          <button type='button' className='location-and-area__cta' onClick={() => handleAddArea(location.id)}>
             Add area
           </button>
           {getAreas(location.id).length === 0 && <p>No areas yet for this location. =(</p>}

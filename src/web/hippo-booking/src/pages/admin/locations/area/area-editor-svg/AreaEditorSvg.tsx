@@ -1,9 +1,7 @@
-import SvgEditor from "../../../../../components/svg-booking/SvgEditor"
+import SvgEditor from "../../../../../components/svg-booking/SvgEditor";
 
 const FloorplanEditorSvg = () => {
-    return (
-        <SvgEditor />
-    )
-}
+  return <SvgEditor />;
+};
 
 export default FloorplanEditorSvg;

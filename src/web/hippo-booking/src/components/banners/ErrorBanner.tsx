@@ -15,26 +15,40 @@ type ErrorBannerMultipleProps = {
   allowClose: boolean;
 };
 
-const ErrorBanner = ({isShown, title, errorMessage, allowClose} : ErrorBannerSingleProps) => {
-  const descriptionElement = (<p className="alert-description">{errorMessage}</p>);
+const ErrorBanner = ({ isShown, title, errorMessage, allowClose }: ErrorBannerSingleProps) => {
+  const descriptionElement = <p className='alert-description'>{errorMessage}</p>;
 
   return (
-    <Banner isShown={isShown} containerClass={"error-banner"} title={title} descriptionElement={descriptionElement} iconSrc={ErrorIcon} allowClose={allowClose} />
+    <Banner
+      isShown={isShown}
+      containerClass={"error-banner"}
+      title={title}
+      descriptionElement={descriptionElement}
+      iconSrc={ErrorIcon}
+      allowClose={allowClose}
+    />
   );
-}
+};
 
-const MultiErrorBanner = ({isShown, title, errors, allowClose} : ErrorBannerMultipleProps) => {
+const MultiErrorBanner = ({ isShown, title, errors, allowClose }: ErrorBannerMultipleProps) => {
   const descriptionElement = (
     <ul>
-    {errors.map((error) => {
-      return <li>{error.message}</li>
-    } )}
+      {errors.map((error) => {
+        return <li>{error.message}</li>;
+      })}
     </ul>
   );
 
   return (
-    <Banner isShown={isShown} containerClass={"error-banner"} title={title} descriptionElement={descriptionElement} iconSrc={ErrorIcon} allowClose={allowClose} />
+    <Banner
+      isShown={isShown}
+      containerClass={"error-banner"}
+      title={title}
+      descriptionElement={descriptionElement}
+      iconSrc={ErrorIcon}
+      allowClose={allowClose}
+    />
   );
-}
+};
 
-export {ErrorBanner, MultiErrorBanner};
+export { ErrorBanner, MultiErrorBanner };

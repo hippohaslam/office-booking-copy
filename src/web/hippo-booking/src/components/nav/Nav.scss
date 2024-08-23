@@ -1,164 +1,161 @@
 @import "../../styles/variables.scss";
 
 header {
-    color: $hippo-brand-navy;
-    background-color: $hippo-brand-grey;
+  color: $hippo-brand-navy;
+  background-color: $hippo-brand-grey;
 
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+    max-width: 1512px;
+    padding: 0 25px;
+    height: 6rem;
+  }
 
-    .nav-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: auto;
-        max-width: 1512px;
-        padding: 0 25px;
-        height: 6rem;
+  .nav-container-logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 20px;
+    font-weight: bold;
+    font-size: 1.6rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  #main-navigation {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    padding: 0;
+  }
+
+  nav {
+    padding: 0 1.5rem;
+    a {
+      color: $hippo-brand-navy;
+      text-decoration: none;
+      padding: 0.5rem;
+      font-weight: normal;
     }
 
-    .nav-container-logo{
-        display: inline-flex;
-        align-items: center;
-        text-decoration: none;
-        gap: 20px;
+    a:hover {
+      text-decoration: underline;
+    }
+
+    ul {
+      display: flex;
+      list-style: none;
+      align-items: center;
+      margin-bottom: auto;
+      padding-inline-start: 0;
+      gap: 20px;
+
+      li {
+        list-style-type: none;
         font-weight: bold;
-        font-size: 1.6rem;
-
-        &:hover{
-            text-decoration: underline;
-        }
+      }
     }
-
-    #main-navigation{
-        display: flex;
-        justify-items: center;
-        align-items: center;
-        padding: 0;
-    }
-
-    nav {
-        padding: 0 1.5rem;
-        a {
-            color: $hippo-brand-navy;
-            text-decoration: none;
-            padding: 0.5rem;
-            font-weight: normal;
-        }
-
-        a:hover{
-            text-decoration: underline;
-        }
-
-        ul {
-            display: flex;
-            list-style: none;
-            align-items: center;
-            margin-bottom: auto;
-            padding-inline-start: 0;
-            gap: 20px;
-
-            li {
-                list-style-type: none;
-                font-weight: bold;
-            }
-        }
-    }
+  }
 }
 
 .nav-container-logo img {
-    height: 100px;
-    width: 150px;
-
+  height: 100px;
+  width: 150px;
 }
 
 header {
-    .hamburger {
-        display: none;
-    }
+  .hamburger {
+    display: none;
+  }
 
-    .bar {
-        display: block;
-        width: 25px;
-        height: 3px;
-        margin: 5px auto;
-        -webkit-transition: all 0.3s ease-in-out;
-        transition: all 0.3s ease-in-out;
-        background-color: $hippo-brand-navy;
-    }
+  .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    background-color: $hippo-brand-navy;
+  }
 
-    .nav-menu a {
-        font-size: 1.2rem;
-    }
+  .nav-menu a {
+    font-size: 1.2rem;
+  }
 }
 
-@media only screen and (max-width: 768px)
-{
-    body:has(.nav-menu.active){
-        position: fixed;
+@media only screen and (max-width: 768px) {
+  body:has(.nav-menu.active) {
+    position: fixed;
+  }
+
+  header {
+    .nav-container-logo img {
+      height: 50px;
+      width: 50px;
     }
 
-    header {
-        .nav-container-logo img {
-            height: 50px;
-            width: 50px;
-        }
-    
-        .nav-container {
-            padding: 0 10px;
-            height: 4rem;
-        }
-    
-        .nav-menu {
-            position: fixed;
-            left: 100%;
-            top: 4rem;
-            flex-direction: column;
-            width: 100%;
-            transition: 0.5s ease-in-out;
-            height: calc(100dvh - 4rem);
-            z-index: 1;
-            background-color: $hippo-brand-light-grey;
-            padding: 0 25px;
-            display: block;
-    
-            &.active {
-                left: 0;
-                display: block;
-                position: absolute;
-            }
-    
-            li {
-                width: 100%;
-                padding: 25px 0;
-    
-                &:not(:last-of-type){
-                    border-bottom: $hippo-brand-grey 1px solid;
-                }
-            }
-    
-            a {
-                font-size: 1.5rem;
-                width: 100%;
-                display: block;
-            }
-        }
-    
-        .hamburger {
-            display: block;
-            cursor: pointer;
-            background-color: unset;
-            border: unset;
-        }
-    
-        .hamburger.active .bar:nth-child(2) {
-            opacity: 0;
-        }
-    
-        .hamburger.active .bar:nth-child(1) {
-            transform: translateY(8px) rotate(45deg);
-        }
-    
-        .hamburger.active .bar:nth-child(3) {
-            transform: translateY(-8px) rotate(-45deg);
-        }
+    .nav-container {
+      padding: 0 10px;
+      height: 4rem;
     }
+
+    .nav-menu {
+      position: fixed;
+      left: 100%;
+      top: 4rem;
+      flex-direction: column;
+      width: 100%;
+      transition: 0.5s ease-in-out;
+      height: calc(100dvh - 4rem);
+      z-index: 1;
+      background-color: $hippo-brand-light-grey;
+      padding: 0 25px;
+      display: block;
+
+      &.active {
+        left: 0;
+        display: block;
+        position: absolute;
+      }
+
+      li {
+        width: 100%;
+        padding: 25px 0;
+
+        &:not(:last-of-type) {
+          border-bottom: $hippo-brand-grey 1px solid;
+        }
+      }
+
+      a {
+        font-size: 1.5rem;
+        width: 100%;
+        display: block;
+      }
+    }
+
+    .hamburger {
+      display: block;
+      cursor: pointer;
+      background-color: unset;
+      border: unset;
+    }
+
+    .hamburger.active .bar:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active .bar:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger.active .bar:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+  }
 }

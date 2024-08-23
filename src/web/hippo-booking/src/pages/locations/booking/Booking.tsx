@@ -396,7 +396,8 @@ const BookableObjectDisplay = ({
     <div
       className={`booking-list-item ` + (existingBookingName != null ? "booking-list-item__booked" : "booking-list-item__available")}
       key={bookableObject.id}
-      onClick={() => onObjectSelected(bookableObject.floorPlanObjectId!)}>
+      onClick={() => onObjectSelected(bookableObject.floorPlanObjectId!)}
+    >
       {bookableObject.name} {" - " + (existingBookingName != null ? "Booked by " + existingBookingName : "Available")}
     </div>
   );

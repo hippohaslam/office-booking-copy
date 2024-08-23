@@ -3,12 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { fabric } from "fabric";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import {
-  getLocationAreaAsync,
-  putObjectsAsync,
-  putAreaAsync,
-  postBookableObjectAsync,
-} from "../../../../../services/Apis";
+import { getLocationAreaAsync, putObjectsAsync, putAreaAsync, postBookableObjectAsync } from "../../../../../services/Apis";
 import { useWindowSize } from "../../../../../hooks/WindowSizeHook";
 import { CustomCircle, CustomFabricObject, CustomGroup, CustomObject, CustomRect } from "../../../../../shared/fabric/CustomObjects";
 import { MultiErrorBanner, SuccessBanner } from "../../../../../components";
@@ -42,7 +37,7 @@ const FloorplanEditor = () => {
   const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
   const [textState, setTextState] = useState({ hidden: true, text: "" });
-  const [newBookableObject, setNewBookableObject] = useState<BookableObject>({name: '', description: '', id: 0});
+  const [newBookableObject, setNewBookableObject] = useState<BookableObject>({ name: "", description: "", id: 0 });
   const [showCreateNewBookableObject, setShowCreateNewBookableObject] = useState(false);
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
@@ -52,13 +47,21 @@ const FloorplanEditor = () => {
 
   const handleAddError = (key: string, message: string) => {
     setErrors([{ key, message }]);
-  }
+  };
 
-  const handleRemoveError = useCallback((key: string) => {
-    setErrors(errors.filter((error) => error.key !== key));
-  }, [errors]);
+  const handleRemoveError = useCallback(
+    (key: string) => {
+      setErrors(errors.filter((error) => error.key !== key));
+    },
+    [errors],
+  );
 
-  const {isPending,data: locationData,isError,error} = useQuery({
+  const {
+    isPending,
+    data: locationData,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["area-edit", locationId, areaId],
     queryFn: () => getLocationAreaAsync(true)(locationId as string, areaId as string),
     enabled: !!locationId,
@@ -68,29 +71,26 @@ const FloorplanEditor = () => {
     if (isError && error) {
       handleAddError(errorKeys.areaFetch, "Failed to fetch area");
     } else {
-      if(errors.some((error) => error.key === errorKeys.areaFetch)){
+      if (errors.some((error) => error.key === errorKeys.areaFetch)) {
         handleRemoveError(errorKeys.areaFetch);
       }
     }
   }, [error, errors, handleRemoveError, isError]);
-  
 
   const areaMutation = useMutation({
-    mutationFn: (nextAreaData: Area) =>
-      putAreaAsync(locationId as string, nextAreaData, areaId as string),
-      onSuccess: () => {
-        handleRemoveError(errorKeys.areaSave);
-      },
-      onError: () => handleAddError(errorKeys.areaSave, "Failed to save area"),
+    mutationFn: (nextAreaData: Area) => putAreaAsync(locationId as string, nextAreaData, areaId as string),
+    onSuccess: () => {
+      handleRemoveError(errorKeys.areaSave);
+    },
+    onError: () => handleAddError(errorKeys.areaSave, "Failed to save area"),
   });
 
   const bookableObjectsMutation = useMutation({
-    mutationFn: (bookableObjects: BookableObject[]) =>
-      putObjectsAsync(locationId as string, areaId as string, bookableObjects),
-      onSuccess: () => {
-        handleRemoveError(errorKeys.saveBookableObjects);
-      },
-      onError: () => handleAddError(errorKeys.saveFabricObjects, "Error saving bookable objects"),
+    mutationFn: (bookableObjects: BookableObject[]) => putObjectsAsync(locationId as string, areaId as string, bookableObjects),
+    onSuccess: () => {
+      handleRemoveError(errorKeys.saveBookableObjects);
+    },
+    onError: () => handleAddError(errorKeys.saveFabricObjects, "Error saving bookable objects"),
   });
 
   // Bit of a hack until I can think of how a better way.
@@ -102,22 +102,22 @@ const FloorplanEditor = () => {
         const bookableObjects = data.bookableObjects ?? [];
         setArea((prev) => {
           if (prev) {
-            return {...prev,bookableObjects: bookableObjects};
+            return { ...prev, bookableObjects: bookableObjects };
           }
         });
       }
     },
-  })
+  });
 
   /** Resets to default values and closes the input box */
   const resetNewBookableObject = () => {
     setShowCreateNewBookableObject(false);
-    setNewBookableObject({name: '', description: '', id: 0});
-  }
-
+    setNewBookableObject({ name: "", description: "", id: 0 });
+  };
 
   const createNewBookableOBjectMutation = useMutation({
-    mutationFn: (bookableObject: BookableObject) => postBookableObjectAsync(Number.parseInt(locationId!), Number.parseInt(areaId!), bookableObject),
+    mutationFn: (bookableObject: BookableObject) =>
+      postBookableObjectAsync(Number.parseInt(locationId!), Number.parseInt(areaId!), bookableObject),
     onSuccess: () => {
       handleRemoveError(errorKeys.saveBookableObjects);
       resetNewBookableObject();
@@ -153,7 +153,7 @@ const FloorplanEditor = () => {
 
   // Add event listener to canvas to handle object selection
   useEffect(() => {
-    if(fabricCanvasRef.current){
+    if (fabricCanvasRef.current) {
       fabricCanvasRef.current.on("mouse:down", (e) => {
         const selectedFabricObject = e.target as CustomFabricObject;
         if (selectedFabricObject) {
@@ -162,13 +162,12 @@ const FloorplanEditor = () => {
           } else {
             setTextState({ hidden: true, text: "" });
           }
-  
+
           // If there is no id, then it is not a bookable object
           if (selectedFabricObject.id) {
             setSelectedObject({
               id: selectedFabricObject.id,
-              hasAssignedDesk:
-                area?.bookableObjects.some((desk) => desk.floorPlanObjectId === selectedFabricObject.id) ?? false,
+              hasAssignedDesk: area?.bookableObjects.some((desk) => desk.floorPlanObjectId === selectedFabricObject.id) ?? false,
             });
           }
           // Perform other operations as needed
@@ -177,11 +176,10 @@ const FloorplanEditor = () => {
         }
       });
     }
-  }, [area?.bookableObjects])
+  }, [area?.bookableObjects]);
 
   // Initialize the canvas
   useEffect(() => {
-    
     if (canvasElRef.current && locationData) {
       const canvasOptions = {
         backgroundColor: "white",
@@ -293,10 +291,7 @@ const FloorplanEditor = () => {
         ...area,
         floorPlanJson: JSON.stringify(fabricCanvasRef.current.toJSON(["id"])),
       };
-      Promise.all([
-        areaMutation.mutateAsync(nextLocation),
-        bookableObjectsMutation.mutateAsync(area.bookableObjects),
-      ]).finally(() => {
+      Promise.all([areaMutation.mutateAsync(nextLocation), bookableObjectsMutation.mutateAsync(area.bookableObjects)]).finally(() => {
         if (locationId) {
           queryClient.invalidateQueries({
             queryKey: ["area-edit", locationId, areaId],
@@ -336,7 +331,6 @@ const FloorplanEditor = () => {
         left: 100,
         top: 100,
         fill: "black",
-
       });
       text.bringForward();
       fabricCanvasRef.current.add(text);
@@ -375,7 +369,7 @@ const FloorplanEditor = () => {
           ...prev,
           bookableObjects: prev.bookableObjects.map((d) => {
             if (d.id === deskId) {
-              return {...d,[field]: text,};
+              return { ...d, [field]: text };
             }
             return d;
           }),
@@ -405,7 +399,7 @@ const FloorplanEditor = () => {
         fabricCanvasRef.current.setActiveObject(
           new fabric.ActiveSelection(forSelect, {
             canvas: fabricCanvasRef.current,
-          })
+          }),
         );
       }
       fabricCanvasRef.current.renderAll();
@@ -439,13 +433,13 @@ const FloorplanEditor = () => {
   const handleAddNewBookableObject = () => createNewBookableOBjectMutation.mutate(newBookableObject);
   const handleAddNewBookableObjectDisplay = () => setShowCreateNewBookableObject(!showCreateNewBookableObject);
 
-  const handleSendToPosition = (position: 'back' | 'front') => {
+  const handleSendToPosition = (position: "back" | "front") => {
     if (fabricCanvasRef.current) {
       const activeObject = fabricCanvasRef.current.getActiveObject();
       if (activeObject) {
-        if (position === 'back') {
+        if (position === "back") {
           fabricCanvasRef.current.sendToBack(activeObject);
-        } else if (position === 'front') {
+        } else if (position === "front") {
           fabricCanvasRef.current.bringToFront(activeObject);
         }
         fabricCanvasRef.current.discardActiveObject();
@@ -472,9 +466,8 @@ const FloorplanEditor = () => {
       reader.readAsText(file);
       // clear the file input when finished
       e.target.value = "";
-
     }
-  }
+  };
 
   const isLoading = isPending || areaMutation.isPending || bookableObjectsMutation.isPending;
   const hasSuccess = areaMutation.isSuccess || bookableObjectsMutation.isSuccess;
@@ -482,94 +475,107 @@ const FloorplanEditor = () => {
   // RENDERS
   // Must always have a canvas element, adding conditional logic to hide the canvas if the location is not loaded will break the fabric.js canvas
   return (
-    <div className="content-container">
-      {errors.length > 0 && <MultiErrorBanner isShown={errors.length > 0} title="Error" errors={errors} allowClose={true} />}
-      {hasSuccess && errors.length < 1 && <SuccessBanner isShown={hasSuccess} title="Saved successfully" />}
+    <div className='content-container'>
+      {errors.length > 0 && <MultiErrorBanner isShown={errors.length > 0} title='Error' errors={errors} allowClose={true} />}
+      {hasSuccess && errors.length < 1 && <SuccessBanner isShown={hasSuccess} title='Saved successfully' />}
       <h1>{!area && isLoading ? "Location loading..." : area?.name}</h1>
       <div>
-        <label htmlFor="location-name">Location name: </label>
-        <input id="location-name" type="text" value={area?.name || ""} onChange={handleLocationUpdate} />
+        <label htmlFor='location-name'>Location name: </label>
+        <input id='location-name' type='text' value={area?.name || ""} onChange={handleLocationUpdate} />
       </div>
       <br />
       <div>
-      <CtaButton type="button" text="Save changes" color="cta-green" onClick={saveLocation} />
+        <CtaButton type='button' text='Save changes' color='cta-green' onClick={saveLocation} />
       </div>
       <br />
-      <div className="floorplan__container">
-        <div className="floorplan__editor">
-          <button type="button" onClick={addCircle}>
+      <div className='floorplan__container'>
+        <div className='floorplan__editor'>
+          <button type='button' onClick={addCircle}>
             Add circle
           </button>
-          <button type="button" onClick={addSquare}>
+          <button type='button' onClick={addSquare}>
             Add square
           </button>
-          <button type="button" onClick={handleLineDraw}>
+          <button type='button' onClick={handleLineDraw}>
             Add line
           </button>
-          <button type="button" onClick={toggleFreeDraw}>
+          <button type='button' onClick={toggleFreeDraw}>
             Free draw mode: {freeDrawMode.toString()}
           </button>
-          <button type="button" onClick={handleAddText}>
+          <button type='button' onClick={handleAddText}>
             Add text
           </button>
-          
-          <button type="button" onClick={removeObject}>
+
+          <button type='button' onClick={removeObject}>
             Remove object
           </button>
-          <button type="button" onClick={handleCopy}>
+          <button type='button' onClick={handleCopy}>
             Copy
           </button>
           <br />
-          <button type="button" onClick={() => handleSendToPosition('back')}>Send to back</button>
-          <button type="button" onClick={() => handleSendToPosition('front')}>Send to front</button>
+          <button type='button' onClick={() => handleSendToPosition("back")}>
+            Send to back
+          </button>
+          <button type='button' onClick={() => handleSendToPosition("front")}>
+            Send to front
+          </button>
           <div>
-            <label htmlFor="svg-upload">Add Svg: </label>
-            <input type="file" name="svg-upload" accept="image/svg+xml" onChange={handleFileUpload} />
+            <label htmlFor='svg-upload'>Add Svg: </label>
+            <input type='file' name='svg-upload' accept='image/svg+xml' onChange={handleFileUpload} />
           </div>
 
-          <div className="canvas__container">
+          <div className='canvas__container'>
             <canvas width={800} height={600} ref={canvasElRef} />
           </div>
           {textState.hidden ? null : (
             <div>
               <label>Text: </label>
-              <input type="text" value={textState.text} onChange={(e) => handleChangeText(e.target.value)} />
+              <input type='text' value={textState.text} onChange={(e) => handleChangeText(e.target.value)} />
             </div>
           )}
         </div>
 
-        <div className="floorplan__desk-list">
+        <div className='floorplan__desk-list'>
           <h2>Bookable objects list</h2>
-          <button type="button" onClick={handleAddNewBookableObjectDisplay}>
+          <button type='button' onClick={handleAddNewBookableObjectDisplay}>
             Create a new bookable object
           </button>
           {showCreateNewBookableObject ? (
             <div>
-              <div className="standard-inputs">
-                <label htmlFor="new-bookable-object-name">Name: </label>
-                <input 
-                  type="text" 
-                  name="new-bookable-object-name" 
-                  value={newBookableObject.name} 
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewBookableObject({...newBookableObject, name: e.target.value})} />
+              <div className='standard-inputs'>
+                <label htmlFor='new-bookable-object-name'>Name: </label>
+                <input
+                  type='text'
+                  name='new-bookable-object-name'
+                  value={newBookableObject.name}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setNewBookableObject({ ...newBookableObject, name: e.target.value })
+                  }
+                />
               </div>
-              <div className="standard-inputs">
-                <label htmlFor="new-bookable-object-description">Description: </label>
-                <input 
-                  type="text" 
-                  name="new-bookable-object-description"
-                  value={newBookableObject.description} 
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewBookableObject({...newBookableObject, description: e.target.value})} />
+              <div className='standard-inputs'>
+                <label htmlFor='new-bookable-object-description'>Description: </label>
+                <input
+                  type='text'
+                  name='new-bookable-object-description'
+                  value={newBookableObject.description}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setNewBookableObject({ ...newBookableObject, description: e.target.value })
+                  }
+                />
               </div>
-              <button type="button" onClick={handleAddNewBookableObject}>Create</button>
-              <button type="button" onClick={resetNewBookableObject}>Cancel</button>
-              <br /><br />
+              <button type='button' onClick={handleAddNewBookableObject}>
+                Create
+              </button>
+              <button type='button' onClick={resetNewBookableObject}>
+                Cancel
+              </button>
+              <br />
+              <br />
             </div>
           ) : null}
           <h3>Unassigned places</h3>
-          {area && area.bookableObjects.filter((desk) => isNullOrEmpty(desk.floorPlanObjectId)).length < 1 && (
-            <p>No unassigned places</p>
-          )}
+          {area && area.bookableObjects.filter((desk) => isNullOrEmpty(desk.floorPlanObjectId)).length < 1 && <p>No unassigned places</p>}
           <ul>
             {area?.bookableObjects
               .filter((desk) => isNullOrEmpty(desk.floorPlanObjectId))
@@ -588,9 +594,7 @@ const FloorplanEditor = () => {
               ))}
           </ul>
           <h3>Assigned places</h3>
-          {area && area.bookableObjects.filter((desk) => !isNullOrEmpty(desk.floorPlanObjectId)).length < 1 && (
-            <p>No assigned places</p>
-          )}
+          {area && area.bookableObjects.filter((desk) => !isNullOrEmpty(desk.floorPlanObjectId)).length < 1 && <p>No assigned places</p>}
           <ul>
             {area?.bookableObjects
               .filter((desk) => !isNullOrEmpty(desk.floorPlanObjectId))
@@ -610,9 +614,8 @@ const FloorplanEditor = () => {
           </ul>
         </div>
       </div>
-      
+
       <br />
-      
     </div>
   );
 };
@@ -627,20 +630,14 @@ interface DeskListItemProps {
   selectedObject: SelectedObject | null;
 }
 
-const DeskListItem: React.FC<DeskListItemProps> = ({
-  desk,
-  handleDeskUpdate,
-  assignDesk,
-  unassignDesk,
-  selectedObject,
-}) => (
+const DeskListItem: React.FC<DeskListItemProps> = ({ desk, handleDeskUpdate, assignDesk, unassignDesk, selectedObject }) => (
   <section>
-    <div className="floorplan__desk-list-card">
+    <div className='floorplan__desk-list-card'>
       <label htmlFor={`object-name=${desk.id}`}>Name: </label>
       <input
         id={`object-name=${desk.id}`}
         data-testid={`object-name-${desk.id}`}
-        type="text"
+        type='text'
         value={desk.name}
         onChange={(e) => handleDeskUpdate(e.target.value, desk.id, "name")}
       />
@@ -653,13 +650,13 @@ const DeskListItem: React.FC<DeskListItemProps> = ({
         onChange={(e) => handleDeskUpdate(e.target.value, desk.id, "description")}
       />
       <button
-        type="button"
+        type='button'
         onClick={() => assignDesk(desk.id)}
         disabled={!selectedObject || selectedObject.hasAssignedDesk || !isNullOrEmpty(desk.floorPlanObjectId)}
       >
         Assign desk
       </button>
-      <button type="button" onClick={() => unassignDesk(desk.id)} disabled={isNullOrEmpty(desk.floorPlanObjectId)}>
+      <button type='button' onClick={() => unassignDesk(desk.id)} disabled={isNullOrEmpty(desk.floorPlanObjectId)}>
         Unassign desk
       </button>
     </div>

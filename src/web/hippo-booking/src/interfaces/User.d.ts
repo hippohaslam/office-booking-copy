@@ -1,7 +1,6 @@
 interface User {
-    firstName?: string;
-    lastName?: string;
-    email: string;
-    isAdmin: boolean;
-  }
-  
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  isAdmin: boolean;
+}

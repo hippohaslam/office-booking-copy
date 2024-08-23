@@ -5,48 +5,47 @@ import { sanitiseForId } from "../../helpers/StringHelpers";
 import TabItem, { TabItemProps } from "./TabItem";
 
 type TabProps = {
-    activeTabIndex: number;
-    children: ReactElement<TabItemProps> | ReactElement<TabItemProps>[];
-    onChange: (index: number) => void;
+  activeTabIndex: number;
+  children: ReactElement<TabItemProps> | ReactElement<TabItemProps>[];
+  onChange: (index: number) => void;
 };
 
-const TabList : React.FC<TabProps> = ({activeTabIndex, children, onChange}) => {
-    const [activeTab, setActiveTab] = useState(activeTabIndex);
+const TabList: React.FC<TabProps> = ({ activeTabIndex, children, onChange }) => {
+  const [activeTab, setActiveTab] = useState(activeTabIndex);
 
-    const handleTabClick = (index: number) => {
-        setActiveTab(index);
-        onChange(index);
-    };
+  const handleTabClick = (index: number) => {
+    setActiveTab(index);
+    onChange(index);
+  };
 
-    const tabs = React.Children.toArray(children).filter(
-        (child): child is ReactElement<TabItemProps> =>
-            React.isValidElement(child) && child.type === TabItem
-    );
+  const tabs = React.Children.toArray(children).filter(
+    (child): child is ReactElement<TabItemProps> => React.isValidElement(child) && child.type === TabItem,
+  );
 
-    return (
-    <div className="tabs">
-        <nav className="tab-list-wrapper" id="tab-nav" aria-label="tab">
-            <ul className="tab-list" role="tablist" aria-orientation="horizontal">
-            {tabs.map((tab, index) => (
-                <li key={`tab-${index}`}>
-                    <button
-                    key={`tab-btn-${index}`}
-                    role="tab"
-                    id={`tab-${sanitiseForId(tab.props.label)}`}
-                    aria-controls={`panel-${sanitiseForId(tab.props.label)}`}
-                    aria-selected={activeTab === index}
-                    onClick={() => handleTabClick(index)}
-                    className={`tab-btn ${
-                        activeTab === index && "tab-btn--active"
-                    }`}
-                    >{tab.props.label}</button>
-                </li>
-            ))}
-            </ul>
-        </nav>
-        {tabs[activeTab]}
+  return (
+    <div className='tabs'>
+      <nav className='tab-list-wrapper' id='tab-nav' aria-label='tab'>
+        <ul className='tab-list' role='tablist' aria-orientation='horizontal'>
+          {tabs.map((tab, index) => (
+            <li key={`tab-${index}`}>
+              <button
+                key={`tab-btn-${index}`}
+                role='tab'
+                id={`tab-${sanitiseForId(tab.props.label)}`}
+                aria-controls={`panel-${sanitiseForId(tab.props.label)}`}
+                aria-selected={activeTab === index}
+                onClick={() => handleTabClick(index)}
+                className={`tab-btn ${activeTab === index && "tab-btn--active"}`}
+              >
+                {tab.props.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      {tabs[activeTab]}
     </div>
-    )
+  );
 };
 
 export default TabList;

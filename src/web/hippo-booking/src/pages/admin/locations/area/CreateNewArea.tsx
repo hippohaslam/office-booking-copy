@@ -50,26 +50,22 @@ const CreateArea = () => {
 
   return (
     <div>
-      {hasErrors && (
-        <ErrorBanner isShown={hasErrors} title="Error" errorMessage={createArea.error.message} allowClose={true} />
-      )}
-      {hasSuccess && (
-        <SuccessBanner isShown={hasSuccess} title="Saved successfully" description="Go back to see it in locations" />
-      )}
-      <Link to="/admin">Back to locations</Link>
+      {hasErrors && <ErrorBanner isShown={hasErrors} title='Error' errorMessage={createArea.error.message} allowClose={true} />}
+      {hasSuccess && <SuccessBanner isShown={hasSuccess} title='Saved successfully' description='Go back to see it in locations' />}
+      <Link to='/admin'>Back to locations</Link>
       <h2>Create a new area {locationData?.name}</h2>
       <form onSubmit={handleSubmit}>
-        <div className="standard-inputs">
-          <label htmlFor="name">Name</label>
-          <input type="text" name="name" value={area.name} onChange={handleAreaUpdate} />
+        <div className='standard-inputs'>
+          <label htmlFor='name'>Name</label>
+          <input type='text' name='name' value={area.name} onChange={handleAreaUpdate} />
         </div>
-        <div className="standard-inputs">
-          <label htmlFor="description">Description</label>
-          <textarea name="description" value={area.description} onChange={handleAreaUpdate} />
+        <div className='standard-inputs'>
+          <label htmlFor='description'>Description</label>
+          <textarea name='description' value={area.description} onChange={handleAreaUpdate} />
         </div>
-        <div className="standard-inputs">
-          <label htmlFor="areaTypeId">Area Type</label>
-          <select name="areaTypeId" value={area.areaTypeId} onChange={handleAreaTypeUpdate}>
+        <div className='standard-inputs'>
+          <label htmlFor='areaTypeId'>Area Type</label>
+          <select name='areaTypeId' value={area.areaTypeId} onChange={handleAreaTypeUpdate}>
             {Object.keys(AreaTypeEnumLabels).map((key, _) => {
               return (
                 <option key={key} value={key}>
@@ -79,7 +75,7 @@ const CreateArea = () => {
             })}
           </select>
         </div>
-        <CtaButton text="Submit" type="submit" color="cta-green" />
+        <CtaButton text='Submit' type='submit' color='cta-green' />
       </form>
     </div>
   );

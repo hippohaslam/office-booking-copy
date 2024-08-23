@@ -13,22 +13,22 @@
 }
 
 .floorplan__desk-list {
-    width: 100%;
-    margin-left: 10px;
+  width: 100%;
+  margin-left: 10px;
 
-    ul {
-        list-style-type: none;
-        padding: 0;
+  ul {
+    list-style-type: none;
+    padding: 0;
 
-        li {
-          list-style: none;
-        }
+    li {
+      list-style: none;
     }
+  }
 
-    .floorplan__desk-list-card {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        max-width: 300px;
-    }
+  .floorplan__desk-list-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    max-width: 300px;
+  }
 }

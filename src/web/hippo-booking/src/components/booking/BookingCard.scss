@@ -1,50 +1,49 @@
 @import "../../styles/variables.scss";
 
-.booking-card{
-    padding: 20px;
-    margin: 10px 0;
-    color: $hippo-brand-navy;
-    border-radius: 26px;
-    min-width: 400px;
-    max-width: 700px;
+.booking-card {
+  padding: 20px;
+  margin: 10px 0;
+  color: $hippo-brand-navy;
+  border-radius: 26px;
+  min-width: 400px;
+  max-width: 700px;
 
-    ul {
-        padding-left: 0;
-    }
-    ul li{
-        list-style: none;
-    }
+  ul {
+    padding-left: 0;
+  }
+  ul li {
+    list-style: none;
+  }
 
-    .bookable-object-item{
-        font-size: 2rem;
-        font-weight: bold;
-    }
+  .bookable-object-item {
+    font-size: 2rem;
+    font-weight: bold;
+  }
 }
 
 .booking-card-hippo-brand-grey {
-    background-color: $hippo-brand-grey;
+  background-color: $hippo-brand-grey;
 }
 
 .booking-card-hippo-brand-light-grey {
-    background-color: $hippo-brand-light-grey;
+  background-color: $hippo-brand-light-grey;
 }
 
 .booking-card-hippo-brand-bluey-grey {
-    background-color: $hippo-brand-bluey-grey;
+  background-color: $hippo-brand-bluey-grey;
 }
 
-@media only screen and (max-width: 768px){
-    .booking-card{
-        min-width: 0;
-        width: 100%;
-    }
+@media only screen and (max-width: 768px) {
+  .booking-card {
+    min-width: 0;
+    width: 100%;
+  }
 }
 
-@media only screen and (max-width: 500px){
-    
-    .booking-item-container{
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        align-items: center;
-    }
+@media only screen and (max-width: 500px) {
+  .booking-item-container {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+  }
 }

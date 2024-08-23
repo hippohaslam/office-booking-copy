@@ -1,0 +1,4 @@
+/dist
+/certs
+.yarn
+staticwebapp.config.json

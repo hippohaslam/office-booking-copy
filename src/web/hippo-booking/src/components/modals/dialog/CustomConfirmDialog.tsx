@@ -1,4 +1,4 @@
-import './CustomConfirmDialog.scss';
+import "./CustomConfirmDialog.scss";
 
 type CustomConfirmDialogProps = {
   isOpen: boolean;
@@ -11,7 +11,7 @@ type CustomConfirmDialogProps = {
 const CustomConfirmDialog = ({ isOpen, onConfirm, confirmButtonLabel, onCancel, cancelButtonLabel, message }: CustomConfirmDialogProps) => {
   if (!isOpen) return null;
   return (
-    <div className="modal-dialog">
+    <div className='modal-dialog'>
       <p>{message}</p>
       <button onClick={onConfirm}>{confirmButtonLabel}</button>
       <button onClick={onCancel}>{cancelButtonLabel}</button>

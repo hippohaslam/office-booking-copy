@@ -1,11 +1,10 @@
-
 /**
  * Check if a string is null, undefined or empty.
  * @param value The string to check.
  * @returns True if the string is null, undefined or empty; otherwise, false.
  */
-function isNullOrEmpty(value: string | null | undefined): value is null | undefined | '' {
-  return value === null || value === undefined || value.trim() === '';
+function isNullOrEmpty(value: string | null | undefined): value is null | undefined | "" {
+  return value === null || value === undefined || value.trim() === "";
 }
 
 /**
@@ -17,11 +16,7 @@ function isNullOrEmpty(value: string | null | undefined): value is null | undefi
  * @returns Formatted Id string
  */
 const sanitiseForId = (label: string) => {
-  return label
-    .toLowerCase()
-    .replace(/[^\w\s]|(\s+)/g, (_match: string, group1: string) =>
-      group1 ? "-" : ""
-    );
-}
+  return label.toLowerCase().replace(/[^\w\s]|(\s+)/g, (_match: string, group1: string) => (group1 ? "-" : ""));
+};
 
 export { isNullOrEmpty, sanitiseForId };
