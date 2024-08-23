@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { postNewLocationAsync } from "../../../services/Apis";
-import { ErrorBanner, SuccessBanner } from "../../../components";
+import {postNewLocationAsync} from "../../../services/Apis";
+import { CtaButton, ErrorBanner, SuccessBanner } from "../../../components";
 import { Link } from "react-router-dom";
 import { NewLocation } from "../../../interfaces/Location";
 
@@ -13,7 +13,7 @@ const CreateLocation = () => {
     const [location, setLocation] = useState<NewLocation>(initialLocation);
 
     const createLocation = useMutation({
-        mutationFn: async () => postNewLocationAsync(location),
+        mutationFn: () => postNewLocationAsync(location),
         onSuccess: () =>  setLocation({name: '', description: ''}),
     });
 
@@ -23,7 +23,7 @@ const CreateLocation = () => {
         createLocation.mutate();
     }
 
-    const handleLocationUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleLocationUpdate = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
         setLocation({
             ...location,
             [e.target.name]: e.target.value,
@@ -40,24 +40,16 @@ const CreateLocation = () => {
             <Link to="/admin">Back to locations</Link>
             <h2>Create a new location</h2>
             <form onSubmit={handleSubmit}>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td><label htmlFor="name">Name</label></td>
-                            <td>
-                                <input type="text" name="name" value={location.name} onChange={handleLocationUpdate} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label htmlFor="description">Description</label></td>
-                            <td>
-                                <input type="text" name="description" value={location.description} onChange={handleLocationUpdate} />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div className="standard-inputs">
+                    <label htmlFor="location-name" title="The name of the location">Name</label>
+                    <input type="text" name="name" value={location.name} onChange={handleLocationUpdate} />
+                </div>
+                <div className="standard-inputs">
+                    <label htmlFor="description" title="The description of the location">Description</label>
+                    <textarea name="description" value={location.description} onChange={handleLocationUpdate} />
+                </div>
                 <br />
-                <button>Submit</button>
+                <CtaButton text="Submit" type="submit" color="cta-green" />
             </form>
         </div>
     )

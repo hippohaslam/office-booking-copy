@@ -8,7 +8,7 @@ const LocationDetails = () => {
 
     const { isFetching, error, data } = useQuery({
         queryKey: ["location"],
-        queryFn: () => getLocationAsync(locationId!)
+        queryFn: () => getLocationAsync()(locationId!)
         });
 
         if (error) {

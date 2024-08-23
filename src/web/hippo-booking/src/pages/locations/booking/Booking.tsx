@@ -40,14 +40,14 @@ const DeskBooking = () => {
 
   const { data: areaData } = useQuery({
     queryKey: ["area", areaId],
-    queryFn: () => getLocationAreaAsync(locationId as string, areaId as string),
+    queryFn: () => getLocationAreaAsync()(locationId as string, areaId as string),
     enabled: !!locationId && !!areaId,
     //staleTime: 1000 * 60 * 60 * 12, // 12 hours.  TODO: Set for production use, extend time to a day? Makes sense to cache this data for a while.
   });
 
   const { data: locationData } = useQuery({
     queryKey: ["location", locationId],
-    queryFn: () => getLocationAsync(locationId as string),
+    queryFn: () => getLocationAsync()(locationId as string),
     enabled: !!locationId,
     //staleTime: 1000 * 60 * 60 * 12, // 12 hours.  TODO: Set for production use, extend time to a day? Makes sense to cache this data for a while.
   });
@@ -260,8 +260,7 @@ const DeskBooking = () => {
         },
         onError: (error) => {
           handleCloseModal();
-          console.log(error);
-            setError(error as AxiosError);
+          setError(error as AxiosError);
         }
       });
     }

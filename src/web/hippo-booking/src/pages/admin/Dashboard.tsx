@@ -1,28 +1,27 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { ErrorBanner } from "../../components";
-import { getLocationAreasAsync, getLocationsAsync } from "../../services/Apis";
+import {getLocationAreasAsync, getLocationsAsync} from "../../services/Apis";
 import { Link, useNavigate } from "react-router-dom";
 import { CtaButton } from "../../components/buttons/Buttons";
 import './Dashboard.scss'
 
 const Admin = () => {
   const navigate = useNavigate();
-
   const {
     isFetching,
     error,
     data: locationData,
   } = useQuery({
-    queryKey: ["locations"],
-    queryFn: getLocationsAsync,
+    queryKey: ["admin-locations"],
+    queryFn: () => getLocationsAsync(true)()
   });
 
   const locationDetailsQueries = useQueries({
     queries:
       locationData?.map((location) => ({
         queryKey: ["locationDetails", location.id],
-        queryFn: () => getLocationAreasAsync(location.id),
-        enabled: !!locationData,
+        queryFn: () => getLocationAreasAsync(true)(location.id),
+        
       })) || [],
   });
 

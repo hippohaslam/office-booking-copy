@@ -10,7 +10,7 @@ import {
   postBookableObjectAsync,
 } from "../../../../../services/Apis";
 import { useWindowSize } from "../../../../../hooks/WindowSizeHook";
-import { CustomCircle, CustomFabricObject, CustomRect } from "../../../../../shared/fabric/CustomObjects";
+import { CustomCircle, CustomFabricObject, CustomGroup, CustomObject, CustomRect } from "../../../../../shared/fabric/CustomObjects";
 import { MultiErrorBanner, SuccessBanner } from "../../../../../components";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../../../shared/fabric/Canvas";
 import { AccordionItem } from "../../../../../components/accordion/Accordion";
@@ -40,7 +40,6 @@ const FloorplanEditor = () => {
   const [errors, setErrors] = useState<ErrorObjects[]>([]);
   const [area, setArea] = useState<Area>();
   const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
-  const [editMode, setEditMode] = useState<boolean>(true);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
   const [textState, setTextState] = useState({ hidden: true, text: "" });
   const [newBookableObject, setNewBookableObject] = useState<BookableObject>({name: '', description: '', id: 0});
@@ -61,7 +60,7 @@ const FloorplanEditor = () => {
 
   const {isPending,data: locationData,isError,error} = useQuery({
     queryKey: ["area-edit", locationId, areaId],
-    queryFn: () => getLocationAreaAsync(locationId as string, areaId as string),
+    queryFn: () => getLocationAreaAsync(true)(locationId as string, areaId as string),
     enabled: !!locationId,
   });
 
@@ -97,7 +96,7 @@ const FloorplanEditor = () => {
   // Bit of a hack until I can think of how a better way.
   // We need to split the bookable objects out of the location data ideally. Not a showstopper though.
   const getBookableObjects = useMutation({
-    mutationFn: () => getLocationAreaAsync(locationId as string, areaId as string),
+    mutationFn: () => getLocationAreaAsync(true)(locationId as string, areaId as string),
     onSuccess: (data) => {
       if (data) {
         const bookableObjects = data.bookableObjects ?? [];
@@ -110,12 +109,18 @@ const FloorplanEditor = () => {
     },
   })
 
+  /** Resets to default values and closes the input box */
+  const resetNewBookableObject = () => {
+    setShowCreateNewBookableObject(false);
+    setNewBookableObject({name: '', description: '', id: 0});
+  }
+
+
   const createNewBookableOBjectMutation = useMutation({
     mutationFn: (bookableObject: BookableObject) => postBookableObjectAsync(Number.parseInt(locationId!), Number.parseInt(areaId!), bookableObject),
     onSuccess: () => {
-      setShowCreateNewBookableObject(false);
       handleRemoveError(errorKeys.saveBookableObjects);
-      setNewBookableObject({name: '', description: '', id: 0});
+      resetNewBookableObject();
       getBookableObjects.mutate();
     },
     onError: () => handleAddError(errorKeys.saveBookableObjects, "Error saving bookable objects"),
@@ -152,7 +157,6 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current.on("mouse:down", (e) => {
         const selectedFabricObject = e.target as CustomFabricObject;
         if (selectedFabricObject) {
-          console.log(selectedFabricObject.type);
           if (selectedFabricObject.type === "text") {
             setTextState({ hidden: false, text: (selectedFabricObject as fabric.Text).text ?? "" });
           } else {
@@ -233,17 +237,6 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current.add(square);
       fabricCanvasRef.current.renderAll();
     }
-  };
-
-  const toggleEditMode = () => {
-    if (fabricCanvasRef.current) {
-      fabricCanvasRef.current.selection = !editMode;
-      fabricCanvasRef.current.forEachObject(function (o) {
-        o.selectable = !editMode;
-      });
-    }
-
-    setEditMode(!editMode);
   };
 
   const toggleFreeDraw = () => {
@@ -461,6 +454,28 @@ const FloorplanEditor = () => {
     }
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (fabricCanvasRef.current && e.target.files) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const data = event.target?.result;
+        if (data) {
+          fabric.loadSVGFromString(data as string, (objects) => {
+            const group = new fabric.Group(objects as CustomObject[]) as CustomGroup;
+            group.set("id", generateUniqueId());
+            fabricCanvasRef.current?.add(group);
+            fabricCanvasRef.current?.renderAll();
+          });
+        }
+      };
+      reader.readAsText(file);
+      // clear the file input when finished
+      e.target.value = "";
+
+    }
+  }
+
   const isLoading = isPending || areaMutation.isPending || bookableObjectsMutation.isPending;
   const hasSuccess = areaMutation.isSuccess || bookableObjectsMutation.isSuccess;
 
@@ -482,26 +497,23 @@ const FloorplanEditor = () => {
       <br />
       <div className="floorplan__container">
         <div className="floorplan__editor">
-          <button type="button" onClick={toggleEditMode}>
-            Edit mode: {editMode.toString()}
-          </button>
-          <button type="button" onClick={addCircle} disabled={!editMode}>
+          <button type="button" onClick={addCircle}>
             Add circle
           </button>
-          <button type="button" onClick={addSquare} disabled={!editMode}>
+          <button type="button" onClick={addSquare}>
             Add square
           </button>
-          <button type="button" onClick={handleLineDraw} disabled={!editMode}>
+          <button type="button" onClick={handleLineDraw}>
             Add line
           </button>
-          <button type="button" onClick={toggleFreeDraw} disabled={!editMode}>
+          <button type="button" onClick={toggleFreeDraw}>
             Free draw mode: {freeDrawMode.toString()}
           </button>
           <button type="button" onClick={handleAddText}>
             Add text
           </button>
-
-          <button type="button" onClick={removeObject} disabled={!editMode}>
+          
+          <button type="button" onClick={removeObject}>
             Remove object
           </button>
           <button type="button" onClick={handleCopy}>
@@ -510,6 +522,10 @@ const FloorplanEditor = () => {
           <br />
           <button type="button" onClick={() => handleSendToPosition('back')}>Send to back</button>
           <button type="button" onClick={() => handleSendToPosition('front')}>Send to front</button>
+          <div>
+            <label htmlFor="svg-upload">Add Svg: </label>
+            <input type="file" name="svg-upload" accept="image/svg+xml" onChange={handleFileUpload} />
+          </div>
 
           <div className="canvas__container">
             <canvas width={800} height={600} ref={canvasElRef} />
@@ -529,7 +545,7 @@ const FloorplanEditor = () => {
           </button>
           {showCreateNewBookableObject ? (
             <div>
-              <div>
+              <div className="standard-inputs">
                 <label htmlFor="new-bookable-object-name">Name: </label>
                 <input 
                   type="text" 
@@ -537,7 +553,7 @@ const FloorplanEditor = () => {
                   value={newBookableObject.name} 
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewBookableObject({...newBookableObject, name: e.target.value})} />
               </div>
-              <div>
+              <div className="standard-inputs">
                 <label htmlFor="new-bookable-object-description">Description: </label>
                 <input 
                   type="text" 
@@ -546,6 +562,8 @@ const FloorplanEditor = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewBookableObject({...newBookableObject, description: e.target.value})} />
               </div>
               <button type="button" onClick={handleAddNewBookableObject}>Create</button>
+              <button type="button" onClick={resetNewBookableObject}>Cancel</button>
+              <br /><br />
             </div>
           ) : null}
           <h3>Unassigned places</h3>

@@ -11,11 +11,11 @@ export const bookingAreasLoader = (queryClient: QueryClient) => async (params: B
   const locationId = Number.parseInt(params.locationId);
   const areaData = await queryClient.fetchQuery({
     queryKey: ["booking-areas", locationId],
-    queryFn: () => getLocationAreasAsync(locationId),
+    queryFn: () => getLocationAreasAsync()(locationId),
   });
   const locationData = await queryClient.fetchQuery({
     queryKey: ["location", locationId],
-    queryFn: () => getLocationAsync(params.locationId),
+    queryFn: () => getLocationAsync()(params.locationId),
   })
   return { areaData, locationData };
 };

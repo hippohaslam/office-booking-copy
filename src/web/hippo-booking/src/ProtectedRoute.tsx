@@ -17,4 +17,18 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   return children;
 };
 
-export default ProtectedRoute;
+const AdminProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const userContext = useUser();
+
+  if(!userContext.user) {
+    return <Navigate to={`/signin?returnUrl=${encodeURI(location.pathname)}`} />;
+  }
+
+  if(!userContext.user.isAdmin) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+}
+
+export {ProtectedRoute, AdminProtectedRoute};

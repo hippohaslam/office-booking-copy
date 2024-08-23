@@ -141,6 +141,15 @@ ul {
   }
 }
 
+// Buttons
+// Basic until we come up with a better style that's not a CTA
+button {
+  padding: 8px;
+  border-color: $hippo-brand-grey;
+  background-color: $hippo-brand-light-grey;
+  cursor: pointer;
+}
+
 /*  */
 
 /* || links */
@@ -417,5 +426,27 @@ hr {
   a.cta {
     width: 100%;
     justify-content: space-between;
+  }
+}
+
+
+// Inputs
+input {
+  min-width: 150px;
+}
+select {
+  min-width: 150px;
+}
+textarea {
+  min-width: 150px;
+}
+
+.standard-inputs {
+  display: block;
+  margin-top: 1em;
+
+  > input, textarea, select {
+    display: block;
+    margin-bottom: 1em;
   }
 }

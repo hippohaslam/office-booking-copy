@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { BookingAreas, Booking, Locations } from "../imports";
 import { BookingAreaParams, bookingAreasLoader } from "../loaders/BookingAreaLoader";
 import ErrorPage from "../pages/error/Error";
-import ProtectedRoute from "../ProtectedRoute";
+import {ProtectedRoute} from "../ProtectedRoute";
 import { Params } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
 import Bookings from "../pages/bookings/Bookings";

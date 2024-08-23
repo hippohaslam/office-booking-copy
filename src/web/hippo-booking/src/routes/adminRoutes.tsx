@@ -1,15 +1,15 @@
 import { Suspense } from "react";
 import { Dashboard, CreateLocation, CreateArea, SvgAreaEditor, FloorplanEditor } from "../imports";
-import ProtectedRoute from "../ProtectedRoute";
+import {AdminProtectedRoute} from "../ProtectedRoute";
 
 const adminRoutes = [
   {
     path: "/admin",
     element: (
       <Suspense fallback={<div>Loading...</div>}>
-        <ProtectedRoute>
+        <AdminProtectedRoute>
           <Dashboard />
-        </ProtectedRoute>
+        </AdminProtectedRoute>
       </Suspense>
     ),
   },
@@ -17,9 +17,9 @@ const adminRoutes = [
     path: "/admin/locations/new",
     element: (
       <Suspense fallback={<div>Loading...</div>}>
-        <ProtectedRoute>
+        <AdminProtectedRoute>
           <CreateLocation />
-        </ProtectedRoute>
+        </AdminProtectedRoute>
       </Suspense>
     ),
   },
@@ -27,9 +27,9 @@ const adminRoutes = [
     path: "/admin/locations/:locationId/areas/new",
     element: (
       <Suspense fallback={<div>Loading...</div>}>
-        <ProtectedRoute>
+        <AdminProtectedRoute>
           <CreateArea />
-        </ProtectedRoute>
+        </AdminProtectedRoute>
       </Suspense>
     ),
   },
@@ -37,9 +37,9 @@ const adminRoutes = [
     path: "/admin/locations/:locationId/area/:areaId/svg-editor",
     element: (
       <Suspense fallback={<div>Loading editor...</div>}>
-        <ProtectedRoute>
+        <AdminProtectedRoute>
           <SvgAreaEditor />
-        </ProtectedRoute>
+        </AdminProtectedRoute>
       </Suspense>
     ),
   },
@@ -47,9 +47,9 @@ const adminRoutes = [
     path: "/admin/locations/:locationId/area/:areaId",
     element: (
       <Suspense fallback={<div>Loading editor...</div>}>
-        <ProtectedRoute>
+        <AdminProtectedRoute>
           <FloorplanEditor />
-        </ProtectedRoute>
+        </AdminProtectedRoute>
       </Suspense>
     ),
   },

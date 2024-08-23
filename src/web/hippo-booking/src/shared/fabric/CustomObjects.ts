@@ -24,6 +24,16 @@ class CustomRect extends fabric.Rect {
     }
 }
 
+// Extend the fabric.Svg class to include an id property
+class CustomObject extends fabric.Object {
+    id: string;
+
+    constructor(options: fabric.Object & { id: string }) {
+        super(options);
+        this.id = options.id;
+    }
+}
+
 // Extend the fabric.Circle class to include an id property
 class CustomCircle extends fabric.Circle {
     id: string;
@@ -34,5 +44,14 @@ class CustomCircle extends fabric.Circle {
     }
 }
 
-export { CustomRect, CustomCircle };
+class CustomGroup extends fabric.Group {
+    id: string;
+
+    constructor(options: fabric.IGroupOptions & { id: string }) {
+        super([], options);
+        this.id = options.id;
+    }
+}
+
+export { CustomRect, CustomCircle, CustomObject, CustomGroup };
 export type { CustomFabricObject, ExtendedCanvas };

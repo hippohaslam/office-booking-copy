@@ -18,7 +18,8 @@ export default function SignIn() {
         userContext.setUser({
             firstName: res.data.firstName,
             lastName: res.data.lastName,
-            email: res.data.email
+            email: res.data.email,
+            isAdmin: res.data.isAdmin || false
         })
     }, [userContext]);
 
@@ -34,7 +35,8 @@ export default function SignIn() {
                 userContext.setUser({
                     firstName: res.data.firstName,
                     lastName: res.data.lastName,
-                    email: res.data.email
+                    email: res.data.email,
+                    isAdmin: res.data.isAdmin || false
                 })
             } catch (err) {
                 console.log('google error', err);
@@ -47,7 +49,6 @@ export default function SignIn() {
     };
 
     useEffect(() => {
-        console.log('Checking logged in user')
         callSessionApi()
             .then(() => {
                 // This is good, navigate user back to where they were going.

@@ -10,6 +10,7 @@ import WarningBanner from './banners/WarningBanner';
 import InfoTile from './tile/info-tile/InfoTile';
 import InfoTileList from './tile/info-tile/InfoTileList';
 import { ActionTile, ActionTileList } from './tile/action-tile/ActionTile';
+import { CtaButton } from './buttons/Buttons';
 
 
 export { 
@@ -26,5 +27,6 @@ export {
     InfoTile,
     InfoTileList,
     ActionTile,
-    ActionTileList
+    ActionTileList,
+    CtaButton
 }

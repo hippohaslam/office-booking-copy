@@ -8,10 +8,9 @@ import { UserProvider } from "../../contexts/UserContext";
 const links = [
   { text: "Make a new booking", link: "/locations" },
   { text: "My bookings", link: "/bookings" },
-  { text: "Admin", link: "/admin" },
 ];
 
-test.each(links)("has link to $text", async ({ text, link }) => {
+test.each(links)("has common link to $text", async ({ text, link }) => {
   render(
     <UserProvider>
       <BrowserRouter>
@@ -24,9 +23,44 @@ test.each(links)("has link to $text", async ({ text, link }) => {
   expect(linkElement).toHaveAttribute("href", link);
 });
 
+test("Admin link is not visibile for average joe user", async () => {
+  const user: User = {
+    email: "",
+    isAdmin: false,
+  };
+  render(
+    <UserProvider initialUser={user}>
+      <BrowserRouter>
+        <Nav />
+      </BrowserRouter>
+    </UserProvider>
+  );
+
+  const adminLink = screen.queryByRole("link", { name: "Admin" });
+  expect(adminLink).not.toBeInTheDocument();
+});
+
+test("Admin link is visibile for admin user", async () => {
+  const user: User = {
+    email: "",
+    isAdmin: true,
+  };
+  render(
+    <UserProvider initialUser={user}>
+      <BrowserRouter>
+        <Nav />
+      </BrowserRouter>
+    </UserProvider>
+  );
+
+  const adminLink = screen.getByRole("link", { name: "Admin" });
+  expect(adminLink).toBeInTheDocument();
+});
+
 test("Navigation shows sign out if user is signed in", async () => {
   const user: User = {
-    email: ""
+    email: "",
+    isAdmin: false,
   };
   render(
     <UserProvider initialUser={user}>

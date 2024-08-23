@@ -56,9 +56,12 @@ const Nav = () => {
                            <li>
                                <Link to="/bookings" onClick={closeMenuOnMobile}>My bookings</Link>
                            </li>
-                           <li>
-                               <Link to="/admin" onClick={closeMenuOnMobile}>Admin</Link>
-                           </li>
+                           {userContext.user?.isAdmin ? (
+                                <li>
+                                <Link to="/admin" onClick={closeMenuOnMobile}>Admin</Link>
+                                </li>
+                           ) : null}
+                           
                            <li>
                                {userContext.user
                                    ?

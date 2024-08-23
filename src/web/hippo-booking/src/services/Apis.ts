@@ -8,45 +8,64 @@ const axiosInstance = axios.create({
   withCredentials: true
 });
 
-const getLocationAsync = async (locationId: string): Promise<BookingLocation> => {
-  const response = await axiosInstance.get(`/location/${locationId}`);
-  return response.data;
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      // Intercepting 404 so we can redirect to a 404 page
+      if (error.response.status === 404) {
+        window.location.replace('/not-found');
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+function prependAdminToUrl(url: string, admin: boolean) {
+  return admin ? `/admin${url}` : url;
 }
 
-const getLocationAreaAsync = async (locationId: string, areaId: string): Promise<Area> => {
-  const response = await axiosInstance.get(`/location/${locationId}/area/${areaId}`);
+const getLocationAsync = (admin: boolean = false) => async (locationId: string): Promise<BookingLocation> => {
+  const url = prependAdminToUrl(`/location/${locationId}`, admin);
+  const response = await axiosInstance.get(url);
   return response.data;
-}
+};
 
-const getLocationsAsync = async (): Promise<BookingLocation[]> => {
-  const response = await axiosInstance.get(`/location`);
+const getLocationsAsync = (admin: boolean = false) => async (): Promise<BookingLocation[]> => {
+  const response = await axiosInstance.get(prependAdminToUrl(`/location`, admin));
   return response.data;
 }
 
 const postNewLocationAsync = async (location: NewLocation) => {
-  return await axiosInstance.post(`/location`, location);
+  return await axiosInstance.post(prependAdminToUrl(`/location`, true), location);
 }
 
 const putObjectsAsync = async (locationId: string, areaId: string, bookableObjects: BookableObject[]) => {
     return await Promise.all(
         bookableObjects.map((bookableObject) =>
-            axiosInstance.put(`/location/${locationId}/area/${areaId}/bookable-object/${bookableObject.id}`, bookableObject)
+            axiosInstance.put(prependAdminToUrl(`/location/${locationId}/area/${areaId}/bookable-object/${bookableObject.id}`, true), bookableObject)
         )
       );
 }
 
 // AREAS
+
+const getLocationAreaAsync = (admin: boolean = false) => async (locationId: string, areaId: string): Promise<Area> => {
+  const response = await axiosInstance.get(prependAdminToUrl(`/location/${locationId}/area/${areaId}`, admin));
+  return response.data;
+}
+
 const postLocationAreaAsync = async (locationId: number, area: NewArea) => {
-  return await axiosInstance.post(`/location/${locationId}/area`, area);
+  return await axiosInstance.post(prependAdminToUrl(`/location/${locationId}/area`, true), area);
 }
 
 const putAreaAsync = async (locationId: string, area: Area, areaId: string) => {
-  return await axiosInstance.put(`/location/${locationId}/area/${areaId}`, area);
+  return await axiosInstance.put(prependAdminToUrl(`/location/${locationId}/area/${areaId}`, true), area);
 }
 
 /** Combines the locationId with the area data */ 
-const getLocationAreasAsync = async (locationId: number): Promise<Area[]> => {
-  const response = await axiosInstance.get(`/location/${locationId}/area`);
+const getLocationAreasAsync = (admin: boolean = false) => async (locationId: number): Promise<Area[]> => {
+  const response = await axiosInstance.get(prependAdminToUrl(`/location/${locationId}/area`, admin));
   response.data.forEach((area: Area) => {
     area.locationId = locationId;
   });
@@ -83,7 +102,7 @@ const deleteBookingAsync = async(bookingId : number) => {
 // BookableObjects
 /** Request to create a new bookable object  */
 const postBookableObjectAsync = async (locationId: number, areaId: number, bookableObject: BookableObject) => {
-  return await axiosInstance.post(`/location/${locationId}/area/${areaId}/bookable-object`, bookableObject);
+  return await axiosInstance.post(prependAdminToUrl(`/location/${locationId}/area/${areaId}/bookable-object`, true), bookableObject);
 }
 
 // AUTH

@@ -7,7 +7,7 @@ import { ActionTile, ActionTileList, ErrorBanner } from '../../components';
 const Locations = () => {
   const { isFetching, error, data } = useQuery({
     queryKey: ["locations"],
-    queryFn: getLocationsAsync,
+    queryFn: () => getLocationsAsync()(),
     //staleTime: 1000 * 60 * 60, // 1 hour. TODO: Set for production use, extend time to a day?
   });
 
@@ -28,11 +28,13 @@ const Locations = () => {
   }
 
   return (
-      <div>
-        <span>Make a new booking</span>
+      <>
         <h1>Choose a location</h1>
-        <ActionTileList listItems={listItems} />
-      </div>
+        {data?.length === 0 
+          ? <p>Uh oh! no locations found...</p> 
+          : <ActionTileList listItems={listItems} />}
+        
+      </>
   );
 };
 

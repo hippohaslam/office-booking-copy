@@ -10,6 +10,11 @@ import { AxiosError } from "axios";
 
 const Bookings = () => {
     const queryClient = useQueryClient();
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+    const [cancelledBooking, setCancelledBooking] = useState<Booking | null>(null);
+    const [showSuccessBanner, setSuccessBannerVisibility] = useState(false);
+    const [deleteError, setDeleteError] = useState<AxiosError | null>(null);
 
     const { isFetching, data, isError } = useQuery({
         queryKey: ["bookings"],
@@ -31,13 +36,7 @@ const Bookings = () => {
     };
 
     const groupedBookings = groupBookingsByDate(data);
-
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-    const [cancelledBooking, setCancelledBooking] = useState<Booking | null>(null);
-    const [showSuccessBanner, setSuccessBannerVisibility] = useState(false);
-    const [deleteError, setDeleteError] = useState<AxiosError | null>(null);
-
+    
     const deleteBooking = useMutation({
         mutationFn: async (booking : Booking) => {
             if (booking) {

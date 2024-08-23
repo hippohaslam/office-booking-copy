@@ -11,6 +11,8 @@ function useAxiosInterceptors() {
         error => {
           if (error.response && error.response.status === 401) {
             navigate('/signin');
+          } else if (error.response && error.response.status === 404) {
+            navigate('/not-found');
           }
           return Promise.reject(error);
         }
