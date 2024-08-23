@@ -8,7 +8,7 @@ import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
 import { useWindowSize } from "../../../hooks/WindowSizeHook";
 import "react-datepicker/dist/react-datepicker.css";
-import './Booking.scss';
+import "./Booking.scss";
 import CustomDatePicker from "../../../components/date-picker/DatePicker";
 import { ConfirmModal, ErrorBanner, TabItem, TabList } from "../../../components";
 import BookingCardStacked from "../../../components/booking/BookingCardStacked";
@@ -31,7 +31,7 @@ const DeskBooking = () => {
   const [selectedObject, setSelectedObject] = useState<BookableObject | null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<number>(loadActiveTab() ?? 0);
-  const [showCanvas, setShowCanvas] = useState<boolean>(activeTab === 0)
+  const [showCanvas, setShowCanvas] = useState<boolean>(activeTab === 0);
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const { windowWidth, windowHeight } = useWindowSize();
@@ -63,36 +63,30 @@ const DeskBooking = () => {
     onSuccess: (data) => {
       refetch();
       return data;
-    }
+    },
   });
 
   useEffect(() => {
-    if(selectedDate){
+    if (selectedDate) {
       refetch();
     }
-    
   }, [refetch, selectedDate]);
 
   const handleObjectColours = useCallback(
     (objectId: string | null) => {
       const setColours = (object: CustomFabricObject) => {
-
         const getColorBasedOnBookingStatus = () => {
           // Find if the object is bookable
-          const bookableObject = areaData?.bookableObjects.find(
-            (obj) => obj.floorPlanObjectId === object.id
-          );
-          const isBookable = bookingsData?.bookableObjects.find(
-            (obj) => obj.id === bookableObject?.id
-          );
-        
+          const bookableObject = areaData?.bookableObjects.find((obj) => obj.floorPlanObjectId === object.id);
+          const isBookable = bookingsData?.bookableObjects.find((obj) => obj.id === bookableObject?.id);
+
           // Determine the color based on booking status
           if (!isBookable) {
-            return 'white'; // Not a bookable object
+            return "white"; // Not a bookable object
           } else if (isBookable.existingBooking) {
-            return 'grey'; // Booked
+            return "grey"; // Booked
           } else {
-            return 'green'; // Not booked
+            return "green"; // Not booked
           }
         };
 
@@ -115,14 +109,13 @@ const DeskBooking = () => {
         fabricCanvasRef.current?.renderAll();
       }
     },
-    [bookingsData?.bookableObjects, areaData?.bookableObjects]
+    [bookingsData?.bookableObjects, areaData?.bookableObjects],
   );
 
   const adjustCanvasSize = useCallback(() => {
     if (fabricCanvasRef.current) {
       if (windowWidth < 1513 && showCanvas) {
         fabricCanvasRef.current.setWidth(windowWidth - 60);
-        
       } else if (showCanvas) {
         fabricCanvasRef.current.setWidth(1452); //(Max width - margins)
       }
@@ -135,8 +128,7 @@ const DeskBooking = () => {
       }
       fabricCanvasRef.current.renderAll();
     }
-  }
-  , [windowWidth, showCanvas]);
+  }, [windowWidth, showCanvas]);
 
   const handleObjectSelected = useCallback(
     (floorplanObjectId: string | null) => {
@@ -151,7 +143,7 @@ const DeskBooking = () => {
         setModalVisible(true);
       }
     },
-    [handleObjectColours, areaData?.bookableObjects]
+    [handleObjectColours, areaData?.bookableObjects],
   );
 
   // All the canvas logic and state rendering
@@ -182,7 +174,7 @@ const DeskBooking = () => {
           }
 
           if (isCustomFabricObject(object)) {
-            if(object.type === "text"){
+            if (object.type === "text") {
               object.selectable = false;
               object.evented = false;
             }
@@ -198,9 +190,7 @@ const DeskBooking = () => {
           // check if data contains an id matching the selected object
 
           if (!isNullOrEmpty(selectedFabricObject.id)) {
-            const found = areaData?.bookableObjects.find(
-              (obj) => obj.floorPlanObjectId === selectedFabricObject.id
-            );
+            const found = areaData?.bookableObjects.find((obj) => obj.floorPlanObjectId === selectedFabricObject.id);
             if (found !== undefined) {
               handleObjectSelected(selectedFabricObject.id);
               if (isCustomFabricObject(selectedFabricObject)) {
@@ -220,7 +210,6 @@ const DeskBooking = () => {
 
       initializeCanvasZoom(fabricCanvas);
       initializeCanvasDragging(fabricCanvas);
-      
     }
 
     return () => {
@@ -241,28 +230,30 @@ const DeskBooking = () => {
     };
   }, [activeTab, initializeCanvas]);
 
-  const handleTabChange = (newIndex : number) => {
+  const handleTabChange = (newIndex: number) => {
     setActiveTab(newIndex);
     newIndex === 0 ? setShowCanvas(true) : setShowCanvas(false);
-    localStorage.setItem("activeBookingTab", String(newIndex))
-  }
+    localStorage.setItem("activeBookingTab", String(newIndex));
+  };
 
   const handleConfirmBooking = () => {
     if (selectedObject) {
-      handleBooking.mutate({
-        date: selectedDate.toISOString().split('T')[0],
-        bookableObjectId: selectedObject.id,
-        areaId: Number.parseInt(areaId!),
-      },
-      {
-        onSuccess: (bookingData) => {
-          navigate(`/bookings/${bookingData.id}/confirmed`);
+      handleBooking.mutate(
+        {
+          date: selectedDate.toISOString().split("T")[0],
+          bookableObjectId: selectedObject.id,
+          areaId: Number.parseInt(areaId!),
         },
-        onError: (error) => {
-          handleCloseModal();
-          setError(error as AxiosError);
-        }
-      });
+        {
+          onSuccess: (bookingData) => {
+            navigate(`/bookings/${bookingData.id}/confirmed`);
+          },
+          onError: (error) => {
+            handleCloseModal();
+            setError(error as AxiosError);
+          },
+        },
+      );
     }
   };
 
@@ -273,7 +264,7 @@ const DeskBooking = () => {
 
   const getExistingBookingName = (bookableObject: BookableObject) => {
     return bookingsData?.bookableObjects.find((obj) => obj.id === bookableObject.id)?.existingBooking?.name ?? null;
-  }
+  };
 
   // Returns the name of the person who booked the desk or null if it's available
   const getBookedBy = (selectedObject: BookableObject): string | null => {
@@ -281,19 +272,18 @@ const DeskBooking = () => {
     return bookedBy ? `${bookedBy}` : null;
   };
 
-  const adjustDate = (direction: 'next' | 'previous' | 'today' | 'tomorrow') => {
-    setSelectedDate(prev => {
-      if(direction === 'today') {
+  const adjustDate = (direction: "next" | "previous" | "today" | "tomorrow") => {
+    setSelectedDate((prev) => {
+      if (direction === "today") {
         return new Date();
       }
       const newDate = new Date(prev);
-      if(direction === 'previous') {
+      if (direction === "previous") {
         newDate.setDate(newDate.getDate() - 1);
-      }
-      else {
+      } else {
         newDate.setDate(newDate.getDate() + 1);
       }
-      
+
       return newDate;
     });
   };
@@ -303,86 +293,92 @@ const DeskBooking = () => {
       if (getBookedBy(selectedObject)) {
         return (
           <ConfirmModal
-          title={selectedObject.name}
-          isOpen={isModalVisible} 
-          childElement={
-            <div>
-              <p>{selectedObject.description}</p>
-              <br />
-              <strong>Sorry. This space has already been booked on this date by {getBookedBy(selectedObject)}.</strong>
-            </div>}
-          showConfirmButton={false}
-          cancelButtonLabel="Cancel"
-          cancelButtonColor="cta-red"
-          onCancel={handleCloseModal}/>
-        )
-      }
-      else {
+            title={selectedObject.name}
+            isOpen={isModalVisible}
+            childElement={
+              <div>
+                <p>{selectedObject.description}</p>
+                <br />
+                <strong>Sorry. This space has already been booked on this date by {getBookedBy(selectedObject)}.</strong>
+              </div>
+            }
+            showConfirmButton={false}
+            cancelButtonLabel='Cancel'
+            cancelButtonColor='cta-red'
+            onCancel={handleCloseModal}
+          />
+        );
+      } else {
         return (
           <ConfirmModal
-          title={selectedObject.name}
-          isOpen={isModalVisible} 
-          childElement={
-            <div>
-              <p>{selectedObject.description}</p>
-              <h3>Would you like to place this booking?</h3>
-              <BookingCardStacked 
-              date={selectedDate} 
-              bookableObjectName={selectedObject.name} 
-              areaName={areaData?.name ?? "Area not found"} 
-              locationName={locationData?.name ?? "Location not found"}
-              />
-            </div>
-          }
-          showConfirmButton
-          confirmButtonLabel="Yes. Book it"
-          confirmButtonColor="cta-green"
-          onConfirm={handleConfirmBooking}
-          cancelButtonLabel="No. Cancel"
-          cancelButtonColor="cta-red"
-          onCancel={handleCloseModal}/>
-        )
+            title={selectedObject.name}
+            isOpen={isModalVisible}
+            childElement={
+              <div>
+                <p>{selectedObject.description}</p>
+                <h3>Would you like to place this booking?</h3>
+                <BookingCardStacked
+                  date={selectedDate}
+                  bookableObjectName={selectedObject.name}
+                  areaName={areaData?.name ?? "Area not found"}
+                  locationName={locationData?.name ?? "Location not found"}
+                />
+              </div>
+            }
+            showConfirmButton
+            confirmButtonLabel='Yes. Book it'
+            confirmButtonColor='cta-green'
+            onConfirm={handleConfirmBooking}
+            cancelButtonLabel='No. Cancel'
+            cancelButtonColor='cta-red'
+            onCancel={handleCloseModal}
+          />
+        );
       }
     }
-  } 
+  };
 
   return (
     <div>
       {error !== null ? (
-        <ErrorBanner isShown={error !== null} allowClose={false} title="There was an error when placing your booking" errorMessage={error.response?.data as string}/>
+        <ErrorBanner
+          isShown={error !== null}
+          allowClose={false}
+          title='There was an error when placing your booking'
+          errorMessage={error.response?.data as string}
+        />
       ) : null}
-      
+
       <h1>Pick a space</h1>
-      <CustomDatePicker adjustDate={adjustDate} inputOnChange={(date) => setSelectedDate(date!)} selectedDate={selectedDate}/>
+      <CustomDatePicker adjustDate={adjustDate} inputOnChange={(date) => setSelectedDate(date!)} selectedDate={selectedDate} />
       <br />
 
       <TabList activeTabIndex={activeTab} onChange={handleTabChange}>
-        <TabItem label="Floorplan">
-          <div className="canvas__container">
+        <TabItem label='Floorplan'>
+          <div className='canvas__container'>
             <canvas height={800} width={600} ref={canvasElRef} />
           </div>
         </TabItem>
 
-        <TabItem label="List">
-        <div>
-          {areaData?.bookableObjects
-            .filter((obj) => !isNullOrEmpty(obj.floorPlanObjectId))
-            .map((bookableObject) => {
-              return (
-                <BookableObjectDisplay
-                  key={bookableObject.id}
-                  bookableObject={bookableObject}
-                  existingBookingName={getExistingBookingName(bookableObject)}
-                  onObjectSelected={handleObjectSelected}
-                />
-              );
-            })}
-        </div>
+        <TabItem label='List'>
+          <div>
+            {areaData?.bookableObjects
+              .filter((obj) => !isNullOrEmpty(obj.floorPlanObjectId))
+              .map((bookableObject) => {
+                return (
+                  <BookableObjectDisplay
+                    key={bookableObject.id}
+                    bookableObject={bookableObject}
+                    existingBookingName={getExistingBookingName(bookableObject)}
+                    onObjectSelected={handleObjectSelected}
+                  />
+                );
+              })}
+          </div>
         </TabItem>
       </TabList>
       {confirmBookingModal()}
       <br />
-      
     </div>
   );
 };
@@ -398,10 +394,9 @@ const BookableObjectDisplay = ({
 }) => {
   return (
     <div
-      className={`booking-list-item ` + (existingBookingName != null  ? "booking-list-item__booked" : "booking-list-item__available")}
+      className={`booking-list-item ` + (existingBookingName != null ? "booking-list-item__booked" : "booking-list-item__available")}
       key={bookableObject.id}
-      onClick={() => onObjectSelected(bookableObject.floorPlanObjectId!)}
-    >
+      onClick={() => onObjectSelected(bookableObject.floorPlanObjectId!)}>
       {bookableObject.name} {" - " + (existingBookingName != null ? "Booked by " + existingBookingName : "Available")}
     </div>
   );

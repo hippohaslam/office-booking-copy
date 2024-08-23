@@ -7,7 +7,7 @@ This project uses Yarn V4 with node_modules. Currently there is a bug in typescr
 
 ## App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This template provides a minimal setup to get React working in Vite with HMR, ESLint and prettier rules.
 
 Currently, two official plugins are available:
 
@@ -15,6 +15,10 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
 ## Development
+
+### Formatting
+
+Recommended to use prettier formatter before submitting any changes. Having a onSave in your IDE is a great way to not forget!
 
 ### HTTPS certificates
 
