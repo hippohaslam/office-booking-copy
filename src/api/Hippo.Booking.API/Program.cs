@@ -135,10 +135,10 @@ try
     builder.Services.AddAuthentication("Cookie")
         .AddCookie("Cookie", options =>
         {
-            if (builder.Environment.IsDevelopment())
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            if (builder.Environment.IsEnvironment("EndToEnd"))
             {
-                options.Cookie.SecurePolicy = CookieSecurePolicy.None;
-                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.SameSite = SameSiteMode.None;
             }
 
             options.ExpireTimeSpan = TimeSpan.FromHours(1);
@@ -175,18 +175,15 @@ try
         new TestEndpoints().Map(app);
     }
 
-    if (!app.Environment.IsEnvironment("IntegrationTest"))
+    app.UseCors(policyBuilder =>
     {
-        app.UseCors(policyBuilder =>
-        {
-            var origins = app.Configuration.GetValue<string>("AllowedOrigins")?.Split(",") ?? [];
-            policyBuilder
-                .WithOrigins(origins)
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-        });
-    }
+        var origins = app.Configuration.GetValue<string>("AllowedOrigins")?.Split(",") ?? [];
+        policyBuilder
+            .WithOrigins(origins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
 
     app.MapGet("/", [AllowAnonymous] () => TypedResults.Redirect("/swagger/index.html"));
 

@@ -14,7 +14,8 @@ services:
     depends_on:
       - postgres
     ports:
-        - "5210:8080"
+        - "7249:8080"
     environment:
-        ASPNETCORE_ENVIRONMENT: Development
-        ConnectionStrings__PostgresConnection: Host=postgres;Port=5432;Database=hippo-booking;Username=postgres;Password=postgres
+        ASPNETCORE_ENVIRONMENT: EndToEnd
+        AllowedOrigins: https://localhost:5173
+        ConnectionStrings__HippoBookingDbContext: Host=postgres;Port=5432;Database=HippoBooking_EndToEnd;Username=postgres;Password=postgres
