@@ -7,6 +7,8 @@ services:
         dockerfile: Dockerfile
     ports:
         - "5173:5173"
+    environment:
+      BUILD_COMMAND: "yarn e2e"
   booking-api:
     build:
         context: ../../

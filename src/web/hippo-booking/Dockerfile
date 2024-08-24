@@ -2,6 +2,8 @@ FROM node:20.13.1
 
 WORKDIR /app
 
+ENV BUILD_COMMAND="yarn dev"
+
 COPY . .
 
 RUN rm -rf node_modules
@@ -13,4 +15,4 @@ RUN apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev
 RUN corepack enable
 RUN yarn install
 
-CMD ["yarn", "dev"]
+CMD ["sh", "-c", "$BUILD_COMMAND"]
