@@ -2,12 +2,11 @@ name: Main CI
 
 on:
   push:
-   branches: [ "main", "feat/ci-test" ]
+    branches: [ "main", "feat/ci-test" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
-        
   build-backend:
     name: 'Build Back End API'
     runs-on: ubuntu-latest
@@ -59,7 +58,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          
+
       - name: Enable Corepack
         run: corepack enable
 
@@ -77,49 +76,45 @@ jobs:
         with:
           cmd: build
           dir: ./src/web/hippo-booking
-          
+
       - name: Test the app
         uses: borales/actions-yarn@v5
         with:
           cmd: ci-test
           dir: ./src/web/hippo-booking
-          
+
 #      - name: Run Cypress Tests
 #        working-directory: ./src/web/hippo-booking
 #        run: |
 #          npx cypress run --component
 
-  validate-terraform:
+  e2e-tests:
+    name: 'Run End-to-End Tests'
     runs-on: ubuntu-latest
-    name: 'Validate Terraform'
-    timeout-minutes: 5
-    if: github.event_name != 'pull_request'
     defaults:
       run:
-        working-directory: ./src/infrastructure/terraform
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        working-directory: ./src
     steps:
       - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init
-        id: init
-        run: terraform init --backend-config="bucket=hippo-booking-terraform" --backend-config="key=terraform.Test.tfstate" --backend-config="region=eu-west-1"
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+          cache: true
+          cache-dependency-path: |
+            src/e2e/**/packages.lock.json
 
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate
+      - name: Restore dependencies
+        working-directory: ./src/e2e/Hippo.Booking.E2ETests
+        run: dotnet restore --locked-mode
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -var-file="Test.tfvars"
-        env:
-          TF_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          TF_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          TF_VAR_github_repo: https://github.com/${{ github.repository }}
-          TF_VAR_github_access_token: ${{ secrets.FRONTEND_DEPLOY_TOKEN }}
-          TF_VAR_slack_token: ${{ secrets.SLACK_TOKEN }}
-          TF_VAR_slack_signing_secret: ${{ secrets.SLACK_SIGNING_SECRET }}
+      - name: Build E2E Tests
+        working-directory: ./src/e2e/Hippo.Booking.E2ETests
+        run: dotnet build --no-restore
+
+      - name: Run Docker Compose
+        run: docker compose -f infrastructure/docker/docker-compose-ci.yml -f infrastructure/docker/docker-compose-services.yml up -d
+
+      - name: Run E2E Tests
+        run: dotnet test e2e/**/Hippo.Booking.E2ETests.csproj --no-build --verbosity normal

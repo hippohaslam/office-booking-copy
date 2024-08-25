@@ -38,7 +38,7 @@
       <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
       <PackageReference Include="Serilog.Sinks.AwsCloudWatch" Version="4.3.37" />
       <PackageReference Include="SlackNet.AspNetCore" Version="0.13.2" />
-      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.1" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.2" />
     </ItemGroup>
 
 </Project>
