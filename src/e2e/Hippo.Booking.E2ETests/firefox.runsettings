@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
     <Playwright>
-        <BrowserName>chromium</BrowserName>
+        <BrowserName>firefox</BrowserName>
         <LaunchOptions>
             <Headless>true</Headless>
         </LaunchOptions>

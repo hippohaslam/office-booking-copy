@@ -133,7 +133,7 @@ jobs:
         run: docker compose -f infrastructure/docker/docker-compose-ci.yml -f infrastructure/docker/docker-compose-services.yml up -d
 
       - name: Run E2E Tests
-        run: dotnet test e2e/**/Hippo.Booking.E2ETests.csproj --no-build --verbosity normal
+        run: dotnet test e2e/**/Hippo.Booking.E2ETests.csproj --no-build --verbosity normal --settings:chromium.runsettings
 
   deploy-infrastructure:
     name: 'Provision ${{ github.event.inputs.environment }} Infrastructure'

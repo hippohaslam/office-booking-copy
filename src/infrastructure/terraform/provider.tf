@@ -21,7 +21,7 @@ provider "aws" {
   default_tags {
     tags = {
       App         = "Hippo Booking"
-      Environment = "Test"
+      Environment = var.environment
     }
   }
 }

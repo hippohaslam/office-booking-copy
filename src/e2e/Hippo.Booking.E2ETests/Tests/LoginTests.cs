@@ -4,7 +4,7 @@ namespace Hippo.Booking.E2ETests.Tests;
 
 [Parallelizable(ParallelScope.Self)]
 [TestFixture]
-public class LoginTests : PlaywrightBaseTest
+public class LoginTests : BasePageTest
 {
     [Test]
     public async Task NavigateToAndAssertLoginPage()

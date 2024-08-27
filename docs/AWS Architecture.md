@@ -7,7 +7,7 @@ The architecture is composed of the following services:
 - **Beanstalk** - Host the backend .NET application
 - **RDS** - Postgres database for the backend application
 
-All services are hosted in the hippo internal AWS account within a seperate VPC.
+All services are hosted in the hippo internal AWS account within a separate VPC.
 All resources are tracked by terraform which can be found in the [terraform](../src/infrastructure/terraform) folder.
 ***
 ![AWS Architecture.png](.attachments%2FAWS%20Architecture.png)

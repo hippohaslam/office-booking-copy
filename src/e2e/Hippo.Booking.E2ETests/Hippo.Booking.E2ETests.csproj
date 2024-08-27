@@ -7,6 +7,7 @@
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <RunSettingsFilePath>.runsettings</RunSettingsFilePath>
     </PropertyGroup>
 
     <ItemGroup>
