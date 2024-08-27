@@ -47,3 +47,4 @@ jobs:
           git config --global user.email 'nightly-build-bot@users.noreply.github.com'
           git commit -am "Automated Nightly Jobs"
           git push
+        continue-on-error: true
