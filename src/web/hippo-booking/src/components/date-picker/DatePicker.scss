@@ -6,7 +6,7 @@
 
 .date-controls {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   row-gap: 2px;
   margin-top: 5px;
 }
@@ -21,8 +21,7 @@
 }
 
 .date-input {
-  padding: 17px 20px !important;
-  width: 9rem;
+  padding: 17px 10px !important;
 }
 
 .date-input-wrapper div {
@@ -35,7 +34,7 @@
 
 .date-input-icon {
   position: unset !important;
-  padding: 17px 20px !important;
+  padding: 0 10px !important;
 
   :hover {
     cursor: pointer;
@@ -113,10 +112,4 @@
   .date-button.today {
     display: none;
   }
-}
-
-@media only screen and (max-width: 430px) {
-    .date-input {
-        width: auto;
-    }
 }
