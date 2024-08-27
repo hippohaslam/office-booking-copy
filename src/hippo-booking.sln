@@ -51,6 +51,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "terraform", "terraform", "{59B5B907-453E-4188-BF48-9C3442079D4E}"
 	ProjectSection(SolutionItems) = preProject
 		infrastructure\terraform\database.tf = infrastructure\terraform\database.tf
+		infrastructure\terraform\README.MD = infrastructure\terraform\README.MD
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Infrastructure.Tests", "api\tests\Hippo.Booking.Infrastructure.Tests\Hippo.Booking.Infrastructure.Tests.csproj", "{D7B94338-3B24-4EEC-9010-EDAB334A2D31}"

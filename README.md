@@ -1,8 +1,10 @@
 # Hippo Desk Booking
 
-![Build Status](https://github.com/harryy94/hippo-booking/actions/workflows/build.yaml/badge.svg)
-
 This is a hippo internal project to manage desk and car park bookings in the office.
+
+## Contributing
+All Hippos are welcome and encouraged to contribute to this repo, either with raising features, bugs or even contributing code.
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) for more information on how to contribute.
 
 ## Components
 - .NET API (src/api) - This is a standard .NET 8 API
@@ -18,7 +20,3 @@ This is a hippo internal project to manage desk and car park bookings in the off
 2. Open the repository in your IDE
 3. Go to the `src/infrastructure/docker` and follow the instructions in the README.md for docker set up
 4. Read the README.md in the relevant section for the component you want to work on
-
-## Contributing
-All Hippos are welcome and encouraged to contribute to this repo, either with raising features, bugs or even contributing code.
-Please read the [CONTRIBUTING.md](CONTRIBUTING.md) for more information on how to contribute.

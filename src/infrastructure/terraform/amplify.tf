@@ -27,7 +27,7 @@ frontend:
         - yarn install
     build:
       commands:
-        - yarn build
+        - yarn build:${var.env_suffix}
   artifacts:
     baseDirectory: src/web/hippo-booking/dist
     files:

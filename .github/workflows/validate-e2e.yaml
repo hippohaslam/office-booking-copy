@@ -6,12 +6,16 @@ on:
     paths:
       - 'src/api/**'
       - 'src/web/**'
+      - 'src/e2e/**'
+      - 'src/infrastructure/docker/**'
       - '.github/workflows/validate-e2e.yaml'
   pull_request:
     branches: [ "main" ]
     paths:
       - 'src/api/**'
       - 'src/web/**'
+      - 'src/e2e/**'
+      - 'src/infrastructure/docker/**'
       - '.github/workflows/validate-e2e.yaml'
 
 jobs:
