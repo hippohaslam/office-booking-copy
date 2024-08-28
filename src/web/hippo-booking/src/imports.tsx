@@ -9,6 +9,7 @@ const CreateArea = React.lazy(() => import("./pages/admin/locations/area/CreateN
 // Location/booking
 const Booking = React.lazy(() => import("./pages/locations/booking/Booking.tsx"));
 const Locations = React.lazy(() => import("./pages/locations/Locations.tsx"));
+const EditLocation = React.lazy(() => import("./pages/admin/locations/EditLocation.tsx"));
 const BookingAreas = React.lazy(() => import("./pages/locations/areas/BookingAreas.tsx"));
 const SvgAreaEditor = React.lazy(() => import("./pages/admin/locations/area/area-editor-svg/AreaEditorSvg.tsx"));
 
@@ -17,6 +18,7 @@ export {
   Booking,
   FloorplanEditor,
   Locations,
+  EditLocation,
   Dashboard,
   BookingAreas,
   SvgAreaEditor,

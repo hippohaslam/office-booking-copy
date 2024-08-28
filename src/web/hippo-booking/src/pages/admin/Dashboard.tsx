@@ -60,7 +60,9 @@ const Admin = () => {
       {locationData?.length === 0 && <p>No locations found. Create a your first location!</p>}
       {locationData?.map((location) => (
         <div key={location.id} className='location-and-area'>
-          <h3 className='location-and-area__header'>{location.name}</h3>
+          <h3 className='location-and-area__header'>
+            <Link to={`/admin/locations/${location.id}`}>{location.name}</Link>
+          </h3>
           <button type='button' className='location-and-area__cta' onClick={() => handleAddArea(location.id)}>
             Add area
           </button>

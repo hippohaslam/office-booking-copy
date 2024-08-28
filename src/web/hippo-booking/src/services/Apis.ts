@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Area, NewArea } from "../interfaces/Area";
-import { BookingLocation, NewLocation } from "../interfaces/Location";
+import type { BookingLocation, NewLocation, EditLocation } from "../interfaces/Location";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const axiosInstance = axios.create({
@@ -27,22 +27,26 @@ function prependAdminToUrl(url: string, admin: boolean) {
 
 const getLocationAsync =
   (admin: boolean = false) =>
-  async (locationId: string): Promise<BookingLocation> => {
-    const url = prependAdminToUrl(`/location/${locationId}`, admin);
-    const response = await axiosInstance.get(url);
-    return response.data;
-  };
+    async (locationId: string): Promise<BookingLocation> => {
+      const url = prependAdminToUrl(`/location/${locationId}`, admin);
+      const response = await axiosInstance.get(url);
+      return response.data;
+    };
 
 const getLocationsAsync =
   (admin: boolean = false) =>
-  async (): Promise<BookingLocation[]> => {
-    const response = await axiosInstance.get(prependAdminToUrl(`/location`, admin));
-    return response.data;
-  };
+    async (): Promise<BookingLocation[]> => {
+      const response = await axiosInstance.get(prependAdminToUrl(`/location`, admin));
+      return response.data;
+    };
 
 const postNewLocationAsync = async (location: NewLocation) => {
   return await axiosInstance.post(prependAdminToUrl(`/location`, true), location);
 };
+
+const editLocationAsync = async (location: EditLocation) => {
+  return await axiosInstance.put(prependAdminToUrl(`/location/${location.id}`, true), location);
+}
 
 const putObjectsAsync = async (locationId: string, areaId: string, bookableObjects: BookableObject[]) => {
   return await Promise.all(
@@ -59,10 +63,10 @@ const putObjectsAsync = async (locationId: string, areaId: string, bookableObjec
 
 const getLocationAreaAsync =
   (admin: boolean = false) =>
-  async (locationId: string, areaId: string): Promise<Area> => {
-    const response = await axiosInstance.get(prependAdminToUrl(`/location/${locationId}/area/${areaId}`, admin));
-    return response.data;
-  };
+    async (locationId: string, areaId: string): Promise<Area> => {
+      const response = await axiosInstance.get(prependAdminToUrl(`/location/${locationId}/area/${areaId}`, admin));
+      return response.data;
+    };
 
 const postLocationAreaAsync = async (locationId: number, area: NewArea) => {
   return await axiosInstance.post(prependAdminToUrl(`/location/${locationId}/area`, true), area);
@@ -75,13 +79,13 @@ const putAreaAsync = async (locationId: string, area: Area, areaId: string) => {
 /** Combines the locationId with the area data */
 const getLocationAreasAsync =
   (admin: boolean = false) =>
-  async (locationId: number): Promise<Area[]> => {
-    const response = await axiosInstance.get(prependAdminToUrl(`/location/${locationId}/area`, admin));
-    response.data.forEach((area: Area) => {
-      area.locationId = locationId;
-    });
-    return response.data;
-  };
+    async (locationId: number): Promise<Area[]> => {
+      const response = await axiosInstance.get(prependAdminToUrl(`/location/${locationId}/area`, admin));
+      response.data.forEach((area: Area) => {
+        area.locationId = locationId;
+      });
+      return response.data;
+    };
 
 // BOOKINGS
 
@@ -144,6 +148,7 @@ export {
   getLocationAreaAsync,
   getLocationsAsync,
   putObjectsAsync,
+  editLocationAsync,
   // AREAS
   getLocationAreasAsync,
   postLocationAreaAsync,

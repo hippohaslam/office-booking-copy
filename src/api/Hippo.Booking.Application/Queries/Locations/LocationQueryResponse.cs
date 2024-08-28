@@ -5,6 +5,7 @@ public class LocationQueryResponse
     public int Id { get; set; }
 
     public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
 
     public List<AreaResponse> Areas { get; set; } = new();
 

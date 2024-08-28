@@ -34,9 +34,12 @@ const CreateLocation = () => {
 
   return (
     <div>
+      <div>
+        <Link to='/admin'>Back to locations</Link>
+        <div className='spacer'></div>
+      </div>
       {hasErrors && <ErrorBanner isShown={hasErrors} title={"Error"} errorMessage={createLocation.error.message} allowClose={true} />}
       {hasSuccess && <SuccessBanner isShown={hasSuccess} title='Saved successfully' description='Go back to see location.' />}
-      <Link to='/admin'>Back to locations</Link>
       <h2>Create a new location</h2>
       <form onSubmit={handleSubmit}>
         <div className='standard-inputs'>

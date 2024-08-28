@@ -23,6 +23,7 @@ public class LocationQueries(IDataContext dataContext) : ILocationQueries
             {
                 Id = x.Id,
                 Name = x.Name,
+                Description = x.Description,
                 Areas = x.Areas.Select(y => new LocationQueryResponse.AreaResponse
                 {
                     Id = y.Id,

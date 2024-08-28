@@ -164,7 +164,8 @@ public class AdminLocationEndpointTests : IntegrationTestBase
         responseLocation.Should().BeEquivalentTo(new LocationQueryResponse
         {
             Id = locations.First().Id,
-            Name = locations.First().Name
+            Name = locations.First().Name,
+            Description = locations.First().Description
         },
             "the correct location should be returned");
     }

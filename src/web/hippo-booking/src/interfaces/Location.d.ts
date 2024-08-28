@@ -11,3 +11,7 @@ interface NewLocation {
   name: string;
   description: string;
 }
+
+interface EditLocation extends NewLocation {
+  id: number;
+}
