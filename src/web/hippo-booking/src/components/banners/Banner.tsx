@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 type bannerProps = {
   isShown: boolean;
-  containerClass: "success-banner" | "error-banner" | "warning-banner";
+  containerClass: "success-banner" | "error-banner" | "warning-banner" | "information-banner";
   title: string;
   descriptionElement?: JSX.Element;
   iconSrc: string;

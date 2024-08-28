@@ -15,6 +15,11 @@
     border: 2pt solid $hippo-brand-green;
   }
 
+  &.information-banner {
+    background-color: $hippo-brand-light-blue;
+    border: 2pt solid $hippo-brand-navy;
+  }
+
   &.error-banner {
     background-color: #ffb4b4;
     border: 2pt solid #ff0000;

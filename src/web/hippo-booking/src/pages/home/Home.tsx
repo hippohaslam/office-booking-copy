@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUpcomingBookingsAsync } from "../../services/Apis.ts";
 import { ErrorBanner } from "../../components/banners/ErrorBanner.tsx";
 import BookingCardStacked from "../../components/booking/BookingCardStacked.tsx";
+import { InformationBanner } from "../../components/index";
 
 const Home = () => {
   const userContext = useUser();
@@ -78,18 +79,14 @@ const Home = () => {
         </div>
       </section>
       <section className='text-content-container'>
-        <h2>Our offices</h2>
-        <p>Some content about our offices will go in here.</p>
-        <h3>Some more content</h3>
-        <p>
-          Filling this page with more content to force the height to go beyond 100vh on mobile devices. Filling this page with more content
-          to force the height to go beyond 100vh on mobile devices. Filling this page with more content to force the height to go beyond
-          100vh on mobile devices. Filling this page with more content to force the height to go beyond 100vh on mobile devices. Filling
-          this page with more content to force the height to go beyond 100vh on mobile devices .Filling this page with more content to force
-          the height to go beyond 100vh on mobile devices
-        </p>
-        <h4>Why</h4>
-        <p>Because safari on mobile doesn't respect 100vh with it's fancy floating search bar</p>
+        <InformationBanner
+          title='Information'
+          isShown
+          description='This site is currently in Development and liable to changes in features and data.'
+          allowClose={false}
+        />
+        <h3>About</h3>
+        <p>You can book a desk or parking space, view your bookings, and cancel bookings.</p>
       </section>
     </div>
   );

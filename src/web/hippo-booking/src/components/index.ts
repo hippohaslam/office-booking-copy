@@ -1,5 +1,6 @@
 import { ErrorBanner, MultiErrorBanner } from "./banners/ErrorBanner";
 import SuccessBanner from "./banners/SuccessBanner";
+import InformationBanner from "./banners/InformationBanner";
 import Nav from "./nav/Nav";
 import CustomConfirmDialog from "./modals/dialog/CustomConfirmDialog";
 import { AccordionItem } from "./accordion/Accordion";
@@ -16,6 +17,7 @@ export {
   MultiErrorBanner,
   ErrorBanner,
   SuccessBanner,
+  InformationBanner,
   WarningBanner,
   Nav,
   AccordionItem,
