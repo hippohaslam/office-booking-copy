@@ -2,11 +2,14 @@
 
 .modal-overlay {
   position: fixed;
+  display: grid;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   z-index: 50;
+  grid-template-rows: repeat(3, minmax(min-content, auto));
+  grid-template-columns: repeat(3, minmax(min-content, auto));
   background-color: rgba(0, 0, 0, 0.546);
   animation: fadeIn 0.1s ease-out forwards;
 }
@@ -16,16 +19,15 @@ body:has(.modal-overlay) {
 }
 
 .modal-booking {
-  position: absolute;
-  top: 50%;
-  left: 50%;
   background-color: $hippo-brand-bluey-grey;
   padding: 20px;
   z-index: 100;
   border-radius: 20px;
   width: 748px;
-  transform: translate(-50%, -50%);
-  animation: 0.1s zoomOut ease-out forwards;
+  animation: 0.3s show forwards;
+  margin: auto;
+  grid-column: 2;
+  grid-row: 2;
 
   & h2 {
     margin-top: 0;
@@ -51,12 +53,21 @@ body:has(.modal-overlay) {
   }
 }
 
-@keyframes zoomOut {
+@keyframes show {
   0% {
-    transform: scale(1.1) translate(-50%, -50%);
+    transform: scale(0.7);
   }
+
+  45% {
+    transform: scale(1.05);
+  }
+
+  80% {
+    transform: scale(0.95);
+  }
+
   100% {
-    transform: scale(1) translate(-50%, -50%);
+    transform: scale(1);
   }
 }
 
