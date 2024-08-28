@@ -5,7 +5,7 @@ This is a hippo internal project and therefore open for all Hippos to contribute
 ## Spotted an issue or have a suggestion?
 If you have spotted an issue or have a suggestion for the project, please raise an issue in the issues tab.
 We have made some templates to help you raise the issue, please use them where possible.
-- If you have raised a bug, this will be looked at promptly and prioritised depenendent on people's capacity and the urgency
+- If you have raised a bug, this will be looked at promptly and prioritised dependent on people's capacity and the urgency
   (such as whether this issue is blocking people from using the service)
 - If you have raised a feature request, this may be reviewed by the facilities team and prioritised based on the value to the service.
 
@@ -18,8 +18,8 @@ or just want to do some PD on a real application.
 
 You should find a variety of documentation in the form of README's and some files under the `docs` folder to help you get started.
 
-You can also join #work-office-booking-eng channel on Slack for additional support.
+You can also join #internal-office-bookings-eng channel on Slack for additional support.
 
 All work must be done in a feature branch and then raised as a PR to the main branch. 
-Specify a brief description of what you have worked on and tag any issue where appropiate.
-Each PR will be reviewed by a codeowner and must also pass the build validation checks before being merged.
+Specify a brief description of what you have worked on and tag any issue where appropriate.
+Each PR will be reviewed by a code-owner and must also pass the build validation checks before being merged.

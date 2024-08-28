@@ -1,6 +1,6 @@
 # Hippo Desk Booking
 
-This is a hippo internal project to manage desk and car park bookings in the office.
+This is a Hippo internal project to manage desk and car park bookings in the office.
 
 ## Contributing
 All Hippos are welcome and encouraged to contribute to this repo, either with raising features, bugs or even contributing code.
