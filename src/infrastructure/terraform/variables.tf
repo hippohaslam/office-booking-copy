@@ -62,6 +62,7 @@ variable "backend_subdomain" {
 variable "hosted_zone_url" {
   description = "Hosted Zone URL"
   type        = string
+  default     = "internal.hippodigital.cloud"
 }
 
 variable "db_instance_size" {
