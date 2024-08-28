@@ -1,5 +1,5 @@
 import Banner from "./Banner";
-import WarningIcon from "../../assets/warning-icon.svg";
+import InfoIcon from "../../assets/info-icon.svg";
 import "./Banners.scss";
 
 type bannerProps = {
@@ -15,7 +15,7 @@ const InformationBanner = ({ isShown, title, description, allowClose = true }: b
       isShown={isShown}
       title={title}
       descriptionElement={<p className='alert-description'>{description}</p>}
-      iconSrc={WarningIcon}
+      iconSrc={InfoIcon}
       containerClass='information-banner'
       allowClose={allowClose}
     />
