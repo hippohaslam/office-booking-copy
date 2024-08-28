@@ -732,14 +732,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/config-array@npm:^0.17.1":
-  version: 0.17.1
-  resolution: "@eslint/config-array@npm:0.17.1"
+"@eslint/config-array@npm:^0.18.0":
+  version: 0.18.0
+  resolution: "@eslint/config-array@npm:0.18.0"
   dependencies:
     "@eslint/object-schema": "npm:^2.1.4"
     debug: "npm:^4.3.1"
     minimatch: "npm:^3.1.2"
-  checksum: 10c0/b986a0a96f2b42467578968ce3d4ae3b9284e587f8490f2dcdc44ff1b8d30580c62b221da6e58d07b09e156c3050e2dc38267f9370521d9cafc099c4e30154ef
+  checksum: 10c0/0234aeb3e6b052ad2402a647d0b4f8a6aa71524bafe1adad0b8db1dfe94d7f5f26d67c80f79bb37ac61361a1d4b14bb8fb475efe501de37263cf55eabb79868f
   languageName: node
   linkType: hard
 
@@ -760,10 +760,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.9.0":
-  version: 9.9.0
-  resolution: "@eslint/js@npm:9.9.0"
-  checksum: 10c0/6ec9f1f0d576132444d6a5c66a8a08b0be9444e3ebb563fa6a6bebcf5299df3da7e454dc04c0fa601bb811197f00764b3a04430d8458cdb8e3a4677993d23f30
+"@eslint/js@npm:9.9.1":
+  version: 9.9.1
+  resolution: "@eslint/js@npm:9.9.1"
+  checksum: 10c0/a3a91de2ce78469f7c4eee78c1eba77360706e1d0fa0ace2e19102079bcf237b851217c85ea501dc92c4c3719d60d9df966977abc8554d4c38e3638c1f53dcb2
   languageName: node
   linkType: hard
 
@@ -1427,21 +1427,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:5.51.24":
-  version: 5.51.24
-  resolution: "@tanstack/query-core@npm:5.51.24"
-  checksum: 10c0/fd7fe403b9ce1632bff6d01d644946f06f9a6e94b69c7365b77bf137b44913e446e04b3ee5965a87afa54d3d674fd7a172e8001671604cbccef4673d6d27b7f7
+"@tanstack/query-core@npm:5.52.2":
+  version: 5.52.2
+  resolution: "@tanstack/query-core@npm:5.52.2"
+  checksum: 10c0/34bc28f492272642159e6eb41cc45d05669a91a7a9124dcfa4a9b721696b921c0909234373035c9f51159069d71ee449459f0d528de500cfb07e6eb8fdd8857c
   languageName: node
   linkType: hard
 
-"@tanstack/react-query@npm:^5.51.24":
-  version: 5.51.24
-  resolution: "@tanstack/react-query@npm:5.51.24"
+"@tanstack/react-query@npm:^5.52.2":
+  version: 5.52.2
+  resolution: "@tanstack/react-query@npm:5.52.2"
   dependencies:
-    "@tanstack/query-core": "npm:5.51.24"
+    "@tanstack/query-core": "npm:5.52.2"
   peerDependencies:
-    react: ^18.0.0
-  checksum: 10c0/25af94dc688cf96d39bb02ecfff49f79bda434ce50178aa5456435e325eea7c51f5510b6f7bef9ebf5b9139037bcbe4808f1c14484fa6c96c9b2abfec2c9be05
+    react: ^18 || ^19
+  checksum: 10c0/936ecc8d4fbd2f89b5569ae9a2fe6e3c0af6ea02561de5f882b910662f1db1b0d73d7a9cbd94fd4d569a2c0773b5e629da4752dc62d4f3ebcf165f5b56d80c0e
   languageName: node
   linkType: hard
 
@@ -1652,13 +1652,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.3.3":
+"@types/react@npm:*":
   version: 18.3.3
   resolution: "@types/react@npm:18.3.3"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/fe455f805c5da13b89964c3d68060cebd43e73ec15001a68b34634604a78140e6fc202f3f61679b9d809dde6d7a7c2cb3ed51e0fd1462557911db09879b55114
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.3.4":
+  version: 18.3.4
+  resolution: "@types/react@npm:18.3.4"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/5c52e1e6f540cff21e3c2a5212066d02e005f6fb21e4a536a29097fae878db9f407cd7a4b43778f51359349c5f692e08bc77ddb5f5cecbfca9ca4d4e3c91a48e
   languageName: node
   linkType: hard
 
@@ -2742,9 +2752,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:^13.13.3":
-  version: 13.13.3
-  resolution: "cypress@npm:13.13.3"
+"cypress@npm:^13.14.0":
+  version: 13.14.0
+  resolution: "cypress@npm:13.14.0"
   dependencies:
     "@cypress/request": "npm:^3.0.1"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -2790,7 +2800,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/187fdbe0ca6eedd04a04828971847ef5f3d0e0c2bd74a25a761dd2cc0de1fb84f7e4c1bc4f88e46f753d87748b31eca3ddaae798275546fe1964c8453cbe4a63
+  checksum: 10c0/8c2588e4715ee90d98475671f1c7c269fc50c8ef5adf87cc23989926fd0067575aff1a341e1498cdbf90130eeed3302194716d01afcdb5576df8f83a086dfbf5
   languageName: node
   linkType: hard
 
@@ -3314,15 +3324,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.9.0":
-  version: 9.9.0
-  resolution: "eslint@npm:9.9.0"
+"eslint@npm:^9.9.1":
+  version: 9.9.1
+  resolution: "eslint@npm:9.9.1"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.2.0"
     "@eslint-community/regexpp": "npm:^4.11.0"
-    "@eslint/config-array": "npm:^0.17.1"
+    "@eslint/config-array": "npm:^0.18.0"
     "@eslint/eslintrc": "npm:^3.1.0"
-    "@eslint/js": "npm:9.9.0"
+    "@eslint/js": "npm:9.9.1"
     "@humanwhocodes/module-importer": "npm:^1.0.1"
     "@humanwhocodes/retry": "npm:^0.3.0"
     "@nodelib/fs.walk": "npm:^1.2.8"
@@ -3359,7 +3369,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/3a22f68c99d75dcbafe6e2fef18d2b5bbcc960c2437f48a414ccf9ca214254733a18e6b79d07bbd374a2369a648413e421aabd07b11be3de5a44d5a4b9997877
+  checksum: 10c0/5e71efda7c0a14ee95436d5cdfed04ee61dfb1d89d7a32b50a424de2e680af82849628ea6581950c2e0726491f786a3cfd0032ce013c1c5093786e475cfdfb33
   languageName: node
   linkType: hard
 
@@ -4003,13 +4013,13 @@ __metadata:
   resolution: "hippo-booking@workspace:."
   dependencies:
     "@react-oauth/google": "npm:^0.12.1"
-    "@tanstack/react-query": "npm:^5.51.24"
+    "@tanstack/react-query": "npm:^5.52.2"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.5.0"
     "@testing-library/react": "npm:^16.0.0"
     "@testing-library/user-event": "npm:^14.5.2"
     "@types/fabric": "npm:^5.3.8"
-    "@types/react": "npm:^18.3.3"
+    "@types/react": "npm:^18.3.4"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/uuid": "npm:^10"
@@ -4018,8 +4028,8 @@ __metadata:
     "@vitejs/plugin-react": "npm:^4.3.1"
     axios: "npm:^1.7.5"
     canvas: "npm:^2.11.2"
-    cypress: "npm:^13.13.3"
-    eslint: "npm:^9.9.0"
+    cypress: "npm:^13.14.0"
+    eslint: "npm:^9.9.1"
     eslint-plugin-react-hooks: "npm:^4.6.2"
     eslint-plugin-react-refresh: "npm:^0.4.9"
     fabric: "npm:^5.4.0"
