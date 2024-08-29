@@ -55,6 +55,11 @@ const Admin = () => {
 
   return (
     <div>
+      <div>
+        <h2>Reporting</h2>
+        <Link to='/admin/reporting'>Go to reporting dashboard</Link>
+      </div>
+      <br />
       <h2>Edit locations</h2>
       <CtaButton text='Add a new location' color='cta-green' onClick={handleAddNewLocation} />
       {locationData?.length === 0 && <p>No locations found. Create a your first location!</p>}

@@ -5,6 +5,8 @@ const Dashboard = React.lazy(() => import("./pages/admin/Dashboard.tsx"));
 const FloorplanEditor = React.lazy(() => import("./pages/admin/locations/area/area-editor-fabric/AreaEditorFabric.tsx"));
 const CreateLocation = React.lazy(() => import("./pages/admin/locations/CreateLocation.tsx"));
 const CreateArea = React.lazy(() => import("./pages/admin/locations/area/CreateNewArea.tsx"));
+const ReportingDashboard = React.lazy(() => import("./pages/admin/reporting/Dashboard.tsx"));
+const Report = React.lazy(() => import("./pages/admin/reporting/Report.tsx"));
 
 // Location/booking
 const Booking = React.lazy(() => import("./pages/locations/booking/Booking.tsx"));
@@ -26,4 +28,6 @@ export {
   // Admin
   CreateLocation,
   CreateArea,
+  ReportingDashboard,
+  Report,
 };

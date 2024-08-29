@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Dashboard, CreateLocation, CreateArea, SvgAreaEditor, FloorplanEditor, EditLocation } from "../imports";
+import { Dashboard, CreateLocation, CreateArea, SvgAreaEditor, FloorplanEditor, ReportingDashboard, Report, EditLocation } from "../imports";
 import { AdminProtectedRoute } from "../ProtectedRoute";
 
 const adminRoutes = [
@@ -9,6 +9,26 @@ const adminRoutes = [
       <Suspense fallback={<div>Loading...</div>}>
         <AdminProtectedRoute>
           <Dashboard />
+        </AdminProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/admin/reporting",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <AdminProtectedRoute>
+          <ReportingDashboard />
+        </AdminProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/admin/reporting/:reportId",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <AdminProtectedRoute>
+          <Report />
         </AdminProtectedRoute>
       </Suspense>
     ),

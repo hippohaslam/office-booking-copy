@@ -141,6 +141,22 @@ const signUserOut = async () => {
   return await axiosInstance.post(`/session/sign-out`, {});
 };
 
+// Reporting
+const getReportListAsync = async (): Promise<ReportingList[]> => {
+  const result = await axiosInstance.get("/reporting");
+  return result.data;
+}
+
+const getReportDataAsync = async (reportId: string): Promise<ReportingParams> => {
+  const result = await axiosInstance.get(`/reporting/${reportId}`);
+  return result.data;
+}
+
+const runReportAsync = (reportId: string, params = {}) => {
+  const data = axiosInstance.post(`/reporting/${reportId}/run`, params);
+  return data;
+}
+
 export {
   // Locations
   getLocationAsync,
@@ -165,4 +181,8 @@ export {
   getSession,
   postSessionGoogle,
   signUserOut,
+  // Reporting
+  getReportDataAsync,
+  getReportListAsync,
+  runReportAsync
 };

@@ -384,6 +384,27 @@ hr {
   }
 }
 
+.table-striped {
+  width: 100%;
+  th,
+  td {
+    text-align: left;
+    padding: 5px;
+  }
+  th {
+    background-color: $hippo-brand-dark-grey;
+    color: white;
+  }
+
+  // striped rows
+  tr:nth-child(odd) {
+    background-color: $hippo-brand-light-grey;
+  }
+  tr:nth-child(even) {
+    background-color: $hippo-brand-bluey-grey;
+  }
+}
+
 /*  */
 
 /* || Hero styling */

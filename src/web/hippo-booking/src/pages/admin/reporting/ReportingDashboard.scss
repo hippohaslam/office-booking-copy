@@ -1,0 +1,21 @@
+@import '../../../styles/variables.scss';
+
+ul {
+    li {
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+        
+        a {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        small {
+            color: $hippo-brand-purple;
+        }
+    }
+}
+

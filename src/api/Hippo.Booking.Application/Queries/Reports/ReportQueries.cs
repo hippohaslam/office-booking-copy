@@ -12,7 +12,8 @@ public class ReportQueries(IDataContext dataContext) : IReportQueries
             .Select(x => new ReportListResponse
             {
                 Id = x.Id,
-                Name = x.Name
+                Name = x.Name,
+                Description = x.Description
             })
             .ToListAsync();
     }

@@ -51,6 +51,11 @@ const indexRoutes = (queryClient: QueryClient) => [
         errorElement: <ErrorPage />,
         children: [...authRoutes],
       },
+      {
+        path: "*",
+        element: <NotFoundPage />,
+        errorElement: <NotFoundPage />,
+      },
     ],
   },
 ];
