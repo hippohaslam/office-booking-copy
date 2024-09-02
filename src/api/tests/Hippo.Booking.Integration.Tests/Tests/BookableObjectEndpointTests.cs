@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using FluentAssertions;
 using Hippo.Booking.Application.Commands.BookableObject;
 using Hippo.Booking.Core.Entities;
+using Hippo.Booking.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
@@ -42,7 +43,8 @@ public class BookableObjectEndpointTests : IntegrationTestBase
             Description = "Bookable Object Test Object 1",
             FloorplanObjectId = "1",
             AreaId = area.Id,
-            Area = area
+            Area = area,
+            BookableObjectTypeId = BookableObjectTypeEnum.Standard
         }, "the data sent in the request should be added to the dataset");
     }
 
@@ -109,7 +111,8 @@ public class BookableObjectEndpointTests : IntegrationTestBase
             Name = "Bookable Object Test Object 2 - updated",
             Description = "Bookable Object Test Object 2 - updated",
             FloorplanObjectId = "2",
-            AreaId = area.Id
+            AreaId = area.Id,
+            BookableObjectTypeId = BookableObjectTypeEnum.Standard
         }, "updates sent in the request should be reflected in the database");
     }
 }

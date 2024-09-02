@@ -1,10 +1,12 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
+using FluentValidation;
 using Hippo.Booking.Application.Commands.BookableObject;
 using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using NSubstitute;
 
 namespace Hippo.Booking.Application.Tests.Commands;
 
@@ -12,6 +14,8 @@ public class BookableObjectCommandTests
 {
     private BookableObjectCommands _sut;
     private IDataContext _dataContext;
+    private IValidator<CreateBookableObjectRequest> _createBookableObjectRequestValidator;
+    private IValidator<UpdateBookableObjectRequest> _updateBookableObjectRequestValidator;
 
     [OneTimeSetUp]
     public async Task Setup()
@@ -36,7 +40,13 @@ public class BookableObjectCommandTests
 
         await _dataContext.Save();
 
-        _sut = new BookableObjectCommands(_dataContext);
+        _createBookableObjectRequestValidator = Substitute.For<IValidator<CreateBookableObjectRequest>>();
+        _updateBookableObjectRequestValidator = Substitute.For<IValidator<UpdateBookableObjectRequest>>();
+        
+        _sut = new BookableObjectCommands(
+            _dataContext, 
+            _createBookableObjectRequestValidator,
+            _updateBookableObjectRequestValidator);
     }
 
     [Test]
@@ -62,6 +72,8 @@ public class BookableObjectCommandTests
             existingBookableObject!.Name.Should().Be(request.Name, "Name should match request");
             existingBookableObject.Description.Should().Be(request.Description, "Description should match request");
         }
+
+        await TestHelpers.AssertValidatorCalled(_createBookableObjectRequestValidator, request);
     }
 
     [Test]
@@ -130,6 +142,8 @@ public class BookableObjectCommandTests
             updatedBookableObject!.Name.Should().Be(request.Name, "Name should match request");
             updatedBookableObject.Description.Should().Be(request.Description, "Description should match request");
         }
+        
+        await TestHelpers.AssertValidatorCalled(_updateBookableObjectRequestValidator, request);
     }
 
     [Test]

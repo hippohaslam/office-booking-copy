@@ -49,13 +49,16 @@ public class BookingCommands(
         dataContext.AddEntity(booking);
 
         await dataContext.Save();
-
-        await userNotifier.NotifyUser(request.UserId,
-            $"You're new booking on *{request.Date}* has been created");
         
         var bookingToReturn = await bookingQueries.GetBookingById(booking.Id);
+        
+        // date string to UK format
+        var dateString = request.Date.ToString("dddd dd MMMM yyyy");
+        
+        await userNotifier.NotifyUser(request.UserId,
+            $"Your new booking for *{bookingToReturn!.BookableObject.Name}* at *{bookingToReturn.Location.Name}* on *{dateString}* has been created");
 
-        return bookingToReturn!;
+        return bookingToReturn;
     }
 
     public async Task Handle(DeleteBookingRequest request)
@@ -64,8 +67,7 @@ public class BookingCommands(
 
         var booking = await dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.BookableObject)
-            .SingleOrDefaultAsync(x =>
-                x.Id == request.BookingId);
+            .SingleOrDefaultAsync(x => x.Id == request.BookingId);
 
         if (booking != null)
         {
@@ -77,8 +79,7 @@ public class BookingCommands(
             }
 
             var currentUserId = currentUser.UserId;
-
-            // if we do an admin check here, we can allow admins to delete any booking
+            
             if (currentUserId != booking.UserId && !currentUser.IsAdmin)
             {
                 throw new ClientForbiddenException();
@@ -89,8 +90,10 @@ public class BookingCommands(
 
             var forSomeBodyElse = currentUserId != booking.UserId ? $" by {currentUser.FullName}" : string.Empty;
 
+            var dateString = booking.Date.ToString("dddd dd MMMM yyyy");
+            
             await userNotifier.NotifyUser(booking.UserId,
-                $"You're booking for *{booking.BookableObject.Name}* on *{booking.Date}* has been cancelled.{forSomeBodyElse}");
+                $"Your booking for *{booking.BookableObject.Name}* on *{dateString}* has been cancelled.{forSomeBodyElse}");
         }
     }
 

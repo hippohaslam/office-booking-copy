@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hippo.Booking.Infrastructure.EF.Migrations
 {
     [DbContext(typeof(HippoBookingDbContext))]
-    [Migration("20240823151457_Reporting")]
-    partial class Reporting
+    [Migration("20240829102214_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,6 +103,9 @@ namespace Hippo.Booking.Infrastructure.EF.Migrations
                     b.Property<int>("AreaId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("BookableObjectTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -119,7 +122,41 @@ namespace Hippo.Booking.Infrastructure.EF.Migrations
 
                     b.HasIndex("AreaId");
 
+                    b.HasIndex("BookableObjectTypeId");
+
                     b.ToTable("BookableObjects");
+                });
+
+            modelBuilder.Entity("Hippo.Booking.Core.Entities.BookableObjectType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BookableObjectTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Standard",
+                            Name = "Standard"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Dog",
+                            Name = "Dog"
+                        });
                 });
 
             modelBuilder.Entity("Hippo.Booking.Core.Entities.Booking", b =>
@@ -285,7 +322,15 @@ namespace Hippo.Booking.Infrastructure.EF.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Hippo.Booking.Core.Entities.BookableObjectType", "BookableObjectType")
+                        .WithMany()
+                        .HasForeignKey("BookableObjectTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Area");
+
+                    b.Navigation("BookableObjectType");
                 });
 
             modelBuilder.Entity("Hippo.Booking.Core.Entities.Booking", b =>

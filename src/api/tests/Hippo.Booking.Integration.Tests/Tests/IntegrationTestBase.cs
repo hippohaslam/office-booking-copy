@@ -51,7 +51,8 @@ public class IntegrationTestBase
             Name = name,
             Description = "Test Bookable Object",
             AreaId = area.Id,
-            Area = area
+            Area = area,
+            BookableObjectTypeId = BookableObjectTypeEnum.Standard
         };
         await AddEntity(bookableObject);
         return bookableObject;

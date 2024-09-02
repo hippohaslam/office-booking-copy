@@ -49,6 +49,8 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
 
     public DbSet<BookableObject> BookableObjects { get; set; } = null!;
 
+    public DbSet<BookableObjectType> BookableObjectTypes { get; set; } = null!;
+
     public DbSet<Core.Entities.Booking> Bookings { get; set; } = null!;
 
     public DbSet<Location> Locations { get; set; } = null!;

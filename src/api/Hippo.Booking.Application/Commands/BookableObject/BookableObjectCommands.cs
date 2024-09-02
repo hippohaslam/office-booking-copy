@@ -1,3 +1,4 @@
+using FluentValidation;
 using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
@@ -5,10 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Application.Commands.BookableObject;
 
-public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableObject, IUpdateBookableObject
+public class BookableObjectCommands(
+    IDataContext dataContext,
+    IValidator<CreateBookableObjectRequest> createBookableObjectRequestValidator,
+    IValidator<UpdateBookableObjectRequest> updateBookableObjectRequestValidator) : ICreateBookableObject, IUpdateBookableObject
 {
     public async Task<int> Handle(int locationId, int areaId, CreateBookableObjectRequest request)
     {
+        await createBookableObjectRequestValidator.ValidateAndThrowAsync(request);
+        
         var area = await dataContext.Query<Area>()
             .Include(i => i.BookableObjects)
             .SingleOrDefaultAsync(x => x.LocationId == locationId && x.Id == areaId);
@@ -28,6 +34,7 @@ public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableO
             Name = request.Name,
             Description = request.Description,
             FloorplanObjectId = request.FloorPlanObjectId,
+            BookableObjectTypeId = request.BookableObjectTypeId,
             AreaId = areaId
         };
 
@@ -40,6 +47,8 @@ public class BookableObjectCommands(IDataContext dataContext) : ICreateBookableO
 
     public async Task Handle(int bookableObjectId, int locationId, int areaId, UpdateBookableObjectRequest request)
     {
+        await updateBookableObjectRequestValidator.ValidateAndThrowAsync(request);
+        
         var bookableObject = await dataContext.Query<Core.Entities.BookableObject>()
             .Include(i => i.Area)
             .SingleOrDefaultAsync(x =>
