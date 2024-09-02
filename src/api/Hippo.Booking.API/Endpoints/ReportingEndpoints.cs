@@ -36,7 +36,7 @@ public class ReportingEndpoints() : EndpointBase("reporting", "Reporting", Acces
                 int reportId, 
                 [FromBody] Dictionary<string, JsonElement> parameters) =>
             {
-                var reportResponse = await runReportCommand.RunReportAsync(reportId, parameters);
+                var reportResponse = await runReportCommand.Handle(reportId, parameters);
 
                 if (!reportResponse.Success)
                 {

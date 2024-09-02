@@ -20,7 +20,6 @@ public class CreateBookableObjectRequestValidator : AbstractValidator<CreateBook
     public CreateBookableObjectRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty();
-        RuleFor(x => x.Description).NotEmpty();
         RuleFor(x => x.BookableObjectTypeId).IsInEnum();
     }
 }

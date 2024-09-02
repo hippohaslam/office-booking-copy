@@ -8,7 +8,7 @@ namespace Hippo.Booking.Application.Commands.Reports;
 
 public class ReportingCommands(IDataContext dataContext, IReportRunner reportRunner) : IRunReportCommand
 {
-    public async Task<ReportResponse> RunReportAsync(int reportId, Dictionary<string, JsonElement> parametersJson)
+    public async Task<ReportResponse> Handle(int reportId, Dictionary<string, JsonElement> parametersJson)
     {
         var report = await dataContext.Query<Report>()
             .SingleOrDefaultAsync(x => x.Id == reportId);
