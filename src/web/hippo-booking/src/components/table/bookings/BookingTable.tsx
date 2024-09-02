@@ -1,3 +1,4 @@
+import { CtaButton } from "../../buttons/CtaButton";
 import "./BookingTable.scss";
 
 type BookingTableProps = {
@@ -26,9 +27,7 @@ const BookingTable = ({ date, bookings, onClick }: BookingTableProps) => {
               <td>{booking.area.name}</td>
               <td>{booking.location.name}</td>
               <td>
-                <button className='cta cta-compact cta-grey' onClick={() => onClick(booking)}>
-                  Cancel booking
-                </button>
+                <CtaButton onClick={() => onClick(booking)} color="cta-grey" text="Cancel booking"/>
               </td>
             </tr>
           ))}

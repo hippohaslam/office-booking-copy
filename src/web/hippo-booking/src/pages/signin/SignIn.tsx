@@ -4,6 +4,7 @@ import { useUser } from "../../contexts/UserContext";
 import { useCallback, useEffect, useState } from "react";
 import { getSession, postSessionGoogle } from "../../services/Apis";
 import HippoSvg from "../../assets/hippo-navy.svg";
+import "./SignIn.scss";
 
 export default function SignIn() {
   const location = useLocation();

@@ -2,7 +2,7 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { ErrorBanner } from "../../components";
 import { getLocationAreasAsync, getLocationsAsync } from "../../services/Apis";
 import { Link, useNavigate } from "react-router-dom";
-import { CtaButton } from "../../components/buttons/Buttons";
+import { CtaButton } from "../../components/buttons/CtaButton";
 import "./Dashboard.scss";
 
 const Admin = () => {

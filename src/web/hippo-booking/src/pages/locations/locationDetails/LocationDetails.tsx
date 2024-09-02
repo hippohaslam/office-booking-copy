@@ -1,7 +1,7 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getLocationAsync } from "../../../services/Apis";
 import { useQuery } from "@tanstack/react-query";
-import { ErrorBanner, WarningBanner } from "../../../components";
+import { CtaLink, ErrorBanner, WarningBanner } from "../../../components";
 
 const LocationDetails = () => {
   const { locationId } = useParams();
@@ -33,9 +33,7 @@ const LocationDetails = () => {
       <h1>{data?.name}</h1>
       <h2>Description</h2>
       <p>{data?.description}</p>
-      <Link className='cta cta-green with-arrow' to={"/locations/" + locationId + "/areas"}>
-        Make a booking at {data?.name}
-      </Link>
+      <CtaLink text={"Make a booking at" + data?.name} to={"/locations/" + locationId + "/areas"} color="cta-green" withArrow={true}/>
     </div>
   );
 };

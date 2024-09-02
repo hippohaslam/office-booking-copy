@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { ErrorBanner, SuccessBanner } from "../../components/index.ts";
+import { CtaLink, ErrorBanner, SuccessBanner } from "../../components/index.ts";
 import BookingTable from "../../components/table/bookings/BookingTable.tsx";
 import BookingCardStacked from "../../components/booking/BookingCardStacked.tsx";
 import { deleteBookingAsync, getUpcomingBookingsAsync } from "../../services/Apis.ts";
@@ -15,6 +14,7 @@ const Bookings = () => {
   const [cancelledBooking, setCancelledBooking] = useState<Booking | null>(null);
   const [showSuccessBanner, setSuccessBannerVisibility] = useState(false);
   const [deleteError, setDeleteError] = useState<AxiosError | null>(null);
+  const [isModalLoading, setModalLoading] = useState(false);
 
   const { isFetching, data, isError } = useQuery({
     queryKey: ["bookings"],
@@ -58,11 +58,16 @@ const Bookings = () => {
     },
     onError: (error) => {
       setDeleteError(error as AxiosError);
+      handleCloseModal();
+      setModalLoading(false);
     },
   });
 
   const handleDeleteSuccess = async () => {
     setSuccessBannerVisibility(true);
+    setCancelledBooking(selectedBooking);
+    handleCloseModal();
+    setModalLoading(false);
     await queryClient.invalidateQueries({ queryKey: ["bookings"] });
   };
 
@@ -77,29 +82,33 @@ const Bookings = () => {
   };
 
   const handleConfirmCancel = () => {
+    if (isModalLoading) {
+      return;
+    }
     if (selectedBooking) {
+      setModalLoading(true);
       deleteBooking.mutate(selectedBooking);
-      setCancelledBooking(selectedBooking);
-      handleCloseModal();
     } else {
       console.error("No booking selected for cancellation");
-    }
+    };
   };
 
   const bookingInfoElement = () => {
     if (selectedBooking) {
       return (
-        <BookingCardStacked
-          elementId='cancel-modal-booking-info'
-          date={selectedBooking.date}
-          bookableObjectName={selectedBooking.bookableObject.name}
-          areaName={selectedBooking.area.name}
-          locationName={selectedBooking.location.name}
-        />
+        <div>
+          <BookingCardStacked
+            elementId='cancel-modal-booking-info'
+            date={selectedBooking.date}
+            bookableObjectName={selectedBooking.bookableObject.name}
+            areaName={selectedBooking.area.name}
+            locationName={selectedBooking.location.name}
+          />
+        </div>
       );
     } else {
       return <span>Selected booking is null</span>;
-    }
+    };
   };
 
   if (isError) {
@@ -150,20 +159,21 @@ const Bookings = () => {
           <BookingTable date={date} bookings={Object.values(groupedBookings[date])} onClick={handleCancelClick} />
         </div>
       ))}
-      <Link to='/locations' className='cta cta-green with-arrow'>
-        Make a new booking
-      </Link>
+      <CtaLink to="/locations" color="cta-green" withArrow={true} text="Make a new booking"/>
 
       <ConfirmModal
         title='Are you sure you want to cancel this booking?'
         isOpen={isModalVisible}
         childElement={bookingInfoElement()}
         showConfirmButton
-        confirmButtonLabel='Yes. Cancel it'
+        confirmButtonLabel={isModalLoading ? "Cancelling booking" : 'Yes. Cancel it'}
         confirmButtonColor='cta-red'
+        confirmButtonDisabled={isModalLoading}
+        confirmButtonLoading={isModalLoading}
         onConfirm={handleConfirmCancel}
         cancelButtonLabel='No. Keep it'
         cancelButtonColor='cta-green'
+        cancelButtonDisabled={isModalLoading}
         onCancel={handleCloseModal}
       />
     </div>

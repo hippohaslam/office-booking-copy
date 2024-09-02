@@ -10,7 +10,7 @@ import { MultiErrorBanner, SuccessBanner } from "../../../../../components";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../../../shared/fabric/Canvas";
 import { AccordionItem } from "../../../../../components/accordion/Accordion";
 import { isNullOrEmpty } from "../../../../../helpers/StringHelpers";
-import { CtaButton } from "../../../../../components/buttons/Buttons";
+import { CtaButton } from "../../../../../components/buttons/CtaButton";
 import "./AreaEditorFabric.scss";
 import { Area } from "../../../../../interfaces/Area";
 

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "./ActionTile.scss";
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
+import CtaLink from "../../buttons/CtaLink";
 
 type LinkDisplayProps = { show: true; text: string; to: string } | { show: false | undefined | null };
 
@@ -27,11 +28,11 @@ const ActionTile = ({ title, iconSrc, description, primaryLink, secondaryLink }:
           ) : null}
         </div>
       </div>
-
       {primaryLink.show ? (
-        <Link to={primaryLink.to} className='cta cta-green with-arrow'>
-          {primaryLink.text}
-        </Link>
+        <div>
+          <br/>
+          <CtaLink text={primaryLink.text} to={primaryLink.to} color='cta-green' withArrow={true}/>
+        </div>
       ) : null}
     </div>
   );

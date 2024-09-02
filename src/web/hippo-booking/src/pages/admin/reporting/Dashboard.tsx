@@ -14,7 +14,7 @@ const Reporting = () => {
   return (
     <div>
       <h1>Reports</h1>
-      <ul>
+      <ul className="reports-list">
         {data?.map((report: ReportingList) => (
           <li key={report.id}>
             <Link to={`/admin/reporting/${report.id}`}>{report.name}</Link>

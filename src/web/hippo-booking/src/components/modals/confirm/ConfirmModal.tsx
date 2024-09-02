@@ -1,5 +1,5 @@
 import "./ConfirmModal.scss";
-import { CtaButton } from "../../buttons/Buttons";
+import { CtaButton } from "../../buttons/CtaButton";
 import { useEffect, useRef } from "react";
 
 type BookingCancelModalProps = {
@@ -10,9 +10,12 @@ type BookingCancelModalProps = {
   onConfirm?: () => void;
   confirmButtonLabel?: string;
   confirmButtonColor?: "cta-green" | "cta-red";
+  confirmButtonDisabled?: boolean;
+  confirmButtonLoading?: boolean;
   onCancel: () => void;
   cancelButtonLabel: string;
   cancelButtonColor?: "cta-green" | "cta-red";
+  cancelButtonDisabled?: boolean;
 };
 
 const BookingCancelModal = ({
@@ -23,9 +26,12 @@ const BookingCancelModal = ({
   onConfirm,
   confirmButtonLabel,
   confirmButtonColor = "cta-green",
+  confirmButtonDisabled = false,
+  confirmButtonLoading = false,
   onCancel,
   cancelButtonLabel,
   cancelButtonColor = "cta-red",
+  cancelButtonDisabled = false
 }: BookingCancelModalProps) => {
   const firstButtonRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -38,6 +44,13 @@ const BookingCancelModal = ({
       }
     }
   }, [isOpen]);
+
+  const handleCloseModalClick = () => {
+    if (cancelButtonDisabled) {
+      return;
+    }
+    closeModal();
+  }
 
   const closeModal = () => {
     if (modalRef.current) {
@@ -52,32 +65,39 @@ const BookingCancelModal = ({
     }, 200);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        overlayRef.current &&
-        (overlayRef.current as HTMLElement).contains(event.target as Node) &&
-        !document.getElementById("cancel-booking-modal")?.contains(event.target as Node)
-      ) {
-        closeModal();
-      }
-    };
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        closeModal();
-      }
-    };
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      overlayRef.current &&
+      (overlayRef.current as HTMLElement).contains(event.target as Node) &&
+      !document.getElementById("cancel-booking-modal")?.contains(event.target as Node)
+    ) {
+      closeModal();
+    }
+  };
+  const handleEscapeKey = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      closeModal();
+    }
+  };
 
+  useEffect(() => {
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleEscapeKey);
-    }
+    };
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscapeKey);
     };
   }, [isOpen, onCancel]);
+
+  useEffect(() => {
+    if (cancelButtonDisabled) {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, [cancelButtonDisabled]);
 
   if (!isOpen) return null;
   return (
@@ -91,12 +111,16 @@ const BookingCancelModal = ({
         aria-describedby='cancel-modal-booking-info'
         aria-modal='true'
       >
-        <h2 id='cancel-modal-heading'>{title}</h2>
-        {childElement}
-        {showConfirmButton ? (
-          <CtaButton ref={firstButtonRef} text={confirmButtonLabel ?? ""} color={confirmButtonColor} onClick={onConfirm} />
-        ) : null}
-        <CtaButton text={cancelButtonLabel} color={cancelButtonColor} onClick={closeModal} />
+        <div id="modal-content">
+          <h2 id='cancel-modal-heading'>{title}</h2>
+          {childElement}
+          <div className="button-group">
+            {showConfirmButton ? (
+              <CtaButton ref={firstButtonRef} text={confirmButtonLabel ?? ""} color={confirmButtonColor} onClick={onConfirm} disabled={confirmButtonDisabled} isLoading={confirmButtonLoading}/>
+            ) : null}
+            <CtaButton text={cancelButtonLabel} color={cancelButtonColor} onClick={handleCloseModalClick} disabled={cancelButtonDisabled}/>
+          </div>
+        </div>
       </div>
     </div>
   );

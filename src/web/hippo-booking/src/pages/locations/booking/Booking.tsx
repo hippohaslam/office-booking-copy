@@ -37,6 +37,7 @@ const DeskBooking = () => {
   const { windowWidth, windowHeight } = useWindowSize();
   const navigate = useNavigate();
   const [error, setError] = useState<AxiosError | null>(null);
+  const [isModalLoading, setModalLoading] = useState(false);
 
   const { data: areaData } = useQuery({
     queryKey: ["area", areaId],
@@ -62,8 +63,14 @@ const DeskBooking = () => {
     mutationFn: (booking: NewBooking) => postBookingAsync(booking),
     onSuccess: (data) => {
       refetch();
+      navigate(`/bookings/${data.id}/confirmed`);
       return data;
     },
+    onError: (error) => {
+      setModalLoading(false);
+      handleCloseModal();
+      setError(error as AxiosError);
+    }
   });
 
   useEffect(() => {
@@ -237,27 +244,25 @@ const DeskBooking = () => {
   };
 
   const handleConfirmBooking = () => {
+    if (isModalLoading) {
+      return;
+    }
     if (selectedObject) {
+      setModalLoading(true);
       handleBooking.mutate(
         {
           date: selectedDate.toISOString().split("T")[0],
           bookableObjectId: selectedObject.id,
           areaId: Number.parseInt(areaId!),
         },
-        {
-          onSuccess: (bookingData) => {
-            navigate(`/bookings/${bookingData.id}/confirmed`);
-          },
-          onError: (error) => {
-            handleCloseModal();
-            setError(error as AxiosError);
-          },
-        },
       );
     }
   };
 
   const handleCloseModal = () => {
+    if (isModalLoading) {
+      return;
+    }
     setModalVisible(false);
     setSelectedObject(null);
   };
@@ -299,7 +304,9 @@ const DeskBooking = () => {
               <div>
                 <p>{selectedObject.description}</p>
                 <br />
-                <strong>Sorry. This space has already been booked on this date by {getBookedBy(selectedObject)}.</strong>
+                <h3>This space has already been booked on this date</h3>
+                <p>Booked by: {getBookedBy(selectedObject)}</p>
+                <br />
               </div>
             }
             showConfirmButton={false}
@@ -326,11 +333,14 @@ const DeskBooking = () => {
               </div>
             }
             showConfirmButton
-            confirmButtonLabel='Yes. Book it'
+            confirmButtonLabel={isModalLoading ? "Placing booking" : 'Yes. Book it'}
             confirmButtonColor='cta-green'
+            confirmButtonDisabled={isModalLoading}
+            confirmButtonLoading={isModalLoading}
             onConfirm={handleConfirmBooking}
             cancelButtonLabel='No. Cancel'
             cancelButtonColor='cta-red'
+            cancelButtonDisabled={isModalLoading}
             onCancel={handleCloseModal}
           />
         );

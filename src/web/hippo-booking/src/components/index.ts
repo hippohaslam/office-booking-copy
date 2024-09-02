@@ -11,7 +11,8 @@ import WarningBanner from "./banners/WarningBanner";
 import InfoTile from "./tile/info-tile/InfoTile";
 import InfoTileList from "./tile/info-tile/InfoTileList";
 import { ActionTile, ActionTileList } from "./tile/action-tile/ActionTile";
-import { CtaButton } from "./buttons/Buttons";
+import { CtaButton } from "./buttons/CtaButton";
+import CtaLink from "./buttons/CtaLink";
 
 export {
   MultiErrorBanner,
@@ -30,4 +31,5 @@ export {
   ActionTile,
   ActionTileList,
   CtaButton,
+  CtaLink
 };

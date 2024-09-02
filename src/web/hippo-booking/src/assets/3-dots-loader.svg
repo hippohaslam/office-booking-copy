@@ -1,0 +1,11 @@
+<svg width="52" height="16" viewBox="0 0 52 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle id="circle-1" cx="7.5" cy="7.5" r="7.5" fill="white">
+        <animate attributeName='opacity' calcMode='spline' dur='1.5' values='1;0;1;' keySplines='.5 0 .5 1;.5 0 .5 1' repeatCount='indefinite' begin='-.4'/>
+    </circle>
+    <circle id="circle-2" cx="25.5" cy="7.5" r="7.5" fill="white">
+        <animate attributeName='opacity' calcMode='spline' dur='1.5' values='1;0;1;' keySplines='.5 0 .5 1;.5 0 .5 1' repeatCount='indefinite' begin='-.2'/>
+    </circle>
+    <circle id="circle-3" cx="43.5" cy="7.5" r="7.5" fill="white">
+        <animate attributeName='opacity' calcMode='spline' dur='1.5' values='1;0;1;' keySplines='.5 0 .5 1;.5 0 .5 1' repeatCount='indefinite' begin='0'/>
+    </circle>
+</svg>
