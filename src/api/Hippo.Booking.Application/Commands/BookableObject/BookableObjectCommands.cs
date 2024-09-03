@@ -64,6 +64,7 @@ public class BookableObjectCommands(
         bookableObject.Name = request.Name;
         bookableObject.Description = request.Description;
         bookableObject.FloorplanObjectId = request.FloorPlanObjectId;
+        bookableObject.BookableObjectTypeId = request.BookableObjectTypeId;
 
         await dataContext.Save();
     }

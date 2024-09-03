@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { CtaButton, ErrorBanner, SuccessBanner } from "../../../../components";
 import { getLocationAsync, postLocationAreaAsync } from "../../../../services/Apis";
-import { AreaTypeEnum, AreaTypeEnumLabels } from "../../../../enums/AreaTypeEnum.ts";
+import { AreaTypeEnum } from "../../../../enums/AreaTypeEnum.ts";
 import { NewArea } from "../../../../interfaces/Area";
+import EnumSelect from "../../../../components/select/EnumSelect.tsx";
 
 const CreateArea = () => {
   const initialArea = {
@@ -65,15 +66,7 @@ const CreateArea = () => {
         </div>
         <div className='standard-inputs'>
           <label htmlFor='areaTypeId'>Area Type</label>
-          <select name='areaTypeId' value={area.areaTypeId} onChange={handleAreaTypeUpdate}>
-            {Object.keys(AreaTypeEnumLabels).map((key, _) => {
-              return (
-                <option key={key} value={key}>
-                  {AreaTypeEnumLabels[key]}
-                </option>
-              );
-            })}
-          </select>
+          <EnumSelect name='areaTypeId' value={area.areaTypeId.toString()} enumObj={AreaTypeEnum} onChange={handleAreaTypeUpdate} />
         </div>
         <CtaButton text='Submit' type='submit' color='cta-green' />
       </form>

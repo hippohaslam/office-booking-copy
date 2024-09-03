@@ -23,7 +23,8 @@ public class BookableObjectEndpointTests : IntegrationTestBase
         {
             Name = "Bookable Object Test Object 1",
             Description = "Bookable Object Test Object 1",
-            FloorPlanObjectId = "1"
+            FloorPlanObjectId = "1",
+            BookableObjectTypeId = BookableObjectTypeEnum.Standard
         };
 
         //Act
@@ -61,7 +62,8 @@ public class BookableObjectEndpointTests : IntegrationTestBase
         {
             Name = "Bookable Object Test Object 3",
             Description = "Bookable Object Test Object 3",
-            FloorPlanObjectId = "1"
+            FloorPlanObjectId = "1",
+            BookableObjectTypeId = BookableObjectTypeEnum.Standard
         };
 
         //Act
@@ -82,6 +84,30 @@ public class BookableObjectEndpointTests : IntegrationTestBase
     }
 
     [Test]
+    public async Task CreatingNewBookableObjectWithNoBookableObjectIdReturns400()
+    {
+        //Arrange
+        var client = GetClient();
+        var location = await SetUpLocation("Bookable Object Test Location 1");
+        var area = await SetUpArea(location, "Bookable Object Test Area 1");
+        var bookableObject = await SetUpBookableObject(area, "Bookable Object Test Object 2");
+
+        var updateBookableObjectRequest = new UpdateBookableObjectRequest
+        {
+            Name = "Bookable Object Test Object 2 - updated",
+            Description = "Bookable Object Test Object 2 - updated",
+            FloorPlanObjectId = "2",
+        };
+
+        //Act
+        var response = await client.PutAsJsonAsync($"admin/location/{location.Id}/area/{area.Id}/bookable-object/{bookableObject.Id}",
+            updateBookableObjectRequest);
+
+        //Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest, "bookable object id is required");
+    }
+
+    [Test]
     public async Task UpdatingExistingBookableObjectIsSuccessful()
     {
         //Arrange
@@ -94,7 +120,8 @@ public class BookableObjectEndpointTests : IntegrationTestBase
         {
             Name = "Bookable Object Test Object 2 - updated",
             Description = "Bookable Object Test Object 2 - updated",
-            FloorPlanObjectId = "2"
+            FloorPlanObjectId = "2",
+            BookableObjectTypeId = BookableObjectTypeEnum.Standard
         };
 
         //Act

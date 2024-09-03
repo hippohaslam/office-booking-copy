@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Area, NewArea } from "../interfaces/Area";
 import type { BookingLocation, NewLocation, EditLocation } from "../interfaces/Location";
+import { BookableObject } from "../interfaces/Desk";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const axiosInstance = axios.create({

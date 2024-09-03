@@ -4,13 +4,14 @@ import { setupServer } from "msw/node";
 import FloorplanEditor from "./AreaEditorFabric";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BookableObject } from "../../../../../interfaces/Desk";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const assignableObjects: Array<BookableObject> = [
-  { id: 1, name: "Desk 1", floorPlanObjectId: undefined },
-  { id: 2, name: "Desk 2", floorPlanObjectId: undefined },
-  { id: 3, name: "Desk 3", floorPlanObjectId: undefined },
+  { id: 1, name: "Desk 1", floorPlanObjectId: undefined, bookableObjectTypeId: 1 },
+  { id: 2, name: "Desk 2", floorPlanObjectId: undefined, bookableObjectTypeId: 1 },
+  { id: 3, name: "Desk 3", floorPlanObjectId: undefined, bookableObjectTypeId: 1 },
 ];
 
 // Provide the server-side API with the request handlers.

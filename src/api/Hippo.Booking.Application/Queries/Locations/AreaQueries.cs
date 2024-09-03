@@ -43,7 +43,8 @@ public class AreaQueries(IDataContext dataContext) : IAreaQueries
                     Id = y.Id,
                     Name = y.Name,
                     Description = y.Description,
-                    FloorPlanObjectId = y.FloorplanObjectId
+                    FloorPlanObjectId = y.FloorplanObjectId,
+                    BookableObjectTypeId = y.BookableObjectTypeId
                 }).ToList()
             })
             .SingleOrDefaultAsync();

@@ -11,8 +11,11 @@ import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../.
 import { AccordionItem } from "../../../../../components/accordion/Accordion";
 import { isNullOrEmpty } from "../../../../../helpers/StringHelpers";
 import { CtaButton } from "../../../../../components/buttons/CtaButton";
-import "./AreaEditorFabric.scss";
 import { Area } from "../../../../../interfaces/Area";
+import type { BookableObject } from "../../../../../interfaces/Desk";
+import { BookableObjectTypeEnum } from "../../../../../enums/BookableObjectTypeEnum";
+import EnumSelect from "../../../../../components/select/EnumSelect";
+import "./AreaEditorFabric.scss";
 
 const generateUniqueId = () => {
   return uuidv4();
@@ -30,6 +33,13 @@ const errorKeys = {
   saveBookableObjects: "save-bookable-objects",
 };
 
+const defaultNewBookableObject: BookableObject = {
+  name: "",
+  description: "",
+  id: 0,
+  bookableObjectTypeId: BookableObjectTypeEnum.Standard,
+};
+
 const FloorplanEditor = () => {
   const { locationId, areaId } = useParams();
   const [errors, setErrors] = useState<ErrorObjects[]>([]);
@@ -37,7 +47,7 @@ const FloorplanEditor = () => {
   const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
   const [textState, setTextState] = useState({ hidden: true, text: "" });
-  const [newBookableObject, setNewBookableObject] = useState<BookableObject>({ name: "", description: "", id: 0 });
+  const [newBookableObject, setNewBookableObject] = useState<BookableObject>(defaultNewBookableObject);
   const [showCreateNewBookableObject, setShowCreateNewBookableObject] = useState(false);
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
@@ -112,7 +122,7 @@ const FloorplanEditor = () => {
   /** Resets to default values and closes the input box */
   const resetNewBookableObject = () => {
     setShowCreateNewBookableObject(false);
-    setNewBookableObject({ name: "", description: "", id: 0 });
+    setNewBookableObject(defaultNewBookableObject);
   };
 
   const createNewBookableOBjectMutation = useMutation({
@@ -362,13 +372,16 @@ const FloorplanEditor = () => {
     });
   };
 
-  const handleDeskUpdate = (text: string, deskId: number, field: "name" | "description") => {
+  const handleDeskUpdate = (text: string, deskId: number, field: "name" | "description" | "bookableObjectTypeId") => {
     setArea((prev) => {
       if (prev) {
         return {
           ...prev,
           bookableObjects: prev.bookableObjects.map((d) => {
             if (d.id === deskId) {
+              if (field === "bookableObjectTypeId") {
+                return { ...d, [field]: Number.parseInt(text) };
+              }
               return { ...d, [field]: text };
             }
             return d;
@@ -564,6 +577,17 @@ const FloorplanEditor = () => {
                   }
                 />
               </div>
+              <div className='standard-inputs'>
+                <label htmlFor='new-bookable-object-type'>Type: </label>
+                <EnumSelect
+                  enumObj={BookableObjectTypeEnum}
+                  value={newBookableObject.bookableObjectTypeId.toString()}
+                  onChange={() => (e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setNewBookableObject({ ...newBookableObject, bookableObjectTypeId: Number.parseInt(e.target.value) })
+                  }
+                  name='new-bookable-object-type'
+                />
+              </div>
               <button type='button' onClick={handleAddNewBookableObject}>
                 Create
               </button>
@@ -624,41 +648,56 @@ export default FloorplanEditor;
 
 interface DeskListItemProps {
   desk: BookableObject;
-  handleDeskUpdate: (value: string, id: number, field: "name" | "description") => void;
+  handleDeskUpdate: (value: string, id: number, field: "name" | "description" | "bookableObjectTypeId") => void;
   assignDesk: (id: number) => void;
   unassignDesk: (id: number) => void;
   selectedObject: SelectedObject | null;
 }
 
-const DeskListItem: React.FC<DeskListItemProps> = ({ desk, handleDeskUpdate, assignDesk, unassignDesk, selectedObject }) => (
-  <section>
-    <div className='floorplan__desk-list-card'>
-      <label htmlFor={`object-name=${desk.id}`}>Name: </label>
-      <input
-        id={`object-name=${desk.id}`}
-        data-testid={`object-name-${desk.id}`}
-        type='text'
-        value={desk.name}
-        onChange={(e) => handleDeskUpdate(e.target.value, desk.id, "name")}
-      />
+const DeskListItem: React.FC<DeskListItemProps> = ({ desk, handleDeskUpdate, assignDesk, unassignDesk, selectedObject }) => {
+  return (
+    <section>
+      <div className='floorplan__desk-list-card'>
+        <div>
+          <label htmlFor={`object-name=${desk.id}`}>Name: </label>
+          <input
+            id={`object-name=${desk.id}`}
+            data-testid={`object-name-${desk.id}`}
+            type='text'
+            value={desk.name}
+            onChange={(e) => handleDeskUpdate(e.target.value, desk.id, "name")}
+          />
+        </div>
 
-      <label htmlFor={`object-description=${desk.id}`}>Description: </label>
-      <textarea
-        id={`desk-description=${desk.id}`}
-        data-testid={`object-description-${desk.id}`}
-        value={desk.description}
-        onChange={(e) => handleDeskUpdate(e.target.value, desk.id, "description")}
-      />
-      <button
-        type='button'
-        onClick={() => assignDesk(desk.id)}
-        disabled={!selectedObject || selectedObject.hasAssignedDesk || !isNullOrEmpty(desk.floorPlanObjectId)}
-      >
-        Assign desk
-      </button>
-      <button type='button' onClick={() => unassignDesk(desk.id)} disabled={isNullOrEmpty(desk.floorPlanObjectId)}>
-        Unassign desk
-      </button>
-    </div>
-  </section>
-);
+        <div>
+          <label htmlFor={`object-description=${desk.id}`}>Description: </label>
+          <textarea
+            id={`desk-description=${desk.id}`}
+            data-testid={`object-description-${desk.id}`}
+            value={desk.description}
+            onChange={(e) => handleDeskUpdate(e.target.value, desk.id, "description")}
+          />
+        </div>
+        <div>
+          <label htmlFor='new-bookable-object-type'>Type: </label>
+          <EnumSelect
+            enumObj={BookableObjectTypeEnum}
+            value={desk.bookableObjectTypeId.toString()}
+            onChange={(e) => handleDeskUpdate(e.target.value, desk.id, "bookableObjectTypeId")}
+            name='bookable-object-type'
+          />
+        </div>
+        <button
+          type='button'
+          onClick={() => assignDesk(desk.id)}
+          disabled={!selectedObject || selectedObject.hasAssignedDesk || !isNullOrEmpty(desk.floorPlanObjectId)}
+        >
+          Assign desk
+        </button>
+        <button type='button' onClick={() => unassignDesk(desk.id)} disabled={isNullOrEmpty(desk.floorPlanObjectId)}>
+          Unassign desk
+        </button>
+      </div>
+    </section>
+  );
+};

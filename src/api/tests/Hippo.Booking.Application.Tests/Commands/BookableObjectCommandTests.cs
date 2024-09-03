@@ -4,6 +4,7 @@ using FluentValidation;
 using Hippo.Booking.Application.Commands.BookableObject;
 using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Entities;
+using Hippo.Booking.Core.Enums;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
@@ -124,7 +125,8 @@ public class BookableObjectCommandTests
         {
             Name = "Updated BookableObject",
             Description = "Updated BookableObject Description",
-            FloorPlanObjectId = "23232"
+            FloorPlanObjectId = "23232",
+            BookableObjectTypeId = BookableObjectTypeEnum.Dog
         };
 
         await _sut.Handle(
@@ -141,6 +143,7 @@ public class BookableObjectCommandTests
             updatedBookableObject.Should().NotBeNull("BookableObject should be updated and still exist");
             updatedBookableObject!.Name.Should().Be(request.Name, "Name should match request");
             updatedBookableObject.Description.Should().Be(request.Description, "Description should match request");
+            updatedBookableObject.BookableObjectTypeId.Should().Be(request.BookableObjectTypeId, "BookableObjectTypeId should match request");
         }
         
         await TestHelpers.AssertValidatorCalled(_updateBookableObjectRequestValidator, request);

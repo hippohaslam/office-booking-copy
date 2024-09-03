@@ -11,8 +11,7 @@ public class CreateBookableObjectRequest
 
     public string FloorPlanObjectId { get; set; } = string.Empty;
 
-    // TODO: Remove default value once frontend is updated
-    public BookableObjectTypeEnum BookableObjectTypeId { get; set; } = BookableObjectTypeEnum.Standard;
+    public BookableObjectTypeEnum BookableObjectTypeId { get; set; }
 }
 
 public class CreateBookableObjectRequestValidator : AbstractValidator<CreateBookableObjectRequest>

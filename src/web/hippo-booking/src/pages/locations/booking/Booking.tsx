@@ -13,6 +13,7 @@ import CustomDatePicker from "../../../components/date-picker/DatePicker";
 import { ConfirmModal, ErrorBanner, TabItem, TabList } from "../../../components";
 import BookingCardStacked from "../../../components/booking/BookingCardStacked";
 import { AxiosError } from "axios";
+import { BookableObject } from "../../../interfaces/Desk";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
@@ -70,7 +71,7 @@ const DeskBooking = () => {
       setModalLoading(false);
       handleCloseModal();
       setError(error as AxiosError);
-    }
+    },
   });
 
   useEffect(() => {
@@ -249,13 +250,11 @@ const DeskBooking = () => {
     }
     if (selectedObject) {
       setModalLoading(true);
-      handleBooking.mutate(
-        {
-          date: selectedDate.toISOString().split("T")[0],
-          bookableObjectId: selectedObject.id,
-          areaId: Number.parseInt(areaId!),
-        },
-      );
+      handleBooking.mutate({
+        date: selectedDate.toISOString().split("T")[0],
+        bookableObjectId: selectedObject.id,
+        areaId: Number.parseInt(areaId!),
+      });
     }
   };
 
@@ -333,7 +332,7 @@ const DeskBooking = () => {
               </div>
             }
             showConfirmButton
-            confirmButtonLabel={isModalLoading ? "Placing booking" : 'Yes. Book it'}
+            confirmButtonLabel={isModalLoading ? "Placing booking" : "Yes. Book it"}
             confirmButtonColor='cta-green'
             confirmButtonDisabled={isModalLoading}
             confirmButtonLoading={isModalLoading}
@@ -361,11 +360,11 @@ const DeskBooking = () => {
 
       <h1>Pick a space</h1>
       <CustomDatePicker
-          adjustDate={adjustDate}
-          inputOnChange={(date) => setSelectedDate(date!)}
-          selectedDate={selectedDate}
-          minDate={new Date()}
-          maxDate={new Date(new Date().setMonth(new Date().getMonth() + 1))}
+        adjustDate={adjustDate}
+        inputOnChange={(date) => setSelectedDate(date!)}
+        selectedDate={selectedDate}
+        minDate={new Date()}
+        maxDate={new Date(new Date().setMonth(new Date().getMonth() + 1))}
       />
       <br />
 
