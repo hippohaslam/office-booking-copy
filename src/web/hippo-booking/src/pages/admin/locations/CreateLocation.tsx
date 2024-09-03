@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { postNewLocationAsync } from "../../../services/Apis";
-import { CtaButton, ErrorBanner, SuccessBanner } from "../../../components";
-import { Link } from "react-router-dom";
+import { CtaButton, ErrorBanner } from "../../../components";
+import { Link, useNavigate } from "react-router-dom";
 import { NewLocation } from "../../../interfaces/Location";
 
 const CreateLocation = () => {
@@ -10,11 +10,12 @@ const CreateLocation = () => {
     name: "",
     description: "",
   };
+  const navigate = useNavigate();
   const [location, setLocation] = useState<NewLocation>(initialLocation);
 
   const createLocation = useMutation({
     mutationFn: () => postNewLocationAsync(location),
-    onSuccess: () => setLocation({ name: "", description: "" }),
+    onSuccess: () => navigate("/admin"),
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,7 +31,6 @@ const CreateLocation = () => {
   };
 
   const hasErrors = createLocation.isError;
-  const hasSuccess = createLocation.isSuccess;
 
   return (
     <div>
@@ -39,7 +39,6 @@ const CreateLocation = () => {
         <div className='spacer'></div>
       </div>
       {hasErrors && <ErrorBanner isShown={hasErrors} title={"Error"} errorMessage={createLocation.error.message} allowClose={true} />}
-      {hasSuccess && <SuccessBanner isShown={hasSuccess} title='Saved successfully' description='Go back to see location.' />}
       <h2>Create a new location</h2>
       <form onSubmit={handleSubmit}>
         <div className='standard-inputs'>
