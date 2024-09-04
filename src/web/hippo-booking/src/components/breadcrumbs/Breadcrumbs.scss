@@ -1,0 +1,53 @@
+@import "../../styles/variables.scss";
+
+.breadcrumbs-container{
+    align-content: center;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.breadcrumbs-content{
+    padding: 0;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1512px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    flex-wrap: wrap;
+    row-gap: 5px;
+    
+    li {
+        list-style: none;
+        height: fit-content;
+    }
+
+    li + li{
+        display: inline-flex;
+
+        &::before{
+            content: "";
+            display: inline-block;
+            padding: 0 10px;
+            width: 16px;
+            height: 16px;
+            margin-top: auto;
+            margin-bottom: auto;
+            position: relative;
+            background-image: url(../../assets/cta-arrow-navy.svg);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+    }
+
+    .breadcrumb-item {
+        margin: 0;
+        padding: 5px 0;
+    }
+
+    .breadcrumb-item[aria-current="page"]{
+        text-decoration: none;
+        cursor: default;
+    }
+}

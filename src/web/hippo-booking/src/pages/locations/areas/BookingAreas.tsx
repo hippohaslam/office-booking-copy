@@ -1,6 +1,6 @@
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { ActionTile, ActionTileList, ErrorBanner } from "../../../components";
+import { ActionTile, ActionTileList, Breadcrumbs, ErrorBanner } from "../../../components";
 import { Area } from "../../../interfaces/Area";
 import OfficeIcon from "../../../assets/office-icon.svg";
 import ParkingIcon from "../../../assets/parking-icon.svg";
@@ -44,9 +44,15 @@ const BookingAreas = () => {
       />
     )) || [];
 
+  const breadcrumbItems = [
+    { to: "/", text: "Home" }, 
+    { to: "/locations", text: "Locations" }, 
+    { to: "", text: locationData.name }
+  ];
+
   return (
     <div>
-      <Link to='/locations'>Back to Choose a location</Link>
+      <Breadcrumbs items={breadcrumbItems}/>
       <h1>{locationData.name}</h1>
       <h2>What would you like to book?</h2>
       <ActionTileList listItems={listItems} />

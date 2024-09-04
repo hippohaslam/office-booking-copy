@@ -13,6 +13,7 @@ import InfoTileList from "./tile/info-tile/InfoTileList";
 import { ActionTile, ActionTileList } from "./tile/action-tile/ActionTile";
 import { CtaButton } from "./buttons/CtaButton";
 import CtaLink from "./buttons/CtaLink";
+import Breadcrumbs from "./breadcrumbs/Breadcrumbs";
 
 export {
   MultiErrorBanner,
@@ -31,5 +32,6 @@ export {
   ActionTile,
   ActionTileList,
   CtaButton,
-  CtaLink
+  CtaLink, 
+  Breadcrumbs
 };

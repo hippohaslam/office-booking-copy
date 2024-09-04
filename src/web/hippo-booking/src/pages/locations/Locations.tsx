@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getLocationsAsync } from "../../services/Apis";
-import { ActionTile, ActionTileList, ErrorBanner } from "../../components";
-
-// TODO: Add location type so we know what's parking and whats an office.
+import { ActionTile, ActionTileList, Breadcrumbs, ErrorBanner } from "../../components";
 
 const Locations = () => {
   const { isFetching, error, data } = useQuery({
@@ -32,8 +30,14 @@ const Locations = () => {
     );
   }
 
+  const breadcrumbItems = [
+    { to: "/", text: "Home" }, 
+    { to: "", text: "Locations" }
+  ];
+
   return (
     <>
+      <Breadcrumbs items={breadcrumbItems}/>
       <h1>Choose a location</h1>
       {data?.length === 0 ? <p>Uh oh! no locations found...</p> : <ActionTileList listItems={listItems} />}
     </>

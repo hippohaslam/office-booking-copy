@@ -10,7 +10,7 @@ import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
 import { useWindowSize } from "../../../hooks/WindowSizeHook";
 import CustomDatePicker from "../../../components/date-picker/DatePicker";
-import { ConfirmModal, ErrorBanner, TabItem, TabList } from "../../../components";
+import { Breadcrumbs, ConfirmModal, ErrorBanner, TabItem, TabList } from "../../../components";
 import BookingCardStacked from "../../../components/booking/BookingCardStacked";
 import { AxiosError } from "axios";
 import { BookableObject } from "../../../interfaces/Desk";
@@ -366,8 +366,25 @@ const DeskBooking = () => {
     }
   };
 
+  const breadcrumbItems = [
+    { to: "/", text: "Home" },
+    { to: "/locations", text: "Locations" },
+    { 
+      to: "/locations/" + locationData?.id! + `/areas`, 
+      text: locationData?.name ?? "Location"
+    },
+  ];
+
+  if (locationData) {
+    if (locationData?.areas.length > 1) {
+      breadcrumbItems.push({ text: areaData?.name ?? "Pick a space", to: ""});
+    }
+  }
+
   return (
     <div>
+      <Breadcrumbs items={breadcrumbItems}
+      />
       {error !== null ? (
         <ErrorBanner
           isShown={error !== null}
