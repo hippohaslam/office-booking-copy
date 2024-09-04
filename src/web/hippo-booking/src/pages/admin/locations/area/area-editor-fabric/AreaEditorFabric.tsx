@@ -622,7 +622,7 @@ const FloorplanEditor = () => {
                 <EnumSelect
                   enumObj={BookableObjectTypeEnum}
                   value={newBookableObject.bookableObjectTypeId.toString()}
-                  onChange={() => (e: React.ChangeEvent<HTMLSelectElement>) =>
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                     setNewBookableObject({ ...newBookableObject, bookableObjectTypeId: Number.parseInt(e.target.value) })
                   }
                   name='new-bookable-object-type'
