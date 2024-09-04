@@ -185,7 +185,8 @@ try
             .AllowCredentials();
     });
 
-    app.MapGet("/", [AllowAnonymous] () => TypedResults.Redirect("/swagger/index.html"));
+    app.MapGet("/", [AllowAnonymous] () => TypedResults.Redirect("/swagger/index.html"))
+        .ExcludeFromDescription();
 
     app.UseSerilogRequestLogging(options =>
     {

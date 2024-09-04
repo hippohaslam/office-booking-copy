@@ -137,8 +137,9 @@ public class BookingEndpointTests : IntegrationTestBase
         var responseContent = await response.Content.ReadAsStringAsync();
         var responseBookings = responseContent.FromJson<List<UserBookingsResponse>>();
 
-        var dbBookings = DbContext.Bookings
+        var dbBookings = DbContext.Query<Core.Entities.Booking>()
             .OrderBy(x => x.Date)
+            .ThenBy(x => x.Id)
             .Include(booking => booking.BookableObject)
             .ThenInclude(bookableObject => bookableObject.Area)
             .ThenInclude(area1 => area1.Location).ToList();
@@ -173,9 +174,12 @@ public class BookingEndpointTests : IntegrationTestBase
             await SetUpBookableObject(area, "Booking Test Desk 1"),
             await SetUpBookableObject(area, "Booking Test Desk 2")
         };
-        var bookings = new List<Core.Entities.Booking>{
+        var bookings = new List<Core.Entities.Booking>
+        {
             await SetUpBooking(bookableObjects.First(), DateOnly.FromDateTime(DateTime.Now)),
-            await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(DateTime.Now))
+            await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(DateTime.Now)),
+            await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(DateTime.Now),
+                x => x.DeletedAt = DateTime.UtcNow)
         };
 
         //Act
@@ -200,7 +204,7 @@ public class BookingEndpointTests : IntegrationTestBase
                     Description = bookableObjects.First().Description,
                     ExistingBooking = new BookingDayResponse.BookableObjectResponse.DayBookingResponse
                     {
-                        Id = bookings.First().Id,
+                        Id = bookings[0].Id,
                         Name = "Test User"
                     }
                 },
@@ -211,7 +215,7 @@ public class BookingEndpointTests : IntegrationTestBase
                     Description = bookableObjects.Last().Description,
                     ExistingBooking = new BookingDayResponse.BookableObjectResponse.DayBookingResponse
                     {
-                        Id = bookings.Last().Id,
+                        Id = bookings[1].Id,
                         Name = "Test User"
                     }
                 }
@@ -248,5 +252,31 @@ public class BookingEndpointTests : IntegrationTestBase
             Location = new IdName<int>(location.Id, location.Name),
             UserId = "testuser"
         });
+    }
+    
+    [Test]
+    public async Task DeleteBookingShouldSoftDeleteBooking()
+    {
+        //Arrange
+        var client = GetClient();
+        var location = await SetUpLocation();
+        var area = await SetUpArea(location);
+        var bookableObject = await SetUpBookableObject(area, "Booking Test Desk 1");
+        var booking = await SetUpBooking(bookableObject, DateOnly.FromDateTime(DateTime.Now));
+
+        //Act
+        var response =
+            await client.DeleteAsync(
+                $"/booking/{booking.Id}");
+
+        //Assert
+        response.EnsureSuccessStatusCode();
+
+        var dbBookings = DbContext.Bookings.Where(x =>
+            x.UserId == "testuser"
+            && x.DeletedBy == "testuser"
+            && x.Date == DateOnly.FromDateTime(DateTime.Now)
+            && x.BookableObjectId == bookableObject.Id);
+        dbBookings.Should().HaveCount(1, "only 1 booking should exist that matches those details");
     }
 }

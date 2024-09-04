@@ -26,7 +26,7 @@ public class SlackConfirmationScheduledTaskTests
             .UseInMemoryDatabase(nameof(SlackConfirmationScheduledTaskTests))
             .Options;
 
-        var dataContext = new HippoBookingDbContext(dbOptions);
+        var dataContext = new HippoBookingDbContext(dbOptions, new TestUserProvider(), new SystemDateTimeProvider());
         
         dataContext.AddEntity(new User
         {

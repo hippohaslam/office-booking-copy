@@ -34,6 +34,7 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
             .ThenInclude(i => i.Location)
             .Where(x => x.Date >= dateTimeProvider.Today && x.UserId == userId)
             .OrderBy(x => x.Date)
+            .ThenBy(x => x.Id)
             .Select(x => new UserBookingsResponse
             {
                 Id = x.Id,
@@ -61,13 +62,13 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
                         Id = y.Id,
                         Name = y.Name,
                         Description = y.Description,
-                        ExistingBooking = y.Bookings.Where(z => z.Date == date)
-                        .Select(z => new BookingDayResponse.BookableObjectResponse.DayBookingResponse
-                        {
-                            Id = z.Id,
-                            Name = z.User.FirstName + " " + z.User.LastName
-                        })
-                        .SingleOrDefault()
+                        ExistingBooking = y.Bookings.Where(z => z.Date == date && z.DeletedAt == null)
+                            .Select(z => new BookingDayResponse.BookableObjectResponse.DayBookingResponse
+                            {
+                                Id = z.Id,
+                                Name = z.User.FirstName + " " + z.User.LastName
+                            })
+                            .SingleOrDefault()
                     }).ToList()
             })
             .SingleOrDefaultAsync();

@@ -14,7 +14,7 @@ public class IntegrationTestBase
 
     public async Task AddEntity<T>(T entity) where T : class
     {
-        DbContext.Set<T>().Add(entity);
+        DbContext.AddEntity(entity);
         await DbContext.SaveChangesAsync();
     }
 
@@ -58,7 +58,10 @@ public class IntegrationTestBase
         return bookableObject;
     }
 
-    protected async Task<Core.Entities.Booking> SetUpBooking(BookableObject bookableObject, DateOnly date)
+    protected async Task<Core.Entities.Booking> SetUpBooking(
+        BookableObject bookableObject, 
+        DateOnly date, 
+        Action<Core.Entities.Booking>? configureBooking = null)
     {
         var booking = new Core.Entities.Booking
         {
@@ -66,6 +69,9 @@ public class IntegrationTestBase
             BookableObjectId = bookableObject.Id,
             Date = date
         };
+        
+        configureBooking?.Invoke(booking);
+        
         await AddEntity(booking);
         return booking;
     }

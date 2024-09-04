@@ -1,4 +1,5 @@
 using FluentValidation;
+using Hippo.Booking.Core;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.EF;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ public static class TestHelpers
             .UseInMemoryDatabase(name)
             .Options;
 
-        return new HippoBookingDbContext(dbOptions);
+        return new HippoBookingDbContext(dbOptions, new TestUserProvider(), new SystemDateTimeProvider());
     }
 
     public static async Task AssertValidatorCalled<T>(IValidator<T> validator, T instance)

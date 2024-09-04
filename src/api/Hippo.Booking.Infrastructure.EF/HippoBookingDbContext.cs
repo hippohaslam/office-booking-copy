@@ -1,11 +1,15 @@
 using System.Reflection;
 using Hippo.Booking.Core.Entities;
+using Hippo.Booking.Core.Extensions;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Infrastructure.EF;
 
-public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> options) : DbContext(options), IDataContext
+public class HippoBookingDbContext(
+    DbContextOptions<HippoBookingDbContext> options,
+    IUserProvider userProvider,
+    IDateTimeProvider dateTimeProvider) : DbContext(options), IDataContext
 {
     public IQueryable<TEntity> Query<TEntity>(Action<QueryOptions>? options = null) where TEntity : class
     {
@@ -25,6 +29,11 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
             query = query.AsSplitQuery();
         }
 
+        if (typeof(TEntity).IsImplementationOf<ISoftDelete>())
+        {
+            query = query.Where(x => !((ISoftDelete)x).DeletedAt.HasValue);
+        }
+
         return query;
     }
 
@@ -35,14 +44,26 @@ public class HippoBookingDbContext(DbContextOptions<HippoBookingDbContext> optio
 
     public void AddEntity<TEntity>(TEntity entity) where TEntity : class
     {
+        if (typeof(TEntity).IsImplementationOf<ICreatedBy>())
+        {
+            ((ICreatedBy)entity).CreatedAt = dateTimeProvider.UtcNow;
+            ((ICreatedBy)entity).CreatedBy = userProvider.GetCurrentUser()?.UserId ?? "System";
+        }
+        
         Set<TEntity>().Add(entity);
     }
 
     public void DeleteEntity<TEntity>(TEntity entity) where TEntity : class
     {
-        // If we do soft delete down the line, we can add it in here.
-
-        Set<TEntity>().Remove(entity);
+        if (typeof(TEntity).IsImplementationOf<ISoftDelete>())
+        {
+            ((ISoftDelete)entity).DeletedAt = dateTimeProvider.UtcNow;
+            ((ISoftDelete)entity).DeletedBy = userProvider.GetCurrentUser()?.UserId ?? "System";
+        }
+        else
+        {
+            Set<TEntity>().Remove(entity);
+        }
     }
 
     public DbSet<User> Users { get; set; } = null!;
