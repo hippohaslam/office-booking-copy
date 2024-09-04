@@ -155,6 +155,7 @@ try
     builder.Services.AddAuthorization();
 
     builder.Services.AddScheduledTask<SlackConfirmationScheduledTask>();
+    builder.Services.AddScheduledTask<CancelUnconfirmedBookingsScheduledTask>();
 
     builder.Services.AddSingleton<SchedulingService>();
     builder.Services.AddHostedService<SchedulingWorkerService>();
