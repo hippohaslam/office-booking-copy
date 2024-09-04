@@ -1,3 +1,4 @@
+import "./AreaEditorFabric.scss";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { fabric } from "fabric";
@@ -15,7 +16,9 @@ import { Area } from "../../../../../interfaces/Area";
 import type { BookableObject } from "../../../../../interfaces/Desk";
 import { BookableObjectTypeEnum } from "../../../../../enums/BookableObjectTypeEnum";
 import EnumSelect from "../../../../../components/select/EnumSelect";
-import "./AreaEditorFabric.scss";
+
+import GetSvgEditorAssets, { SvgAsset } from "../../../../../services/AssetFiles";
+import SelectModal from "../../../../../components/modals/select/SelectModal";
 
 const generateUniqueId = () => {
   return uuidv4();
@@ -44,16 +47,23 @@ const FloorplanEditor = () => {
   const { locationId, areaId } = useParams();
   const [errors, setErrors] = useState<ErrorObjects[]>([]);
   const [area, setArea] = useState<Area>();
+  const [urlSvgs, setUrlSvgs] = useState<SvgAsset[]>([]);
   const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
   const [textState, setTextState] = useState({ hidden: true, text: "" });
   const [newBookableObject, setNewBookableObject] = useState<BookableObject>(defaultNewBookableObject);
   const [showCreateNewBookableObject, setShowCreateNewBookableObject] = useState(false);
+  const [showSvgSelectModal, setShowSvgSelectModal] = useState(false);
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const { windowWidth } = useWindowSize();
 
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const assets = GetSvgEditorAssets();
+    setUrlSvgs(assets);
+  }, []);
 
   const handleAddError = (key: string, message: string) => {
     setErrors([{ key, message }]);
@@ -482,6 +492,18 @@ const FloorplanEditor = () => {
     }
   };
 
+  const handleSvgUrlUploadModal = (url: string) => {
+    if (fabricCanvasRef.current) {
+      fabric.loadSVGFromURL(url, (objects) => {
+        const group = new fabric.Group(objects as CustomObject[]) as CustomGroup;
+        group.set("id", generateUniqueId());
+        fabricCanvasRef.current?.add(group);
+        fabricCanvasRef.current?.renderAll();
+      });
+    }
+    setShowSvgSelectModal(false);
+  };
+
   const isLoading = isPending || areaMutation.isPending || bookableObjectsMutation.isPending;
   const hasSuccess = areaMutation.isSuccess || bookableObjectsMutation.isSuccess;
 
@@ -489,6 +511,26 @@ const FloorplanEditor = () => {
   // Must always have a canvas element, adding conditional logic to hide the canvas if the location is not loaded will break the fabric.js canvas
   return (
     <div className='content-container'>
+      <SelectModal title='Select an image' isOpen={showSvgSelectModal} onClose={() => setShowSvgSelectModal(false)}>
+        <>
+          {urlSvgs.length > 0 ? (
+            urlSvgs.map((asset) => (
+              <img
+                height={100}
+                width={100}
+                key={asset.name}
+                src={asset.path}
+                alt={asset.name}
+                className='clickable hover-border'
+                onClick={() => handleSvgUrlUploadModal(asset.path)}
+              />
+            ))
+          ) : (
+            <p>No images available</p>
+          )}
+        </>
+      </SelectModal>
+
       {errors.length > 0 && <MultiErrorBanner isShown={errors.length > 0} title='Error' errors={errors} allowClose={true} />}
       {hasSuccess && errors.length < 1 && <SuccessBanner isShown={hasSuccess} title='Saved successfully' />}
       <h1>{!area && isLoading ? "Location loading..." : area?.name}</h1>
@@ -532,8 +574,11 @@ const FloorplanEditor = () => {
           <button type='button' onClick={() => handleSendToPosition("front")}>
             Send to front
           </button>
+          <button type='button' onClick={() => setShowSvgSelectModal(true)}>
+            Add image
+          </button>
           <div>
-            <label htmlFor='svg-upload'>Add Svg: </label>
+            <label htmlFor='svg-upload'>Add Svg from file: </label>
             <input type='file' name='svg-upload' accept='image/svg+xml' onChange={handleFileUpload} />
           </div>
 

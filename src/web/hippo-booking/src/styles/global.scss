@@ -242,7 +242,7 @@ hr {
   border-top: 1pt solid $hippo-brand-dark-grey;
 }
 
-/*  */
+/* Tables */
 
 .table-striped {
   width: 100%;
@@ -329,4 +329,13 @@ textarea {
 
 .spacer {
   margin: 1em 0 1em 0;
+}
+
+// Selectables
+.clickable {
+  cursor: pointer;
+
+  &.hover-border:hover {
+    border: 3px solid $hippo-brand-dark-grey;
+  }
 }
