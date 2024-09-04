@@ -138,9 +138,15 @@ const DeskBooking = () => {
     }
   }, [windowWidth, showCanvas]);
 
+  const handleListItemSelected = useCallback((bookableObject: BookableObject) => {
+    setSelectedObject(bookableObject);
+    setModalVisible(true);
+  }, []);
+
   const handleObjectSelected = useCallback(
     (floorplanObjectId: string | null) => {
-      if (floorplanObjectId === null) {
+      // This is more of a guard as it should not expect a null value coming from the canvas objects
+      if (isNullOrEmpty(floorplanObjectId)) {
         setSelectedObject(null);
         handleObjectColours(null);
         return;
@@ -376,20 +382,16 @@ const DeskBooking = () => {
         </TabItem>
 
         <TabItem label='List'>
-          <div>
-            {areaData?.bookableObjects
-              .filter((obj) => !isNullOrEmpty(obj.floorPlanObjectId))
-              .map((bookableObject) => {
-                return (
-                  <BookableObjectDisplay
-                    key={bookableObject.id}
-                    bookableObject={bookableObject}
-                    existingBookingName={getExistingBookingName(bookableObject)}
-                    onObjectSelected={handleObjectSelected}
-                  />
-                );
-              })}
-          </div>
+          {areaData?.bookableObjects.map((bookableObject) => {
+            return (
+              <BookableObjectListDisplay
+                key={bookableObject.id}
+                bookableObject={bookableObject}
+                existingBookingName={getExistingBookingName(bookableObject)}
+                onObjectSelected={handleListItemSelected}
+              />
+            );
+          })}
         </TabItem>
       </TabList>
       {confirmBookingModal()}
@@ -398,20 +400,20 @@ const DeskBooking = () => {
   );
 };
 
-const BookableObjectDisplay = ({
+const BookableObjectListDisplay = ({
   bookableObject,
   existingBookingName,
   onObjectSelected,
 }: {
   bookableObject: BookableObject;
   existingBookingName: string | null;
-  onObjectSelected: (floorPlanObjectId: string) => void;
+  onObjectSelected: (bookableObject: BookableObject) => void;
 }) => {
   return (
     <div
       className={`booking-list-item ` + (existingBookingName != null ? "booking-list-item__booked" : "booking-list-item__available")}
       key={bookableObject.id}
-      onClick={() => onObjectSelected(bookableObject.floorPlanObjectId!)}
+      onClick={() => onObjectSelected(bookableObject)}
     >
       {bookableObject.name} {" - " + (existingBookingName != null ? "Booked by " + existingBookingName : "Available")}
     </div>

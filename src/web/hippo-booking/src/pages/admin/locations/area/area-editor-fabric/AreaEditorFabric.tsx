@@ -47,7 +47,7 @@ const FloorplanEditor = () => {
   const { locationId, areaId } = useParams();
   const [errors, setErrors] = useState<ErrorObjects[]>([]);
   const [area, setArea] = useState<Area>();
-  const [urlSvgs, setUrlSvgs] = useState<SvgAsset[]>([]);
+  const [urlSvgs] = useState<SvgAsset[]>(GetSvgEditorAssets());
   const [selectedObject, setSelectedObject] = useState<SelectedObject | null>(null);
   const [freeDrawMode, setFreeDrawMode] = useState<boolean>(false);
   const [textState, setTextState] = useState({ hidden: true, text: "" });
@@ -59,11 +59,6 @@ const FloorplanEditor = () => {
   const { windowWidth } = useWindowSize();
 
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    const assets = GetSvgEditorAssets();
-    setUrlSvgs(assets);
-  }, []);
 
   const handleAddError = (key: string, message: string) => {
     setErrors([{ key, message }]);
