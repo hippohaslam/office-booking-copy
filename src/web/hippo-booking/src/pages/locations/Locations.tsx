@@ -15,6 +15,7 @@ const Locations = () => {
         title={location.name}
         primaryLink={{ show: true, to: `/locations/${location.id}/areas`, text: "Book at this location" }}
         secondaryLink={{ show: true, to: `/location/${location.id}`, text: "View more details" }}
+        tileTestId="location-tile"
       />
     )) || [];
 

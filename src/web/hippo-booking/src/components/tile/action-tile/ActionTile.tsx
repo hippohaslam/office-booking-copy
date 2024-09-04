@@ -11,11 +11,12 @@ type ActionTileProps = {
   iconSrc?: string;
   primaryLink: LinkDisplayProps;
   secondaryLink: LinkDisplayProps;
+  tileTestId?: string;
 };
 
-const ActionTile = ({ title, iconSrc, description, primaryLink, secondaryLink }: ActionTileProps) => {
+const ActionTile = ({ title, iconSrc, description, primaryLink, secondaryLink, tileTestId }: ActionTileProps) => {
   return (
-    <div className='action-tile'>
+    <div className='action-tile' data-testId={isNullOrEmpty(tileTestId) ? "action-tile" : tileTestId}>
       <div className='tile-content'>
         {!isNullOrEmpty(iconSrc) ? <img src={iconSrc} alt='' /> : null}
         <div>

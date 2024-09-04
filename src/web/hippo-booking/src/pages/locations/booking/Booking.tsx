@@ -412,16 +412,20 @@ const DeskBooking = () => {
         </TabItem>
 
         <TabItem label='List'>
-          {areaData?.bookableObjects.map((bookableObject) => {
-            return (
-              <BookableObjectListDisplay
-                key={bookableObject.id}
-                bookableObject={bookableObject}
-                existingBookingName={getExistingBookingName(bookableObject)}
-                onObjectSelected={handleListItemSelected}
-              />
-            );
-          })}
+          <ul className="bookable-objects-list"> 
+            {areaData?.bookableObjects.map((bookableObject) => {
+                return (
+                  <li className="bookable-Objects-list-item">
+                    <BookableObjectListDisplay
+                      key={bookableObject.id}
+                      bookableObject={bookableObject}
+                      existingBookingName={getExistingBookingName(bookableObject)}
+                      onObjectSelected={handleListItemSelected}
+                    />
+                  </li>
+                );
+              })}
+          </ul>
         </TabItem>
       </TabList>
       {confirmBookingModal()}
@@ -440,13 +444,13 @@ const BookableObjectListDisplay = ({
   onObjectSelected: (bookableObject: BookableObject) => void;
 }) => {
   return (
-    <div
-      className={`booking-list-item ` + (existingBookingName != null ? "booking-list-item__booked" : "booking-list-item__available")}
+    <button
+      className={`bookable-object-button ` + (existingBookingName != null ? "bookable-object-button__booked" : "bookable-object-button__available")}
       key={bookableObject.id}
       onClick={() => onObjectSelected(bookableObject)}
     >
       {bookableObject.name} {" - " + (existingBookingName != null ? "Booked by " + existingBookingName : "Available")}
-    </div>
+    </button>
   );
 };
 

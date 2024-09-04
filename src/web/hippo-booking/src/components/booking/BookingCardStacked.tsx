@@ -31,7 +31,7 @@ const BookingCardStacked = ({
           {bookableObjectName}
         </li>
         <li aria-label='area'>{areaName}</li>
-        <li area-label='location'>{locationName}</li>
+        <li aria-label='location'>{locationName}</li>
       </ul>
     </div>
   );

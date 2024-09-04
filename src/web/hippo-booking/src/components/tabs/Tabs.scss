@@ -4,13 +4,13 @@
   nav {
     padding: 0;
 
-    ul {
+    .tab-list {
       padding-left: 0;
       display: inline-flex;
       margin-bottom: 0;
     }
 
-    li {
+    .tab-btn {
       list-style: none;
     }
 
@@ -53,15 +53,12 @@
 @media only screen and (max-width: 768px) {
   .tabs {
     nav {
-      ul {
+      .tab-list {
         width: 100%;
       }
-      li {
-        flex-grow: 1;
-      }
-
       .tab-btn {
         width: 100%;
+        flex-grow: 1;
       }
     }
 

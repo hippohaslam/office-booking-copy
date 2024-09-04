@@ -42,11 +42,14 @@ jobs:
 
       - name: Build E2E Tests
         working-directory: ./src/e2e/Hippo.Booking.E2ETests
-        run: dotnet build --no-restore
+        run: dotnet build --no-restore --configuration Release
 
       - name: Run Docker Compose
         run: docker compose -f infrastructure/docker/docker-compose-ci.yml -f infrastructure/docker/docker-compose-services.yml up -d
 
       - name: Run E2E Tests
         working-directory: ./src/e2e/Hippo.Booking.E2ETests
-        run: dotnet test --no-build --verbosity normal --settings:chromium.runsettings
+        env:
+          User__Email: ${{ secrets.AUTOMATION_USER }}
+          User__Password: ${{ secrets.AUTOMATION_PASSWORD }}
+        run: xvfb-run dotnet test --no-build --verbosity normal --configuration Release

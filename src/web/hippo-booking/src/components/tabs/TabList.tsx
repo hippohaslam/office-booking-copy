@@ -25,11 +25,10 @@ const TabList: React.FC<TabProps> = ({ activeTabIndex, children, onChange }) => 
   return (
     <div className='tabs'>
       <nav className='tab-list-wrapper' id='tab-nav' aria-label='tab'>
-        <ul className='tab-list' role='tablist' aria-orientation='horizontal'>
+        <div className='tab-list' role='tablist' aria-orientation='horizontal'>
           {tabs.map((tab, index) => (
-            <li key={`tab-${index}`}>
               <button
-                key={`tab-btn-${index}`}
+                key={`tab-${index}`}
                 role='tab'
                 id={`tab-${sanitiseForId(tab.props.label)}`}
                 aria-controls={`panel-${sanitiseForId(tab.props.label)}`}
@@ -39,9 +38,8 @@ const TabList: React.FC<TabProps> = ({ activeTabIndex, children, onChange }) => 
               >
                 {tab.props.label}
               </button>
-            </li>
           ))}
-        </ul>
+        </div>
       </nav>
       {tabs[activeTab]}
     </div>

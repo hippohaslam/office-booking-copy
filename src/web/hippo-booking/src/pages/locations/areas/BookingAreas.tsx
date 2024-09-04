@@ -41,6 +41,7 @@ const BookingAreas = () => {
         description={AreaTypeEnumLabels[area.areaTypeId]}
         primaryLink={{ show: true, text: "Book in this area", to: `/locations/${locationId}/areas/${area.id}` }}
         secondaryLink={{ show: false }}
+        tileTestId="area-tile"
       />
     )) || [];
 
