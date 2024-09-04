@@ -1,3 +1,5 @@
+import "./Booking.scss";
+import "react-datepicker/dist/react-datepicker.css";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBookingsForDateAsync, getLocationAreaAsync, getLocationAsync, postBookingAsync } from "../../../services/Apis";
@@ -7,8 +9,6 @@ import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../.
 import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric/CustomObjects";
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
 import { useWindowSize } from "../../../hooks/WindowSizeHook";
-import "react-datepicker/dist/react-datepicker.css";
-import "./Booking.scss";
 import CustomDatePicker from "../../../components/date-picker/DatePicker";
 import { ConfirmModal, ErrorBanner, TabItem, TabList } from "../../../components";
 import BookingCardStacked from "../../../components/booking/BookingCardStacked";
@@ -90,7 +90,7 @@ const DeskBooking = () => {
 
           // Determine the color based on booking status
           if (!isBookable) {
-            return "white"; // Not a bookable object
+            return "white";
           } else if (isBookable.existingBooking) {
             return "grey"; // Booked
           } else {
@@ -98,7 +98,20 @@ const DeskBooking = () => {
           }
         };
 
-        object.set("fill", getColorBasedOnBookingStatus());
+        // log out the type
+        // fill the colour of a group
+        if (object.type === "group") {
+          const group = object as fabric.Group;
+          group.getObjects().forEach((obj) => {
+            if (obj.type === "path" || obj.type === "rect") {
+              obj.set({
+                fill: getColorBasedOnBookingStatus(),
+              });
+            }
+          });
+        } else {
+          object.set("fill", getColorBasedOnBookingStatus());
+        }
       };
 
       if (objectId !== null) {
