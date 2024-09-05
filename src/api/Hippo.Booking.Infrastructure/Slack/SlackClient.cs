@@ -54,11 +54,28 @@ public class SlackClient(IOptions<SlackSettings> slackOptions, ISlackApiClient s
         }
     }
 
-    public async Task SendMessage(Message slackMessage, CancellationToken ct = default)
+    public async Task<PostMessageResponse?> SendMessage(Message slackMessage, CancellationToken ct = default)
     {
         try
         {
-            await slackApiClient.Chat.PostMessage(slackMessage, ct);
+            return await slackApiClient.Chat.PostMessage(slackMessage, ct);
+        }
+        catch (SlackException e)
+        {
+            if (e.ErrorCode == "channel_not_found")
+            {
+                return null;
+            }
+
+            throw;
+        }
+    }
+
+    public async Task DeleteMessage(string ts, string channel, CancellationToken ct = default)
+    {
+        try
+        {
+            await slackApiClient.Chat.Delete(ts, channel, true, ct);
         }
         catch (SlackException e)
         {

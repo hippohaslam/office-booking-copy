@@ -1,14 +1,16 @@
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Core.Models;
+using Hippo.Booking.Infrastructure.Slack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SlackNet.WebApi;
 
 namespace Hippo.Booking.Infrastructure.Scheduling;
 
 public class CancelUnconfirmedBookingsScheduledTask(
     IDataContext dataContext,
     IDateTimeProvider dateTimeProvider,
-    IUserNotifier userNotifier,
+    ISlackClient slackClient,
     ILogger<SlackConfirmationScheduledTask> logger) : IScheduledTask
 {
     public async Task RunTask(ScheduleContext scheduleContext)
@@ -27,13 +29,32 @@ public class CancelUnconfirmedBookingsScheduledTask(
         {
             try
             {
+                var userId = await slackClient.GetUserIdByEmail(booking.User.Email);
+                
+                if (userId == null)
+                {
+                    logger.LogWarning("User {Email} not found in Slack", booking.User.Email);
+                    continue;
+                }
+                
+                if (!string.IsNullOrEmpty(booking.LastSlackMessageId))
+                {
+                    logger.LogDebug("Deleting last message for booking {BookingId}", booking.Id);
+                    await slackClient.DeleteMessage(booking.LastSlackMessageId, userId);
+                }
+                
                 dataContext.DeleteEntity(booking);
                 await dataContext.Save();
 
-                var dateString = booking.Date.ToString("dddd dd MMMM yyyy");
+                var dateString = booking.Date.ToString("dddd d MMMM yyyy");
 
-                await userNotifier.NotifyUser(booking.UserId,
-                    $"Your booking for *{booking.BookableObject.Name}* on *{dateString}* was not confirmed so has been automatically cancelled");
+                var message = new Message
+                {
+                    Channel = userId,
+                    Text = $"Your booking for *{booking.BookableObject.Name}* on *{dateString}* was not confirmed so has been automatically cancelled"
+                };
+
+                await slackClient.SendMessage(message);
             }
             catch (Exception ex)
             {

@@ -11,6 +11,8 @@ public class Booking : BaseEntity<int>, ICreatedBy, ISoftDelete
     public BookableObject BookableObject { get; set; } = null!;
 
     public bool IsConfirmed { get; set; }
+    
+    public string? LastSlackMessageId { get; set; }
 
     public DateOnly Date { get; set; }
     

@@ -12,5 +12,7 @@ public interface ISlackClient
         MessageResponse responseMessage,
         CancellationToken ct = default);
 
-    Task SendMessage(Message slackMessage, CancellationToken ct = default);
+    Task<PostMessageResponse?> SendMessage(Message slackMessage, CancellationToken ct = default);
+    
+    Task DeleteMessage(string ts, string channel, CancellationToken ct = default);
 }

@@ -20,31 +20,47 @@ public class SlackConfirmationScheduledTask(
 
         var usersToNotify = await dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.User)
+            .Include(i => i.BookableObject)
+            .ThenInclude(i => i.Area)
+            .ThenInclude(i => i.Location)
             .Where(x => x.Date == dateToCheck && !x.IsConfirmed)
-            .Select(x => new
-            {
-                Id = x.Id,
-                User = x.User,
-                Location =
-                    $"{x.BookableObject.Name} - {x.BookableObject.Area.Name} - {x.BookableObject.Area.Location.Name}"
-            })
             .ToListAsync();
 
         logger.LogDebug("Found {Count} bookings for task", usersToNotify.Count);
 
         foreach (var booking in usersToNotify)
         {
-            var userId = await SlackClient.GetUserIdByEmail(booking.User.Email);
-            if (userId == null)
+            try
             {
-                logger.LogWarning("User {Email} not found in Slack", booking.User.Email);
-                continue;
-            }
+                var userId = await SlackClient.GetUserIdByEmail(booking.User.Email);
+                if (userId == null)
+                {
+                    logger.LogWarning("User {Email} not found in Slack", booking.User.Email);
+                    continue;
+                }
+                
+                if (!string.IsNullOrEmpty(booking.LastSlackMessageId))
+                {
+                    logger.LogDebug("Deleting last message for booking {BookingId}", booking.Id);
+                    await SlackClient.DeleteMessage(booking.LastSlackMessageId, userId);
+                }
 
-            await SendConfirmationMessage(settings.Message,
-                booking.Location,
-                userId,
-                booking.Id);
+                var location =
+                    $"{booking.BookableObject.Name} - {booking.BookableObject.Area.Name} - {booking.BookableObject.Area.Location.Name}";
+
+                var messageId = await SendConfirmationMessage(settings.Message,
+                    location,
+                    userId,
+                    booking.Id);
+
+                booking.LastSlackMessageId = messageId;
+
+                await dataContext.Save();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error sending slack message for booking {BookingId}", booking.Id);
+            }
         }
     }
 }

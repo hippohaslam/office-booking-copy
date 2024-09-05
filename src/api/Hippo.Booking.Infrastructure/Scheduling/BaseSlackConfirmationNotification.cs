@@ -8,7 +8,7 @@ public abstract class BaseSlackConfirmationNotification(ISlackClient slackClient
 {
     protected ISlackClient SlackClient => slackClient;
 
-    public async Task SendConfirmationMessage(string messageTitleMarkdown, string location, string userId, int bookingId)
+    public async Task<string> SendConfirmationMessage(string messageTitleMarkdown, string location, string userId, int bookingId)
     {
         var message = new Message
         {
@@ -50,6 +50,7 @@ public abstract class BaseSlackConfirmationNotification(ISlackClient slackClient
             }
         };
 
-        await SlackClient.SendMessage(message);
+        var messageResponse = await SlackClient.SendMessage(message);
+        return messageResponse?.Ts ?? string.Empty;
     }
 }

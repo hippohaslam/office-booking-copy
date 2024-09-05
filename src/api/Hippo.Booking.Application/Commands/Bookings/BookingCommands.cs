@@ -53,7 +53,7 @@ public class BookingCommands(
         var bookingToReturn = await bookingQueries.GetBookingById(booking.Id);
         
         // date string to UK format
-        var dateString = request.Date.ToString("dddd dd MMMM yyyy");
+        var dateString = request.Date.ToString("dddd d MMMM yyyy");
         
         await userNotifier.NotifyUser(request.UserId,
             $"Your new booking for *{bookingToReturn!.BookableObject.Name}* at *{bookingToReturn.Location.Name}* on *{dateString}* has been created");
@@ -90,7 +90,7 @@ public class BookingCommands(
 
             var forSomeBodyElse = currentUserId != booking.UserId ? $" by {currentUser.FullName}" : string.Empty;
 
-            var dateString = booking.Date.ToString("dddd dd MMMM yyyy");
+            var dateString = booking.Date.ToString("dddd d MMMM yyyy");
             
             await userNotifier.NotifyUser(booking.UserId,
                 $"Your booking for *{booking.BookableObject.Name}* on *{dateString}* has been cancelled.{forSomeBodyElse}");
