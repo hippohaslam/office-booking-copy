@@ -1,10 +1,11 @@
+import "./SignIn.scss";
+import { useCallback, useEffect, useState } from "react";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
-import { useCallback, useEffect, useState } from "react";
 import { getSession, postSessionGoogle } from "../../services/Apis";
 import HippoSvg from "../../assets/hippo-navy.svg";
-import "./SignIn.scss";
+import { ErrorBanner } from "../../components";
 
 export default function SignIn() {
   const location = useLocation();
@@ -12,6 +13,7 @@ export default function SignIn() {
   const navigate = useNavigate();
   const returnURl = new URLSearchParams(location.search).get("returnUrl");
   const [showLogin, setShowLogin] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const callSessionApi = useCallback(async () => {
     const res = await getSession();
@@ -38,15 +40,14 @@ export default function SignIn() {
           email: res.data.email,
           isAdmin: res.data.isAdmin || false,
         });
-      } catch (err) {
+        setErrorMessage(null);
+      } catch (err: any) {
         console.log("google error", err);
+        setErrorMessage(err.message);
       }
       navigate(returnURl || "/");
     }
   }
-  const errorMessage = () => {
-    throw Error("Error signing in");
-  };
 
   useEffect(() => {
     callSessionApi()
@@ -54,22 +55,35 @@ export default function SignIn() {
         // This is good, navigate user back to where they were going.
         navigate(returnURl || "/");
       })
-      .catch(() => {
+      .catch((e: any) => {
         // Likely a 401, try get the user to log in again
         setShowLogin(true);
+        // Ignore 401 error because initial login attempt will always return 401
+        if (e.status === 401) {
+          return;
+        }
+        setErrorMessage("Failed to login, please try again");
       });
   }, [callSessionApi, navigate, returnURl]);
 
   if (showLogin) {
     return (
-      <div className='login-container'>
-        <img src={HippoSvg} alt='Hippo Logo' />
-        <h1>Office bookings</h1>
-        <p>For booking desks, dog-of-the-day, and car parking spaces at the Hippo offices.</p>
-        <div style={{ paddingTop: 20 + "px", paddingBlock: 20 + "px" }}>
-          <GoogleLogin onSuccess={handleSignInUser} onError={errorMessage} useOneTap auto_select shape='pill' size='large' />
+      <>
+        <ErrorBanner title='Uh oh!' errorMessage={errorMessage || ""} isShown={errorMessage !== null} allowClose={false} />
+        <div className='login-container'>
+          <img src={HippoSvg} alt='Hippo Logo' />
+          <h1>Office bookings</h1>
+          <p>For booking desks, dog-of-the-day, and car parking spaces at the Hippo offices.</p>
+          <div style={{ paddingTop: 20 + "px", paddingBlock: 20 + "px" }}>
+            <GoogleLogin
+              onSuccess={handleSignInUser}
+              onError={() => setErrorMessage("Failed to login, please try again")}
+              shape='pill'
+              size='large'
+            />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 

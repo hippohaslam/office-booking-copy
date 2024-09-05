@@ -64,7 +64,24 @@ main {
 
 .login-page-container {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+
   height: 100vh;
+}
+
+@media only screen and (max-width: 640px) {
+  .login-page-container {
+    margin: 0 20px;
+  }
+}
+
+@media only screen and (max-width: 768px){
+  .login-page-container {
+      padding: 20px;
+  }
 }
 
 /* || headings */

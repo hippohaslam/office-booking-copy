@@ -1,19 +1,12 @@
 @import "../../styles/variables.scss";
 
 .login-container {
-    align-self: center;
-    justify-self: center;
     display: flex;
     flex-direction: column;
     background-color: $hippo-brand-light-grey;
     color: $hippo-brand-navy;
     border-radius: 26px;
-    max-width: 600px;
     padding: 20px 50px;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
-    margin-right: auto;
 
     img {
         width: 150px;
@@ -21,14 +14,3 @@
     }
 }
 
-@media only screen and (max-width: 640px) {
-    .login-container {
-      margin: 0 20px;
-    }
-  }
-
-@media only screen and (max-width: 768px){
-    .login-container {
-        padding: 20px;
-    }
-}
