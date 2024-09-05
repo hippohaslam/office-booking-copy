@@ -127,7 +127,7 @@ jobs:
 
       - name: Build E2E Tests
         working-directory: ./src/e2e/Hippo.Booking.E2ETests
-        run: dotnet build --no-restore --configuration Releaseßßß
+        run: dotnet build --no-restore --configuration Release
 
       - name: Run Docker Compose
         run: docker compose -f infrastructure/docker/docker-compose-ci.yml -f infrastructure/docker/docker-compose-services.yml up -d
