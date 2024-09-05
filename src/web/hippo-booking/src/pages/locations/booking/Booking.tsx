@@ -415,7 +415,7 @@ const DeskBooking = () => {
           <ul className="bookable-objects-list"> 
             {areaData?.bookableObjects.map((bookableObject) => {
                 return (
-                  <li className="bookable-Objects-list-item">
+                  <li key={bookableObject.id + "-list-item"} className="bookable-Objects-list-item">
                     <BookableObjectListDisplay
                       key={bookableObject.id}
                       bookableObject={bookableObject}

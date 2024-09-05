@@ -9,7 +9,7 @@ type TabItemProps = {
 
 const TabItem: React.FC<TabItemProps> = ({ label, children }) => {
   return (
-    <div className='tab-panel' role='tabpanel' aria-labelledby={`tab-${sanitiseForId(label)}`} id={`panel-${sanitiseForId(label)}`}>
+    <div className='tab-panel' role='tabpanel' aria-labelledby={`tab-${sanitiseForId(label)}`} id={`panel-${sanitiseForId(label)}`} tabIndex={0}>
       {children}
     </div>
   );
