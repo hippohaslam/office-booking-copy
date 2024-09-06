@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer>
       <div className='footer-container'>
-        <p>Hippo booking - Version 0.1</p>
+        <p>Office booking - Version 0.1</p>
         <a href='https://github.com/hippo-digital/office-booking' target='_blank'>
           View this project on GitHub
         </a>
