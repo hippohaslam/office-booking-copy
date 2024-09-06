@@ -211,7 +211,7 @@ const DeskBooking = () => {
       });
       fabricCanvas.renderAll();
 
-      fabricCanvas.on("mouse:down", (e: fabric.IEvent<Event>) => {
+      fabricCanvas.on("mouse:up", (e: fabric.IEvent<Event>) => {
         const selectedFabricObject = e.target as CustomFabricObject;
         if (selectedFabricObject) {
           // check if data contains an id matching the selected object
@@ -369,22 +369,21 @@ const DeskBooking = () => {
   const breadcrumbItems = [
     { to: "/", text: "Home" },
     { to: "/locations", text: "Locations" },
-    { 
-      to: "/locations/" + locationData?.id! + `/areas`, 
-      text: locationData?.name ?? "Location"
+    {
+      to: "/locations/" + locationData?.id! + `/areas`,
+      text: locationData?.name ?? "Location",
     },
   ];
 
   if (locationData) {
     if (locationData?.areas.length > 1) {
-      breadcrumbItems.push({ text: areaData?.name ?? "Pick a space", to: ""});
+      breadcrumbItems.push({ text: areaData?.name ?? "Pick a space", to: "" });
     }
   }
 
   return (
     <div>
-      <Breadcrumbs items={breadcrumbItems}
-      />
+      <Breadcrumbs items={breadcrumbItems} />
       {error !== null ? (
         <ErrorBanner
           isShown={error !== null}
@@ -412,19 +411,19 @@ const DeskBooking = () => {
         </TabItem>
 
         <TabItem label='List'>
-          <ul className="bookable-objects-list"> 
+          <ul className='bookable-objects-list'>
             {areaData?.bookableObjects.map((bookableObject) => {
-                return (
-                  <li key={bookableObject.id + "-list-item"} className="bookable-Objects-list-item">
-                    <BookableObjectListDisplay
-                      key={bookableObject.id}
-                      bookableObject={bookableObject}
-                      existingBookingName={getExistingBookingName(bookableObject)}
-                      onObjectSelected={handleListItemSelected}
-                    />
-                  </li>
-                );
-              })}
+              return (
+                <li key={bookableObject.id + "-list-item"} className='bookable-Objects-list-item'>
+                  <BookableObjectListDisplay
+                    key={bookableObject.id}
+                    bookableObject={bookableObject}
+                    existingBookingName={getExistingBookingName(bookableObject)}
+                    onObjectSelected={handleListItemSelected}
+                  />
+                </li>
+              );
+            })}
           </ul>
         </TabItem>
       </TabList>
@@ -445,7 +444,9 @@ const BookableObjectListDisplay = ({
 }) => {
   return (
     <button
-      className={`bookable-object-button ` + (existingBookingName != null ? "bookable-object-button__booked" : "bookable-object-button__available")}
+      className={
+        `bookable-object-button ` + (existingBookingName != null ? "bookable-object-button__booked" : "bookable-object-button__available")
+      }
       key={bookableObject.id}
       onClick={() => onObjectSelected(bookableObject)}
     >
