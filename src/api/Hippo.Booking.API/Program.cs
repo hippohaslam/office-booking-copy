@@ -141,7 +141,7 @@ try
                 options.Cookie.SameSite = SameSiteMode.None;
             }
 
-            options.ExpireTimeSpan = TimeSpan.FromHours(1);
+            options.ExpireTimeSpan = TimeSpan.FromHours(3);
             options.SlidingExpiration = false;
 
             options.Events.OnRedirectToLogin = context =>
