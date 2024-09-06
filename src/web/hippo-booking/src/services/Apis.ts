@@ -13,9 +13,12 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      // Intercepting 404 so we can redirect to a 404 page
       if (error.response.status === 404) {
         window.location.replace("/not-found");
+      }
+      // intercept 401 only if page is not on /signin
+      if (error.response.status === 401 && !window.location.pathname.includes("/signin")) {
+        window.location.replace("/signin");
       }
     }
     return Promise.reject(error);
