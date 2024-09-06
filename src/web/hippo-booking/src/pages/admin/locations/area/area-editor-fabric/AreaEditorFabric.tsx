@@ -346,6 +346,7 @@ const FloorplanEditor = () => {
         left: 100,
         top: 100,
         fill: "black",
+        fontFamily: '"DM Sans","serif"',
       });
       text.bringForward();
       fabricCanvasRef.current.add(text);
