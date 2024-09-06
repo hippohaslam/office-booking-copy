@@ -319,8 +319,19 @@ const FloorplanEditor = () => {
 
   const removeObject = () => {
     if (fabricCanvasRef.current) {
-      const activeObject = fabricCanvasRef.current.getActiveObject();
+      const activeObject = fabricCanvasRef.current.getActiveObject() as CustomObject;
+
       if (activeObject) {
+        if (!isNullOrEmpty(activeObject.id) && area) {
+          const nextDesks = area.bookableObjects.map((desk) => {
+            if (desk.floorPlanObjectId === activeObject.id) {
+              desk.floorPlanObjectId = undefined;
+            }
+            return desk;
+          });
+          setArea({ ...area, bookableObjects: nextDesks });
+        }
+
         fabricCanvasRef.current.remove(activeObject);
         setTextState({ hidden: true, text: "" });
       }
