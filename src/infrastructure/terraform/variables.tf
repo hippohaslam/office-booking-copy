@@ -69,3 +69,8 @@ variable "db_instance_size" {
   description = "DB Instance Size"
   type        = string
 }
+
+variable "db_retention_period" {
+  description = "How many days to retain a DB backup"
+  type        = number
+}

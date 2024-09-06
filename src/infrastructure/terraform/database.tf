@@ -3,16 +3,17 @@ locals {
 }
 
 resource "aws_db_instance" "hippo-booking-db" {
-  identifier           = "hippo-booking-db-${var.env_suffix}"
-  allocated_storage    = 20 # Minimum storage for RDS instances
-  engine               = "postgres"
-  engine_version       = "16.3"
-  instance_class       = var.db_instance_size
-  username             = "postgres"
-  password             = random_password.db_password.result
-  parameter_group_name = "default.postgres16"
-  publicly_accessible  = true
-  skip_final_snapshot  = true
+  identifier              = "hippo-booking-db-${var.env_suffix}"
+  allocated_storage       = 20 # Minimum storage for RDS instances
+  engine                  = "postgres"
+  engine_version          = "16.3"
+  instance_class          = var.db_instance_size
+  username                = "postgres"
+  password                = random_password.db_password.result
+  parameter_group_name    = "default.postgres16"
+  publicly_accessible     = true
+  skip_final_snapshot     = true
+  backup_retention_period = var.db_retention_period
 
   db_subnet_group_name   = aws_db_subnet_group.db-subnet.name
   vpc_security_group_ids = [aws_security_group.db-security-group.id]
