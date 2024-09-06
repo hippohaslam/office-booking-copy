@@ -142,7 +142,7 @@ try
             }
 
             options.ExpireTimeSpan = TimeSpan.FromHours(3);
-            options.SlidingExpiration = false;
+            options.SlidingExpiration = true;
 
             options.Events.OnRedirectToLogin = context =>
             {
