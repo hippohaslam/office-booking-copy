@@ -8,6 +8,7 @@ import { fabric } from "fabric";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas";
 import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric/CustomObjects";
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
+import { compareAlphabeticallyByPropertyWithNumbers } from "../../../helpers/ArrayHelpers";
 import { useWindowSize } from "../../../hooks/WindowSizeHook";
 import CustomDatePicker from "../../../components/date-picker/DatePicker";
 import { Breadcrumbs, ConfirmModal, ErrorBanner, TabItem, TabList } from "../../../components";
@@ -412,18 +413,21 @@ const DeskBooking = () => {
 
         <TabItem label='List'>
           <ul className='bookable-objects-list'>
-            {areaData?.bookableObjects.map((bookableObject) => {
-              return (
-                <li key={bookableObject.id + "-list-item"} className='bookable-Objects-list-item'>
-                  <BookableObjectListDisplay
-                    key={bookableObject.id}
-                    bookableObject={bookableObject}
-                    existingBookingName={getExistingBookingName(bookableObject)}
-                    onObjectSelected={handleListItemSelected}
-                  />
-                </li>
-              );
-            })}
+            {areaData?.bookableObjects
+              .sort((a, b) => compareAlphabeticallyByPropertyWithNumbers(a, b, 'name'))
+              .map((bookableObject) => {
+                return (
+                  <li key={bookableObject.id + "-list-item"} className='bookable-Objects-list-item'>
+                    <BookableObjectListDisplay
+                      key={bookableObject.id}
+                      bookableObject={bookableObject}
+                      existingBookingName={getExistingBookingName(bookableObject)}
+                      onObjectSelected={handleListItemSelected}
+                    />
+                  </li>
+                );
+              })
+            }
           </ul>
         </TabItem>
       </TabList>

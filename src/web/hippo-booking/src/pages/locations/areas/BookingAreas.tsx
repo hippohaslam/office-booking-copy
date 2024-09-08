@@ -6,6 +6,7 @@ import OfficeIcon from "../../../assets/office-icon.svg";
 import ParkingIcon from "../../../assets/parking-icon.svg";
 import { AreaTypeEnum, AreaTypeEnumLabels } from "../../../enums/AreaTypeEnum";
 import { BookingLocation } from "../../../interfaces/Location";
+import { compareAlphabeticallyByPropertyWithNumbers } from "../../../helpers/ArrayHelpers";
 
 const BookingAreas = () => {
   // prefetch to see if we can skip this page. It works!! a bit abstracty but does the job
@@ -34,15 +35,16 @@ const BookingAreas = () => {
   }
 
   const listItems =
-    areaData?.map((area) => (
-      <ActionTile
-        title={area.name}
-        iconSrc={area.areaTypeId === AreaTypeEnum.Desks ? OfficeIcon : area.areaTypeId === AreaTypeEnum.CarPark ? ParkingIcon : undefined}
-        description={AreaTypeEnumLabels[area.areaTypeId]}
-        primaryLink={{ show: true, text: "Book in this area", to: `/locations/${locationId}/areas/${area.id}` }}
-        secondaryLink={{ show: false }}
-        tileTestId="area-tile"
-      />
+    areaData?.sort((a, b) => compareAlphabeticallyByPropertyWithNumbers(a, b, "name"))
+      .map((area) => (
+        <ActionTile
+          title={area.name}
+          iconSrc={area.areaTypeId === AreaTypeEnum.Desks ? OfficeIcon : area.areaTypeId === AreaTypeEnum.CarPark ? ParkingIcon : undefined}
+          description={AreaTypeEnumLabels[area.areaTypeId]}
+          primaryLink={{ show: true, text: "Book in this area", to: `/locations/${locationId}/areas/${area.id}` }}
+          secondaryLink={{ show: false }}
+          tileTestId="area-tile"
+        />
     )) || [];
 
   const breadcrumbItems = [

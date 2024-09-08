@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getLocationsAsync } from "../../services/Apis";
 import { ActionTile, ActionTileList, Breadcrumbs, ErrorBanner } from "../../components";
+import { compareAlphabeticallyByPropertyWithNumbers } from "../../helpers/ArrayHelpers";
 
 const Locations = () => {
   const { isFetching, error, data } = useQuery({
@@ -10,13 +11,14 @@ const Locations = () => {
   });
 
   const listItems =
-    data?.map((location) => (
-      <ActionTile
-        title={location.name}
-        primaryLink={{ show: true, to: `/locations/${location.id}/areas`, text: "Book at this location" }}
-        secondaryLink={{ show: true, to: `/location/${location.id}`, text: "View more details" }}
-        tileTestId="location-tile"
-      />
+    data?.sort((a, b) => compareAlphabeticallyByPropertyWithNumbers(a, b, "name"))
+      .map((location) => (
+        <ActionTile
+          title={location.name}
+          primaryLink={{ show: true, to: `/locations/${location.id}/areas`, text: "Book at this location" }}
+          secondaryLink={{ show: true, to: `/location/${location.id}`, text: "View more details" }}
+          tileTestId="location-tile"
+        />
     )) || [];
 
   if (error) {
