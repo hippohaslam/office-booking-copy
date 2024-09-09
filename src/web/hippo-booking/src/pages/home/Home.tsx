@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../../contexts/UserContext.tsx";
-import RelaxingGraphic from "../../assets/undraw_a_moment_to_relax_re_v5gv.svg";
-import OfficeGraphic from "../../assets/undraw_in_the_office_re_jtgc.svg";
+import RelaxingGraphic from "../../assets/relaxed-graphic.svg";
+import OfficeGraphic from "../../assets/in-the-office-graphic.svg";
 import ErrorGraphic from "../../assets/undraw_not_found_re_bh2e.svg";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import { getUpcomingBookingsAsync } from "../../services/Apis.ts";
 import { ErrorBanner } from "../../components/banners/ErrorBanner.tsx";
 import BookingCardStacked from "../../components/booking/BookingCardStacked.tsx";
 import { InformationBanner } from "../../components/index";
+import "./Home.scss";
 
 const Home = () => {
   const userContext = useUser();

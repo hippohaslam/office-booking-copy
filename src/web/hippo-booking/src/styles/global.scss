@@ -282,42 +282,11 @@ hr {
   }
 }
 
-/* || Hero styling */
-
-.hero-container {
-  display: flex;
-  margin: 0 auto;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1512px;
-  padding: 0 25px;
-
-  // picked 'medium' but can change to anything
-  .hero-container__medium-height {
-    min-height: 280px;
-  }
-
-  .hero-content {
-    margin: 30px 0;
-    align-content: center;
-  }
-}
-
-/*  */
-
 /* || General mobile styling */
 
 @media only screen and (max-width: 768px) {
   main {
     min-height: calc(100dvh - (4rem + 4rem)); //100dvh - (header + footer)
-  }
-
-  .hero-content {
-    width: 100%;
-  }
-
-  .hero-graphic {
-    display: none;
   }
 }
 
