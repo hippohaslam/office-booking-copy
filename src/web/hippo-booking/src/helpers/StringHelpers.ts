@@ -8,6 +8,15 @@ function isNullOrEmpty(value: string | null | undefined): value is null | undefi
 }
 
 /**
+ * Check if a string is not null, undefined or empty.
+ * @param value The string to check.
+ * @returns True if the string is not null, undefined or empty; otherwise, false.
+ */
+function isNotNullOrEmpty(value: string | null | undefined): value is string {
+  return !isNullOrEmpty(value);
+}
+
+/**
  * Converts a raw, unformatted label into a format that can be used in element attributes such as Ids.
  * 1. Changes the input label to lowercase
  * 2. Removes special characters
@@ -19,4 +28,4 @@ const sanitiseForId = (label: string) => {
   return label.toLowerCase().replace(/[^\w\s]|(\s+)/g, (_match: string, group1: string) => (group1 ? "-" : ""));
 };
 
-export { isNullOrEmpty, sanitiseForId };
+export { isNullOrEmpty, isNotNullOrEmpty, sanitiseForId };
