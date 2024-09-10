@@ -19,6 +19,27 @@
     }
 }
 
+.hero-graphic{
+    width: 550px;
+}
+
+@media only screen and (max-width: 1587px) {
+    .hero-container{
+        padding-left: 75px;
+        padding-right: 75px;
+    }
+
+    .hero-graphic{
+        width: 40%;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .hero-graphic {
+        display: none;
+    }
+}
+
 @media only screen and (max-width: 768px) {
 
     .hero-content {
@@ -27,9 +48,5 @@
 
     .hero-container{
         padding: 25px 25px;
-    }
-
-    .hero-graphic {
-        display: none;
     }
 }
