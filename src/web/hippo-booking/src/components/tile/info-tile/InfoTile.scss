@@ -2,9 +2,14 @@
 
 .info-tile-list {
   display: grid;
-  gap: 10px;
-  grid-template-columns: auto auto;
+  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
   padding-left: 0;
+  margin: 20px 0;
+
+  &.single-column{
+    grid-template-columns: auto;
+  }
 
   li {
     list-style: none;
@@ -16,7 +21,12 @@
   grid-template-columns: 60px auto;
   align-items: start;
   justify-content: start;
-  padding: 20px 15px;
+  border-radius: 12px;
+  padding-bottom: 10px;
+
+  &:not(:has(img)){
+    grid-template-columns: auto;
+  }
 
   h2,
   h3,
@@ -24,6 +34,7 @@
   h5 {
     margin-top: 0;
   }
+
 }
 
 @media only screen and (max-width: 60rem) {

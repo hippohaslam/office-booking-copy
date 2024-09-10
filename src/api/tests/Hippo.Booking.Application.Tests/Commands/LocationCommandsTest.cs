@@ -40,7 +40,10 @@ public class LocationCommandsTest
         var request = new CreateLocationRequest
         {
             Name = "Test Location",
-            Description = "Test Location Description"
+            Description = "Test Location Description",
+            Address = "Test Address",
+            SlackChannel = "Test Slack Channel",
+            GuideLink = "Test Guide Link"
         };
 
         var result = await _sut.Handle(request);
@@ -55,6 +58,9 @@ public class LocationCommandsTest
             existingLocation.Should().NotBeNull();
             existingLocation!.Name.Should().Be(request.Name);
             existingLocation.Description.Should().Be(request.Description);
+            existingLocation.Address.Should().Be(request.Address);
+            existingLocation.SlackChannel.Should().Be(request.SlackChannel);
+            existingLocation.GuideLink.Should().Be(request.GuideLink);
         }
     }
 
@@ -78,7 +84,10 @@ public class LocationCommandsTest
         var request = new UpdateLocationRequest
         {
             Name = "Updated Location",
-            Description = "Updated Location Description"
+            Description = "Updated Location Description",
+            Address = "Updated Address",
+            SlackChannel = "Updated Slack Channel",
+            GuideLink = "Updated Guide Link"
         };
 
         Assert.DoesNotThrowAsync(async () => await _sut.Handle(existingLocation!.Id, request));
@@ -91,6 +100,9 @@ public class LocationCommandsTest
             updatedLocation.Should().NotBeNull("Location should be updated");
             updatedLocation!.Name.Should().Be(request.Name, "Name should match request");
             updatedLocation.Description.Should().Be(request.Description, "Description should match request");
+            updatedLocation.Address.Should().Be(request.Address);
+            updatedLocation.SlackChannel.Should().Be(request.SlackChannel);
+            updatedLocation.GuideLink.Should().Be(request.GuideLink);
         }
     }
 

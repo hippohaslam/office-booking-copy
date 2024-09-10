@@ -99,6 +99,7 @@ const BookingConfirmed = () => {
           </Link>
         </InfoTile>
       </InfoTileList>
+      <br/>
     </div>
   );
 };

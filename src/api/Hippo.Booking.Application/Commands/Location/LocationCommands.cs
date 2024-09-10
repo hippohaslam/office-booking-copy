@@ -28,7 +28,10 @@ public class LocationCommands(
         var location = new Core.Entities.Location
         {
             Name = request.Name,
-            Description = request.Description
+            Description = request.Description,
+            Address = request.Address,
+            SlackChannel = request.SlackChannel,
+            GuideLink = request.GuideLink
         };
 
         dataContext.AddEntity(location);
@@ -52,6 +55,9 @@ public class LocationCommands(
 
         location.Name = request.Name;
         location.Description = request.Description;
+        location.Address = request.Address;
+        location.SlackChannel = request.SlackChannel;
+        location.GuideLink = request.GuideLink;
 
         await dataContext.Save();
     }

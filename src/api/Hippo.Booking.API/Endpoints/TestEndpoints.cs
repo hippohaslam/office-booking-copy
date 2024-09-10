@@ -43,7 +43,14 @@ public class TestEndpoints() : EndpointBase("test", "Test", AccessLevelEnum.Anon
         {
             return await HandleResponse(async () =>
             {
-                var locationRequest = new CreateLocationRequest();
+                var locationRequest = new CreateLocationRequest()
+                {
+                    Name = string.Empty,
+                    Description = "Test Location Description",
+                    Address = "Test Address",
+                    SlackChannel = "Test Slack Channel",
+                    GuideLink = "Test Guide Link"
+                };
                 
                 await locationValidator.ValidateAndThrowAsync(locationRequest);
             });

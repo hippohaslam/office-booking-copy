@@ -9,6 +9,9 @@ const CreateLocation = () => {
   const initialLocation = {
     name: "",
     description: "",
+    address: "",
+    slackChannel: "",
+    guideLink: ""
   };
   const navigate = useNavigate();
   const [location, setLocation] = useState<NewLocation>(initialLocation);
@@ -52,6 +55,24 @@ const CreateLocation = () => {
             Description
           </label>
           <textarea name='description' value={location.description} onChange={handleLocationUpdate} />
+        </div>
+        <div className='standard-inputs'>
+          <label htmlFor='address' title='The address of the location'>
+            Address
+          </label>
+          <textarea id='address' name='address' value={location.address} onChange={handleLocationUpdate} />
+        </div>
+        <div className='standard-inputs'>
+          <label htmlFor='slack-channel' title='The link to the Slack channel for the location'>
+            Slack channel link
+          </label>
+          <input type="text" id='slack-channel' name='slackChannel' value={location.slackChannel} onChange={handleLocationUpdate} />
+        </div>
+        <div className='standard-inputs'>
+          <label htmlFor='office-guide' title='The link to the Slack channel for the location'>
+            Office guide link
+          </label>
+          <input type="text" id='office-guide' name='guideLink' value={location.guideLink} onChange={handleLocationUpdate} />
         </div>
         <br />
         <CtaButton text='Submit' type='submit' color='cta-green' />

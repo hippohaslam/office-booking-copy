@@ -2,11 +2,12 @@ import "./InfoTile.scss";
 
 type InfoTileListProps = {
   children: JSX.Element[];
+  singleColumn?: boolean;
 };
 
-const InfoTileList: React.FC<InfoTileListProps> = ({ children }: InfoTileListProps) => {
+const InfoTileList: React.FC<InfoTileListProps> = ({ children, singleColumn = false }: InfoTileListProps) => {
   return (
-    <ul className='info-tile-list'>
+    <ul className={singleColumn ? 'info-tile-list single-column' : 'info-tile-list'}>
       {children.map((listItem, index) => (
         <li className='info-tile-list-item' key={index}>
           {listItem}

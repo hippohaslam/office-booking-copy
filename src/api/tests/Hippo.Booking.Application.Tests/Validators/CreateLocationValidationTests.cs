@@ -11,11 +11,13 @@ public class CreateLocationValidationTests() :
         new CreateLocationRequest
         {
             Name = "Test Location",
-            Description = "Test Description"
+            Description = "Test Description",
+            Address = "Test Address"
         },
         new CreateLocationRequest
         {
-            Name = "Test Location"
+            Name = "Test Location",
+            Address = "Test Address"
         }
     };
 
@@ -28,12 +30,20 @@ public class CreateLocationValidationTests() :
         },
         new CreateLocationRequest
         {
+            Name = null!,
+            Description = "Test",
+            Address = "Test Address"
+        },
+        new CreateLocationRequest
+        {
             Name = "Test Location".PadRight(200),
+            Address = "Test Address"
         },
         new CreateLocationRequest
         {
             Name = "Test Location",
-            Description = "Test Description".PadRight(600)
+            Description = "Test Description".PadRight(600),
+            Address = "Test Address"
         }
     };
 }

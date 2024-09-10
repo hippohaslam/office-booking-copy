@@ -15,7 +15,10 @@ public class Seeding
             Id = 1,
             Name = "Leeds",
             Description = "Test Leeds location",
-            Areas = new List<Area>()
+            Areas = new List<Area>(),
+            Address = "Aireside House, 26 Aire St, Leeds, LS1 4HT",
+            SlackChannel = "https://hippodigital.co.uk/",
+            GuideLink = "https://hippodigital.co.uk/"
         };
 
         var areas = new List<Area>

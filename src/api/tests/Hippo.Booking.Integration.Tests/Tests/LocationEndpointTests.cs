@@ -72,7 +72,10 @@ public class LocationEndpointTests : IntegrationTestBase
         {
             Id = locations.First().Id,
             Name = locations.First().Name,
-            Description = locations.First().Description
+            Description = locations.First().Description,
+            Address = locations.First().Address,
+            SlackChannel = locations.First().SlackChannel,
+            GuideLink = locations.First().GuideLink
         },
             "the correct location should be returned");
     }

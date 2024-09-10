@@ -1,7 +1,5 @@
-using System.Text.Json;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Enums;
-using Hippo.Booking.Core.Extensions;
 using Hippo.Booking.Infrastructure.EF;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
@@ -23,7 +21,10 @@ public class IntegrationTestBase
         var location = new Location
         {
             Name = name,
-            Description = "Test Location"
+            Description = "Test Location",
+            Address = "Test Address",
+            SlackChannel = "Test Slack Channel",
+            GuideLink = "Test Guide Link"
         };
         await AddEntity(location);
         return location;

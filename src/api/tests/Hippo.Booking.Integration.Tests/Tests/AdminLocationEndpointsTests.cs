@@ -33,7 +33,10 @@ public class AdminLocationEndpointTests : IntegrationTestBase
         var createLocation = new CreateLocationRequest
         {
             Name = "Create Test Location",
-            Description = "Test Location"
+            Description = "Test Location",
+            Address = "Test Address",
+            SlackChannel = "Test Slack Channel",
+            GuideLink = "Test Guide Link"
         };
 
         //Act
@@ -52,7 +55,10 @@ public class AdminLocationEndpointTests : IntegrationTestBase
         {
             Id = int.Parse(value),
             Name = "Create Test Location",
-            Description = "Test Location"
+            Description = "Test Location",
+            Address = "Test Address",
+            SlackChannel = "Test Slack Channel",
+            GuideLink = "Test Guide Link"
         }, "the content from the request should be added to the database");
 
         response.Headers.Location.Should().Be($"/location/{location!.Id}", "the location header should be set to the location endpoint");
@@ -66,12 +72,18 @@ public class AdminLocationEndpointTests : IntegrationTestBase
         await AddEntity(new Location
         {
             Name = "Test Location",
-            Description = "Test Location"
+            Description = "Test Location",
+            Address = "Test Address",
+            SlackChannel = "Test Slack Channel",
+            GuideLink = "Test Guide Link"
         });
         var createLocation = new CreateLocationRequest
         {
             Name = "Test Location",
-            Description = "Test Location"
+            Description = "Test Location",
+            Address = "Test Address",
+            SlackChannel = "Test Slack Channel",
+            GuideLink = "Test Guide Link"
         };
 
         //Act
@@ -96,7 +108,10 @@ public class AdminLocationEndpointTests : IntegrationTestBase
         var updateLocation = new UpdateLocationRequest
         {
             Name = "Location Test Location 1 - updated",
-            Description = "Location Test Location 1 - updated"
+            Description = "Location Test Location 1 - updated",
+            Address = "Location Test Location 1 - updated",
+            SlackChannel = "Location Test Location 1 - updated",
+            GuideLink = "Location Test Location 1 - updated"
         };
 
         //Act
@@ -112,7 +127,10 @@ public class AdminLocationEndpointTests : IntegrationTestBase
         {
             Id = location.Id,
             Name = "Location Test Location 1 - updated",
-            Description = "Location Test Location 1 - updated"
+            Description = "Location Test Location 1 - updated",
+            Address = "Location Test Location 1 - updated",
+            SlackChannel = "Location Test Location 1 - updated",
+            GuideLink = "Location Test Location 1 - updated"
         }, "the updates to the location should be reflected in the database");
     }
 
@@ -165,7 +183,10 @@ public class AdminLocationEndpointTests : IntegrationTestBase
         {
             Id = locations.First().Id,
             Name = locations.First().Name,
-            Description = locations.First().Description
+            Description = locations.First().Description,
+            Address = locations.First().Address,
+            SlackChannel = locations.First().SlackChannel,
+            GuideLink = locations.First().GuideLink
         },
             "the correct location should be returned");
     }

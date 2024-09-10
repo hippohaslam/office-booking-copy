@@ -24,6 +24,9 @@ public class LocationQueries(IDataContext dataContext) : ILocationQueries
                 Id = x.Id,
                 Name = x.Name,
                 Description = x.Description,
+                Address = x.Address,
+                SlackChannel = x.SlackChannel,
+                GuideLink = x.GuideLink,
                 Areas = x.Areas.Select(y => new LocationQueryResponse.AreaResponse
                 {
                     Id = y.Id,
