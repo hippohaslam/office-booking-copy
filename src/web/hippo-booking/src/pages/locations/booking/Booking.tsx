@@ -142,7 +142,7 @@ const DeskBooking = () => {
         fabricCanvasRef.current.setWidth(1452); //(Max width - margins)
       }
 
-      fabricCanvasRef.current.setHeight(windowHeight - 150);
+      fabricCanvasRef.current.setHeight(windowHeight - 300);
 
       if (showCanvas === false) {
         fabricCanvasRef.current.setWidth(1);
@@ -408,6 +408,21 @@ const DeskBooking = () => {
         <TabItem label='Floorplan'>
           <div className='canvas__container'>
             <canvas height={800} width={600} ref={canvasElRef} />
+          </div>
+          <div className="color-key">
+            <strong>Key:</strong>
+            <p>
+              <div className="color-block color-block__green"></div>
+              <span>- available</span>
+            </p>
+            <p>
+              <div className="color-block color-block__grey"></div>
+              <span>- not available</span>
+            </p>
+            <p>
+              <div className="color-block color-block__orange"></div>
+              <span>- selected</span>
+            </p>
           </div>
         </TabItem>
 

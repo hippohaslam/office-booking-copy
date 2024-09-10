@@ -40,3 +40,46 @@
   background-color: $hippo-brand-yellow;
   border-radius: 10px;
 }
+
+.color-key{
+  margin-top: 10px;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 10px;
+
+  p{
+    display: flex;
+    flex-wrap: nowrap;
+    text-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+  }
+}
+
+.color-block{
+  height: 1.5rem;
+  width: 25px;
+  border-radius: 12px;
+  margin-right: 5px;
+  
+  &.color-block__green{
+    background-color: #138000;
+  }
+
+  &.color-block__grey{
+    background-color: #808080;
+  }
+
+  &.color-block__orange{
+    background-color: #fba501;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .color-key{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
