@@ -26,7 +26,7 @@ const Nav = () => {
   };
 
   const closeMenuOnMobile = () => {
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth <= 1000) {
       setMobileShowMenu(false);
     }
   };
@@ -35,7 +35,7 @@ const Nav = () => {
     <header>
       <div className='nav-container'>
         <Link className='nav-container-logo' to='/' onClick={closeMenuOnMobile}>
-          <img src={window.innerWidth <= 500 ? HippoIconSvg : HippoSvg} alt='Hippo Logo' />
+          <img src={window.innerWidth <= 1000 ? HippoIconSvg : HippoSvg} alt='Hippo Logo' />
         </Link>
         <Link className='nav-container-logo' to='/' onClick={closeMenuOnMobile}>
           Office Bookings

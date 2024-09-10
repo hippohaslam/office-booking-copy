@@ -88,7 +88,7 @@ header {
   }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1000px) {
   body:has(.nav-menu.active) {
     position: fixed;
   }
