@@ -79,10 +79,12 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
     public async Task<BookableObjectBookingStateResponse> GetBookedState(int bookableObjectId)
     {
         var bookingState = await dataContext.Query<Core.Entities.Booking>()
+            .Include(i => i.BookableObject)
             .Where(x => x.BookableObjectId == bookableObjectId && x.Date == dateTimeProvider.Today)
             .Select(x => new BookableObjectBookingStateResponse
             {
                 IsBooked = true,
+                ObjectName = x.BookableObject.Name,
                 BookedBy = x.User.FirstName + " " + x.User.LastName
             })
             .SingleOrDefaultAsync();
