@@ -170,6 +170,7 @@ try
     new SessionEndpoints().Map(app);
     new UserManagementEndpoints().Map(app);
     new ReportingEndpoints().Map(app);
+    new ScreenEndpoints().Map(app);
 
     if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("IntegrationTest"))
     {

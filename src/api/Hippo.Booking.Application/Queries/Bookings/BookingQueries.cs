@@ -75,4 +75,18 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
 
         return location;
     }
+
+    public async Task<BookableObjectBookingStateResponse> GetBookedState(int bookableObjectId)
+    {
+        var bookingState = await dataContext.Query<Core.Entities.Booking>()
+            .Where(x => x.BookableObjectId == bookableObjectId && x.Date == dateTimeProvider.Today)
+            .Select(x => new BookableObjectBookingStateResponse
+            {
+                IsBooked = true,
+                BookedBy = x.User.FirstName + " " + x.User.LastName
+            })
+            .SingleOrDefaultAsync();
+
+        return bookingState ?? new BookableObjectBookingStateResponse { IsBooked = false };
+    }
 }

@@ -7,4 +7,6 @@ public interface IBookingQueries
     Task<List<UserBookingsResponse>> GetUpcomingBookingsForUser(string userId);
 
     Task<BookingDayResponse?> GetAreaAndBookingsForTheDay(int locationId, int areaId, DateOnly date);
+
+    Task<BookableObjectBookingStateResponse> GetBookedState(int bookableObjectId);
 }
