@@ -87,7 +87,11 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
                     IsBooked = true,
                     BookedBy = z.User.FirstName + " " + z.User.LastName
                 })
-                .SingleOrDefault()
+                .SingleOrDefault() ?? new BookableObjectBookingStateResponse
+                {
+                    IsBooked = false,
+                    ObjectName = x.Name
+                }
             )
             .SingleOrDefaultAsync();
         
