@@ -78,17 +78,23 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
 
     public async Task<BookableObjectBookingStateResponse> GetBookedState(int bookableObjectId)
     {
-        var bookingState = await dataContext.Query<Core.Entities.Booking>()
-            .Include(i => i.BookableObject)
-            .Where(x => x.BookableObjectId == bookableObjectId && x.Date == dateTimeProvider.Today)
-            .Select(x => new BookableObjectBookingStateResponse
-            {
-                IsBooked = true,
-                ObjectName = x.BookableObject.Name,
-                BookedBy = x.User.FirstName + " " + x.User.LastName
-            })
+        var bookingState = await dataContext.Query<BookableObject>()
+            .Where(x => x.Id == bookableObjectId)
+            .Select(x => x.Bookings.Where(y => y.Date != dateTimeProvider.Today && y.DeletedAt == null)
+                .Select(z => new BookableObjectBookingStateResponse
+                {
+                    ObjectName = x.Name,
+                    IsBooked = true,
+                    BookedBy = z.User.FirstName + " " + z.User.LastName
+                })
+                .SingleOrDefault()
+            )
             .SingleOrDefaultAsync();
-
-        return bookingState ?? new BookableObjectBookingStateResponse { IsBooked = false };
+        
+        return bookingState ?? new BookableObjectBookingStateResponse
+        {
+            IsBooked = false,
+            ObjectName = "<Unknown>"
+        };
     }
 }
