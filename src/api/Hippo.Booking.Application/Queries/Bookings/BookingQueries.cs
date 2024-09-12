@@ -80,7 +80,7 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
     {
         var bookingState = await dataContext.Query<BookableObject>()
             .Where(x => x.Id == bookableObjectId)
-            .Select(x => x.Bookings.Where(y => y.Date != dateTimeProvider.Today && y.DeletedAt == null)
+            .Select(x => x.Bookings.Where(y => y.Date == dateTimeProvider.Today && y.DeletedAt == null)
                 .Select(z => new BookableObjectBookingStateResponse
                 {
                     ObjectName = x.Name,
