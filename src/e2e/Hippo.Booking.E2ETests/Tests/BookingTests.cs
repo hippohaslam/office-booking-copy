@@ -15,10 +15,10 @@ public class BookingTests : PlaywrightFixture
 
         var locationsPage = new LocationsPage(Page);
         await locationsPage.AssertLocationsPage();
-        await locationsPage.ClickBookAtThisLocationLink("Leeds");
+        await locationsPage.ClickBookAtThisLocationLink("Leeds - e2e test");
         
         var areasPage = new AreasPage(Page);
-        await areasPage.AssertAreasPage("Leeds");
+        await areasPage.AssertAreasPage("Leeds - e2e test");
         await areasPage.ClickBookInThisAreaLink("Floor 1");
 
         var bookingPage = new BookingPage(Page);
@@ -33,25 +33,25 @@ public class BookingTests : PlaywrightFixture
         
         var confirmationPage = new BookingConfirmedPage(Page);
         await confirmationPage.AssertBookingConfirmedPage();
-        await confirmationPage.AssertBookingDetails(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1", "Leeds");
+        await confirmationPage.AssertBookingDetails(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1", "Leeds - e2e test");
         await confirmationPage.ClickOnMyBookingsCta();
         
         var myBookingsPage = new MyBookingsPage(Page);
         await myBookingsPage.AssertMyBookingsPage();
-        await myBookingsPage.AssertBookingRow(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1", "Leeds");
+        await myBookingsPage.AssertBookingRow(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1", "Leeds - e2e test");
         await myBookingsPage.ClickCancelBookingButton(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1",
-            "Leeds");
+            "Leeds - e2e test");
         await myBookingsPage.AssertConfirmationModal();
         await myBookingsPage.ClickCloseModalButton();
         await myBookingsPage.ClickCancelBookingButton(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1",
-            "Leeds");
+            "Leeds - e2e test");
         await myBookingsPage.AssertConfirmationModal();
         await myBookingsPage.ClickModalConfirmButton();
 
         var banner = new BannerComponent(Page);
         await banner.AssertBanner("Booking cancelled",
-            "Your booking of Desk 2 at Floor 1, Leeds on " + DateTime.Now.ToString("dddd d MMMM yyyy") +
+            "Your booking of Desk 2 at Floor 1, Leeds - e2e test on " + DateTime.Now.ToString("dddd d MMMM yyyy") +
             " has been cancelled.");
-        await myBookingsPage.AssertBookingRowNotShown(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1", "Leeds");
+        await myBookingsPage.AssertBookingRowNotShown(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1", "Leeds - e2e test");
     }
 }

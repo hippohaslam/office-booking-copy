@@ -42,19 +42,19 @@ const CreateLocation = () => {
         <div className='spacer'></div>
       </div>
       {hasErrors && <ErrorBanner isShown={hasErrors} title={"Error"} errorMessage={createLocation.error.message} allowClose={true} />}
-      <h2>Create a new location</h2>
+      <h1>Create a new location</h1>
       <form onSubmit={handleSubmit}>
         <div className='standard-inputs'>
           <label htmlFor='location-name' title='The name of the location'>
             Name
           </label>
-          <input type='text' name='name' value={location.name} onChange={handleLocationUpdate} />
+          <input id="location-name" type='text' name='name' value={location.name} onChange={handleLocationUpdate} />
         </div>
         <div className='standard-inputs'>
           <label htmlFor='description' title='The description of the location'>
             Description
           </label>
-          <textarea name='description' value={location.description} onChange={handleLocationUpdate} />
+          <textarea id="description" name='description' value={location.description} onChange={handleLocationUpdate} />
         </div>
         <div className='standard-inputs'>
           <label htmlFor='address' title='The address of the location'>

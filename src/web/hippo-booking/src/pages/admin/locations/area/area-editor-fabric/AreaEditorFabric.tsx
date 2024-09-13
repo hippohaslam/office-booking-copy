@@ -540,10 +540,10 @@ const FloorplanEditor = () => {
 
       {errors.length > 0 && <MultiErrorBanner isShown={errors.length > 0} title='Error' errors={errors} allowClose={true} />}
       {hasSuccess && errors.length < 1 && <SuccessBanner isShown={hasSuccess} title='Saved successfully' />}
-      <h1>{!area && isLoading ? "Location loading..." : area?.name}</h1>
+      <h1>{!area && isLoading ? "Area loading..." : area?.name}</h1>
       <div>
-        <label htmlFor='location-name'>Location name: </label>
-        <input id='location-name' type='text' value={area?.name || ""} onChange={handleLocationUpdate} />
+        <label htmlFor='area-name'>Area name: </label>
+        <input id='area-name' type='text' value={area?.name || ""} onChange={handleLocationUpdate} />
       </div>
       <br />
       <div>
@@ -610,6 +610,7 @@ const FloorplanEditor = () => {
               <div className='standard-inputs'>
                 <label htmlFor='new-bookable-object-name'>Name: </label>
                 <input
+                  id="new-bookable-object-name"
                   type='text'
                   name='new-bookable-object-name'
                   value={newBookableObject.name}
@@ -621,6 +622,7 @@ const FloorplanEditor = () => {
               <div className='standard-inputs'>
                 <label htmlFor='new-bookable-object-description'>Description: </label>
                 <input
+                  id="new-bookable-object-description"
                   type='text'
                   name='new-bookable-object-description'
                   value={newBookableObject.description}
@@ -652,7 +654,7 @@ const FloorplanEditor = () => {
           ) : null}
           <h3>Unassigned places</h3>
           {area && area.bookableObjects.filter((desk) => isNullOrEmpty(desk.floorPlanObjectId)).length < 1 && <p>No unassigned places</p>}
-          <ul>
+          <ul data-testid='unassigned-list'>
             {area?.bookableObjects
               .filter((desk) => isNullOrEmpty(desk.floorPlanObjectId))
               .map((desk) => (
@@ -671,7 +673,7 @@ const FloorplanEditor = () => {
           </ul>
           <h3>Assigned places</h3>
           {area && area.bookableObjects.filter((desk) => !isNullOrEmpty(desk.floorPlanObjectId)).length < 1 && <p>No assigned places</p>}
-          <ul>
+          <ul data-testid='assigned-list'>
             {area?.bookableObjects
               .filter((desk) => !isNullOrEmpty(desk.floorPlanObjectId))
               .map((desk) => (

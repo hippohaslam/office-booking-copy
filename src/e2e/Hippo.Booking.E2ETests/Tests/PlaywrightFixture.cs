@@ -16,6 +16,10 @@ public abstract class PlaywrightFixture
     [OneTimeSetUp]
     public async Task Setup()
     {
+        var seeding = new Seeding();
+        await seeding.SeedOfficeData();
+        await seeding.SetUserAsAdmin();
+        
         Browsers.InstallRequiredBrowsers();
         
         _playwright = await Playwright.CreateAsync();
@@ -32,13 +36,6 @@ public abstract class PlaywrightFixture
         Page = await _context.NewPageAsync();
         
         await LogInToService();
-    }
-
-    [OneTimeSetUp]
-    public async Task SeedData()
-    {
-        var seeding = new Seeding();
-        await seeding.SeedOfficeData();
     }
 
     private async Task LogInToService()

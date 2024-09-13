@@ -137,6 +137,7 @@ jobs:
         env:
           User__Email: ${{ secrets.AUTOMATION_USER }}
           User__Password: ${{ secrets.AUTOMATION_PASSWORD }}
+          User__Id: ${{ secrets.AUTOMATION_USERID }}
         run: xvfb-run dotnet test --no-build --verbosity normal --configuration Release
 
   deploy-infrastructure:

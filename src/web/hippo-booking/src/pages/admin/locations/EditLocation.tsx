@@ -57,7 +57,7 @@ const EditLocation = () => {
       {hasErrors && <ErrorBanner isShown={hasErrors} title={"Error"} errorMessage={updateLocation.error.message} allowClose={true} />}
       {hasSuccess && <SuccessBanner isShown={hasSuccess} title='Saved successfully' description='' />}
 
-      <h2>Edit location</h2>
+      <h1>Edit location</h1>
       <form onSubmit={handleSubmit}>
         <div className='standard-inputs'>
           <label htmlFor='location-name' title='The name of the location'>

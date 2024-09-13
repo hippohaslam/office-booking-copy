@@ -20,4 +20,9 @@ public class HeaderComponent(IPage page)
     {
         await NavMenu.GetByRole(AriaRole.Button, new () {Name = "Sign out"}).ClickAsync();
     }
+    
+    public async Task ClickAdminNavLink()
+    {
+        await NavMenu.GetByRole(AriaRole.Link, new () {Name = "Admin"}).ClickAsync();
+    }
 }

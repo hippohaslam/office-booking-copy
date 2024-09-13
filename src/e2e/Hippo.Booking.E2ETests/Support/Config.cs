@@ -24,6 +24,7 @@ public class Config
     public static string BaseUrl => Instance.GetValue<string>("Urls:BaseUrl") ?? string.Empty;
     public static string UserEmail => Instance.GetValue<string>("User:Email") ?? string.Empty;
     public static string UserPassword => Instance.GetValue<string>("User:Password") ?? string.Empty;
+    public static string UserId => Instance.GetValue<string>("User:Id") ?? string.Empty;
     private static string DbConnectionString => Instance.GetValue<string>("ConnectionStrings:Database") ?? string.Empty;
     
     public static HippoBookingDbContext GetDbContext()

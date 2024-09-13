@@ -53,15 +53,15 @@ const CreateArea = () => {
     <div>
       {hasErrors && <ErrorBanner isShown={hasErrors} title='Error' errorMessage={createArea.error.message} allowClose={true} />}
       <Link to='/admin'>Back to locations</Link>
-      <h2>Create a new area {locationData?.name}</h2>
+      <h1>Create a new area {locationData?.name}</h1>
       <form onSubmit={handleSubmit}>
         <div className='standard-inputs'>
           <label htmlFor='name'>Name</label>
-          <input type='text' name='name' value={area.name} onChange={handleAreaUpdate} />
+          <input id="name" type='text' name='name' value={area.name} onChange={handleAreaUpdate} />
         </div>
         <div className='standard-inputs'>
           <label htmlFor='description'>Description</label>
-          <textarea name='description' value={area.description} onChange={handleAreaUpdate} />
+          <textarea id="description" name='description' value={area.description} onChange={handleAreaUpdate} />
         </div>
         <div className='standard-inputs'>
           <label htmlFor='areaTypeId'>Area Type</label>
