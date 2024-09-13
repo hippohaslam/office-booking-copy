@@ -14,6 +14,7 @@ resource "aws_db_instance" "hippo-booking-db" {
   publicly_accessible     = true
   skip_final_snapshot     = true
   backup_retention_period = var.db_retention_period
+  storage_encrypted       = true
 
   db_subnet_group_name   = aws_db_subnet_group.db-subnet.name
   vpc_security_group_ids = [aws_security_group.db-security-group.id]
