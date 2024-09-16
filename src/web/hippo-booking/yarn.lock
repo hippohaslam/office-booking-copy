@@ -976,9 +976,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mswjs/interceptors@npm:^0.35.3":
-  version: 0.35.3
-  resolution: "@mswjs/interceptors@npm:0.35.3"
+"@mswjs/interceptors@npm:^0.35.6":
+  version: 0.35.6
+  resolution: "@mswjs/interceptors@npm:0.35.6"
   dependencies:
     "@open-draft/deferred-promise": "npm:^2.2.0"
     "@open-draft/logger": "npm:^0.3.0"
@@ -986,7 +986,7 @@ __metadata:
     is-node-process: "npm:^1.2.0"
     outvariant: "npm:^1.4.3"
     strict-event-emitter: "npm:^0.5.1"
-  checksum: 10c0/7a4be78836c6b92106740688252d17abf9432e83653181cd4db9b7577932732c35cafbdfe1b30ce09fc8aff095fb822d4a0a61f18f3955cf2b2f849585b21cfa
+  checksum: 10c0/9472f640183675869368bf2ccf32354db0dfb320c754bcbfc683059f5380674598c59dde4fa58007f74817e31aa1dbd123787fcd0b1d37d53595aa718d06bfbe
   languageName: node
   linkType: hard
 
@@ -1671,13 +1671,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.3.5":
-  version: 18.3.5
-  resolution: "@types/react@npm:18.3.5"
+"@types/react@npm:^18.3.6":
+  version: 18.3.6
+  resolution: "@types/react@npm:18.3.6"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/548b1d3d7c2f0242fbfdbbd658731b4ce69a134be072fa83e6ab516f2840402a3f20e3e7f72e95133b23d4880ef24a6d864050dc8e1f7c68f39fa87ca8445917
+  checksum: 10c0/e347787a496f2006fe61358316e040c22548a1669559277b72dad39e2f1f713080115be9fe6c30f9d1d28a54054b96cf6c06471be6967a3605e31f5b84a6cec7
   languageName: node
   linkType: hard
 
@@ -4023,7 +4023,7 @@ __metadata:
     "@testing-library/react": "npm:^16.0.1"
     "@testing-library/user-event": "npm:^14.5.2"
     "@types/fabric": "npm:^5.3.9"
-    "@types/react": "npm:^18.3.5"
+    "@types/react": "npm:^18.3.6"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/uuid": "npm:^10.0.0"
@@ -4039,7 +4039,7 @@ __metadata:
     fabric: "npm:^5.4.0"
     jsdom: "npm:^25.0.0"
     jwt-decode: "npm:^4.0.0"
-    msw: "npm:^2.4.6"
+    msw: "npm:^2.4.7"
     prettier: "npm:3.3.3"
     react: "npm:^18.3.1"
     react-datepicker: "npm:^7.3.0"
@@ -4945,15 +4945,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.4.6":
-  version: 2.4.6
-  resolution: "msw@npm:2.4.6"
+"msw@npm:^2.4.7":
+  version: 2.4.7
+  resolution: "msw@npm:2.4.7"
   dependencies:
     "@bundled-es-modules/cookie": "npm:^2.0.0"
     "@bundled-es-modules/statuses": "npm:^1.0.1"
     "@bundled-es-modules/tough-cookie": "npm:^0.1.6"
     "@inquirer/confirm": "npm:^3.0.0"
-    "@mswjs/interceptors": "npm:^0.35.3"
+    "@mswjs/interceptors": "npm:^0.35.6"
     "@open-draft/until": "npm:^2.1.0"
     "@types/cookie": "npm:^0.6.0"
     "@types/statuses": "npm:^2.0.4"
@@ -4973,7 +4973,7 @@ __metadata:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 10c0/afcef1863842e4f70158e4973e7a827a01b0e20b37e373a9c43b847a81772c5cb8bdee4a5bad739f5c90063e84367b2282a58c2ab409072cccc88c8fc06ad27f
+  checksum: 10c0/d0aa43aab753d98c1953b083f9fab168e9a7375a4afb66b93332196efbaada82e02ead7807a958ce12a5a1204084e05eb0023cee6020b49e4d0de5b4b91f9ab7
   languageName: node
   linkType: hard
 

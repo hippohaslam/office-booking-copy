@@ -201,8 +201,8 @@
       },
       "FluentValidation": {
         "type": "Transitive",
-        "resolved": "11.9.2",
-        "contentHash": "XeHp9LvFvu1fsQ/NvDCymV02GOCB1nz7ZUhfpI3uMhCcHTkV1K5bMkv+Nc/kuNYyAsX5+5bcmUanIEMd5QN+Eg=="
+        "resolved": "11.10.0",
+        "contentHash": "qsJGSJDdZ8qiG+lVJ70PZfJHcEdq8UQZ/tZDXoj78/iHKG6lVKtMJsD11zyyv/IPc7rwqGqnFoFLTNzpo3IPYg=="
       },
       "FluentValidation.AspNetCore": {
         "type": "Transitive",
@@ -2177,7 +2177,7 @@
       "hippo.booking.api": {
         "type": "Project",
         "dependencies": {
-          "FluentValidation": "[11.9.2, )",
+          "FluentValidation": "[11.10.0, )",
           "FluentValidation.AspNetCore": "[11.3.0, )",
           "Hellang.Authentication.JwtBearer.Google": "[3.0.0, )",
           "Hippo.Booking.Application": "[1.0.0, )",
@@ -2198,7 +2198,7 @@
       "hippo.booking.application": {
         "type": "Project",
         "dependencies": {
-          "FluentValidation": "[11.9.2, )",
+          "FluentValidation": "[11.10.0, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[8.0.8, )",
           "Microsoft.Extensions.DependencyInjection": "[8.0.0, )"
