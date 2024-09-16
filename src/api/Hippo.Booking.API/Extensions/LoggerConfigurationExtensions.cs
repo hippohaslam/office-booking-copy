@@ -1,7 +1,7 @@
-using Amazon;
 using Amazon.CloudWatchLogs;
 using Serilog;
 using Serilog.Events;
+using Serilog.Formatting.Json;
 using Serilog.Sinks.AwsCloudWatch;
 
 namespace Hippo.Booking.API.Extensions;
@@ -34,6 +34,7 @@ public static class LoggerConfigurationExtensions
             config = config.WriteTo.AmazonCloudWatch(
                 logGroup: logGroup,
                 logStreamPrefix: DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"),
+                textFormatter: new JsonFormatter(renderMessage: true),
                 cloudWatchClient: Client);
         }
 

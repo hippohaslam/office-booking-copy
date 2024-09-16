@@ -204,9 +204,6 @@ try
             .AllowCredentials();
     });
 
-    app.MapGet("/", [AllowAnonymous] () => TypedResults.Redirect("/swagger/index.html"))
-        .ExcludeFromDescription();
-
     app.UseSerilogRequestLogging(options =>
     {
         options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms (User: {User})";
@@ -221,14 +218,20 @@ try
 
     app.MapHealthChecks("/health");
 
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
+    if (app.Environment.IsDevelopment())
     {
-        options.OAuthClientId(app.Configuration.GetValue<string>("Google:ClientId"));
-        options.OAuthClientSecret(app.Configuration.GetValue<string>("Google:ClientSecret"));
-        options.OAuthScopes("profile", "openid", "email");
-        options.OAuthUsePkce();
-    });
+        app.MapGet("/", [AllowAnonymous]() => TypedResults.Redirect("/swagger/index.html"))
+            .ExcludeFromDescription();
+
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
+        {
+            options.OAuthClientId(app.Configuration.GetValue<string>("Google:ClientId"));
+            options.OAuthClientSecret(app.Configuration.GetValue<string>("Google:ClientSecret"));
+            options.OAuthScopes("profile", "openid", "email");
+            options.OAuthUsePkce();
+        });
+    }
 
     app.UseAuthentication();
     app.UseAuthorization();
