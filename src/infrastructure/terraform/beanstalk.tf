@@ -216,7 +216,7 @@ EOF
 }
 
 resource "aws_iam_policy" "secrets_manager_policy" {
-  name        = "ELBAccessSecretsManagerPolicy"
+  name        = "BookingELBAccessSecretsManagerPolicy_${var.env_suffix}"
   description = "Policy to allow ELB to access specific secrets in AWS Secrets Manager"
 
   policy = jsonencode({
@@ -234,7 +234,7 @@ resource "aws_iam_policy" "secrets_manager_policy" {
 }
 
 resource "aws_iam_policy" "cloudwatch_policy" {
-  name        = "ELBAccessCloudwatchPolicy"
+  name        = "BookingELBAccessCloudwatchPolicy_${var.env_suffix}"
   description = "Policy to allow ELB to access to cloudwatch"
 
   policy = jsonencode({
