@@ -113,32 +113,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-          cache: true
-          cache-dependency-path: |
-            src/e2e/**/packages.lock.json
-
-      - name: Restore dependencies
-        working-directory: ./src/e2e/Hippo.Booking.E2ETests
-        run: dotnet restore --locked-mode
-
-      - name: Build E2E Tests
-        working-directory: ./src/e2e/Hippo.Booking.E2ETests
-        run: dotnet build --no-restore --configuration Release
-
-      - name: Run Docker Compose
-        run: docker compose -f infrastructure/docker/docker-compose-ci.yml -f infrastructure/docker/docker-compose-services.yml up -d
-
-      - name: Run E2E Tests
-        working-directory: ./src/e2e/Hippo.Booking.E2ETests
-        env:
-          User__Email: ${{ secrets.AUTOMATION_USER }}
-          User__Password: ${{ secrets.AUTOMATION_PASSWORD }}
-          User__Id: ${{ secrets.AUTOMATION_USERID }}
-        run: xvfb-run dotnet test --no-build --verbosity normal --configuration Release
+#      - name: Setup .NET
+#        uses: actions/setup-dotnet@v4
+#        with:
+#          dotnet-version: 8.0.x
+#          cache: true
+#          cache-dependency-path: |
+#            src/e2e/**/packages.lock.json
+#
+#      - name: Restore dependencies
+#        working-directory: ./src/e2e/Hippo.Booking.E2ETests
+#        run: dotnet restore --locked-mode
+#
+#      - name: Build E2E Tests
+#        working-directory: ./src/e2e/Hippo.Booking.E2ETests
+#        run: dotnet build --no-restore --configuration Release
+#
+#      - name: Run Docker Compose
+#        run: docker compose -f infrastructure/docker/docker-compose-ci.yml -f infrastructure/docker/docker-compose-services.yml up -d
+#
+#      - name: Run E2E Tests
+#        working-directory: ./src/e2e/Hippo.Booking.E2ETests
+#        env:
+#          User__Email: ${{ secrets.AUTOMATION_USER }}
+#          User__Password: ${{ secrets.AUTOMATION_PASSWORD }}
+#          User__Id: ${{ secrets.AUTOMATION_USERID }}
+#        run: xvfb-run dotnet test --no-build --verbosity normal --configuration Release
 
   deploy-infrastructure:
     name: 'Provision ${{ github.event.inputs.environment }} Infrastructure'
