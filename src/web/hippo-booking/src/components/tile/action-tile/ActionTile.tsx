@@ -16,7 +16,7 @@ type ActionTileProps = {
 
 const ActionTile = ({ title, iconSrc, description, primaryLink, secondaryLink, tileTestId }: ActionTileProps) => {
   return (
-    <div className='action-tile' data-testId={isNullOrEmpty(tileTestId) ? "action-tile" : tileTestId}>
+    <div className='action-tile' data-testid={isNullOrEmpty(tileTestId) ? "action-tile" : tileTestId}>
       <div className='tile-content'>
         {!isNullOrEmpty(iconSrc) ? <img src={iconSrc} alt='' /> : null}
         <div>
@@ -31,8 +31,8 @@ const ActionTile = ({ title, iconSrc, description, primaryLink, secondaryLink, t
       </div>
       {primaryLink.show ? (
         <div>
-          <br/>
-          <CtaLink text={primaryLink.text} to={primaryLink.to} color='cta-green' withArrow={true}/>
+          <br />
+          <CtaLink text={primaryLink.text} to={primaryLink.to} color='cta-green' withArrow={true} />
         </div>
       ) : null}
     </div>

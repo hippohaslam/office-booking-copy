@@ -40,6 +40,7 @@ const DeskBooking = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<AxiosError | null>(null);
   const [isModalLoading, setModalLoading] = useState(false);
+  const panningInfoRef = useRef<{ x: number; y: number } | null>(null);
 
   const { data: areaData } = useQuery({
     queryKey: ["area", areaId],
@@ -212,32 +213,71 @@ const DeskBooking = () => {
       });
       fabricCanvas.renderAll();
 
-      fabricCanvas.on("mouse:up", (e: fabric.IEvent<Event>) => {
-        const selectedFabricObject = e.target as CustomFabricObject;
-        if (selectedFabricObject) {
-          // check if data contains an id matching the selected object
+      fabricCanvas.on("mouse:down", (e: fabric.IEvent<MouseEvent>) => {
+        // So we can track if the user is panning the canvas
+        panningInfoRef.current = { x: e.e.clientX, y: e.e.clientY };
+      });
 
-          if (!isNullOrEmpty(selectedFabricObject.id)) {
-            const found = areaData?.bookableObjects.find((obj) => obj.floorPlanObjectId === selectedFabricObject.id);
-            if (found !== undefined) {
-              handleObjectSelected(selectedFabricObject.id);
-              if (isCustomFabricObject(selectedFabricObject)) {
-                selectedFabricObject.set("fill", "orange");
-                handleObjectColours(selectedFabricObject.id);
-              }
+      // Not entirely sure if the touch events are enabled in fabric...
+      fabricCanvas.on("touchstart", (e: fabric.IEvent<Event>) => {
+        if (e.e instanceof TouchEvent) {
+          const touch = e.e.touches[0];
+          panningInfoRef.current = { x: touch.clientX, y: touch.clientY };
+        }
+      });
+
+      // Not entirely sure if the touch events are enabled in fabric...
+      fabricCanvas.on("touchend", (e: fabric.IEvent<Event>) => {
+        if (panningInfoRef.current) {
+          if (e.e instanceof TouchEvent) {
+            const touch = e.e.changedTouches[0];
+            if (panningInfoRef.current.x !== touch.clientX || panningInfoRef.current.y !== touch.clientY) {
+              panningInfoRef.current = null;
             } else {
-              setSelectedObject(null);
-              handleObjectColours(null);
+              panningInfoRef.current = null;
+              handleFinalTouch(e.target as CustomFabricObject);
             }
           }
-        } else {
-          setSelectedObject(null);
-          handleObjectColours(null);
+        }
+      });
+
+      fabricCanvas.on("mouse:up", (e: fabric.IEvent<MouseEvent>) => {
+        if (panningInfoRef.current) {
+          if (panningInfoRef.current.x !== e.e.clientX || panningInfoRef.current.y !== e.e.clientY) {
+            panningInfoRef.current = null;
+          } else {
+            panningInfoRef.current = null;
+            handleFinalTouch(e.target as CustomFabricObject);
+          }
         }
       });
 
       initializeCanvasZoom(fabricCanvas);
       initializeCanvasDragging(fabricCanvas);
+    }
+
+    function handleFinalTouch(target: CustomFabricObject) {
+      const selectedFabricObject = target as CustomFabricObject;
+      if (selectedFabricObject) {
+        // check if data contains an id matching the selected object
+
+        if (!isNullOrEmpty(selectedFabricObject.id)) {
+          const found = areaData?.bookableObjects.find((obj) => obj.floorPlanObjectId === selectedFabricObject.id);
+          if (found !== undefined) {
+            handleObjectSelected(selectedFabricObject.id);
+            if (isCustomFabricObject(selectedFabricObject)) {
+              selectedFabricObject.set("fill", "orange");
+              handleObjectColours(selectedFabricObject.id);
+            }
+          } else {
+            setSelectedObject(null);
+            handleObjectColours(null);
+          }
+        }
+      } else {
+        setSelectedObject(null);
+        handleObjectColours(null);
+      }
     }
 
     return () => {
@@ -409,27 +449,31 @@ const DeskBooking = () => {
           <div className='canvas__container'>
             <canvas height={800} width={600} ref={canvasElRef} />
           </div>
-          <div className="color-key">
+          <div className='color-key__container'>
             <strong>Key:</strong>
-            <p>
-              <div className="color-block color-block__green"></div>
+            <div className='color-key'>
+              <div className='color-block color-block__green'></div>
               <span>- available</span>
-            </p>
-            <p>
-              <div className="color-block color-block__grey"></div>
+            </div>
+            <div className='color-key'>
+              <div className='color-block color-block__grey'></div>
               <span>- not available</span>
-            </p>
-            <p>
-              <div className="color-block color-block__orange"></div>
+            </div>
+            <div className='color-key'>
+              <div className='color-block color-block__orange'></div>
               <span>- selected</span>
-            </p>
+            </div>
+            <div className='color-key'>
+              <div className='color-block color-block__white'></div>
+              <span>- not selectable</span>
+            </div>
           </div>
         </TabItem>
 
         <TabItem label='List'>
           <ul className='bookable-objects-list'>
             {areaData?.bookableObjects
-              .sort((a, b) => compareAlphabeticallyByPropertyWithNumbers(a, b, 'name'))
+              .sort((a, b) => compareAlphabeticallyByPropertyWithNumbers(a, b, "name"))
               .map((bookableObject) => {
                 return (
                   <li key={bookableObject.id + "-list-item"} className='bookable-Objects-list-item'>
@@ -441,8 +485,7 @@ const DeskBooking = () => {
                     />
                   </li>
                 );
-              })
-            }
+              })}
           </ul>
         </TabItem>
       </TabList>
