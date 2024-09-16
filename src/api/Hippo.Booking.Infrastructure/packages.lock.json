@@ -2,11 +2,30 @@
   "version": 1,
   "dependencies": {
     "net8.0": {
+      "AWSSDK.SecretsManager": {
+        "type": "Direct",
+        "requested": "[3.7.400.20, )",
+        "resolved": "3.7.400.20",
+        "contentHash": "yMLToGdVcb5qX+GMZ8rV9uZXHPk2zN+MaU+WZ3iFpwaTLilSn1PrG5rno4bkUA8a4bwdTbc2YTi3owdcmeP9Kg==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.400.20, 4.0.0)"
+        }
+      },
       "Dapper": {
         "type": "Direct",
         "requested": "[2.1.35, )",
         "resolved": "2.1.35",
         "contentHash": "YKRwjVfrG7GYOovlGyQoMvr1/IJdn+7QzNXJxyMh0YfFF5yvDmTYaJOVYWsckreNjGsGSEtrMTpnzxTUq/tZQw=="
+      },
+      "Microsoft.Extensions.Configuration": {
+        "type": "Direct",
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "0J/9YNXTMWSZP2p2+nvl8p71zpSwokZXZuJW+VjdErkegAnFdO1XlqtA62SJtgVYHdKu3uPxJHcMR/r35HwFBA==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
+          "Microsoft.Extensions.Primitives": "8.0.0"
+        }
       },
       "SlackNet": {
         "type": "Direct",
@@ -21,6 +40,11 @@
           "System.Text.RegularExpressions": "4.3.1",
           "WebSocket4Net": "0.15.1"
         }
+      },
+      "AWSSDK.Core": {
+        "type": "Transitive",
+        "resolved": "3.7.400.20",
+        "contentHash": "0qx2+wZ0NZmDp8/ATlomhrPB6Sak9p9z+9IL6vKPm94Jg2VM6ff5JBDKRBMEbBA5zIKvZUOXSaQzMbeFlZ+02w=="
       },
       "FluentValidation": {
         "type": "Transitive",

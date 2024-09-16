@@ -13,7 +13,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="AWSSDK.SecretsManager" Version="3.7.400.20" />
       <PackageReference Include="Dapper" Version="2.1.35" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
       <PackageReference Include="SlackNet" Version="0.13.3" />
     </ItemGroup>
 

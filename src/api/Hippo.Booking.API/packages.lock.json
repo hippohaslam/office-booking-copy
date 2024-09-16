@@ -157,8 +157,16 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.103.10",
-        "contentHash": "T+whMY7eMb7hy6COuI47iOM+7aqrNw3AWymgje2RYTNoKnnlQIdpYf0arIft874NDN5IYW3f0wuAcwYeowN46g=="
+        "resolved": "3.7.400.20",
+        "contentHash": "0qx2+wZ0NZmDp8/ATlomhrPB6Sak9p9z+9IL6vKPm94Jg2VM6ff5JBDKRBMEbBA5zIKvZUOXSaQzMbeFlZ+02w=="
+      },
+      "AWSSDK.SecretsManager": {
+        "type": "Transitive",
+        "resolved": "3.7.400.20",
+        "contentHash": "yMLToGdVcb5qX+GMZ8rV9uZXHPk2zN+MaU+WZ3iFpwaTLilSn1PrG5rno4bkUA8a4bwdTbc2YTi3owdcmeP9Kg==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.400.20, 4.0.0)"
+        }
       },
       "Dapper": {
         "type": "Transitive",
@@ -376,6 +384,15 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
           "Microsoft.Extensions.Options": "8.0.0",
+          "Microsoft.Extensions.Primitives": "8.0.0"
+        }
+      },
+      "Microsoft.Extensions.Configuration": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "0J/9YNXTMWSZP2p2+nvl8p71zpSwokZXZuJW+VjdErkegAnFdO1XlqtA62SJtgVYHdKu3uPxJHcMR/r35HwFBA==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
           "Microsoft.Extensions.Primitives": "8.0.0"
         }
       },
@@ -1932,9 +1949,11 @@
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
+          "AWSSDK.SecretsManager": "[3.7.400.20, )",
           "Dapper": "[2.1.35, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
+          "Microsoft.Extensions.Configuration": "[8.0.0, )",
           "SlackNet": "[0.13.3, )"
         }
       },

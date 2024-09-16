@@ -10,7 +10,10 @@ public static class LoggerConfigurationExtensions
 {
     public static AmazonCloudWatchLogsClient? Client = null;
 
-    public static LoggerConfiguration ConfigureLogging(this LoggerConfiguration loggerConfig, AwsLoggingConfig? awsLoggingConfig = null)
+    public static LoggerConfiguration ConfigureLogging(
+        this LoggerConfiguration loggerConfig,
+        string environment,
+        bool useCloudWatch = false)
     {
         var config = loggerConfig
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -21,15 +24,15 @@ public static class LoggerConfigurationExtensions
             .WriteTo.Console()
             .Enrich.FromLogContext();
 
-        if (awsLoggingConfig != null)
+
+        if (useCloudWatch)
         {
-            Client ??= new AmazonCloudWatchLogsClient(
-                awsLoggingConfig.AccessKeyId,
-                awsLoggingConfig.AccessSecretKey,
-                awsLoggingConfig.Region);
+            Client = new AmazonCloudWatchLogsClient();
+
+            var logGroup = "booking/" + environment.ToLower() + "/logs";
 
             config = config.WriteTo.AmazonCloudWatch(
-                logGroup: awsLoggingConfig.LogGroup,
+                logGroup: logGroup,
                 logStreamPrefix: DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"),
                 cloudWatchClient: Client);
         }

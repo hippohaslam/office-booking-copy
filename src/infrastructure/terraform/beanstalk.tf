@@ -169,43 +169,8 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "ConnectionStrings__HippoBookingDbContext"
-    value     = "Server=${aws_db_instance.hippo-booking-db.address};Port=${aws_db_instance.hippo-booking-db.port};User Id=${aws_db_instance.hippo-booking-db.username};Password=${aws_db_instance.hippo-booking-db.password};Database=HippoBooking_${var.environment}"
-    resource  = ""
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "Aws__AccessKeyId"
-    value     = var.aws_access_key_id
-    resource  = ""
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "Aws__AccessSecretKey"
-    value     = var.aws_secret_access_key
-    resource  = ""
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "Google__ClientSecret"
-    value     = var.google_client_secret
-    resource  = ""
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "Slack__Token"
-    value     = var.slack_token
-    resource  = ""
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "Slack__SigningSecret"
-    value     = var.slack_signing_secret
+    name      = "IsAwsEnvironment"
+    value     = true
     resource  = ""
   }
 
@@ -230,6 +195,8 @@ resource "aws_iam_role" "eb_instance_role" {
     "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier",
     "arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker",
     "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier",
+    aws_iam_policy.secrets_manager_policy.arn,
+    aws_iam_policy.cloudwatch_policy.arn
   ]
 
   assume_role_policy = <<EOF
@@ -246,6 +213,54 @@ resource "aws_iam_role" "eb_instance_role" {
   ]
 }
 EOF
+}
+
+resource "aws_iam_policy" "secrets_manager_policy" {
+  name        = "ELBAccessSecretsManagerPolicy"
+  description = "Policy to allow ELB to access specific secrets in AWS Secrets Manager"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource = aws_secretsmanager_secret.dotnet_secrets.arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "cloudwatch_policy" {
+  name        = "ELBAccessCloudwatchPolicy"
+  description = "Policy to allow ELB to access to cloudwatch"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams"
+        ],
+        Resource = ["*"]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_secrets_policy" {
+  role       = aws_iam_role.eb_instance_role.name
+  policy_arn = aws_iam_policy.secrets_manager_policy.arn
+}
+resource "aws_iam_role_policy_attachment" "attach_cloudwatch_policy" {
+  role       = aws_iam_role.eb_instance_role.name
+  policy_arn = aws_iam_policy.cloudwatch_policy.arn
 }
 
 output "elastic_beanstalk_application_name" {

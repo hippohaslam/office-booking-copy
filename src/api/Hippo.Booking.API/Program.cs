@@ -10,6 +10,7 @@ using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Extensions;
 using Hippo.Booking.Core;
 using Hippo.Booking.Core.Interfaces;
+using Hippo.Booking.Infrastructure.Configuration;
 using Hippo.Booking.Infrastructure.EF;
 using Hippo.Booking.Infrastructure.Reports;
 using Hippo.Booking.Infrastructure.Scheduling;
@@ -25,7 +26,9 @@ using SlackNet.AspNetCore;
 using SlackNet.Blocks;
 
 Log.Logger = new LoggerConfiguration()
-    .ConfigureLogging(AwsLoggingConfig.FromEnvironmentVariables())
+    .ConfigureLogging(
+        Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development",
+        Environment.GetEnvironmentVariable("IsAwsEnvironment") == "true")
         .CreateBootstrapLogger();
 
 try
@@ -34,11 +37,25 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
+    if (builder.Configuration.GetValue<bool>("IsAwsEnvironment"))
+    {
+        Log.Logger.Information("Using AWS Secrets Manager and cloudwatch logging");
+        var lowerEnvironment = builder.Environment.EnvironmentName.ToLowerInvariant();
+        var awsRegion = builder.Configuration.GetValue<string>("AwsRegion") ?? "eu-west-1";
+        builder.Configuration.AddAwsSecretsManager(awsRegion, $"booking-api-secrets-{lowerEnvironment}");
+
+        builder.Services.AddSerilog((_, lc) => lc
+            .ConfigureLogging(builder.Environment.EnvironmentName, true));
+    }
+    else
+    {
+        Log.Logger.Information("Using local secrets and console logging");
+        builder.Services.AddSerilog((_, lc) => lc
+            .ConfigureLogging(string.Empty, false));
+    }
+
     Log.Logger.Information("Environment: {0}", builder.Environment.EnvironmentName);
-
-    builder.Services.AddSerilog((services, lc) => lc
-        .ConfigureLogging(AwsLoggingConfig.FromWebApplicationBuilder(builder)));
-
+    
     builder.Services.AddHealthChecks();
 
     builder.Services.AddEndpointsApiExplorer();
