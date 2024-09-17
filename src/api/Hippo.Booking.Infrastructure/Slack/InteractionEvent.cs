@@ -1,5 +1,5 @@
-using Hippo.Booking.Application.Commands.Bookings;
-using Hippo.Booking.Application.Queries.Bookings;
+using Hippo.Booking.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SlackNet.Blocks;
 using SlackNet.Interaction;
@@ -9,16 +9,15 @@ namespace Hippo.Booking.Infrastructure.Slack;
 
 public class InteractionEvent(
     ISlackClient slackClient,
-    IDeleteBookingCommand deleteBookingCommand,
-    IConfirmBookingCommand confirmBookingCommand,
-    IBookingQueries bookingQueries,
+    IDataContext dataContext,
     ILogger<InteractionEvent> logger) : IBlockActionHandler<ButtonAction>
 {
     public async Task Handle(ButtonAction action, BlockActionRequest request)
     {
         var bookingId = int.Parse(action.Value);
 
-        var booking = await bookingQueries.GetBookingById(bookingId);
+        var booking = await dataContext.Query<Core.Entities.Booking>()
+            .SingleOrDefaultAsync(x => x.Id == bookingId);
 
         if (booking == null)
         {
@@ -38,7 +37,8 @@ public class InteractionEvent(
         {
             logger.LogDebug("Booking {BookingId} confirmed by {User} via Slack", bookingId, request.User);
 
-            await confirmBookingCommand.Handle(bookingId);
+            booking.IsConfirmed = true;
+            await dataContext.Save();
 
             await slackClient.RespondToInteraction(request.ResponseUrl, new MessageResponse
             {
@@ -52,12 +52,10 @@ public class InteractionEvent(
         else if (action.ActionId == "cancel_booking")
         {
             logger.LogDebug("Booking {BookingId} cancelled by {User} via Slack", bookingId, request.User);
-
-            await deleteBookingCommand.Handle(new DeleteBookingRequest
-            {
-                BookingId = booking.Id
-            });
-
+            
+            dataContext.DeleteEntity(booking);
+            await dataContext.Save();
+            
             await slackClient.RespondToInteraction(request.ResponseUrl, new MessageResponse
             {
                 ReplaceOriginal = true,

@@ -13,7 +13,7 @@ public class BookingCommands(
     IBookingQueries bookingQueries,
     IDateTimeProvider dateTimeProvider,
     IValidator<CreateBookingRequest> createBookingValidator,
-    IValidator<DeleteBookingRequest> deleteBookingValidator) : ICreateBookingCommand, IDeleteBookingCommand, IConfirmBookingCommand
+    IValidator<DeleteBookingRequest> deleteBookingValidator) : ICreateBookingCommand, IDeleteBookingCommand
 {
     public async Task<BookingResponse> Handle(CreateBookingRequest request)
     {
@@ -95,21 +95,5 @@ public class BookingCommands(
             await userNotifier.NotifyUser(booking.UserId,
                 $"Your booking for *{booking.BookableObject.Name}* on *{dateString}* has been cancelled.{forSomeBodyElse}");
         }
-    }
-
-    public async Task Handle(int bookingId)
-    {
-        var booking = await dataContext.Query<Core.Entities.Booking>()
-            .Include(i => i.BookableObject)
-            .SingleOrDefaultAsync(x => x.Id == bookingId);
-
-        if (booking == null)
-        {
-            throw new ClientException("Booking not found");
-        }
-
-        booking.IsConfirmed = true;
-
-        await dataContext.Save();
     }
 }

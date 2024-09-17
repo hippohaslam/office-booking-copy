@@ -198,27 +198,6 @@ public class BookingCommandsTests
     }
 
     [Test]
-    public async Task CanConfirmBooking()
-    {
-        var existingBooking = await _dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
-            .SingleAsync(x => x.Date == DateOnly.FromDateTime(DateTime.Now.AddDays(2)));
-
-        await _sut.Handle(existingBooking.Id);
-
-        var confirmedBooking = await _dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
-            .FirstOrDefaultAsync(x => x.Id == existingBooking.Id);
-
-        confirmedBooking.Should().NotBeNull("The booking should have been confirmed");
-        confirmedBooking!.IsConfirmed.Should().BeTrue("The booking should be confirmed");
-    }
-
-    [Test]
-    public void CannotConfirmBookingThatDoesNotExist()
-    {
-        Assert.ThrowsAsync<ClientException>(async () => await _sut.Handle(5));
-    }
-
-    [Test]
     public async Task CanDeleteBooking()
     {
         var bookingToDelete = new Core.Entities.Booking

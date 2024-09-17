@@ -30,7 +30,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ICreateBookingCommand, BookingCommands>();
         services.AddScoped<IDeleteBookingCommand, BookingCommands>();
-        services.AddScoped<IConfirmBookingCommand, BookingCommands>();
 
         services.AddScoped<IRunReportCommand, ReportingCommands>();
 

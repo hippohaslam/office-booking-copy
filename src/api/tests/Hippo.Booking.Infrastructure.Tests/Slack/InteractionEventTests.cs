@@ -1,7 +1,7 @@
-using Hippo.Booking.Application.Commands.Bookings;
-using Hippo.Booking.Application.Models;
-using Hippo.Booking.Application.Queries.Bookings;
+using FluentAssertions;
+using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.Slack;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using SlackNet;
@@ -14,33 +14,30 @@ public class InteractionEventTests
 {
     private InteractionEvent _sut;
     private ISlackClient _slackClient;
-    private IDeleteBookingCommand _deleteBookingCommand;
-    private IConfirmBookingCommand _confirmBookingCommand;
-    private IBookingQueries _bookingQueries;
+    private IDataContext _dataContext;
     private ILogger<InteractionEvent> _logger;
 
     [SetUp]
-    public void Setup()
+    public async Task Setup()
     {
         _slackClient = Substitute.For<ISlackClient>();
-        _deleteBookingCommand = Substitute.For<IDeleteBookingCommand>();
-        _confirmBookingCommand = Substitute.For<IConfirmBookingCommand>();
-        _bookingQueries = Substitute.For<IBookingQueries>();
         _logger = Substitute.For<ILogger<InteractionEvent>>();
 
-        _bookingQueries.GetBookingById(1).Returns(new BookingResponse
+        _dataContext = TestHelpers.GetDbContext(nameof(InteractiveMessage) + Guid.NewGuid());
+        
+        _dataContext.AddEntity(new Core.Entities.Booking
         {
             Id = 1,
-            BookableObject = new IdName<int>(1, "BookableObject"),
-            Area = new IdName<int>(1, "Area"),
-            Location = new IdName<int>(1, "Location")
+            BookableObjectId = 1,
+            Date = DateOnly.FromDateTime(DateTime.Now),
+            UserId = "123"
         });
+
+        await _dataContext.Save();
 
         _sut = new InteractionEvent(
             _slackClient,
-            _deleteBookingCommand,
-            _confirmBookingCommand,
-            _bookingQueries,
+            _dataContext,
             _logger);
     }
 
@@ -62,10 +59,12 @@ public class InteractionEventTests
         };
 
         await _sut.Handle(action, request);
-
-        await _bookingQueries.Received(1).GetBookingById(2);
-        await _confirmBookingCommand.DidNotReceive().Handle(Arg.Any<int>());
-        await _deleteBookingCommand.DidNotReceive().Handle(Arg.Any<DeleteBookingRequest>());
+        
+        var booking = await _dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
+            .SingleOrDefaultAsync(x => x.Id == 1);
+        
+        booking.Should().NotBeNull();
+        booking!.IsConfirmed.Should().BeFalse("booking should not be confirmed as ID does not match");
     }
 
     [Test]
@@ -86,10 +85,12 @@ public class InteractionEventTests
         };
 
         await _sut.Handle(action, request);
+        
+        var booking = await _dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
+            .SingleOrDefaultAsync(x => x.Id == 1);
 
-        await _bookingQueries.Received(1).GetBookingById(1);
-        await _confirmBookingCommand.Received(1).Handle(1);
-        await _deleteBookingCommand.DidNotReceive().Handle(Arg.Any<DeleteBookingRequest>());
+        booking.Should().NotBeNull();
+        booking!.IsConfirmed.Should().BeTrue("booking should be confirmed as ID matches");
     }
 
     [Test]
@@ -111,9 +112,10 @@ public class InteractionEventTests
 
         await _sut.Handle(action, request);
 
-        await _bookingQueries.Received(1).GetBookingById(1);
-        await _confirmBookingCommand.DidNotReceive().Handle(Arg.Any<int>());
-        await _deleteBookingCommand.Received(1).Handle(Arg.Is<DeleteBookingRequest>(x => x.BookingId == 1));
+        var booking = await _dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
+            .SingleOrDefaultAsync(x => x.Id == 1);
+
+        booking.Should().BeNull();
     }
 
     [Test]
@@ -135,8 +137,10 @@ public class InteractionEventTests
 
         await _sut.Handle(action, request);
 
-        await _bookingQueries.Received(1).GetBookingById(1);
-        await _confirmBookingCommand.DidNotReceive().Handle(Arg.Any<int>());
-        await _deleteBookingCommand.DidNotReceive().Handle(Arg.Is<DeleteBookingRequest>(x => x.BookingId == 1));
+        var booking = await _dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
+            .SingleOrDefaultAsync(x => x.Id == 1);
+        
+        booking.Should().NotBeNull();
+        booking!.IsConfirmed.Should().BeFalse("booking should not be touched as action is invalid");
     }
 }
