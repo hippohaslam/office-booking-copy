@@ -418,8 +418,11 @@ const FloorplanEditor = () => {
       if (activeObjects && activeObjects.length > 0) {
         activeObjects.forEach((activeObject: CustomFabricObject) => {
           activeObject.clone((cloned: CustomFabricObject) => {
-            const id = generateUniqueId();
-            cloned.set("id", id);
+            const newId = generateUniqueId();
+            // Only generate a new id if the original object has an id
+            if (!isNullOrEmpty(activeObject.id)) {
+              cloned.set("id", newId);
+            }
             cloned.set("left", activeObject?.left ? activeObject.left + 10 : 150);
             cloned.set("top", activeObject?.top ? activeObject.top + 10 : 150);
             forSelect.push(cloned);
@@ -610,7 +613,7 @@ const FloorplanEditor = () => {
               <div className='standard-inputs'>
                 <label htmlFor='new-bookable-object-name'>Name: </label>
                 <input
-                  id="new-bookable-object-name"
+                  id='new-bookable-object-name'
                   type='text'
                   name='new-bookable-object-name'
                   value={newBookableObject.name}
@@ -622,7 +625,7 @@ const FloorplanEditor = () => {
               <div className='standard-inputs'>
                 <label htmlFor='new-bookable-object-description'>Description: </label>
                 <input
-                  id="new-bookable-object-description"
+                  id='new-bookable-object-description'
                   type='text'
                   name='new-bookable-object-description'
                   value={newBookableObject.description}
