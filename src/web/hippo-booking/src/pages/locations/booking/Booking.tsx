@@ -202,11 +202,11 @@ const DeskBooking = () => {
             object.hoverCursor = "default";
           }
 
+          if (object.type === "text") {
+            object.selectable = false;
+            object.evented = false;
+          }
           if (isCustomFabricObject(object)) {
-            if (object.type === "text") {
-              object.selectable = false;
-              object.evented = false;
-            }
             handleObjectColours(null);
           }
         }
