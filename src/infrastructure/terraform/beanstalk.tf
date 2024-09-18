@@ -58,7 +58,7 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
-    value     = "t3.micro"
+    value     = var.beanstalk_instance_type
     resource  = ""
   }
 

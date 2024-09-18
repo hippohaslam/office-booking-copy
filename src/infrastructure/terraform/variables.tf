@@ -53,6 +53,11 @@ variable "hosted_zone_url" {
   default     = "internal.hippodigital.cloud"
 }
 
+variable "beanstalk_instance_type" {
+  description = "Beanstalk Instance Type"
+  type        = string
+}
+
 variable "db_instance_size" {
   description = "DB Instance Size"
   type        = string
