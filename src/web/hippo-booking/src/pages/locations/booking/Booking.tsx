@@ -85,7 +85,7 @@ const DeskBooking = () => {
   const handleObjectColours = useCallback(
     (objectId: string | null) => {
       const setColours = (object: CustomFabricObject) => {
-        const getColorBasedOnBookingStatus = () => {
+        const getColourBasedOnBookingStatus = () => {
           // Find if the object is bookable
           const bookableObject = areaData?.bookableObjects.find((obj) => obj.floorPlanObjectId === object.id);
           const isBookable = bookingsData?.bookableObjects.find((obj) => obj.id === bookableObject?.id);
@@ -107,12 +107,12 @@ const DeskBooking = () => {
           group.getObjects().forEach((obj) => {
             if (obj.type === "path" || obj.type === "rect") {
               obj.set({
-                fill: getColorBasedOnBookingStatus(),
+                fill: getColourBasedOnBookingStatus(),
               });
             }
           });
-        } else {
-          object.set("fill", getColorBasedOnBookingStatus());
+        } else if (object.type !== "text") {
+          object.set("fill", getColourBasedOnBookingStatus());
         }
       };
 
