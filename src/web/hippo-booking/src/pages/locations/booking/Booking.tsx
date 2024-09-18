@@ -215,19 +215,15 @@ const DeskBooking = () => {
 
       fabricCanvas.on("mouse:down", (e: fabric.IEvent<MouseEvent>) => {
         // So we can track if the user is panning the canvas
-        panningInfoRef.current = { x: e.e.clientX, y: e.e.clientY };
-      });
-
-      // Not entirely sure if the touch events are enabled in fabric...
-      fabricCanvas.on("touchstart", (e: fabric.IEvent<Event>) => {
         if (e.e instanceof TouchEvent) {
           const touch = e.e.touches[0];
           panningInfoRef.current = { x: touch.clientX, y: touch.clientY };
+        } else {
+          panningInfoRef.current = { x: e.e.clientX, y: e.e.clientY };
         }
       });
 
-      // Not entirely sure if the touch events are enabled in fabric...
-      fabricCanvas.on("touchend", (e: fabric.IEvent<Event>) => {
+      fabricCanvas.on("mouse:up", (e: fabric.IEvent<MouseEvent>) => {
         if (panningInfoRef.current) {
           if (e.e instanceof TouchEvent) {
             const touch = e.e.changedTouches[0];
@@ -237,17 +233,13 @@ const DeskBooking = () => {
               panningInfoRef.current = null;
               handleFinalTouch(e.target as CustomFabricObject);
             }
-          }
-        }
-      });
-
-      fabricCanvas.on("mouse:up", (e: fabric.IEvent<MouseEvent>) => {
-        if (panningInfoRef.current) {
-          if (panningInfoRef.current.x !== e.e.clientX || panningInfoRef.current.y !== e.e.clientY) {
-            panningInfoRef.current = null;
           } else {
-            panningInfoRef.current = null;
-            handleFinalTouch(e.target as CustomFabricObject);
+            if (panningInfoRef.current.x !== e.e.clientX || panningInfoRef.current.y !== e.e.clientY) {
+              panningInfoRef.current = null;
+            } else {
+              panningInfoRef.current = null;
+              handleFinalTouch(e.target as CustomFabricObject);
+            }
           }
         }
       });
