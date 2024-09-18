@@ -140,19 +140,12 @@ jobs:
 #          User__Id: ${{ secrets.AUTOMATION_USERID }}
 #        run: xvfb-run dotnet test --no-build --verbosity normal --configuration Release
 
-  deploy-infrastructure:
-    name: 'Provision ${{ github.event.inputs.environment }} Infrastructure'
+  deploy-environment:
+    name: 'Deploy Environment'
     runs-on: ubuntu-latest
     needs: [build-backend, build-frontend, e2e-tests]
-    outputs:
-      elastic_beanstalk_application_name: ${{ steps.outputs.outputs.elastic_beanstalk_application_name }}
-      elastic_beanstalk_environment_name: ${{ steps.outputs.outputs.elastic_beanstalk_environment_name }}
-      amplify_app_name: ${{ steps.outputs.outputs.amplify_app_name }}
     environment:
       name: ${{ github.event.inputs.environment }}
-    defaults:
-      run:
-        working-directory: ./src/infrastructure/terraform
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -169,14 +162,17 @@ jobs:
 
       - name: Terraform Init
         id: init
+        working-directory: ./src/infrastructure/terraform
         run: terraform init --backend-config="bucket=hippo-booking-terraform" --backend-config="key=terraform.${{ github.event.inputs.environment }}.tfstate" --backend-config="region=eu-west-1"
 
       - name: Terraform Validate
         id: validate
+        working-directory: ./src/infrastructure/terraform
         run: terraform validate
 
       - name: Terraform Plan
         id: plan
+        working-directory: ./src/infrastructure/terraform
         run: terraform plan -out plan.plan -var-file="${{ github.event.inputs.environment }}.tfvars"
         env:
           TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -187,67 +183,42 @@ jobs:
 
       - name: Terraform Apply
         id: apply
+        working-directory: ./src/infrastructure/terraform
         run: terraform apply plan.plan
 
       - name: Terraform Outputs
         id: outputs
+        working-directory: ./src/infrastructure/terraform
         run: |
           echo "elastic_beanstalk_application_name=$(terraform output elastic_beanstalk_application_name)" >> $GITHUB_OUTPUT
           echo "elastic_beanstalk_environment_name=$(terraform output elastic_beanstalk_environment_name)" >> $GITHUB_OUTPUT
           echo "amplify_app_name=$(terraform output amplify_app_name)" >> $GITHUB_OUTPUT
 
-  deploy-backend:
-    name: 'Deploy Backend to Beanstalk'
-    runs-on: ubuntu-latest
-    needs: [ deploy-infrastructure ]
-    environment:
-      name: ${{ github.event.inputs.environment }}
-    steps:
       - uses: actions/download-artifact@v4.1.8
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: eu-west-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Deploy to Elastic Beanstalk
-        run: |
-          aws s3 cp "deploy-files/${{github.run_id}}.zip" s3://elasticbeanstalk-eu-west-1-${{ secrets.AWS_ACCOUNT_ID }}/artifact/hippo-booking-api/
-          aws elasticbeanstalk create-application-version --application-name ${{ needs.deploy-infrastructure.outputs.elastic_beanstalk_application_name }} --version-label ${{github.run_id}} --description ${{github.run_id}} --source-bundle S3Bucket="elasticbeanstalk-eu-west-1-${{ secrets.AWS_ACCOUNT_ID }}",S3Key="artifact/hippo-booking-api/${{github.run_id}}.zip"
-          aws elasticbeanstalk update-environment --application-name ${{ needs.deploy-infrastructure.outputs.elastic_beanstalk_application_name }} --environment-name ${{ needs.deploy-infrastructure.outputs.elastic_beanstalk_environment_name }} --version-label ${{github.run_id}}
-          aws elasticbeanstalk wait environment-updated --application-name ${{ needs.deploy-infrastructure.outputs.elastic_beanstalk_application_name }} --environment-name ${{ needs.deploy-infrastructure.outputs.elastic_beanstalk_environment_name }}
-
-  deploy-frontend:
-    name: 'Deploy Frontend to Amplify'
-    runs-on: ubuntu-latest
-    needs: [ deploy-infrastructure ]
-    environment:
-      name: ${{ github.event.inputs.environment }}
-    steps:
-      - uses: actions/download-artifact@v4.1.8
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: eu-west-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Get Amplify App Id
         run: |
-          APPID=$(aws amplify list-apps | jq '.apps[] | select(.name == ${{ needs.deploy-infrastructure.outputs.amplify_app_name }})'.appId)
+          APPID=$(aws amplify list-apps | jq '.apps[] | select(.name == ${{ steps.outputs.outputs.amplify_app_name }})'.appId)
           echo "APP_ID=$APPID" >>${GITHUB_ENV}
 
-      - name: Running Amplify Deployment Job
+      - name: Start Amplify Frontend Deployment Job
         run: |
           echo "Deploying app"
           JOB_ID=$(aws amplify start-job --app-id ${{ env.APP_ID }} --branch-name main --job-type RELEASE | jq -r '.jobSummary.jobId')
           echo "Release started"
           echo "Job ID is $JOB_ID"
-          
-          while [[ "$(aws amplify get-job --app-id ${{ env.APP_ID }} --branch-name main --job-id $JOB_ID | jq -r '.job.summary.status')" =~ ^(PENDING|RUNNING)$ ]]; do sleep 1; done
-          JOB_STATUS="$(aws amplify get-job --app-id ${{ env.APP_ID }} --branch-name main --job-id $JOB_ID | jq -r '.job.summary.status')"
+          echo "JOB_ID=$JOB_ID" >>${GITHUB_ENV}
+
+      - name: Deploy Backend to Elastic Beanstalk
+        run: |
+          aws s3 cp "deploy-files/${{github.run_id}}.zip" s3://elasticbeanstalk-eu-west-1-${{ secrets.AWS_ACCOUNT_ID }}/artifact/hippo-booking-api/
+          aws elasticbeanstalk create-application-version --application-name ${{ steps.outputs.outputs.elastic_beanstalk_application_name }} --version-label ${{github.run_id}} --description ${{github.run_id}} --source-bundle S3Bucket="elasticbeanstalk-eu-west-1-${{ secrets.AWS_ACCOUNT_ID }}",S3Key="artifact/hippo-booking-api/${{github.run_id}}.zip"
+          aws elasticbeanstalk update-environment --application-name ${{ steps.outputs.outputs.elastic_beanstalk_application_name }} --environment-name ${{ steps.outputs.outputs.elastic_beanstalk_environment_name }} --version-label ${{github.run_id}}
+          aws elasticbeanstalk wait environment-updated --application-name ${{ steps.outputs.outputs.elastic_beanstalk_application_name }} --environment-name ${{ steps.outputs.outputs.elastic_beanstalk_environment_name }}
+
+      - name: Wait for Amplify Frontend Deployment Job
+        run: |
+          while [[ "$(aws amplify get-job --app-id ${{ env.APP_ID }} --branch-name main --job-id ${{ env.JOB_ID }} | jq -r '.job.summary.status')" =~ ^(PENDING|RUNNING)$ ]]; do sleep 1; done
+          JOB_STATUS="$(aws amplify get-job --app-id ${{ env.APP_ID }} --branch-name main --job-id ${{ env.JOB_ID }} | jq -r '.job.summary.status')"
           echo "Job finished"
           echo "Job status is $JOB_STATUS"
