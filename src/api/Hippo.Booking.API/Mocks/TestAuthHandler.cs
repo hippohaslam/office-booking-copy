@@ -1,13 +1,12 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Hippo.Booking.Integration.Tests.TestSupport;
+namespace Hippo.Booking.API.Mocks;
 
 
-public class IntegrationTestAuthHandler(
+public class TestAuthHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,
     ILoggerFactory logger,
     UrlEncoder encoder)

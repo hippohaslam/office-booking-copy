@@ -25,7 +25,7 @@ public abstract class PlaywrightFixture
         _playwright = await Playwright.CreateAsync();
         _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
         {
-            Headless = false
+            Headless = Config.Headless
         });
 
         _context = await _browser.NewContextAsync(new BrowserNewContextOptions
@@ -35,7 +35,9 @@ public abstract class PlaywrightFixture
         
         Page = await _context.NewPageAsync();
         
-        await LogInToService();
+        // REPLACE BypassAuthToHomePage() with LogInToService() when Google Auth is working again
+        // await LogInToService();
+        await BypassAuthToHomePage();
     }
 
     private async Task LogInToService()
@@ -45,6 +47,15 @@ public abstract class PlaywrightFixture
         await loginPage.AssertPage();
         await loginPage.LogInWithGoogleAuth();
 
+        var homePage = new HomePage(Page);
+        await homePage.AssertPage();
+    }
+
+    private async Task BypassAuthToHomePage()
+    {
+        var loginPage = new LoginPage(Page);
+        await loginPage.GoToPage();
+        
         var homePage = new HomePage(Page);
         await homePage.AssertPage();
     }

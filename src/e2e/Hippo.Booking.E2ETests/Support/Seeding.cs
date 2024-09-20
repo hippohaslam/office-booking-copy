@@ -97,8 +97,9 @@ public class Seeding
         {
             user = new User
             {
-                Id = Config.UserId,
-                FirstName = "Booking",
+                // Id = Config.UserId, <-- If google auth is re-enabled, this will need to be set
+                Id = "testuser",
+                FirstName = "Test",
                 LastName = "User",
                 Email = Config.UserEmail,
                 IsAdmin = true

@@ -2,6 +2,7 @@ using FluentValidation;
 using Hippo.Booking.API.Endpoints;
 using Hippo.Booking.API.Extensions;
 using Hippo.Booking.API.HostedServices;
+using Hippo.Booking.API.Mocks;
 using Hippo.Booking.API.Services;
 using Hippo.Booking.API.StartupTasks;
 using Hippo.Booking.Application;
@@ -15,6 +16,7 @@ using Hippo.Booking.Infrastructure.EF;
 using Hippo.Booking.Infrastructure.Reports;
 using Hippo.Booking.Infrastructure.Scheduling;
 using Hippo.Booking.Infrastructure.Slack;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -149,25 +151,32 @@ try
 
     builder.Services.AddHippoBookingApplication();
 
-    builder.Services.AddAuthentication("Cookie")
-        .AddCookie("Cookie", options =>
+    if (builder.Configuration.GetValue<bool>("UseMockAuth"))
+    {
+        builder.Services.AddAuthentication(options =>
         {
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            if (builder.Environment.IsEnvironment("EndToEnd"))
+            options.DefaultAuthenticateScheme = "Test";
+            options.DefaultChallengeScheme = "Test";
+        }).AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+    }
+    else
+    {
+        builder.Services.AddAuthentication("Cookie")
+            .AddCookie("Cookie", options =>
             {
-                options.Cookie.SameSite = SameSiteMode.None;
-            }
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.ExpireTimeSpan = TimeSpan.FromHours(3);
+                options.SlidingExpiration = true;
 
-            options.ExpireTimeSpan = TimeSpan.FromHours(3);
-            options.SlidingExpiration = true;
-
-            options.Events.OnRedirectToLogin = context =>
-            {
-                context.Response.StatusCode = 401;
-                return Task.CompletedTask;
-            };
-        })
-        .AddJwtBearer("Google", options => { options.UseGoogle(builder.Configuration.GetValue<string>("Google:ClientId") ?? ""); });
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = 401;
+                    return Task.CompletedTask;
+                };
+            })
+            .AddJwtBearer("Google",
+                options => { options.UseGoogle(builder.Configuration.GetValue<string>("Google:ClientId") ?? ""); });
+    }
 
     builder.Services.AddAuthorization();
 

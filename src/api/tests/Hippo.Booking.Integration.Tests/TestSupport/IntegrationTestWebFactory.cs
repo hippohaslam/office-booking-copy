@@ -22,12 +22,6 @@ public class IntegrationTestWebFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = "Test";
-                options.DefaultChallengeScheme = "Test";
-            }).AddScheme<AuthenticationSchemeOptions, IntegrationTestAuthHandler>("Test", options => { });
-
             // replace SlackClient
             var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(ISlackClient));
 

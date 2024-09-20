@@ -13,7 +13,7 @@ public class HomePage(IPage page)
     public async Task AssertPage()
     {
         await page.WaitForURLAsync(Config.BaseUrl);
-        await Assertions.Expect(H1Heading).ToHaveTextAsync("Hi Booking");
+        await Assertions.Expect(H1Heading).ToHaveTextAsync("Hi Test");
     }
 
     public async Task ClickMakeANewBookingCta() => await MakeANewBookingCta.ClickAsync();
