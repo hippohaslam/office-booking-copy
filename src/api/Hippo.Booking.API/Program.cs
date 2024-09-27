@@ -164,6 +164,7 @@ try
         builder.Services.AddAuthentication("Cookie")
             .AddCookie("Cookie", options =>
             {
+                options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.ExpireTimeSpan = TimeSpan.FromHours(3);
                 options.SlidingExpiration = true;
@@ -242,11 +243,26 @@ try
         });
     }
 
+    if (!app.Configuration.GetValue<bool>("UseMockAuth"))
+    {
+        app.Use(async (context, next) =>
+        {
+            context.Response.Headers.Append("X-Frame-Options", "DENY");
+            context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+            context.Response.Headers.Append("X-Xss-Protection", "1; mode=block");
+            context.Response.Headers.Append("Referrer-Policy", "no-referrer");
+            context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; frame-ancestors 'none';");
+            await next();
+        });
+
+        app.UseHsts();
+    }
+
     app.UseAuthentication();
     app.UseAuthorization();
 
     app.UseSlackNet();
-
+    
     app.Run();
 }
 catch (Exception ex)
