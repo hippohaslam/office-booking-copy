@@ -151,15 +151,15 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.400.22",
-        "contentHash": "v1Pm6lFSkAufm7WtiwE+2laHSj330cVUzTRTXZ50YXNgT0jDu1OryJrTqxPxlbiv6jFEkTutvM9rImuvDSpaeg=="
+        "resolved": "3.7.400.26",
+        "contentHash": "6XcQjkfKMwG8z4FOPJ8N0vbq1PVCIneK4wEj+b4l8461XwCcHmQig9/2XmoNkdzFKDSDptBsBmaO2UgaroNuag=="
       },
       "AWSSDK.SecretsManager": {
         "type": "Transitive",
-        "resolved": "3.7.400.22",
-        "contentHash": "rDqkSzpeTWSWzQxZK6mc5BaV8m+01Og4GZlTPgMscefRzwbJTMVu5aH86ArZ8tgknyaCT3fshx//pMFeqYNOXQ==",
+        "resolved": "3.7.400.26",
+        "contentHash": "n7bRkbfSFAKwvS7J8ccNUS0LawZFGrRQ37NsMIcpvwPpNtqYd+HLLRxZjTe3ljSzvg+LvJ9ohdTDsF0hhsX1aA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.400.22, 4.0.0)"
+          "AWSSDK.Core": "[3.7.400.26, 4.0.0)"
         }
       },
       "Azure.Core": {
@@ -839,21 +839,21 @@
       },
       "Npgsql": {
         "type": "Transitive",
-        "resolved": "8.0.3",
-        "contentHash": "6WEmzsQJCZAlUG1pThKg/RmeF6V+I0DmBBBE/8YzpRtEzhyZzKcK7ulMANDm5CkxrALBEC8H+5plxHWtIL7xnA==",
+        "resolved": "8.0.4",
+        "contentHash": "vaYEUlF/pB9m8bs21wQv3Da0kMHT4A9USe47VfY/L2BO97xz5KfIxhEu22QS9d68ZrLxvtL3wQDfDLPr2OjbjA==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0"
         }
       },
       "Npgsql.EntityFrameworkCore.PostgreSQL": {
         "type": "Transitive",
-        "resolved": "8.0.4",
-        "contentHash": "/hHd9MqTRVDgIpsToCcxMDxZqla0HAQACiITkq1+L9J2hmHKV6lBAPlauF+dlNSfHpus7rrljWx4nAanKD6qAw==",
+        "resolved": "8.0.8",
+        "contentHash": "D5WWJZJTgZYUmGv66BARXbTlinp2a5f5RueJqGYoHuWJw02J0i2va/RA+8N4A5hLORK5YKMRqXhFWtKsZdrksw==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "8.0.4",
-          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.4",
-          "Microsoft.EntityFrameworkCore.Relational": "8.0.4",
-          "Npgsql": "8.0.3"
+          "Microsoft.EntityFrameworkCore": "8.0.8",
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.8",
+          "Microsoft.EntityFrameworkCore.Relational": "8.0.8",
+          "Npgsql": "8.0.4"
         }
       },
       "Npgsql.EntityFrameworkCore.PostgreSQL.Design": {
@@ -1089,8 +1089,8 @@
       },
       "SlackNet": {
         "type": "Transitive",
-        "resolved": "0.13.3",
-        "contentHash": "o91NanqOw6CbmAvCQFR40bveQH3TJ5J4N0n1zFabuMP80DFSAR8uf7mPDsp0G8xcikv7UhwjY2jBtIL5NoR80w==",
+        "resolved": "0.14.0",
+        "contentHash": "WZ5t+qFnozqZBeDfib2kcFXog75VwPd9qOes2KIUwKqeZUwGxZRmQ86SVMKB1clBO+Na00rPRHDl2VY7QgtKBA==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
           "Newtonsoft.Json": "13.0.1",
@@ -1102,26 +1102,27 @@
       },
       "SlackNet.AspNetCore": {
         "type": "Transitive",
-        "resolved": "0.13.3",
-        "contentHash": "cHAcLlBSMSzvny2A+hbgeUkiBc/ovw4O22DtGUjMwBbTmdk4ORdSQaxSPsJ3TTSbA6yYmIqTs+EChASzQuojVg==",
+        "resolved": "0.14.0",
+        "contentHash": "etHtP6TQNlidCoB5RJrjFK8SnyeI0X2pkNm7UWZmpHM+C0bQusU4kQJ+/Zpd06wZ0nE9OjVwEImTlxzL/wE1Nw==",
         "dependencies": {
           "Microsoft.AspNetCore.Http": "2.1.22",
           "Microsoft.AspNetCore.Http.Abstractions": "2.1.1",
           "Microsoft.AspNetCore.Mvc.Abstractions": "1.1.8",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "2.2.0",
+          "Microsoft.Extensions.Hosting.Abstractions": "2.1.1",
           "Microsoft.Extensions.Logging.Abstractions": "2.2.0",
-          "SlackNet": "0.13.3",
-          "SlackNet.Extensions.DependencyInjection": "0.13.3",
+          "SlackNet": "0.14.0",
+          "SlackNet.Extensions.DependencyInjection": "0.14.0",
           "System.Text.Encodings.Web": "4.5.1"
         }
       },
       "SlackNet.Extensions.DependencyInjection": {
         "type": "Transitive",
-        "resolved": "0.13.3",
-        "contentHash": "63aQ+Fi/3RMa4S9G8du52cy4HUQsDKOfk/K77w9L3ZFSSDJ5/+9juvYEwuuWZIPOUpr/f1ICZ86436iBZm/FlA==",
+        "resolved": "0.14.0",
+        "contentHash": "BdasdKzZ/5eJ+NMs7Chi72tbxSI8os0gL7wR3yyzgqAtYRMMdtqzlZDhILAoPuHVIpuA/p4jp9sc5crajl46nQ==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "2.2.0",
-          "SlackNet": "0.13.3"
+          "SlackNet": "0.14.0"
         }
       },
       "SuperSocket.ClientEngine.Core": {
@@ -2187,11 +2188,11 @@
           "Microsoft.AspNetCore.Authentication.Google": "[8.0.8, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[8.0.8, )",
           "Microsoft.Extensions.Configuration.Binder": "[8.0.2, )",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.4, )",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.8, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "[1.1.0, )",
           "Serilog.AspNetCore": "[8.0.2, )",
           "Serilog.Sinks.AwsCloudWatch": "[4.3.37, )",
-          "SlackNet.AspNetCore": "[0.13.3, )",
+          "SlackNet.AspNetCore": "[0.14.0, )",
           "Swashbuckle.AspNetCore": "[6.8.0, )"
         }
       },
@@ -2213,12 +2214,12 @@
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SecretsManager": "[3.7.400.22, )",
+          "AWSSDK.SecretsManager": "[3.7.400.26, )",
           "Dapper": "[2.1.35, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
           "Microsoft.Extensions.Configuration": "[8.0.0, )",
-          "SlackNet": "[0.13.3, )"
+          "SlackNet": "[0.14.0, )"
         }
       },
       "hippo.booking.infrastructure.ef": {
@@ -2227,7 +2228,7 @@
           "Hippo.Booking.Application": "[1.0.0, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore.Relational": "[8.0.8, )",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.4, )"
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.8, )"
         }
       }
     }

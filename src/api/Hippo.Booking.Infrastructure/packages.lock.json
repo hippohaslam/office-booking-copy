@@ -4,11 +4,11 @@
     "net8.0": {
       "AWSSDK.SecretsManager": {
         "type": "Direct",
-        "requested": "[3.7.400.22, )",
-        "resolved": "3.7.400.22",
-        "contentHash": "rDqkSzpeTWSWzQxZK6mc5BaV8m+01Og4GZlTPgMscefRzwbJTMVu5aH86ArZ8tgknyaCT3fshx//pMFeqYNOXQ==",
+        "requested": "[3.7.400.26, )",
+        "resolved": "3.7.400.26",
+        "contentHash": "n7bRkbfSFAKwvS7J8ccNUS0LawZFGrRQ37NsMIcpvwPpNtqYd+HLLRxZjTe3ljSzvg+LvJ9ohdTDsF0hhsX1aA==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.400.22, 4.0.0)"
+          "AWSSDK.Core": "[3.7.400.26, 4.0.0)"
         }
       },
       "Dapper": {
@@ -29,9 +29,9 @@
       },
       "SlackNet": {
         "type": "Direct",
-        "requested": "[0.13.3, )",
-        "resolved": "0.13.3",
-        "contentHash": "o91NanqOw6CbmAvCQFR40bveQH3TJ5J4N0n1zFabuMP80DFSAR8uf7mPDsp0G8xcikv7UhwjY2jBtIL5NoR80w==",
+        "requested": "[0.14.0, )",
+        "resolved": "0.14.0",
+        "contentHash": "WZ5t+qFnozqZBeDfib2kcFXog75VwPd9qOes2KIUwKqeZUwGxZRmQ86SVMKB1clBO+Na00rPRHDl2VY7QgtKBA==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
           "Newtonsoft.Json": "13.0.1",
@@ -43,8 +43,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.400.22",
-        "contentHash": "v1Pm6lFSkAufm7WtiwE+2laHSj330cVUzTRTXZ50YXNgT0jDu1OryJrTqxPxlbiv6jFEkTutvM9rImuvDSpaeg=="
+        "resolved": "3.7.400.26",
+        "contentHash": "6XcQjkfKMwG8z4FOPJ8N0vbq1PVCIneK4wEj+b4l8461XwCcHmQig9/2XmoNkdzFKDSDptBsBmaO2UgaroNuag=="
       },
       "FluentValidation": {
         "type": "Transitive",
@@ -186,21 +186,21 @@
       },
       "Npgsql": {
         "type": "Transitive",
-        "resolved": "8.0.3",
-        "contentHash": "6WEmzsQJCZAlUG1pThKg/RmeF6V+I0DmBBBE/8YzpRtEzhyZzKcK7ulMANDm5CkxrALBEC8H+5plxHWtIL7xnA==",
+        "resolved": "8.0.4",
+        "contentHash": "vaYEUlF/pB9m8bs21wQv3Da0kMHT4A9USe47VfY/L2BO97xz5KfIxhEu22QS9d68ZrLxvtL3wQDfDLPr2OjbjA==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0"
         }
       },
       "Npgsql.EntityFrameworkCore.PostgreSQL": {
         "type": "Transitive",
-        "resolved": "8.0.4",
-        "contentHash": "/hHd9MqTRVDgIpsToCcxMDxZqla0HAQACiITkq1+L9J2hmHKV6lBAPlauF+dlNSfHpus7rrljWx4nAanKD6qAw==",
+        "resolved": "8.0.8",
+        "contentHash": "D5WWJZJTgZYUmGv66BARXbTlinp2a5f5RueJqGYoHuWJw02J0i2va/RA+8N4A5hLORK5YKMRqXhFWtKsZdrksw==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "8.0.4",
-          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.4",
-          "Microsoft.EntityFrameworkCore.Relational": "8.0.4",
-          "Npgsql": "8.0.3"
+          "Microsoft.EntityFrameworkCore": "8.0.8",
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.8",
+          "Microsoft.EntityFrameworkCore.Relational": "8.0.8",
+          "Npgsql": "8.0.4"
         }
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
@@ -930,7 +930,7 @@
           "Hippo.Booking.Application": "[1.0.0, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore.Relational": "[8.0.8, )",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.4, )"
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.8, )"
         }
       }
     }
