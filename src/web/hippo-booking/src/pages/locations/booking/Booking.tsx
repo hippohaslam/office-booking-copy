@@ -215,7 +215,7 @@ const DeskBooking = () => {
 
       fabricCanvas.on("mouse:down", (e: fabric.IEvent<MouseEvent>) => {
         // So we can track if the user is panning the canvas
-        if (e.e instanceof TouchEvent) {
+        if (typeof TouchEvent !== "undefined" && e.e instanceof TouchEvent) {
           const touch = e.e.touches[0];
           panningInfoRef.current = { x: touch.clientX, y: touch.clientY };
         } else {
@@ -225,7 +225,7 @@ const DeskBooking = () => {
 
       fabricCanvas.on("mouse:up", (e: fabric.IEvent<MouseEvent>) => {
         if (panningInfoRef.current) {
-          if (e.e instanceof TouchEvent) {
+          if (typeof TouchEvent !== "undefined" && e.e instanceof TouchEvent) {
             const touch = e.e.changedTouches[0];
             if (panningInfoRef.current.x !== touch.clientX || panningInfoRef.current.y !== touch.clientY) {
               panningInfoRef.current = null;
