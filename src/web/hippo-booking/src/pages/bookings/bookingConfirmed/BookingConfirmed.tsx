@@ -8,6 +8,7 @@ import HelpIcon from "../../../assets/help-icon.svg";
 import { CtaLink, ErrorBanner, InfoTile, InfoTileList } from "../../../components";
 import { getBookingAsync } from "../../../services/Apis";
 import { useQuery } from "@tanstack/react-query";
+import { Area } from "../../../interfaces/Area";
 
 const BookingConfirmed = () => {
   const { bookingId } = useParams();
@@ -56,12 +57,24 @@ const BookingConfirmed = () => {
             color='hippo-brand-bluey-grey'
           />
           <p>You will receive a Slack message confirming this booking.</p>
-          <CtaLink text="Manage this and other bookings" to="/bookings" color="cta-green" withArrow={true}/>
           <div className='sub-section-grey'>
-            <h2>Need another booking?</h2>
-            <p>Bookings can be placed up to 2 weeks in advance. You can also book spaces for guests and other Hippos under your name.</p>
-            <CtaLink text={`Book again at ${data.area.name}, ${data.location.name}`} to={`/locations/${data?.location.id}/areas/${data?.area.id}`} color="cta-navy" withArrow={true}/>
+            <h2>Need another booking in {data?.location.name}?</h2>
+            <p>Bookings can be placed up to 1 month in advance. You can also book spaces for guests and other Hippos under your name.</p>
+            <div className='button-group'>
+              {data.location.areas.map((area: Area) => {
+                return (
+                  <CtaLink
+                    key={area.id}
+                    text={`Book ${area.name}`}
+                    to={`/locations/${data?.location.id}/areas/${area.id}`}
+                    color='cta-navy'
+                    withArrow={true}
+                  />
+                );
+              })}
+            </div>
           </div>
+          <CtaLink text='Manage this and other bookings' to='/bookings' color='cta-green' withArrow={true} />
         </div>
       )}
 
@@ -99,7 +112,7 @@ const BookingConfirmed = () => {
           </Link>
         </InfoTile>
       </InfoTileList>
-      <br/>
+      <br />
     </div>
   );
 };

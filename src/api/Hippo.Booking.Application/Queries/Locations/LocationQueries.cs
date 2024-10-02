@@ -27,11 +27,7 @@ public class LocationQueries(IDataContext dataContext) : ILocationQueries
                 Address = x.Address,
                 SlackChannel = x.SlackChannel,
                 GuideLink = x.GuideLink,
-                Areas = x.Areas.Select(y => new LocationQueryResponse.AreaResponse
-                {
-                    Id = y.Id,
-                    Name = y.Name
-                }).ToList()
+                Areas = x.Areas.Select(y => new IdName<int>(y.Id, y.Name)).ToList()
             })
             .SingleOrDefaultAsync();
     }

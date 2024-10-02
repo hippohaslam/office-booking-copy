@@ -60,7 +60,15 @@ public class BookingEndpointTests : IntegrationTestBase
             Area = new IdName<int>(area.Id, area.Name),
             BookableObject = new IdName<int>(bookableObject.Id, bookableObject.Name),
             Date = DateOnly.FromDateTime(DateTime.Now),
-            Location = new IdName<int>(location.Id, location.Name),
+            Location = new BookingLocationResponse
+            {
+                Id = location.Id,
+                Name = location.Name,
+                Areas = new List<IdName<int>>
+                {
+                    new(area.Id, area.Name)
+                }
+            },
             UserId = "testuser"
         }, options => options.Excluding(x => x.Id),
             "the booking response should be as expected");
@@ -249,7 +257,15 @@ public class BookingEndpointTests : IntegrationTestBase
             BookableObject = new IdName<int>(bookableObject.Id, bookableObject.Name),
             Date = DateOnly.FromDateTime(DateTime.Now),
             Id = booking.Id,
-            Location = new IdName<int>(location.Id, location.Name),
+            Location = new BookingLocationResponse
+            {
+                Id = location.Id,
+                Name = location.Name,
+                Areas = new List<IdName<int>>
+                {
+                    new(area.Id, area.Name)
+                }
+            },
             UserId = "testuser"
         });
     }

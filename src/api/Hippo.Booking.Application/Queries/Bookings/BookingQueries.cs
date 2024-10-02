@@ -20,7 +20,14 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
                 Date = x.Date,
                 BookableObject = new IdName<int>(x.BookableObjectId, x.BookableObject.Name),
                 Area = new IdName<int>(x.BookableObject.AreaId, x.BookableObject.Area.Name),
-                Location = new IdName<int>(x.BookableObject.Area.LocationId, x.BookableObject.Area.Location.Name),
+                Location = new BookingLocationResponse
+                {
+                    Id = x.BookableObject.Area.LocationId,
+                    Name = x.BookableObject.Area.Location.Name,
+                    Areas = x.BookableObject.Area.Location.Areas
+                        .Select(y => new IdName<int>(y.Id, y.Name))
+                        .ToList()
+                },
                 UserId = x.UserId
             })
             .SingleOrDefaultAsync();

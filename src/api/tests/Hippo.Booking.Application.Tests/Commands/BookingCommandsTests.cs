@@ -95,7 +95,15 @@ public class BookingCommandsTests
             Date = request.Date,
             BookableObject = new IdName<int>(1, "Existing BookableObject"),
             Area = new IdName<int>(1, "Existing Area"),
-            Location = new IdName<int>(1, "Existing Location"),
+            Location = new BookingLocationResponse
+            {
+                Id = 1,
+                Name = "Existing Location",
+                Areas = new List<IdName<int>>
+                {
+                    new(1, "Existing Area")
+                }
+            },
             UserId = "1"
         });
 
@@ -133,7 +141,15 @@ public class BookingCommandsTests
             Date = request.Date,
             BookableObject = new IdName<int>(1, "Existing BookableObject"),
             Area = new IdName<int>(1, "Existing Area"),
-            Location = new IdName<int>(1, "Existing Location"),
+            Location = new BookingLocationResponse
+            {
+                Id = 1,
+                Name = "Existing Location",
+                Areas = new List<IdName<int>>
+                {
+                    new(1, "Existing Area")
+                }
+            },
             UserId = "1"
         });
 

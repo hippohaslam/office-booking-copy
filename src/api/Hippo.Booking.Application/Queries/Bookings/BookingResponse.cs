@@ -12,7 +12,7 @@ public class BookingResponse
     
     public required IdName<int> Area { get; set; }
 
-    public required IdName<int> Location { get; set; }
+    public required BookingLocationResponse Location { get; set; }
 
     public string UserId { get; set; } = string.Empty;
 }
