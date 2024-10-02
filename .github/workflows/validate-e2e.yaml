@@ -48,8 +48,8 @@ jobs:
       - name: Run Docker Compose
         run: docker compose -f infrastructure/docker/docker-compose-ci.yml -f infrastructure/docker/docker-compose-services.yml up -d
 
-      - name: Sleep for 5 seconds
-        run: sleep 5s
+      - name: Sleep for 10 seconds
+        run: sleep 10s
         shell: bash
 
       - name: Run E2E Tests
