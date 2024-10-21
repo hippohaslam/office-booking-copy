@@ -13,10 +13,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AWSSDK.SecretsManager" Version="3.7.400.26" />
+      <PackageReference Include="AWSSDK.SecretsManager" Version="3.7.400.36" />
       <PackageReference Include="Dapper" Version="2.1.35" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-      <PackageReference Include="SlackNet" Version="0.14.0" />
+      <PackageReference Include="SlackNet" Version="0.15.0" />
     </ItemGroup>
 
 </Project>
