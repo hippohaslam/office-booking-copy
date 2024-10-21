@@ -67,3 +67,8 @@ variable "db_retention_period" {
   description = "How many days to retain a DB backup"
   type        = number
 }
+
+variable "email_recipients_alarms" {
+  description = "Who will receive emails for alarms, i.e. when health degrades"
+  type        = set(string)
+}
