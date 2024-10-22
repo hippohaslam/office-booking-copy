@@ -432,7 +432,7 @@ const DeskBooking = () => {
         inputOnChange={(date) => setSelectedDate(date!)}
         selectedDate={selectedDate}
         minDate={new Date()}
-        maxDate={new Date(new Date().setMonth(new Date().getMonth() + 1))}
+        maxDate={new Date(new Date().setDate(new Date().getDate() + 42))}
       />
       <br />
 

@@ -19,7 +19,7 @@ public class CreateBookingRequestValidatorTests() :
         new CreateBookingRequest
         {
             UserId = "1",
-            Date = DateOnly.FromDateTime(DateTime.Now.AddMonths(1)),
+            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(42)),
             AreaId = 1,
             BookableObjectId = 1
         }
@@ -65,7 +65,7 @@ public class CreateBookingRequestValidatorTests() :
         new CreateBookingRequest
         {
             UserId = "1",
-            Date = DateOnly.FromDateTime(DateTime.Now.AddMonths(1).AddDays(1)),
+            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(43)),
             AreaId = 1,
             BookableObjectId = 1
         },

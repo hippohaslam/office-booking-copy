@@ -22,7 +22,7 @@ public class CreateBookingRequestValidator : AbstractValidator<CreateBookingRequ
         RuleFor(x => x.AreaId).NotEmpty();
         RuleFor(x => x.Date).NotEmpty()
             .GreaterThanOrEqualTo(dateTimeProvider.Today)
-            .LessThanOrEqualTo(dateTimeProvider.Today.AddMonths(1));
+            .LessThanOrEqualTo(dateTimeProvider.Today.AddDays(42)); // 6 weeks
         RuleFor(x => x.UserId).NotEmpty();
     }
 }
