@@ -15,6 +15,7 @@ import { Breadcrumbs, ConfirmModal, ErrorBanner, TabItem, TabList } from "../../
 import BookingCardStacked from "../../../components/booking/BookingCardStacked";
 import { AxiosError } from "axios";
 import { BookableObject } from "../../../interfaces/Desk";
+import {DaysEnum} from "../../../enums/DaysEnum.ts";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
@@ -27,9 +28,19 @@ const loadActiveTab = () => {
   }
 };
 
+const initialDate = () =>{
+  const sessionDate = sessionStorage.getItem("bookingDate")
+
+  if (sessionDate) {
+    return new Date(sessionDate)
+  }
+
+  return new Date()
+}
+
 const DeskBooking = () => {
   const { locationId, areaId } = useParams();
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(initialDate());
   const [selectedObject, setSelectedObject] = useState<BookableObject | null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<number>(loadActiveTab() ?? 0);
@@ -41,6 +52,7 @@ const DeskBooking = () => {
   const [error, setError] = useState<AxiosError | null>(null);
   const [isModalLoading, setModalLoading] = useState(false);
   const panningInfoRef = useRef<{ x: number; y: number } | null>(null);
+  const [dateDisplay, setDateDisplay] = useState<string>("");
 
   const { data: areaData } = useQuery({
     queryKey: ["area", areaId],
@@ -78,6 +90,8 @@ const DeskBooking = () => {
 
   useEffect(() => {
     if (selectedDate) {
+      sessionStorage.setItem("bookingDate", selectedDate.toISOString())
+      setDateDisplay(DaysEnum[selectedDate.getDay()] + " " + selectedDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }));
       refetch();
     }
   }, [refetch, selectedDate]);
@@ -434,7 +448,7 @@ const DeskBooking = () => {
         minDate={new Date()}
         maxDate={new Date(new Date().setDate(new Date().getDate() + 42))}
       />
-      <br />
+      <div className='date-display'>{dateDisplay}</div>
 
       <TabList activeTabIndex={activeTab} onChange={handleTabChange}>
         <TabItem label='Floorplan'>
