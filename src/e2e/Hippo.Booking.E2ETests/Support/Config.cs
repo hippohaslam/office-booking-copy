@@ -28,12 +28,27 @@ public class Config
     public static bool Headless => Instance.GetValue<bool>("Headless");
     private static string DbConnectionString => Instance.GetValue<string>("ConnectionStrings:Database") ?? string.Empty;
     
-    public static HippoBookingDbContext GetDbContext()
+    public static async Task<HippoBookingDbContext> GetDbContext()
     {
         var dbOptions = new DbContextOptionsBuilder<HippoBookingDbContext>()
             .UseNpgsql(DbConnectionString)
             .Options;
 
-        return new HippoBookingDbContext(dbOptions, new TestUserProvider(), new SystemDateTimeProvider());
+        var db = new HippoBookingDbContext(dbOptions, new TestUserProvider(), new SystemDateTimeProvider());
+
+        var retries = 0;
+        while (retries <= 5)
+        {
+            retries++;
+
+            if (await db.Database.CanConnectAsync())
+            {
+                return db;
+            }
+            
+            await Task.Delay(3000);
+        }
+
+        throw new InvalidOperationException("Could not connect to database");
     }
 }

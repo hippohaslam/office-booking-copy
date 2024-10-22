@@ -7,7 +7,7 @@ public class Seeding
 {
     public async Task SeedOfficeData()
     {
-        var db = Config.GetDbContext();
+        var db = await Config.GetDbContext();
         var dataDirectory = AppDomain.CurrentDomain.BaseDirectory + "/Data";
 
         var location = new Location
@@ -85,7 +85,7 @@ public class Seeding
 
     public async Task SetUserAsAdmin()
     {
-        var db = Config.GetDbContext();
+        var db = await Config.GetDbContext();
         var user = db.Users.FirstOrDefault(u => u.Email == Config.UserEmail);
 
         if (user != null)
