@@ -25,3 +25,20 @@ resource "aws_cloudwatch_metric_alarm" "beanstalk_health_alarm" {
     EnvironmentName = local.beanstalk-api-name
   }
 }
+
+resource "aws_cloudwatch_metric_alarm" "cpu_utilization_too_high" {
+  alarm_name          = "Booking ${var.environment} Database CPU too high"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/RDS"
+  period              = "300"
+  statistic           = "Average"
+  threshold           = 90
+  alarm_description   = "Average database CPU utilization over last 5 minutes too high"
+  actions_enabled     = "true"
+  alarm_actions       = [aws_sns_topic.booking_app_topic.arn]
+  dimensions = {
+    DBInstanceIdentifier = aws_db_instance.hippo-booking-db.id
+  }
+}
