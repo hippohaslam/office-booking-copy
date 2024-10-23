@@ -30,5 +30,6 @@ public class LocationsPage(IPage page)
     public async Task ClickBookAtThisLocationLink(string locationName)
     {
         await BookAtThisLocationLink(locationName).ClickAsync();
+        await page.WaitForURLAsync(Config.BaseUrl + "locations/**/areas");
     }
 }

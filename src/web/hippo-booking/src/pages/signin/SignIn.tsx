@@ -72,7 +72,7 @@ export default function SignIn() {
         <ErrorBanner title='Uh oh!' errorMessage={errorMessage || ""} isShown={errorMessage !== null} allowClose={false} />
         <div className='login-container'>
           <img src={HippoSvg} alt='Hippo Logo' />
-          <h1>Office bookings</h1>
+          <h1>Hippo Reserve</h1>
           <p>For booking desks, dog-of-the-day, and car parking spaces at the Hippo offices.</p>
           <div style={{ paddingTop: 20 + "px", paddingBlock: 20 + "px" }}>
             <GoogleLogin

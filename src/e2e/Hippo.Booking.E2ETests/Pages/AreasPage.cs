@@ -16,7 +16,6 @@ public class AreasPage(IPage page)
 
     public async Task AssertAreasPage(string locationName)
     {
-        await page.WaitForURLAsync(Config.BaseUrl + "locations/**/areas");
         await Assertions.Expect(H1Heading(locationName)).ToBeVisibleAsync();
         await Assertions.Expect(H2Heading).ToBeVisibleAsync();
     }

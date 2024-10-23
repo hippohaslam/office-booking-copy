@@ -6,7 +6,7 @@ public class HeaderComponent(IPage page)
 {
     private ILocator Header => page.Locator("header");
     private ILocator SiteLogo => page.GetByAltText("Hippo Logo");
-    private ILocator SiteHeading => page.GetByRole(AriaRole.Link, new() {Name = "Office Bookings"});
+    private ILocator SiteHeading => page.GetByRole(AriaRole.Link, new() {Name = "Hippo Reserve"});
     private ILocator NavMenu => Header.GetByRole(AriaRole.Navigation);
 
     public async Task AssertHeader()

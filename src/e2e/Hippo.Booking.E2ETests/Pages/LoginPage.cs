@@ -15,7 +15,7 @@ public class LoginPage(IPage page)
     public async Task AssertPage()
     {
         await Assertions.Expect(page).ToHaveURLAsync($"{Config.BaseUrl}signin?returnUrl=/");
-        await Assertions.Expect(H1Heading).ToHaveTextAsync("Office bookings");
+        await Assertions.Expect(H1Heading).ToHaveTextAsync("Hippo Reserve");
     }
 
     public async Task LogInWithGoogleAuth()

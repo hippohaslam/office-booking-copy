@@ -38,7 +38,7 @@ const Nav = () => {
           <img src={window.innerWidth <= 1000 ? HippoIconSvg : HippoSvg} alt='Hippo Logo' />
         </Link>
         <Link className='nav-container-logo' to='/' onClick={closeMenuOnMobile}>
-          Office Bookings
+          Hippo Reserve
         </Link>
         <div>
           <button
