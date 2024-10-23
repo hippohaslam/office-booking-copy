@@ -48,10 +48,12 @@ public class SlackConfirmationScheduledTask(
                 var location =
                     $"{booking.BookableObject.Name} - {booking.BookableObject.Area.Name} - {booking.BookableObject.Area.Location.Name}";
 
-                var messageId = await SendConfirmationMessage(settings.Message,
+                var messageId = await SendConfirmationMessage(
+                    settings.Message,
                     location,
                     userId,
-                    booking.Id);
+                    booking.Id,
+                    settings.CanConfirm);
 
                 booking.LastSlackMessageId = messageId;
 

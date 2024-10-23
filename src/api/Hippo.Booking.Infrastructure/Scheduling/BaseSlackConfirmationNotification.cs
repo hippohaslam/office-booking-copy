@@ -8,8 +8,34 @@ public abstract class BaseSlackConfirmationNotification(ISlackClient slackClient
 {
     protected ISlackClient SlackClient => slackClient;
 
-    public async Task<string> SendConfirmationMessage(string messageTitleMarkdown, string location, string userId, int bookingId)
+    public async Task<string> SendConfirmationMessage(
+        string messageTitleMarkdown, 
+        string location, 
+        string userId, 
+        int bookingId,
+        bool canConfirm)
     {
+        var buttons = new List<IActionElement>();
+
+        if (canConfirm)
+        {
+            buttons.Add(new Button
+            {
+                Text = new PlainText("Confirm"),
+                Style = ButtonStyle.Primary,
+                ActionId = "confirm_booking",
+                Value = bookingId.ToString()
+            });
+        }
+        
+        buttons.Add(new Button
+        {
+            Text = new PlainText("Cancel"),
+            Style = ButtonStyle.Danger,
+            ActionId = "cancel_booking",
+            Value = bookingId.ToString()
+        });
+        
         var message = new Message
         {
             Channel = userId,
@@ -29,23 +55,7 @@ public abstract class BaseSlackConfirmationNotification(ISlackClient slackClient
                 },
                 new ActionsBlock
                 {
-                    Elements = new List<IActionElement>
-                    {
-                        new Button
-                        {
-                            Text = new PlainText("Confirm"),
-                            Style = ButtonStyle.Primary,
-                            ActionId = "confirm_booking",
-                            Value = bookingId.ToString()
-                        },
-                        new Button
-                        {
-                            Text = new PlainText("Cancel"),
-                            Style = ButtonStyle.Danger,
-                            ActionId = "cancel_booking",
-                            Value = bookingId.ToString()
-                        }
-                    }
+                    Elements = buttons
                 }
             }
         };

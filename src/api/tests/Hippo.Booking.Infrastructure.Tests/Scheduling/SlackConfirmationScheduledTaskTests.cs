@@ -7,6 +7,7 @@ using Hippo.Booking.Infrastructure.Slack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using SlackNet.Blocks;
 using SlackNet.WebApi;
 
 namespace Hippo.Booking.Infrastructure.Tests.Scheduling;
@@ -146,5 +147,47 @@ public class SlackConfirmationScheduledTaskTests
         
         await _slackClient.Received(1).SendMessage(Arg.Is<Message>(x => x.Channel == "testslack2"));
         await _slackClient.Received(1).SendMessage(Arg.Any<Message>());
+    }
+
+    [Test]
+    public async Task ConfirmedButtonPresentIfSpecified()
+    {
+        _slackClient.ClearReceivedCalls();
+
+        var json = @"{""message"":""Hello, world!"",""dayOffset"":1, ""canConfirm"":true}";
+
+        var scheduleContext = new ScheduleContext(json);
+
+        await _sut.RunTask(scheduleContext);
+
+        await _slackClient.Received(1).GetUserIdByEmail("user2@test.com");
+        await _slackClient.Received(1).GetUserIdByEmail("user3@test.com");
+
+        await _slackClient.Received(1).SendMessage(Arg.Is<Message>(x =>
+            x.Channel == "testslack2" &&
+            (x.Blocks.Single(y => y.Type == "actions") as ActionsBlock)!.Elements.Count == 2 &&
+            (x.Blocks.Single(y => y.Type == "actions") as ActionsBlock)!.Elements
+                .Any(z => z.ActionId == "confirm_booking")));
+    }
+    
+    [Test]
+    public async Task ConfirmedButtonNotPresentIfNotSpecified()
+    {
+        _slackClient.ClearReceivedCalls();
+
+        var json = @"{""message"":""Hello, world!"",""dayOffset"":1, ""canConfirm"":false}";
+
+        var scheduleContext = new ScheduleContext(json);
+
+        await _sut.RunTask(scheduleContext);
+
+        await _slackClient.Received(1).GetUserIdByEmail("user2@test.com");
+        await _slackClient.Received(1).GetUserIdByEmail("user3@test.com");
+
+        await _slackClient.Received(1).SendMessage(Arg.Is<Message>(x =>
+            x.Channel == "testslack2" &&
+            (x.Blocks.Single(y => y.Type == "actions") as ActionsBlock)!.Elements.Count == 1 &&
+            (x.Blocks.Single(y => y.Type == "actions") as ActionsBlock)!.Elements
+            .All(z => z.ActionId != "confirm_booking")));
     }
 }
