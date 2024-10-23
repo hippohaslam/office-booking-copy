@@ -1,7 +1,7 @@
 environment             = "Production"
 env_suffix              = "prod"
-frontend_subdomain      = "booking"
-backend_subdomain       = "bookingapi"
+frontend_subdomain      = "reserve"
+backend_subdomain       = "reserveapi"
 beanstalk_instance_type = "t3.micro"
 db_instance_size        = "db.t3.micro"
 db_retention_period     = 7
