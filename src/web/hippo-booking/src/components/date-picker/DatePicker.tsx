@@ -13,7 +13,7 @@ const CustomDatePicker = ({ selectedDate, inputOnChange, adjustDate, minDate, ma
   const changeDate = (direction: "next" | "previous" | "today") => {
       if (direction === "next" &&
           maxDate != null &&
-          selectedDate >= new Date(maxDate.setDate(new Date().getDate() - 1))) {
+          selectedDate >= new Date(maxDate.setDate(maxDate.getDate() - 1))) {
           return;
       }
       if (direction === "previous" && minDate != null && selectedDate <= minDate) {
