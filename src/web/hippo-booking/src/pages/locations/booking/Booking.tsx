@@ -358,6 +358,30 @@ const DeskBooking = () => {
     });
   };
 
+  const handleZoomInBtn = () => {
+    if (fabricCanvasRef.current) {
+      const canvas = fabricCanvasRef.current;
+      const zoom = canvas.getZoom();
+      const center = canvas.getCenter();
+
+      const newZoom = zoom * 1.2;
+
+      canvas.zoomToPoint(new fabric.Point(center.left, center.top), newZoom);
+    }
+  };
+
+  const handleZoomOutBtn = () => {
+    if (fabricCanvasRef.current) {
+      const canvas = fabricCanvasRef.current;
+      const zoom = canvas.getZoom();
+      const center = canvas.getCenter();
+
+      const newZoom = zoom / 1.2;
+
+      canvas.zoomToPoint(new fabric.Point(center.left, center.top), newZoom);
+    }
+  };
+
   const confirmBookingModal = () => {
     if (selectedObject) {
       if (getBookedBy(selectedObject)) {
@@ -427,7 +451,19 @@ const DeskBooking = () => {
       breadcrumbItems.push({ text: areaData?.name ?? "Pick a space", to: "" });
     }
   }
+  const PlusIcon: React.FC = () => (
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='currentColor'>
+      <path d='M19 11h-6V5a1 1 0 0 0-2 0v6H5a1 1 0 0 0 0 2h6v6a1 1 0 0 0 2 0v-6h6a1 1 0 0 0 0-2z' />
+    </svg>
+  );
 
+  const MinusIcon: React.FC = () => (
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='currentColor'>
+      <path d='M19 13H5a1 1 0 0 1 0-2h14a1 1 0 0 1 0 2z' />
+    </svg>
+  );
+
+  // RENDERING STUFF
   return (
     <div>
       <Breadcrumbs items={breadcrumbItems} />
@@ -454,6 +490,14 @@ const DeskBooking = () => {
         <TabItem label='Floorplan'>
           <div className='canvas__container'>
             <canvas height={800} width={600} ref={canvasElRef} />
+            <div className='zoom-in-out-btns'>
+              <button onClick={handleZoomInBtn}>
+                <PlusIcon />
+              </button>
+              <button onClick={handleZoomOutBtn}>
+                <MinusIcon />
+              </button>
+            </div>
           </div>
           <div className='color-key__container'>
             <strong>Key:</strong>

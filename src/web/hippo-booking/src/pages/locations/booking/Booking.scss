@@ -94,3 +94,23 @@
   }
 }
 
+.zoom-in-out-btns {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  button {
+    border-radius: 10px;
+    background-color: $hippo-brand-light-green;
+    color: $hippo-brand-navy;
+    border: 0;
+    font-size: .1em;
+  }
+}
+
+.canvas__container {
+  position: relative;
+}
