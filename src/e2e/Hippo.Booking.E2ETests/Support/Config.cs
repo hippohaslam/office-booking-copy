@@ -37,7 +37,7 @@ public class Config
         var db = new HippoBookingDbContext(dbOptions, new TestUserProvider(), new SystemDateTimeProvider());
 
         var retries = 0;
-        while (retries <= 5)
+        while (retries <= 10)
         {
             retries++;
 
@@ -46,7 +46,7 @@ public class Config
                 return db;
             }
             
-            await Task.Delay(3000);
+            await Task.Delay(5000);
         }
 
         throw new InvalidOperationException("Could not connect to database");
