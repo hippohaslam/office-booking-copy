@@ -40,11 +40,11 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization_too_high" {
   namespace           = "AWS/RDS"
   period              = "300"
   statistic           = "Average"
-  threshold           = 90
+  threshold           = 80
   alarm_description   = "Average database CPU utilization over last 5 minutes too high"
   actions_enabled     = "true"
   alarm_actions       = [aws_sns_topic.booking_app_topic.arn]
   dimensions = {
-    DBInstanceIdentifier = aws_db_instance.hippo-booking-db.id
+    DBInstanceIdentifier = aws_db_instance.hippo-booking-db.identifier
   }
 }
