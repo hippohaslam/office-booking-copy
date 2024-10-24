@@ -9,6 +9,12 @@ resource "aws_sns_topic_subscription" "booking_app_topic_subscription" {
   endpoint  = each.key
 }
 
+resource "aws_sns_topic_subscription" "booking_app_topic_slack_subscription" {
+  topic_arn = aws_sns_topic.booking_app_topic.arn
+  protocol  = "email"
+  endpoint  = var.slack_channel_email
+}
+
 resource "aws_cloudwatch_metric_alarm" "beanstalk_health_alarm" {
   alarm_name          = "${local.beanstalk-api-name}-alarm-activated"
   comparison_operator = "GreaterThanOrEqualToThreshold"

@@ -72,3 +72,8 @@ variable "email_recipients_alarms" {
   description = "Who will receive emails for alarms, i.e. when health degrades"
   type        = set(string)
 }
+
+variable "slack_channel_email" {
+  description = "Slack channel email to send AWS Alarm alerts to"
+  type        = string
+}

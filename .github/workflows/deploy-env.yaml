@@ -180,6 +180,7 @@ jobs:
           TF_VAR_github_access_token: ${{ secrets.FRONTEND_DEPLOY_TOKEN }}
           TF_VAR_slack_token: ${{ secrets.SLACK_TOKEN }}
           TF_VAR_slack_signing_secret: ${{ secrets.SLACK_SIGNING_SECRET }}
+          TF_VAR_slack_channel_email: ${{ secrets.SLACK_CHANNEL_EMAIL }}
 
       - name: Terraform Apply
         id: apply
