@@ -59,7 +59,7 @@ const BookingConfirmed = () => {
           <p>You will receive a Slack message confirming this booking.</p>
           <div className='sub-section-grey'>
             <h2>Need another booking in {data?.location.name}?</h2>
-            <p>Bookings can be placed up to 1 month in advance. You can also book spaces for guests and other Hippos under your name.</p>
+            <p>Bookings can be placed up to 6 weeks in advance. You can also book spaces for guests and other Hippos under your name.</p>
             <div className='button-group'>
               {data.location.areas.map((area: Area) => {
                 return (
