@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CtaLink, ErrorBanner, SuccessBanner } from "../../components/index.ts";
-import BookingTable from "../../components/table/bookings/BookingTable.tsx";
+import { ActionTable, CtaLink, ErrorBanner, IconButton, SuccessBanner } from "../../components/index.ts";
 import BookingCardStacked from "../../components/booking/BookingCardStacked.tsx";
 import { deleteBookingAsync, getUpcomingBookingsAsync } from "../../services/Apis.ts";
 import ConfirmModal from "../../components/modals/confirm/ConfirmModal.tsx";
 import { AxiosError } from "axios";
+import DeleteIcon from "../../assets/delete-icon-navy.svg";
 
 const Bookings = () => {
   const queryClient = useQueryClient();
@@ -20,30 +20,6 @@ const Bookings = () => {
     queryKey: ["bookings"],
     queryFn: getUpcomingBookingsAsync,
   });
-
-  const groupBookingsByDate = (bookings: Booking[] | undefined): { [key: string]: Booking[] } => {
-    if (!bookings) {
-      return {};
-    }
-    return bookings?.reduce(
-      (grouped, booking) => {
-        const dateKey = new Date(booking.date).toLocaleDateString("en-GB", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        });
-        if (!grouped[dateKey]) {
-          grouped[dateKey] = [];
-        }
-        grouped[dateKey].push(booking);
-        return grouped;
-      },
-      {} as { [key: string]: Booking[] },
-    );
-  };
-
-  const groupedBookings = groupBookingsByDate(data);
 
   const deleteBooking = useMutation({
     mutationFn: async (booking: Booking) => {
@@ -125,6 +101,29 @@ const Bookings = () => {
     );
   }
 
+  const UpcomingBookingsRows = () => {
+    return (
+      <>
+      {data?.map((booking, index) => (
+        <tr key={index} className='booking-row'>
+          <td>{new Date(booking.date).toLocaleDateString("en-GB", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}</td>
+          <td>{booking.bookableObject.name}</td>
+          <td>{booking.area.name}</td>
+          <td>{booking.location.name}</td>
+          <td>
+            <IconButton title="Cancel booking" onClick={() => handleCancelClick(booking)} color="navy" showBorder={false} showText={false} iconSrc={DeleteIcon}/>
+          </td>
+        </tr>
+      ))}
+      </>
+    )
+  }
+
   return (
     <div>
       <SuccessBanner
@@ -153,29 +152,30 @@ const Bookings = () => {
 
       <h1>My bookings</h1>
       <h2>Upcoming</h2>
-      {data?.length === 0 && <p>You have no upcoming bookings.</p>}
-      {Object.keys(groupedBookings).map((date) => (
-        <div key={date}>
-          <BookingTable date={date} bookings={Object.values(groupedBookings[date])} onClick={handleCancelClick} />
-        </div>
-      ))}
-      <CtaLink to="/locations" color="cta-green" withArrow={true} text="Make a new booking"/>
-
-      <ConfirmModal
-        title='Are you sure you want to cancel this booking?'
-        isOpen={isModalVisible}
-        childElement={bookingInfoElement()}
-        showConfirmButton
-        confirmButtonLabel={isModalLoading ? "Cancelling booking" : 'Yes. Cancel it'}
-        confirmButtonColor='cta-red'
-        confirmButtonDisabled={isModalLoading}
-        confirmButtonLoading={isModalLoading}
-        onConfirm={handleConfirmCancel}
-        cancelButtonLabel='No. Keep it'
-        cancelButtonColor='cta-green'
-        cancelButtonDisabled={isModalLoading}
-        onCancel={handleCloseModal}
-      />
+      {data?.length === 0 ? <p>You have no upcoming bookings.</p> : 
+      <>
+        <ActionTable 
+          title="Bookings" 
+          columnHeadings={["Date", "Bookable object", "Area", "Location", "Actions"]} 
+          rows={UpcomingBookingsRows()}>
+        </ActionTable>
+        <ConfirmModal
+          title='Are you sure you want to cancel this booking?'
+          isOpen={isModalVisible}
+          childElement={bookingInfoElement()}
+          showConfirmButton
+          confirmButtonLabel={isModalLoading ? "Cancelling booking" : 'Yes. Cancel it'}
+          confirmButtonColor='cta-red'
+          confirmButtonDisabled={isModalLoading}
+          confirmButtonLoading={isModalLoading}
+          onConfirm={handleConfirmCancel}
+          cancelButtonLabel='No. Keep it'
+          cancelButtonColor='cta-green'
+          cancelButtonDisabled={isModalLoading}
+          onCancel={handleCloseModal}
+          />
+        </>}
+        <CtaLink to="/locations" color="cta-green" withArrow={true} text="Make a new booking"/>
     </div>
   );
 };

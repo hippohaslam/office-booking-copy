@@ -7,16 +7,16 @@ public class AdminPage(IPage page)
 {
     private ILocator H1Heading => page.GetByRole(AriaRole.Heading, new() { Name = "Admin" });
     private ILocator ReportingLink => page.GetByRole(AriaRole.Link, new() { Name = "Go to reporting dashboard" });
-    private ILocator AddNewLocationButton => page.GetByRole(AriaRole.Button, new() { Name = "Add a new location" });
+    private ILocator AddNewLocationButton => page.GetByRole(AriaRole.Link, new() { Name = "Add a new location" });
 
     private ILocator LocationContainer(string locationName) => page.GetByTestId("location-container")
         .Filter(new LocatorFilterOptions {Has = page.GetByRole(AriaRole.Heading, new() {Name = locationName})});
     
     private ILocator EditLocationLink(string locationName) =>
-        LocationContainer(locationName).GetByRole(AriaRole.Link, new() { Name = locationName });
+        LocationContainer(locationName).GetByRole(AriaRole.Link, new() { Name = "View and edit location details" });
 
     private ILocator AddAreaButton(string locationName) =>
-        LocationContainer(locationName).GetByRole(AriaRole.Button, new() {Name = "Add area"});
+        LocationContainer(locationName).GetByRole(AriaRole.Link, new() {Name = "Add new area for " + locationName});
 
     private ILocator AreasList(string locationName) => LocationContainer(locationName).GetByRole(AriaRole.List);
     

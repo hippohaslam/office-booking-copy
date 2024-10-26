@@ -1,16 +1,31 @@
+@import "../../styles/variables.scss";
+
+.location-and-area-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
 .location-and-area {
-  border: 1px solid #f9f9f9;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  margin: 20px 0;
-  padding: 10px;
+  border-radius: 12px;
+  background-color: $hippo-brand-light-grey;
+  padding: 10px 20px;
 
   .location-and-area__header {
     padding: 10px 0;
     margin: 0;
   }
+}
 
-  .location-and-area__cta {
-    margin: 10px 0 10px 0;
+@media only screen and (max-width: 1300px){
+  .location-and-area-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media only screen and (max-width: 850px){
+  .location-and-area-list {
+    grid-template-columns: 1fr;
   }
 }

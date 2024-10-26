@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { CtaButton } from "../../buttons/CtaButton";
 
 type SelectModalProps = {
   title: string;
@@ -68,9 +69,7 @@ const SelectModal = ({ title, isOpen, onClose, children }: SelectModalProps) => 
           {children}
         </div>
         <div>
-          <button type='button' onClick={onClose}>
-            Cancel
-          </button>
+          <CtaButton color='cta-green' text="Cancel" onClick={onClose}/>
         </div>
       </div>
     </div>

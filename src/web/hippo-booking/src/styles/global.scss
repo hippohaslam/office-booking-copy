@@ -60,6 +60,7 @@ body {
 main {
   min-height: calc(100dvh - (6rem + 4rem)); // = full height - (header height - footer height)
   background-color: var(--hippo-brand-grey);
+  padding-bottom: 20px
 }
 
 .login-page-container {
@@ -175,10 +176,10 @@ button {
 /* || links */
 
 a {
+  display: block;
   color: var(--hippo-dark-green);
   text-underline-offset: 7px;
   text-decoration-color: var(--hippo-brand-green);
-  margin: 1em 0;
 
   &:not(.cta):visited {
     color: var(--hippo-dark-green);
@@ -213,7 +214,7 @@ a {
 }
 
 p a {
-  margin: 0;
+  display: inline;
 }
 
 /* Containers and sections */
@@ -305,11 +306,47 @@ textarea {
   display: block;
   margin-top: 1em;
 
+  label {
+    display: block;
+    font-weight: bold;
+    font-size: 15pt;
+  }
+
+  p.hint{
+    margin: 0;
+    padding: 0;
+    font-weight: 100;
+    color: rgb(57, 57, 57);
+  }
+
   > input,
   textarea,
   select {
     display: block;
     margin-bottom: 1em;
+    background-color: $hippo-brand-light-grey;
+    border: solid 1px $hippo-brand-dark-grey;
+    border-radius: 12px;
+    padding: 10px 15px;
+    width: 100%;
+    max-width: 750px;
+    font-size: 12pt;
+
+    &:has(+ p.hint){
+      margin-bottom: 1px;
+    }
+  }
+
+  &.standard-inputs__transparent{
+    > input,
+    textarea,
+    select {
+      background-color: transparent;
+    }
+  }
+
+  textarea {
+    min-height: 100px;
   }
 }
 

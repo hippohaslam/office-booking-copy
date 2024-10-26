@@ -6,14 +6,14 @@ namespace Hippo.Booking.E2ETests.Pages.Admin;
 
 public class CreateEditLocationPage(IPage page)
 {
-    private ILocator BackToLocationsLink => page.GetByRole(AriaRole.Link, new() { Name = "Back to locations" });
+    private ILocator BackToLocationsLink => page.GetByRole(AriaRole.Link, new() { Name = "Admin" }).First;
     private ILocator H1Heading => page.GetByRole(AriaRole.Heading, new() { Name = "Create a new location" });
     private ILocator NameInput => page.GetByRole(AriaRole.Textbox, new() { Name = "Name" });
     private ILocator DescriptionInput => page.GetByRole(AriaRole.Textbox, new() { Name = "Description" });
     private ILocator AddressInput => page.GetByRole(AriaRole.Textbox, new() { Name = "Address" });
     private ILocator SlackChannelInput => page.GetByRole(AriaRole.Textbox, new() { Name = "Slack channel link" });
     private ILocator GuideLinkInput => page.GetByRole(AriaRole.Textbox, new() { Name = "Office guide link" });
-    private ILocator SubmitButton => page.GetByRole(AriaRole.Button, new() { Name = "Submit" });
+    private ILocator SubmitButton => page.GetByRole(AriaRole.Button, new() { Name = "Save location" });
     
     public async Task AssertCreateEditLocationPage(StateHelper.CreateEditState state)
     {

@@ -1,12 +1,12 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { ErrorBanner } from "../../components";
+import { CtaLink, ErrorBanner, IconLink } from "../../components";
 import { getLocationAreasAsync, getLocationsAsync } from "../../services/Apis";
-import { Link, useNavigate } from "react-router-dom";
-import { CtaButton } from "../../components/buttons/CtaButton";
+import { Link } from "react-router-dom";
 import "./Dashboard.scss";
 
+import AddIcon from "../../assets/add-icon.svg";
+
 const Admin = () => {
-  const navigate = useNavigate();
   const {
     isFetching,
     error,
@@ -28,15 +28,7 @@ const Admin = () => {
   const getAreas = (locationId: number) => {
     return locationDetailsQueries.flatMap((query) => query.data?.filter((x) => x && x.locationId === locationId) || []);
   };
-
-  const handleAddNewLocation = () => {
-    navigate("/admin/locations/new");
-  };
-
-  const handleAddArea = (locationId: number) => {
-    navigate(`/admin/locations/${locationId}/areas/new`);
-  };
-
+  
   if (error || locationDetailsQueries.some((query) => query.isError)) {
     return (
       <div>
@@ -61,28 +53,29 @@ const Admin = () => {
         <Link to='/admin/reporting'>Go to reporting dashboard</Link>
       </div>
       <br />
-      <h2>Edit locations</h2>
-      <CtaButton text='Add a new location' color='cta-green' onClick={handleAddNewLocation} />
+      <h2>Locations</h2>
       {locationData?.length === 0 && <p>No locations found. Create a your first location!</p>}
-      {locationData?.map((location) => (
-        <div key={location.id} className='location-and-area' data-testid='location-container'>
-          <h3 className='location-and-area__header'>
-            <Link to={`/admin/locations/${location.id}`}>{location.name}</Link>
-          </h3>
-          <button type='button' className='location-and-area__cta' onClick={() => handleAddArea(location.id)}>
-            Add area
-          </button>
-          {getAreas(location.id).length === 0 && <p>No areas yet for this location. =(</p>}
-          <ul>
-            {/* Get all the areas of this location */}
-            {getAreas(location.id).map((area) => (
-              <li key={area.id}>
-                <Link to={`/admin/locations/${location.id}/area/${area.id}`}>{area.name}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <div className="location-and-area-list">
+        {locationData?.map((location) => (
+          <div key={location.id} className='location-and-area' data-testid='location-container'>
+            <h3 className='location-and-area__header'>{location.name}</h3>
+            <Link to={`/admin/locations/${location.id}`}>View and edit location details</Link>
+            <br/>
+            <h4>Areas</h4>
+            {getAreas(location.id).length === 0 && <p>There are no areas yet for this location. &#128533;</p>}
+            <ul>
+              {/* Get all the areas of this location */}
+              {getAreas(location.id).map((area) => (
+                <li key={area.id}>
+                  <Link to={`/admin/locations/${location.id}/area/${area.id}`}>{area.name}</Link>
+                </li>
+              ))}
+            </ul>
+            <IconLink title={`Add new area for ${location.name}`} color="navy" iconSrc={AddIcon} to={`/admin/locations/${location.id}/areas/new`} showBorder={true} showText={true}/>
+          </div>
+        ))}
+      </div>
+      <CtaLink text='Add a new location' color='cta-green' to='/admin/locations/new' />
     </div>
   );
 };

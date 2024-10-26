@@ -63,6 +63,10 @@ const putObjectsAsync = async (locationId: string, areaId: string, bookableObjec
   );
 };
 
+const editObjectAsync = async (locationId: string, areaId: string, bookableObject: BookableObject) => {
+  return await axiosInstance.put(prependAdminToUrl(`/location/${locationId}/area/${areaId}/bookable-object/${bookableObject.id}`, true), bookableObject);
+}
+
 // AREAS
 
 const getLocationAreaAsync =
@@ -181,6 +185,7 @@ export {
   deleteBookingAsync,
   // BookableObjects
   postBookableObjectAsync,
+  editObjectAsync,
   // AUTH
   getSession,
   postSessionGoogle,

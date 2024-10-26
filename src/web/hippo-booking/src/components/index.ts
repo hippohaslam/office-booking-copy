@@ -3,7 +3,7 @@ import SuccessBanner from "./banners/SuccessBanner";
 import InformationBanner from "./banners/InformationBanner";
 import Nav from "./nav/Nav";
 import CustomConfirmDialog from "./modals/dialog/CustomConfirmDialog";
-import { AccordionItem } from "./accordion/Accordion";
+import { AccordionGroup, AccordionItem } from "./accordion/Accordion";
 import TabItem from "./tabs/TabItem";
 import TabList from "./tabs/TabList";
 import ConfirmModal from "./modals/confirm/ConfirmModal";
@@ -14,6 +14,9 @@ import { ActionTile, ActionTileList } from "./tile/action-tile/ActionTile";
 import { CtaButton } from "./buttons/CtaButton";
 import CtaLink from "./buttons/CtaLink";
 import Breadcrumbs from "./breadcrumbs/Breadcrumbs";
+import ActionTable from "./table/action/ActionTable";
+import IconButton from "./buttons/Icon/IconButton";
+import IconLink from "./buttons/Icon/IconLink";
 
 export {
   MultiErrorBanner,
@@ -22,6 +25,7 @@ export {
   InformationBanner,
   WarningBanner,
   Nav,
+  AccordionGroup,
   AccordionItem,
   CustomConfirmDialog,
   TabItem,
@@ -33,5 +37,8 @@ export {
   ActionTileList,
   CtaButton,
   CtaLink, 
-  Breadcrumbs
+  Breadcrumbs,
+  ActionTable,
+  IconButton,
+  IconLink
 };

@@ -1,0 +1,108 @@
+@import "../../../styles/variables.scss";
+
+table.action-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+  
+  caption {
+    text-align: left;
+    font-size: 15pt;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  th, td {
+    padding: 5px 15px;
+    text-align: left;
+    max-width: 700px;
+
+    button {
+      display: inline-block;
+    }
+  }
+  
+  thead {
+    background-color: $hippo-brand-navy;
+    color: white;
+    font-weight: bold;
+    height: 50px;
+
+    th:first-child {
+      border-top-left-radius: 12px;
+    }
+
+    th:last-child {
+      border-top-right-radius: 12px;
+    }
+  }
+  
+  tbody {
+    background-color: $hippo-brand-bluey-grey;
+
+    tr:nth-child(even) {
+      background-color: $hippo-brand-light-grey;
+    }
+
+    tr:last-child{
+      td:first-child{
+        border-bottom-left-radius: 12px;
+      }
+      td:last-child{
+        border-bottom-right-radius: 12px;
+      }
+    }
+  }
+
+  button {
+    margin: 0;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  table.action-table{
+    
+    thead {
+      display: none;
+    }
+    
+    tbody {
+      background-color: unset;
+
+      tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        margin-bottom: 10px;
+        border: 1px solid $hippo-brand-light-grey;
+        border-radius: 12px;
+        background-color: $hippo-brand-light-grey;
+        overflow: hidden;
+        padding: 10px;
+
+        &:last-of-type{
+          margin-bottom: 0;
+        }
+
+        td {
+          padding: 0;
+        }
+
+        td:first-of-type{
+          font-weight: bold;
+        }
+
+        td:not(last-of-type:has(button)) {
+          grid-column: 1;
+        }
+
+        td:last-of-type:has(button) {
+          grid-row: 1 / 1000;
+          padding: 0;
+          grid-column: 2;
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+  }
+}

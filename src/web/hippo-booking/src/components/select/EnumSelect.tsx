@@ -1,3 +1,5 @@
+import "./Select.scss";
+
 const addSpaceBetweenCapitals = (str: string) => {
   return str
     .split("")
@@ -24,13 +26,15 @@ const EnumSelect = <T extends object>({ enumObj, name, value, onChange }: EnumSe
   const options = getEnumOptions(enumObj);
 
   return (
-    <select value={value} onChange={onChange} name={name} id={name}>
-      {options.map((option) => (
-        <option key={String(option.value)} value={String(option.value)}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+    <div className="select">
+      <select value={value} onChange={onChange} name={name} id={name}>
+        {options.map((option) => (
+          <option key={String(option.value)} value={String(option.value)}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };
 

@@ -6,7 +6,7 @@ namespace Hippo.Booking.E2ETests.Pages.Admin;
 
 public class CreateEditAreaPage(IPage page)
 {
-    private ILocator BackToLocationsLink => page.GetByRole(AriaRole.Link, new() { Name = "Back to locations" });
+    private ILocator BackToLocationsLink => page.GetByRole(AriaRole.Link, new() { Name = "Admin" }).First;
     private ILocator H1Heading(string locationName) =>
         page.GetByRole(AriaRole.Heading, new() {Name = "Create a new area " + locationName});
     

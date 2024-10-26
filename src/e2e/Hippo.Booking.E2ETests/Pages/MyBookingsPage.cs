@@ -7,12 +7,12 @@ public class MyBookingsPage(IPage page)
 {
     private ILocator H1Heading => page.GetByRole(AriaRole.Heading, new() { Name = "My bookings" });
 
-    private ILocator BookingsForDateTable(DateOnly date) =>
-        page.GetByRole(AriaRole.Table, new() {Name = date.ToString("dddd d MMMM yyyy")});
+    private ILocator BookingsForDateTable() =>
+        page.GetByRole(AriaRole.Table, new() {Name = "Bookings"});
     
     private ILocator BookingRow(DateOnly date, string bookableObjectName, string areaName, string locationName) =>
-        BookingsForDateTable(date).GetByRole(AriaRole.Row).Filter(new LocatorFilterOptions
-            {HasText = bookableObjectName + areaName + locationName + "Cancel booking"});
+        BookingsForDateTable().GetByRole(AriaRole.Row).Filter(new LocatorFilterOptions
+            {HasText = date.ToString("dddd dd MMMM yyyy") + bookableObjectName + areaName + locationName});
 
     private ILocator
         CancelBookingButton(DateOnly date, string bookableObjectName, string areaName, string locationName) =>

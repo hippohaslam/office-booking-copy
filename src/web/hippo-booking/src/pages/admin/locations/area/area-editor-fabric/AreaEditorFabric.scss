@@ -1,41 +1,92 @@
+@import "../../../../../styles/variables.scss";
+
 .floorplan__container {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 20px;
   height: 100%;
   width: 100%;
 }
 
-// if media is less than 900px
-@media (max-width: 1150px) {
-  .floorplan__container {
-    flex-direction: column;
-  }
+.toolbar{
+  display: flex;
+  gap: 50px;
+  background-color: $hippo-brand-navy;
+  border-top-left-radius: 12pt;
+  border-top-right-radius: 12pt;
+  padding: 5px 12px;
+  flex-wrap: wrap;
+}
+
+.toolbar {
+  gap: 15px;
+}
+
+.toolbar-button-group{
+  display: flex;
+}
+
+.floorplan__desk-list-container{
+  background-color: $hippo-brand-light-grey;
+  padding: 15px;
+  height: 650px; 
+  border-radius: 12px;
 }
 
 .floorplan__desk-list {
+  margin-left: 0;
   width: 100%;
-  margin-left: 10px;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-gutter: auto;
+  scrollbar-color: blue;
 
   ul {
+    display: flex;
+    flex-direction: column;
     list-style-type: none;
     padding: 0;
 
     li {
       list-style: none;
     }
+
+    li:nth-child(even){
+      background-color:$hippo-brand-bluey-grey;
+    }
   }
 
   .floorplan__desk-list-card {
     display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    max-width: 300px;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px;
+    align-items: center;
 
-    > div {
-      // put label and input not in a row
-      display: flex;
-      flex-direction: column;
-      margin: 5px 0;
+    button[aria-disabled="true"]{
+      background-color: transparent;
+      color: grey;
+      cursor: not-allowed;
+
+      &:active{
+        border-style: outset;
+      }
     }
+  }
+
+  .floorplan__desk-list-card:nth-child(even) {
+    background-color: $hippo-brand-grey;
+  }
+}
+
+@media only screen and (max-width: 1150px){
+  .floorplan__container {
+    grid-template-columns: 1fr;
+  }
+
+  .floorplan__desk-list{
+    height: auto;
+    overflow-y: unset;
   }
 }

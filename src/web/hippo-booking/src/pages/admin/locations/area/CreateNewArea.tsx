@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { CtaButton, ErrorBanner } from "../../../../components";
+import { useNavigate, useParams } from "react-router-dom";
+import { Breadcrumbs, CtaButton, ErrorBanner } from "../../../../components";
 import { getLocationAsync, postLocationAreaAsync } from "../../../../services/Apis";
 import { AreaTypeEnum } from "../../../../enums/AreaTypeEnum.ts";
 import { NewArea } from "../../../../interfaces/Area";
@@ -48,11 +48,15 @@ const CreateArea = () => {
   };
 
   const hasErrors = createArea.isError;
+  const breadcrumbItems = [
+    { to: "/admin", text: "Admin" }, 
+    { to: "", text: "Create new area" }
+  ];
 
   return (
     <div>
       {hasErrors && <ErrorBanner isShown={hasErrors} title='Error' errorMessage={createArea.error.message} allowClose={true} />}
-      <Link to='/admin'>Back to locations</Link>
+      <Breadcrumbs items={breadcrumbItems} />
       <h1>Create a new area {locationData?.name}</h1>
       <form onSubmit={handleSubmit}>
         <div className='standard-inputs'>

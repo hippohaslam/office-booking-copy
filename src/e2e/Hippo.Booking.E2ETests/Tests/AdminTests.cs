@@ -63,21 +63,28 @@ public class AdminTests : PlaywrightFixture
         };
 
         var createEditAreaFloorPlanPage = new EditAreaFloorPlanPage(Page);
-        await createEditAreaFloorPlanPage.AssertEditAreaFloorPlanPage(area.Name);
+        await createEditAreaFloorPlanPage.AssertEditAreaFloorPlanPage();
         await createEditAreaFloorPlanPage.ClickCreateNewBookableObjectButton();
         await createEditAreaFloorPlanPage.AssertCreateNewBookableObjectForm();
         await createEditAreaFloorPlanPage.ClickCancelBookableObjectButton();
         await createEditAreaFloorPlanPage.ClickCreateNewBookableObjectButton();
         await createEditAreaFloorPlanPage.AssertCreateNewBookableObjectForm();
         await createEditAreaFloorPlanPage.FillOutCreateNewBookableObjectFormAndSubmit(bookableObject);
-        await createEditAreaFloorPlanPage.AssertBookableObjectInList(bookableObject.Name, false);
+        await createEditAreaFloorPlanPage.ToggleUnassignedItemsAccordion(1);
+        await createEditAreaFloorPlanPage.AssertBookableObjectInUnassignedAccordion(bookableObject.Name);
 
         await createEditAreaFloorPlanPage.AddCircleToFloorPlan();
         await createEditAreaFloorPlanPage.AssignBookableObjectToCircle(bookableObject.Name);
-        await createEditAreaFloorPlanPage.AssertBookableObjectInList(bookableObject.Name, true);
+        await createEditAreaFloorPlanPage.ToggleAssignedItemsAccordion(1);
+        await createEditAreaFloorPlanPage.AssertBookableObjectInAssignedAccordion(bookableObject.Name);
         await createEditAreaFloorPlanPage.ClickSaveChangesButton();
-
+        
         var banner = new BannerComponent(Page);
+        await banner.AssertBanner("Saved successfully", "");
+
+        await createEditAreaFloorPlanPage.UnassignBookableObject(bookableObject.Name);
+        await createEditAreaFloorPlanPage.AssertBookableObjectInUnassignedAccordion(bookableObject.Name);
+        await createEditAreaFloorPlanPage.ClickSaveChangesButton();
         await banner.AssertBanner("Saved successfully", "");
     }
 }

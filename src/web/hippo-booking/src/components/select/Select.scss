@@ -1,0 +1,28 @@
+@import "../../styles/variables.scss";
+
+.select {
+    position: relative;
+    display: grid;
+    grid-template-areas: "select";
+    align-items: center;
+    margin-bottom: 1em;
+    max-width: 750px;
+
+    & select {
+        appearance: none;
+        cursor: pointer;
+        grid-area: select;
+        margin-bottom: 0;
+    }
+}
+
+.select::after {
+    content: "";
+    width: 0.8em;
+    height: 0.5em;
+    background-color: $hippo-brand-navy;
+    clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+    justify-self: end;
+    margin-right: 10px;
+    grid-area: select;
+}
