@@ -158,15 +158,15 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.400.36",
-        "contentHash": "K4iJjzwI8VfkjxvLhjpODiZvVk5frjqHJ69rWIxk6xPWglHBLYAN4DhSZO/GpKJpNWjtHB+VlCvgWGZA8JnEHQ=="
+        "resolved": "3.7.400.39",
+        "contentHash": "TQuS+qoEvEih81PVb0sV/V1UAFTJhswA0wEFfBGm5v9AramJHkF2gPNF0RAcsnMlwumzM0+o3P/ZQVxAtsSHJA=="
       },
       "AWSSDK.SecretsManager": {
         "type": "Transitive",
-        "resolved": "3.7.400.36",
-        "contentHash": "yPAXNa+cavvaLmkbthn6F3tE9adySUxWcD61k0RTq5/3hmsq5AeXZVd3jwu74OT/tZpkakjGEXLfPpRfguUJwQ==",
+        "resolved": "3.7.400.39",
+        "contentHash": "jGqmK3m10YsJhPm8vX48/pDH7ezoovou3sQ9+F5JIQHi5W9KSaSxhzmsK0y0V6FPpgkuUOYGr4r+z+Aw6wMGDw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.400.36, 4.0.0)"
+          "AWSSDK.Core": "[3.7.400.39, 4.0.0)"
         }
       },
       "Dapper": {
@@ -1938,7 +1938,7 @@
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SecretsManager": "[3.7.400.36, )",
+          "AWSSDK.SecretsManager": "[3.7.400.39, )",
           "Dapper": "[2.1.35, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
