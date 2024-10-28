@@ -1,0 +1,14 @@
+export { default as CircleIcon } from "./circle-icon.svg";
+export { default as SquareIcon } from "./square-icon.svg";
+export { default as AddLineIcon } from "./line-icon.svg";
+export { default as FreeDrawIcon } from "./edit-mode-icon.svg";
+export { default as FreeDrawOffIcon } from "./edit-off-icon.svg";
+export { default as TextIcon } from "./text-icon.svg";
+export { default as DeleteIcon } from "./delete-icon.svg";
+export { default as DuplicateIcon } from "./copy-icon.svg";
+export { default as SendToBackIcon } from "./bring-to-back-icon.svg";
+export { default as SendToFrontIcon } from "./bring-to-front-icon.svg";
+export { default as ImageIcon } from "./image-icon.svg";
+export { default as EditIcon } from "./edit-icon.svg";
+export { default as AddIcon } from "./add-icon.svg";
+export { default as AssignIcon } from "./assign-icon.svg";

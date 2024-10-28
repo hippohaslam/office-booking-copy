@@ -1,20 +1,9 @@
-@import "./variables.scss";
+@use "variables.scss";
 
 /* || font */
 
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
 
-@font-face {
-  font-family: "DM Sans";
-  src: url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
-  font-display: swap;
-  font-weight: normal;
-  font-style: normal;
-}
-
-/*  */
 
 /* || general */
 
@@ -166,8 +155,8 @@ ul {
 // Basic until we come up with a better style that's not a CTA
 button {
   padding: 8px;
-  border-color: $hippo-brand-grey;
-  background-color: $hippo-brand-light-grey;
+  border-color: variables.$hippo-brand-grey;
+  background-color: variables.$hippo-brand-light-grey;
   cursor: pointer;
 }
 
@@ -257,7 +246,7 @@ section.full-width-navy {
 
 hr {
   border: none;
-  border-top: 1pt solid $hippo-brand-dark-grey;
+  border-top: 1pt solid variables.$hippo-brand-dark-grey;
 }
 
 /* Tables */
@@ -270,16 +259,16 @@ hr {
     padding: 5px;
   }
   th {
-    background-color: $hippo-brand-dark-grey;
+    background-color: variables.$hippo-brand-dark-grey;
     color: white;
   }
 
   // striped rows
   tr:nth-child(odd) {
-    background-color: $hippo-brand-light-grey;
+    background-color: variables.$hippo-brand-light-grey;
   }
   tr:nth-child(even) {
-    background-color: $hippo-brand-bluey-grey;
+    background-color: variables.$hippo-brand-bluey-grey;
   }
 }
 
@@ -324,8 +313,8 @@ textarea {
   select {
     display: block;
     margin-bottom: 1em;
-    background-color: $hippo-brand-light-grey;
-    border: solid 1px $hippo-brand-dark-grey;
+    background-color: variables.$hippo-brand-light-grey;
+    border: solid 1px variables.$hippo-brand-dark-grey;
     border-radius: 12px;
     padding: 10px 15px;
     width: 100%;
@@ -359,6 +348,6 @@ textarea {
   cursor: pointer;
 
   &.hover-border:hover {
-    border: 3px solid $hippo-brand-dark-grey;
+    border: 3px solid variables.$hippo-brand-dark-grey;
   }
 }

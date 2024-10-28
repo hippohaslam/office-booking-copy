@@ -1,9 +1,9 @@
-@import "../../styles/variables.scss";
+@use "../../styles/variables.scss";
 
 .booking-card {
   padding: 20px;
   margin: 10px 0;
-  color: $hippo-brand-navy;
+  color: variables.$hippo-brand-navy;
   border-radius: 26px;
   min-width: 400px;
   max-width: 700px;
@@ -22,15 +22,15 @@
 }
 
 .booking-card-hippo-brand-grey {
-  background-color: $hippo-brand-grey;
+  background-color: variables.$hippo-brand-grey;
 }
 
 .booking-card-hippo-brand-light-grey {
-  background-color: $hippo-brand-light-grey;
+  background-color: variables.$hippo-brand-light-grey;
 }
 
 .booking-card-hippo-brand-bluey-grey {
-  background-color: $hippo-brand-bluey-grey;
+  background-color: variables.$hippo-brand-bluey-grey;
 }
 
 @media only screen and (max-width: 768px) {

@@ -1,4 +1,4 @@
-@import "../../styles/variables.scss";
+@use "../../styles/variables.scss";
 
 .date-container {
   padding: 10px 0;
@@ -14,7 +14,7 @@
 .date-control {
   border: none;
   font-size: 12pt;
-  background-color: $hippo-brand-light-grey;
+  background-color: variables.$hippo-brand-light-grey;
   flex-basis: 0;
   flex-grow: 1;
   border-left: 1px rgba(164, 164, 164, 0.472) solid;
@@ -28,7 +28,7 @@
     display: flex;
     align-items: center;
     flex-direction: row-reverse;
-    background-color: $hippo-brand-light-grey;
+    background-color: variables.$hippo-brand-light-grey;
     box-shadow: 0 1px 1px 0 rgba(175, 175, 175, 0.61);
 }
 
@@ -96,7 +96,7 @@
 
   &:hover {
     cursor: pointer;
-    background-color: $hippo-brand-bluey-grey;
+    background-color: variables.$hippo-brand-bluey-grey;
   }
 }
 

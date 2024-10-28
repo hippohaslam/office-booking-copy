@@ -1,4 +1,4 @@
-@import "../../../styles/variables.scss";
+@use "../../../styles/variables.scss";
 
 .confirmed-page-heading {
   display: flex;
@@ -8,7 +8,7 @@
   border-radius: 12px;
   align-items: center;
   gap: 30px;
-  background-color: $hippo-brand-light-green;
+  background-color: variables.$hippo-brand-light-green;
 
   h1 {
     margin-bottom: 0;
@@ -22,7 +22,7 @@
 
 .sub-section-grey {
   padding: 10px 25px;
-  border: 2pt $hippo-brand-dark-grey dotted;
+  border: 2pt variables.$hippo-brand-dark-grey dotted;
   border-radius: 12px;
   margin: 40px 0;
 }

@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Breadcrumbs, CtaButton, ErrorBanner } from "../../../../components";
-import { getLocationAsync, postLocationAreaAsync } from "../../../../services/Apis";
-import { AreaTypeEnum } from "../../../../enums/AreaTypeEnum.ts";
-import { NewArea } from "../../../../interfaces/Area";
-import EnumSelect from "../../../../components/select/EnumSelect.tsx";
+import { Breadcrumbs, CtaButton, ErrorBanner } from "../../../components";
+import { getLocationAsync, postLocationAreaAsync } from "../../../services/Apis";
+import { AreaTypeEnum } from "../../../enums/AreaTypeEnum.ts";
+import { NewArea } from "../../../interfaces/Area";
+import EnumSelect from "../../../components/select/EnumSelect.tsx";
 
 const CreateArea = () => {
   const initialArea = {
@@ -49,8 +49,8 @@ const CreateArea = () => {
 
   const hasErrors = createArea.isError;
   const breadcrumbItems = [
-    { to: "/admin", text: "Admin" }, 
-    { to: "", text: "Create new area" }
+    { to: "/admin", text: "Admin" },
+    { to: "", text: "Create new area" },
   ];
 
   return (
@@ -61,11 +61,11 @@ const CreateArea = () => {
       <form onSubmit={handleSubmit}>
         <div className='standard-inputs'>
           <label htmlFor='name'>Name</label>
-          <input id="name" type='text' name='name' value={area.name} onChange={handleAreaUpdate} />
+          <input id='name' type='text' name='name' value={area.name} onChange={handleAreaUpdate} />
         </div>
         <div className='standard-inputs'>
           <label htmlFor='description'>Description</label>
-          <textarea id="description" name='description' value={area.description} onChange={handleAreaUpdate} />
+          <textarea id='description' name='description' value={area.description} onChange={handleAreaUpdate} />
         </div>
         <div className='standard-inputs'>
           <label htmlFor='areaTypeId'>Area Type</label>

@@ -1,12 +1,12 @@
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { ActionTile, ActionTileList, Breadcrumbs, ErrorBanner } from "../../../components";
-import { Area } from "../../../interfaces/Area";
-import OfficeIcon from "../../../assets/office-icon.svg";
-import ParkingIcon from "../../../assets/parking-icon.svg";
-import { AreaTypeEnum, AreaTypeEnumLabels } from "../../../enums/AreaTypeEnum";
-import { BookingLocation } from "../../../interfaces/Location";
-import { compareAlphabeticallyByPropertyWithNumbers } from "../../../helpers/ArrayHelpers";
+import { ActionTile, ActionTileList, Breadcrumbs, ErrorBanner } from "../../components";
+import { Area } from "../../interfaces/Area";
+import OfficeIcon from "../../assets/office-icon.svg";
+import ParkingIcon from "../../assets/parking-icon.svg";
+import { AreaTypeEnum, AreaTypeEnumLabels } from "../../enums/AreaTypeEnum";
+import { BookingLocation } from "../../interfaces/Location";
+import { compareAlphabeticallyByPropertyWithNumbers } from "../../helpers/ArrayHelpers";
 
 const BookingAreas = () => {
   // prefetch to see if we can skip this page. It works!! a bit abstracty but does the job
@@ -35,7 +35,8 @@ const BookingAreas = () => {
   }
 
   const listItems =
-    areaData?.sort((a, b) => compareAlphabeticallyByPropertyWithNumbers(a, b, "name"))
+    areaData
+      ?.sort((a, b) => compareAlphabeticallyByPropertyWithNumbers(a, b, "name"))
       .map((area) => (
         <ActionTile
           title={area.name}
@@ -43,19 +44,19 @@ const BookingAreas = () => {
           description={AreaTypeEnumLabels[area.areaTypeId]}
           primaryLink={{ show: true, text: "Book in this area", to: `/locations/${locationId}/areas/${area.id}` }}
           secondaryLink={{ show: false }}
-          tileTestId="area-tile"
+          tileTestId='area-tile'
         />
-    )) || [];
+      )) || [];
 
   const breadcrumbItems = [
-    { to: "/", text: "Home" }, 
-    { to: "/locations", text: "Locations" }, 
-    { to: "", text: locationData.name }
+    { to: "/", text: "Home" },
+    { to: "/locations", text: "Locations" },
+    { to: "", text: locationData.name },
   ];
 
   return (
     <div>
-      <Breadcrumbs items={breadcrumbItems}/>
+      <Breadcrumbs items={breadcrumbItems} />
       <h1>{locationData.name}</h1>
       <h2>What would you like to book?</h2>
       <ActionTileList listItems={listItems} />

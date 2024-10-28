@@ -1,4 +1,4 @@
-@import "../../styles/variables.scss";
+@use "../../styles/variables.scss";
 
 .alert-banner {
   padding: 10px 10px;
@@ -11,13 +11,13 @@
   gap: 15px;
 
   &.success-banner {
-    background-color: $hippo-brand-light-green;
-    border: 2pt solid $hippo-brand-green;
+    background-color: variables.$hippo-brand-light-green;
+    border: 2pt solid variables.$hippo-brand-green;
   }
 
   &.information-banner {
-    background-color: $hippo-brand-light-blue;
-    border: 2pt solid $hippo-brand-navy;
+    background-color: variables.$hippo-brand-light-blue;
+    border: 2pt solid variables.$hippo-brand-navy;
   }
 
   &.error-banner {
@@ -27,7 +27,7 @@
 
   &.warning-banner {
     background-color: #faf8cf;
-    border: 2pt solid $hippo-brand-yellow;
+    border: 2pt solid variables.$hippo-brand-yellow;
   }
 
   .alert-title {

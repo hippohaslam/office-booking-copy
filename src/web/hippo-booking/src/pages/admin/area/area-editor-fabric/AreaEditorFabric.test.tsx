@@ -4,7 +4,7 @@ import { setupServer } from "msw/node";
 import FloorplanEditor from "./AreaEditorFabric";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BookableObject } from "../../../../../interfaces/Desk";
+import { BookableObject } from "../../../../interfaces/Desk";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 

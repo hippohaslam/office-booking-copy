@@ -1,4 +1,4 @@
-@import "../../../styles/variables.scss";
+@use "../../../styles/variables.scss";
 
 .action-tile__list {
   margin-top: 20px;
@@ -18,7 +18,7 @@
 }
 
 .action-tile {
-  background-color: $hippo-brand-bluey-grey;
+  background-color: variables.$hippo-brand-bluey-grey;
   padding: 20px;
   border-radius: 12px;
   display: flex;

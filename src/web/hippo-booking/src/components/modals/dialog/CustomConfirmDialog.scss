@@ -1,11 +1,11 @@
-@import "../../../styles/variables.scss";
+@use "../../../styles/variables.scss";
 
 .modal-dialog {
   position: absolute;
   top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: $hippo-brand-bluey-grey;
+  background-color: variables.$hippo-brand-bluey-grey;
   padding: 20px;
   z-index: 100;
   border-radius: 20px;

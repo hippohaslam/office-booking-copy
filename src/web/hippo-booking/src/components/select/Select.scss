@@ -1,4 +1,4 @@
-@import "../../styles/variables.scss";
+@use "../../styles/variables.scss";
 
 .select {
     position: relative;
@@ -20,7 +20,7 @@
     content: "";
     width: 0.8em;
     height: 0.5em;
-    background-color: $hippo-brand-navy;
+    background-color: variables.$hippo-brand-navy;
     clip-path: polygon(100% 0%, 0 0%, 50% 100%);
     justify-self: end;
     margin-right: 10px;

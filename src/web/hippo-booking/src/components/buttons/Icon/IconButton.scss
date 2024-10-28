@@ -1,4 +1,4 @@
-@import "../../../styles/variables.scss";
+@use "../../../styles/variables.scss";
 
 button.icon-button, a.icon-link{
     width: fit-content;
@@ -13,12 +13,12 @@ button.icon-button, a.icon-link{
 
     &.icon-button__navy, &.icon-link__navy{
         &.icon-button__border, &.icon-link__border{
-            border: 2pt solid $hippo-brand-navy;
+            border: 2pt solid variables.$hippo-brand-navy;
         }
 
         &:hover{
-            background-color: $hippo-brand-navy;
-            border: 2pt solid $hippo-brand-navy;
+            background-color: variables.$hippo-brand-navy;
+            border: 2pt solid variables.$hippo-brand-navy;
             color: white;
 
             & img {
@@ -29,12 +29,12 @@ button.icon-button, a.icon-link{
     
     &.icon-button__grey, &.icon-link__grey{
         &.icon-button__border, &.icon-button__border{
-            border: 2pt solid $hippo-brand-grey;
+            border: 2pt solid variables.$hippo-brand-grey;
         }
 
         &:not([aria-disabled='true']):hover{
-            background-color: $hippo-brand-grey;
-            border: 2pt solid $hippo-brand-grey;
+            background-color: variables.$hippo-brand-grey;
+            border: 2pt solid variables.$hippo-brand-grey;
 
             & img {
                 // Bit of a hack as we can't use fill due to the icons not being inline SVGs

@@ -1,21 +1,21 @@
-import "./Booking.scss";
+import "./NewBooking.scss";
 import "react-datepicker/dist/react-datepicker.css";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { getBookingsForDateAsync, getLocationAreaAsync, getLocationAsync, postBookingAsync } from "../../../services/Apis";
+import { getBookingsForDateAsync, getLocationAreaAsync, getLocationAsync, postBookingAsync } from "../../../services/Apis.ts";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
-import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas";
-import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric/CustomObjects";
-import { isNullOrEmpty } from "../../../helpers/StringHelpers";
-import { compareAlphabeticallyByPropertyWithNumbers } from "../../../helpers/ArrayHelpers";
-import { useWindowSize } from "../../../hooks/WindowSizeHook";
-import CustomDatePicker from "../../../components/date-picker/DatePicker";
-import { Breadcrumbs, ConfirmModal, ErrorBanner, TabItem, TabList } from "../../../components";
-import BookingCardStacked from "../../../components/booking/BookingCardStacked";
+import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas.ts";
+import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric/CustomObjects.ts";
+import { isNullOrEmpty } from "../../../helpers/StringHelpers.ts";
+import { compareAlphabeticallyByPropertyWithNumbers } from "../../../helpers/ArrayHelpers.ts";
+import { useWindowSize } from "../../../hooks/WindowSizeHook.tsx";
+import CustomDatePicker from "../../../components/date-picker/DatePicker.tsx";
+import { Breadcrumbs, ConfirmModal, ErrorBanner, TabItem, TabList } from "../../../components/index.ts";
+import BookingCardStacked from "../../../components/booking/BookingCardStacked.tsx";
 import { AxiosError } from "axios";
 import { BookableObject } from "../../../interfaces/Desk";
-import {DaysEnum} from "../../../enums/DaysEnum.ts";
+import { DaysEnum } from "../../../enums/DaysEnum.ts";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
@@ -28,17 +28,17 @@ const loadActiveTab = () => {
   }
 };
 
-const initialDate = () =>{
-  const sessionDate = sessionStorage.getItem("bookingDate")
+const initialDate = () => {
+  const sessionDate = sessionStorage.getItem("bookingDate");
 
   if (sessionDate) {
-    return new Date(sessionDate)
+    return new Date(sessionDate);
   }
 
-  return new Date()
-}
+  return new Date();
+};
 
-const DeskBooking = () => {
+const NewBooking = () => {
   const { locationId, areaId } = useParams();
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate());
   const [selectedObject, setSelectedObject] = useState<BookableObject | null>(null);
@@ -90,8 +90,12 @@ const DeskBooking = () => {
 
   useEffect(() => {
     if (selectedDate) {
-      sessionStorage.setItem("bookingDate", selectedDate.toISOString())
-      setDateDisplay(DaysEnum[selectedDate.getDay()] + " " + selectedDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }));
+      sessionStorage.setItem("bookingDate", selectedDate.toISOString());
+      setDateDisplay(
+        DaysEnum[selectedDate.getDay()] +
+          " " +
+          selectedDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
+      );
       refetch();
     }
   }, [refetch, selectedDate]);
@@ -567,4 +571,4 @@ const BookableObjectListDisplay = ({
   );
 };
 
-export default DeskBooking;
+export default NewBooking;

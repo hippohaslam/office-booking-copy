@@ -1,10 +1,10 @@
-@import "../../styles/variables.scss";
+@use "../../styles/variables.scss";
 
 .login-container {
     display: flex;
     flex-direction: column;
-    background-color: $hippo-brand-light-grey;
-    color: $hippo-brand-navy;
+    background-color: variables.$hippo-brand-light-grey;
+    color: variables.$hippo-brand-navy;
     border-radius: 26px;
     padding: 20px 50px;
 

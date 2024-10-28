@@ -1,8 +1,8 @@
-@import "../../styles/variables.scss";
+@use "../../styles/variables.scss";
 
 header {
-  color: $hippo-brand-navy;
-  background-color: $hippo-brand-grey;
+  color: variables.$hippo-brand-navy;
+  background-color: variables.$hippo-brand-grey;
 
   .nav-container {
     display: flex;
@@ -37,7 +37,7 @@ header {
   nav {
     padding: 0 1.5rem;
     a {
-      color: $hippo-brand-navy;
+      color: variables.$hippo-brand-navy;
       text-decoration: none;
       padding: 0.5rem;
       font-weight: normal;
@@ -80,7 +80,7 @@ header {
     margin: 5px auto;
     -webkit-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
-    background-color: $hippo-brand-navy;
+    background-color: variables.$hippo-brand-navy;
   }
 
   .nav-menu a {
@@ -113,7 +113,7 @@ header {
       transition: 0.5s ease-in-out;
       height: calc(100dvh - 4rem);
       z-index: 1;
-      background-color: $hippo-brand-light-grey;
+      background-color: variables.$hippo-brand-light-grey;
       padding: 0 25px;
       display: block;
 
@@ -128,7 +128,7 @@ header {
         padding: 25px 0;
 
         &:not(:last-of-type) {
-          border-bottom: $hippo-brand-grey 1px solid;
+          border-bottom: variables.$hippo-brand-grey 1px solid;
         }
       }
 

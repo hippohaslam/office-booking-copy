@@ -1,7 +1,7 @@
-@import "../../styles/variables.scss";
+@use "../../styles/variables.scss";
 
 footer {
-  background-color: $hippo-brand-navy;
+  background-color: variables.$hippo-brand-navy;
   color: white;
   display: flex;
 

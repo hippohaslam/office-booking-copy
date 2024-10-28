@@ -1,4 +1,4 @@
-@import "../../../styles/variables.scss";
+@use "../../../styles/variables.scss";
 
 .bookable-objects-list {
   padding-left: 0;
@@ -20,12 +20,12 @@
   font-size: 16px;
 
   &.bookable-object-button__booked {
-    background-color: $hippo-brand-dark-grey;
+    background-color: variables.$hippo-brand-dark-grey;
   }
 
   &.bookable-object-button__available {
-    background-color: $hippo-brand-light-green;
-    color: $hippo-brand-navy;
+    background-color: variables.$hippo-brand-light-green;
+    color: variables.$hippo-brand-navy;
   }
 }
 
@@ -37,7 +37,7 @@
   margin: 10px;
   padding: 5px 15px 20px 15px;
   max-width: 800px;
-  background-color: $hippo-brand-yellow;
+  background-color: variables.$hippo-brand-yellow;
   border-radius: 10px;
 }
 
@@ -104,8 +104,8 @@
 
   button {
     border-radius: 10px;
-    background-color: $hippo-brand-light-green;
-    color: $hippo-brand-navy;
+    background-color: variables.$hippo-brand-light-green;
+    color: variables.$hippo-brand-navy;
     border: 0;
     font-size: .1em;
   }

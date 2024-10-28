@@ -25,5 +25,12 @@ export default defineConfig(({ mode }) => {
         key: "./certs/dev.pem",
       },
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler',
+        }
+      }
+    }
   };
 });

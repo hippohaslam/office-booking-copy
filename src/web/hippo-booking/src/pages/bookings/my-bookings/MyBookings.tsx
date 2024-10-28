@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ActionTable, CtaLink, ErrorBanner, IconButton, SuccessBanner } from "../../components/index.ts";
-import BookingCardStacked from "../../components/booking/BookingCardStacked.tsx";
-import { deleteBookingAsync, getUpcomingBookingsAsync } from "../../services/Apis.ts";
-import ConfirmModal from "../../components/modals/confirm/ConfirmModal.tsx";
+import { ActionTable, CtaLink, ErrorBanner, IconButton, SuccessBanner } from "../../../components/index.ts";
+import BookingCardStacked from "../../../components/booking/BookingCardStacked.tsx";
+import { deleteBookingAsync, getUpcomingBookingsAsync } from "../../../services/Apis.ts";
+import ConfirmModal from "../../../components/modals/confirm/ConfirmModal.tsx";
 import { AxiosError } from "axios";
-import DeleteIcon from "../../assets/delete-icon-navy.svg";
+import DeleteIcon from "../../../assets/delete-icon-navy.svg";
 
-const Bookings = () => {
+const MyBookings = () => {
   const queryClient = useQueryClient();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
@@ -66,7 +66,7 @@ const Bookings = () => {
       deleteBooking.mutate(selectedBooking);
     } else {
       console.error("No booking selected for cancellation");
-    };
+    }
   };
 
   const bookingInfoElement = () => {
@@ -84,7 +84,7 @@ const Bookings = () => {
       );
     } else {
       return <span>Selected booking is null</span>;
-    };
+    }
   };
 
   if (isError) {
@@ -104,25 +104,34 @@ const Bookings = () => {
   const UpcomingBookingsRows = () => {
     return (
       <>
-      {data?.map((booking, index) => (
-        <tr key={index} className='booking-row'>
-          <td>{new Date(booking.date).toLocaleDateString("en-GB", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })}</td>
-          <td>{booking.bookableObject.name}</td>
-          <td>{booking.area.name}</td>
-          <td>{booking.location.name}</td>
-          <td>
-            <IconButton title="Cancel booking" onClick={() => handleCancelClick(booking)} color="navy" showBorder={false} showText={false} iconSrc={DeleteIcon}/>
-          </td>
-        </tr>
-      ))}
+        {data?.map((booking, index) => (
+          <tr key={index} className='booking-row'>
+            <td>
+              {new Date(booking.date).toLocaleDateString("en-GB", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </td>
+            <td>{booking.bookableObject.name}</td>
+            <td>{booking.area.name}</td>
+            <td>{booking.location.name}</td>
+            <td>
+              <IconButton
+                title='Cancel booking'
+                onClick={() => handleCancelClick(booking)}
+                color='navy'
+                showBorder={false}
+                showText={false}
+                iconSrc={DeleteIcon}
+              />
+            </td>
+          </tr>
+        ))}
       </>
-    )
-  }
+    );
+  };
 
   return (
     <div>
@@ -152,32 +161,35 @@ const Bookings = () => {
 
       <h1>My bookings</h1>
       <h2>Upcoming</h2>
-      {data?.length === 0 ? <p>You have no upcoming bookings.</p> : 
-      <>
-        <ActionTable 
-          title="Bookings" 
-          columnHeadings={["Date", "Bookable object", "Area", "Location", "Actions"]} 
-          rows={UpcomingBookingsRows()}>
-        </ActionTable>
-        <ConfirmModal
-          title='Are you sure you want to cancel this booking?'
-          isOpen={isModalVisible}
-          childElement={bookingInfoElement()}
-          showConfirmButton
-          confirmButtonLabel={isModalLoading ? "Cancelling booking" : 'Yes. Cancel it'}
-          confirmButtonColor='cta-red'
-          confirmButtonDisabled={isModalLoading}
-          confirmButtonLoading={isModalLoading}
-          onConfirm={handleConfirmCancel}
-          cancelButtonLabel='No. Keep it'
-          cancelButtonColor='cta-green'
-          cancelButtonDisabled={isModalLoading}
-          onCancel={handleCloseModal}
+      {data?.length === 0 ? (
+        <p>You have no upcoming bookings.</p>
+      ) : (
+        <>
+          <ActionTable
+            title='Bookings'
+            columnHeadings={["Date", "Bookable object", "Area", "Location", "Actions"]}
+            rows={UpcomingBookingsRows()}
+          ></ActionTable>
+          <ConfirmModal
+            title='Are you sure you want to cancel this booking?'
+            isOpen={isModalVisible}
+            childElement={bookingInfoElement()}
+            showConfirmButton
+            confirmButtonLabel={isModalLoading ? "Cancelling booking" : "Yes. Cancel it"}
+            confirmButtonColor='cta-red'
+            confirmButtonDisabled={isModalLoading}
+            confirmButtonLoading={isModalLoading}
+            onConfirm={handleConfirmCancel}
+            cancelButtonLabel='No. Keep it'
+            cancelButtonColor='cta-green'
+            cancelButtonDisabled={isModalLoading}
+            onCancel={handleCloseModal}
           />
-        </>}
-        <CtaLink to="/locations" color="cta-green" withArrow={true} text="Make a new booking"/>
+        </>
+      )}
+      <CtaLink to='/locations' color='cta-green' withArrow={true} text='Make a new booking' />
     </div>
   );
 };
 
-export default Bookings;
+export default MyBookings;

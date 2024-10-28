@@ -1,4 +1,4 @@
-@import "../../../../../styles/variables.scss";
+@use "../../../../styles/variables.scss";
 
 .floorplan__container {
   display: grid;
@@ -11,7 +11,7 @@
 .toolbar{
   display: flex;
   gap: 50px;
-  background-color: $hippo-brand-navy;
+  background-color: variables.$hippo-brand-navy;
   border-top-left-radius: 12pt;
   border-top-right-radius: 12pt;
   padding: 5px 12px;
@@ -27,7 +27,7 @@
 }
 
 .floorplan__desk-list-container{
-  background-color: $hippo-brand-light-grey;
+  background-color: variables.$hippo-brand-light-grey;
   padding: 15px;
   height: 650px; 
   border-radius: 12px;
@@ -52,7 +52,7 @@
     }
 
     li:nth-child(even){
-      background-color:$hippo-brand-bluey-grey;
+      background-color:variables.$hippo-brand-bluey-grey;
     }
   }
 
@@ -76,7 +76,7 @@
   }
 
   .floorplan__desk-list-card:nth-child(even) {
-    background-color: $hippo-brand-grey;
+    background-color: variables.$hippo-brand-grey;
   }
 }
 
