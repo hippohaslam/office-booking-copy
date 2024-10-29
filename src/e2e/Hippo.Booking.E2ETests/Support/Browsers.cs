@@ -6,7 +6,7 @@ public static class Browsers
 {
     public static void InstallRequiredBrowsers()
     {
-        var exitCode = Program.Main(["install"]);
+        var exitCode = Program.Main(["install", "chromium"]);
         if (exitCode != 0)
         {
             throw new Exception($"Playwright exited with code {exitCode}");
