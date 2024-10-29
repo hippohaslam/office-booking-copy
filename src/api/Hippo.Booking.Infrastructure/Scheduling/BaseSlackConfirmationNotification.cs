@@ -21,7 +21,7 @@ public abstract class BaseSlackConfirmationNotification(ISlackClient slackClient
         {
             buttons.Add(new Button
             {
-                Text = new PlainText("Confirm"),
+                Text = new PlainText("Confirm Booking"),
                 Style = ButtonStyle.Primary,
                 ActionId = "confirm_booking",
                 Value = bookingId.ToString()
@@ -30,7 +30,7 @@ public abstract class BaseSlackConfirmationNotification(ISlackClient slackClient
         
         buttons.Add(new Button
         {
-            Text = new PlainText("Cancel"),
+            Text = new PlainText("Cancel Booking"),
             Style = ButtonStyle.Danger,
             ActionId = "cancel_booking",
             Value = bookingId.ToString()
