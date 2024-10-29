@@ -49,10 +49,6 @@ public abstract class BaseSlackConfirmationNotification(ISlackClient slackClient
                 {
                     Text = new Markdown($"You have booked: *{location}*"),
                 },
-                new SectionBlock
-                {
-                    Text = new Markdown("Please confirm if you still require this booking"),
-                },
                 new ActionsBlock
                 {
                     Elements = buttons
