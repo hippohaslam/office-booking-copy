@@ -26,6 +26,7 @@ public class Config
     public static string UserPassword => Instance.GetValue<string>("User:Password") ?? string.Empty;
     public static string UserId => Instance.GetValue<string>("User:Id") ?? string.Empty;
     public static bool Headless => Instance.GetValue<bool>("Headless");
+    public static string? PlaywrightS3Bucket => Instance.GetValue<string?>("PlaywrightS3Bucket");
     private static string DbConnectionString => Instance.GetValue<string>("ConnectionStrings:Database") ?? string.Empty;
     
     public static async Task<HippoBookingDbContext> GetDbContext()

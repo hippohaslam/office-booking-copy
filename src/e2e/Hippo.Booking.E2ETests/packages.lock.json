@@ -2,6 +2,15 @@
   "version": 1,
   "dependencies": {
     "net8.0": {
+      "AWSSDK.S3": {
+        "type": "Direct",
+        "requested": "[3.7.405.2, )",
+        "resolved": "3.7.405.2",
+        "contentHash": "9lBqWBJBG4psVGC5UYDNCgd/WoPp2exKt+ZfOyuy2Fs+3htxhFMECt6aLchdXW9Q6jtTh5WvEiEnam1TG2YQtA==",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.400.38, 4.0.0)"
+        }
+      },
       "coverlet.collector": {
         "type": "Direct",
         "requested": "[6.0.2, )",
@@ -110,6 +119,11 @@
         "requested": "[4.6.0, )",
         "resolved": "4.6.0",
         "contentHash": "R7e1+a4vuV/YS+ItfL7f//rG+JBvVeVLX4mHzFEZo4W1qEKl8Zz27AqvQSAqo+BtIzUCo4aAJMYa56VXS4hudw=="
+      },
+      "AWSSDK.Core": {
+        "type": "Transitive",
+        "resolved": "3.7.400.38",
+        "contentHash": "qRdaMM/CM5MNcYQTm6qE49nWKGGY4JlT/L/w3UN/NizMm3eGdYrjomNB5zx1+g+uXIiLkT1qhaoh0w/kWmK2GQ=="
       },
       "FluentValidation": {
         "type": "Transitive",
