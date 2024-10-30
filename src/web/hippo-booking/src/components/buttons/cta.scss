@@ -119,6 +119,10 @@ gap: 5px;
     }
 }
 
+.cta + .cta {
+    margin-left: 10px;
+}
+
 .with-arrow {
     display: flex;
     
@@ -152,6 +156,11 @@ gap: 5px;
         width: 100%;
         justify-content: space-between;
         margin-top: 0;
+    }
+
+    .cta + .cta {
+        margin-top: 0;
+        margin-left: 0;
     }
 
     .button-group{

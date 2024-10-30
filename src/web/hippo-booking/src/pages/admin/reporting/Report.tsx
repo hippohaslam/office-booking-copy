@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getReportDataAsync, runReportAsync } from "../../../services/Apis";
 import { useState } from "react";
+import { ActionTable, CtaButton } from "../../../components";
 
 // Use of any in this file is intentional because of the dynamic nature of the data
 
@@ -22,6 +23,7 @@ const fieldTypes = (type: number) => {
 const Report = () => {
   const { reportId } = useParams();
   const [reportData, setReportData] = useState<any[] | null>(null);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
 
   const { data } = useQuery({
     queryKey: ["reporting", reportId],
@@ -35,11 +37,12 @@ const Report = () => {
   const runReport = useMutation({
     mutationKey: ["reporting", reportId, "run"],
     mutationFn: async (data: Object) => {
+      setIsRunning(true);
       const response = await runReportAsync(reportId as string, data as Object);
       return response.data;
     },
     onSuccess: (data) => {
-      console.log("return data", data);
+      setIsRunning(false);
       setReportData(data);
     },
   });
@@ -57,50 +60,41 @@ const Report = () => {
       <h1>Report {reportId}</h1>
       <div>
         {data ? (
-          <form onSubmit={handleSubmitForm}>
-            <h2>{data.name}</h2>
-            <p>{data.description}</p>
-            <h3>Parameters to run</h3>
-            {JSON.parse(data.parameterJson as any).length < 1 && <p>No parameters in this report</p>}
-            <ul>
-              {JSON.parse(data.parameterJson as any).map((param: any, index: number) => (
-                  <li key={index}>
-                    <label>
-                      {param.name}:
-                    </label>
-                  <input type={fieldTypes(param.fieldType)} name={param.id} />
-                </li>
-              ))}
-            </ul>
-            <button type='submit'>Run</button>
-            <button type='button' onClick={() => setReportData(null)}>
-              Clear
-            </button>
-          </form>
+            <form onSubmit={handleSubmitForm}>
+              <h2>{data.name}</h2>
+              <p>{data.description}</p>
+              <h3>Parameters to run</h3>
+              {JSON.parse(data.parameterJson as any).length < 1 && <p>No parameters in this report</p>}
+                {JSON.parse(data.parameterJson as any).map((param: any, index: number) => (
+                  <div className='standard-inputs' key={index}>
+                   <label htmlFor={param.id}>{param.name}</label>
+                    <input id={param.id} type={fieldTypes(param.fieldType)} name={param.id} />
+                  </div>
+               ))}
+        <CtaButton text='Run Report' type='submit' color='cta-green' isLoading={isRunning} />
+        <CtaButton text='Clear Data' type='button' color='cta-red' onClick={() => setReportData(null)} />
+    </form>
         ) : null}
       </div>
       <div>
         {reportData && reportData.length > 0 ? (
           <div>
-            <h3>Result Data</h3>
-            <table id='report-data-table' className='table-striped'>
-              <thead>
-                <tr>
-                  {Object.keys(reportData[0]).map((key) => (
-                    <th key={key}>{key}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {reportData.map((row: any, index: number) => (
-                  <tr key={index}>
-                    {Object.values(row).map((value: any, idx: number) => (
-                      <td key={idx}>{value}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <ActionTable
+                title="Result Data"
+                columnHeadings={Object.keys(reportData[0]).map((key) => key.toString() ?? "")}
+                rows={
+                  <>
+                  {reportData.map((row: any, index: number) => (
+                      <tr key={index}>
+                        {Object.values(row).map((value: any, idx: number) => (
+                            <td key={idx}>{value}</td>
+                        ))}
+                      </tr>
+                    ))
+                  }
+                  </>
+                 }
+                />
           </div>
         ) : (
           <div>{!reportData ? <p>Run the report to see the data</p> : <p>No data found</p>}</div>
