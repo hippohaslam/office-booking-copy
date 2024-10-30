@@ -6,15 +6,16 @@ import { useState } from "react";
 // Use of any in this file is intentional because of the dynamic nature of the data
 
 // using typeof we will determine the type of the field for an input
-const fieldTypes = (field: string) => {
-  if (typeof field === "string") {
-    return "text";
-  } else if (typeof field === "number") {
-    return "number";
-  } else if (typeof field === "boolean") {
-    return "checkbox";
-  } else {
-    return "text";
+const fieldTypes = (type: number) => {
+  switch (type) {
+    case 0:
+      return "text";
+    case 1:
+      return "number";
+    case 2:
+      return "date";
+    default:
+      return "text";
   }
 };
 
@@ -60,19 +61,14 @@ const Report = () => {
             <h2>{data.name}</h2>
             <p>{data.description}</p>
             <h3>Parameters to run</h3>
-            {JSON.parse(data.parameterJson as any).length < 1 && <p>No paramaters in this report</p>}
+            {JSON.parse(data.parameterJson as any).length < 1 && <p>No parameters in this report</p>}
             <ul>
               {JSON.parse(data.parameterJson as any).map((param: any, index: number) => (
-                <li key={index}>
-                  {Object.keys(param).map((key) => (
-                    <div key={key}>
-                      <label>
-                        {key} as {typeof param[key]}:
-                      </label>
-                      &nbsp;&nbsp;
-                      <input type={fieldTypes(param[key])} defaultValue={param[key]} name={key} />
-                    </div>
-                  ))}
+                  <li key={index}>
+                    <label>
+                      {param.name}:
+                    </label>
+                  <input type={fieldTypes(param.fieldType)} name={param.id} />
                 </li>
               ))}
             </ul>
@@ -99,7 +95,7 @@ const Report = () => {
                 {reportData.map((row: any, index: number) => (
                   <tr key={index}>
                     {Object.values(row).map((value: any, idx: number) => (
-                      <td key={idx}>{value.toString()}</td>
+                      <td key={idx}>{value}</td>
                     ))}
                   </tr>
                 ))}
