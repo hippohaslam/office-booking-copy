@@ -20,13 +20,13 @@ const Reporting = () => {
     <div>
       <Breadcrumbs items={breadcrumbItems}/>
       <h1>Reports</h1>
-      <ul className="reports-list">
-        {data?.map((report: ReportingList) => (
-          <li key={report.id}>
-            <Link to={`/admin/reporting/${report.id}`}>{report.name}</Link>
-            <br />
-            <small>{report.description}</small>
-          </li>
+      <ul className="admin-card-list">
+      {data?.map((report: ReportingList) => (
+        <li className='admin-card'>
+            <h2>{report.name}</h2>
+            <p>{report.description}</p>
+            <Link to={`/admin/reporting/${report.id}`}>View report</Link>
+        </li>
         ))}
       </ul>
     </div>

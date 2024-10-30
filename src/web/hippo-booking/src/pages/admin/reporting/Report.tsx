@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getReportDataAsync, runReportAsync } from "../../../services/Apis";
 import { useState } from "react";
-import { ActionTable, CtaButton } from "../../../components";
+import { ActionTable, Breadcrumbs, CtaButton } from "../../../components";
 
 // Use of any in this file is intentional because of the dynamic nature of the data
 
@@ -55,8 +55,15 @@ const Report = () => {
     runReport.mutate(data);
   };
 
+  const breadcrumbItems = [
+    { to: "/admin", text: "Admin" }, 
+    { to: "/admin/reporting", text: "Reports" },
+    { to: "", text: "Report " + reportId }
+  ]
+
   return (
     <div>
+      <Breadcrumbs items={breadcrumbItems}/>
       <h1>Report {reportId}</h1>
       <div>
         {data ? (

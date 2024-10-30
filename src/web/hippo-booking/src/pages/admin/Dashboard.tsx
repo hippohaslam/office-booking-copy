@@ -55,10 +55,10 @@ const Admin = () => {
       <br />
       <h2>Locations</h2>
       {locationData?.length === 0 && <p>No locations found. Create a your first location!</p>}
-      <div className="location-and-area-list">
+      <ul className="admin-card-list">
         {locationData?.map((location) => (
-          <div key={location.id} className='location-and-area' data-testid='location-container'>
-            <h3 className='location-and-area__header'>{location.name}</h3>
+          <li key={location.id} className='admin-card' data-testid='location-container'>
+            <h3 className='admin-card__header'>{location.name}</h3>
             <Link to={`/admin/locations/${location.id}`}>View and edit location details</Link>
             <br/>
             <h4>Areas</h4>
@@ -71,10 +71,11 @@ const Admin = () => {
                 </li>
               ))}
             </ul>
+            <br/>
             <IconLink title={`Add new area for ${location.name}`} color="navy" iconSrc={AddIcon} to={`/admin/locations/${location.id}/areas/new`} showBorder={true} showText={true}/>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
       <CtaLink text='Add a new location' color='cta-green' to='/admin/locations/new' />
     </div>
   );
