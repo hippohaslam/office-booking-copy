@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { getSession, postSessionGoogle } from "../../services/Apis";
 import HippoSvg from "../../assets/hippo-navy.svg";
+import HippoReserveLogo from "../../assets/hippo-reserve-logo.svg";
 import { ErrorBanner } from "../../components";
 
 export default function SignIn() {
@@ -69,10 +70,14 @@ export default function SignIn() {
   if (showLogin) {
     return (
       <>
+        <img src={HippoSvg} className='hippo-watermark-logo'/>
         <ErrorBanner title='Uh oh!' errorMessage={errorMessage || ""} isShown={errorMessage !== null} allowClose={false} />
         <div className='login-container'>
-          <img src={HippoSvg} alt='Hippo Logo' />
-          <h1>Hippo Reserve</h1>
+          {/* <img src={HippoSvg} alt='Hippo Logo' /> */}
+          <div className="login-logo">
+            <img alt='' src={HippoReserveLogo}></img>
+            <h1>Hippo Reserve</h1>
+          </div>
           <p>For booking desks, dog-of-the-day, and car parking spaces at the Hippo offices.</p>
           <div style={{ paddingTop: 20 + "px", paddingBlock: 20 + "px" }}>
             <GoogleLogin
