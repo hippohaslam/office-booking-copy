@@ -1,6 +1,6 @@
-@use "../../../styles/variables.scss";
+@use "../../styles/variables.scss";
 
-table.action-table {
+table.standard-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 10px;
@@ -24,9 +24,12 @@ table.action-table {
   
   thead {
     background-color: variables.$hippo-brand-navy;
-    color: white;
     font-weight: bold;
     height: 50px;
+
+    th{
+      color: white;
+    }
 
     th:first-child {
       border-top-left-radius: 12px;
@@ -60,7 +63,7 @@ table.action-table {
 }
 
 @media screen and (max-width: 750px) {
-  table.action-table{
+  table.standard-table{
     
     thead {
       display: none;

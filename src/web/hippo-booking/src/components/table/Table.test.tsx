@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { screen } from "@testing-library/dom";
-import ActionTable from "./ActionTable";
+import Table from "./Table";
 
 test("Action table should display correctly", () => {
     //Arrange
@@ -23,7 +23,7 @@ test("Action table should display correctly", () => {
         )
     }
     render(
-        <ActionTable title="Test table" columnHeadings={["Name", "Location", "Date", "Actions"]} rows={rows()}/>
+        <Table title="Test table" columnHeadings={["Name", "Location", "Date", "Actions"]} rows={rows()}/>
     );
 
     //Assert

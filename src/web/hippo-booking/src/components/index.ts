@@ -14,7 +14,7 @@ import { ActionTile, ActionTileList } from "./tile/action-tile/ActionTile";
 import { CtaButton } from "./buttons/CtaButton";
 import CtaLink from "./buttons/CtaLink";
 import Breadcrumbs from "./breadcrumbs/Breadcrumbs";
-import ActionTable from "./table/action/ActionTable";
+import Table from "./table/Table";
 import IconButton from "./buttons/Icon/IconButton";
 import IconLink from "./buttons/Icon/IconLink";
 
@@ -38,7 +38,7 @@ export {
   CtaButton,
   CtaLink, 
   Breadcrumbs,
-  ActionTable,
+  Table,
   IconButton,
   IconLink
 };

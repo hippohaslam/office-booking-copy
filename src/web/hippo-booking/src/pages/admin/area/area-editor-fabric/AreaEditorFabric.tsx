@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { getLocationAreaAsync, putObjectsAsync, putAreaAsync, postBookableObjectAsync, editObjectAsync } from "../../../../services/Apis";
 import { useWindowSize } from "../../../../hooks/WindowSizeHook";
 import { CustomCircle, CustomFabricObject, CustomGroup, CustomObject, CustomRect } from "../../../../shared/fabric/CustomObjects";
-import { ActionTable, Breadcrumbs, ConfirmModal, IconButton, MultiErrorBanner, SuccessBanner } from "../../../../components";
+import { Table, Breadcrumbs, ConfirmModal, IconButton, MultiErrorBanner, SuccessBanner } from "../../../../components";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../../shared/fabric/Canvas";
 import { AccordionGroup, AccordionItem } from "../../../../components/accordion/Accordion";
 import { isNullOrEmpty } from "../../../../helpers/StringHelpers";
@@ -719,7 +719,7 @@ const FloorplanEditor = () => {
       <br />
       <div>
         <h2>Manage bookable objects</h2>
-        <ActionTable
+        <Table
           title='Bookable objects (places)'
           columnHeadings={["Name", "Type", "Description", "Action"]}
           rows={
@@ -745,6 +745,9 @@ const FloorplanEditor = () => {
               ) : (
                 <tr>
                   <td>There are currently no bookable objects for this area 😔</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
                 </tr>
               )}
             </>

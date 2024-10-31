@@ -1,15 +1,15 @@
 import { ReactNode } from "react";
-import "./ActionTable.scss";
+import "./Table.scss";
 
-type ActionTableProps = {
+type TableProps = {
     title: string;
     columnHeadings: string[];
     rows: ReactNode;
 };
 
-const ActionTable = ({title, columnHeadings, rows}: ActionTableProps) => {
+const Table = ({title, columnHeadings, rows}: TableProps) => {
     return (
-        <table className="action-table">
+        <table className="standard-table">
             <caption>{title}</caption>
             <thead>
                 <tr>
@@ -23,4 +23,4 @@ const ActionTable = ({title, columnHeadings, rows}: ActionTableProps) => {
     )
 };
 
-export default ActionTable;
+export default Table;

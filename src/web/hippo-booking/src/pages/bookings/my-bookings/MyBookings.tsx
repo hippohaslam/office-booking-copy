@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ActionTable, CtaLink, ErrorBanner, IconButton, SuccessBanner } from "../../../components/index.ts";
+import { Table, CtaLink, ErrorBanner, IconButton, SuccessBanner } from "../../../components/index.ts";
 import BookingCardStacked from "../../../components/booking/BookingCardStacked.tsx";
 import { deleteBookingAsync, getUpcomingBookingsAsync } from "../../../services/Apis.ts";
 import ConfirmModal from "../../../components/modals/confirm/ConfirmModal.tsx";
@@ -165,11 +165,11 @@ const MyBookings = () => {
         <p>You have no upcoming bookings.</p>
       ) : (
         <>
-          <ActionTable
+          <Table
             title='Bookings'
             columnHeadings={["Date", "Bookable object", "Area", "Location", "Actions"]}
             rows={UpcomingBookingsRows()}
-          ></ActionTable>
+          ></Table>
           <ConfirmModal
             title='Are you sure you want to cancel this booking?'
             isOpen={isModalVisible}
