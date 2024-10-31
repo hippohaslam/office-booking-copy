@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getReportDataAsync, runReportAsync } from "../../../services/Apis";
 import { useState } from "react";
-import { ActionTable, Breadcrumbs, CtaButton } from "../../../components";
+import { Table, Breadcrumbs, CtaButton } from "../../../components";
 
 // Use of any in this file is intentional because of the dynamic nature of the data
 
@@ -86,7 +86,7 @@ const Report = () => {
       <div>
         {reportData && reportData.length > 0 ? (
           <div>
-            <ActionTable
+            <Table
                 title="Result Data"
                 columnHeadings={Object.keys(reportData[0]).map((key) => key.toString() ?? "")}
                 rows={
