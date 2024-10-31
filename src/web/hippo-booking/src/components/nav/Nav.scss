@@ -14,16 +14,31 @@ header {
     height: 6rem;
   }
 
-  .nav-container-logo {
+  a.nav-site-logo {
     display: inline-flex;
     align-items: center;
+    gap: 10px;
     text-decoration: none;
-    gap: 20px;
-    font-weight: bold;
-    font-size: 1.6rem;
+
+    span {
+      font-weight: bold;
+      font-size: 1.6rem;
+    }
+
+    img {
+      height: 50px;
+    }
 
     &:hover {
       text-decoration: underline;
+    }
+
+    &:focus-visible {
+      background-image: none;
+      background-color: unset;
+      box-shadow: 0 0 0 5px #000;
+      outline: solid 3pt variables.$hippo-brand-yellow;
+      outline-offset: 5px;
     }
   }
 
@@ -41,10 +56,10 @@ header {
       text-decoration: none;
       padding: 0.5rem;
       font-weight: normal;
-    }
 
-    a:hover {
-      text-decoration: underline;
+      &:hover {
+        text-decoration: underline;
+      }
     }
 
     ul {
@@ -61,11 +76,6 @@ header {
       }
     }
   }
-}
-
-.nav-container-logo img {
-  height: 100px;
-  width: 150px;
 }
 
 header {
@@ -94,9 +104,8 @@ header {
   }
 
   header {
-    .nav-container-logo img {
-      height: 50px;
-      width: 50px;
+    a.nav-site-logo img {
+      height: 35px;
     }
 
     .nav-container {

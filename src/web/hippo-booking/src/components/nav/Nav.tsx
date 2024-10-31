@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import { googleLogout } from "@react-oauth/google";
 import "./Nav.scss";
-import HippoSvg from "../../assets/hippo-navy.svg";
-import HippoIconSvg from "../../assets/hippo-icon.svg";
+import HippoReserveLogo from "../../assets/hippo-reserve-logo.svg";
 import { useUser } from "../../contexts/UserContext";
 import { signUserOut } from "../../services/Apis";
 import { useState } from "react";
@@ -34,11 +33,9 @@ const Nav = () => {
   return (
     <header>
       <div className='nav-container'>
-        <Link className='nav-container-logo' to='/' onClick={closeMenuOnMobile}>
-          <img src={window.innerWidth <= 1000 ? HippoIconSvg : HippoSvg} alt='Hippo Logo' />
-        </Link>
-        <Link className='nav-container-logo' to='/' onClick={closeMenuOnMobile}>
-          Hippo Reserve
+        <Link aria-label='home page' to='/' onClick={closeMenuOnMobile} className='nav-site-logo'>
+          <img alt='' src={HippoReserveLogo}></img>
+          <span>Hippo Reserve</span>
         </Link>
         <div>
           <button
