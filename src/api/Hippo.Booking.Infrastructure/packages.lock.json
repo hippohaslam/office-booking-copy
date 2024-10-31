@@ -4,11 +4,11 @@
     "net8.0": {
       "AWSSDK.SecretsManager": {
         "type": "Direct",
-        "requested": "[3.7.400.40, )",
-        "resolved": "3.7.400.40",
-        "contentHash": "nBzE2B6LMjwelLpT8XRRAzX34M3hVtPa3uC+PiR6NdsFar3g6hNl9kFtcMUdiVgr7YZLZxC/TGQ/CJlA+2DGOw==",
+        "requested": "[3.7.400.42, )",
+        "resolved": "3.7.400.42",
+        "contentHash": "8xih+nLXzl4ypv5TRwG1gsaRNrRzQ5Ph+Vm7vd+K2KgJDiQPoOOdnAmrHw/1jRfds0w284oCyVX8zHW2uGfUrQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.400.40, 4.0.0)"
+          "AWSSDK.Core": "[3.7.400.42, 4.0.0)"
         }
       },
       "Dapper": {
@@ -43,8 +43,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.400.40",
-        "contentHash": "Bt3id437I3k363mHCvBdpUwdw9P2zM3te+wCZ2EWv+PIOyz1NbYqTfrn04U3x333wxsOfT9Ln+cUJeUw96HsTw=="
+        "resolved": "3.7.400.42",
+        "contentHash": "TEpIIUzTtAhXzOeAe7GBGyFcRe7Rr1jTIdtuy9PSCgMbVQnd/sDApd+bss0nU8BUvN32YDZbDFfq5UicgQzC/A=="
       },
       "FluentValidation": {
         "type": "Transitive",
