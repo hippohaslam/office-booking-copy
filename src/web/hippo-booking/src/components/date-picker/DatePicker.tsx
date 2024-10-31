@@ -59,6 +59,7 @@ const CustomDatePicker = ({ selectedDate, inputOnChange, adjustDate, minDate, ma
           }
           className='date-control date-input'
           calendarIconClassName='date-input-icon'
+          calendarStartDay={1}
         />
         <button
           type='button'
