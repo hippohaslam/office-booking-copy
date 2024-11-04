@@ -121,9 +121,9 @@
       },
       "SlackNet.AspNetCore": {
         "type": "Direct",
-        "requested": "[0.15.0, )",
-        "resolved": "0.15.0",
-        "contentHash": "QhheYC9SPhJV+MgNzCW3ffg15uB5d1uz/His5hG1mzz5+NYpz1cQSldC841Yi1Wit+zrh3zQJbyos70FB5eecA==",
+        "requested": "[0.15.1, )",
+        "resolved": "0.15.1",
+        "contentHash": "633NOmnn6oscqLQB/n7IJkSGOTXhT9qkWPkOIQYGHLomsQUJ8FxHxQ804MRMRAefFTgupQ4nbR/kmVp6Et+n5A==",
         "dependencies": {
           "Microsoft.AspNetCore.Http": "2.1.22",
           "Microsoft.AspNetCore.Http.Abstractions": "2.1.1",
@@ -131,8 +131,8 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "2.2.0",
           "Microsoft.Extensions.Hosting.Abstractions": "2.1.1",
           "Microsoft.Extensions.Logging.Abstractions": "2.2.0",
-          "SlackNet": "0.15.0",
-          "SlackNet.Extensions.DependencyInjection": "0.15.0",
+          "SlackNet": "0.15.1",
+          "SlackNet.Extensions.DependencyInjection": "0.15.1",
           "System.Text.Encodings.Web": "4.5.1"
         }
       },
@@ -158,15 +158,15 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.400.42",
-        "contentHash": "TEpIIUzTtAhXzOeAe7GBGyFcRe7Rr1jTIdtuy9PSCgMbVQnd/sDApd+bss0nU8BUvN32YDZbDFfq5UicgQzC/A=="
+        "resolved": "3.7.400.45",
+        "contentHash": "mu3DZfi7B30DFlGn0GURcaiTpvXN3Qy8syD54T7e5SCnMGdQXAaStyVwuht+4T9T5LnPAMe0TBAtokUqFg09Vw=="
       },
       "AWSSDK.SecretsManager": {
         "type": "Transitive",
-        "resolved": "3.7.400.42",
-        "contentHash": "8xih+nLXzl4ypv5TRwG1gsaRNrRzQ5Ph+Vm7vd+K2KgJDiQPoOOdnAmrHw/1jRfds0w284oCyVX8zHW2uGfUrQ==",
+        "resolved": "3.7.400.45",
+        "contentHash": "5A6idDjdiLJAbt0dW5zJrxYw5urFAgfE3Xq5CHUSPJN7V4LMw24XzHMTPwzMvMDenudrZXg3Fdth6gxrH0wv/w==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.400.42, 4.0.0)"
+          "AWSSDK.Core": "[3.7.400.45, 4.0.0)"
         }
       },
       "Dapper": {
@@ -837,8 +837,8 @@
       },
       "SlackNet": {
         "type": "Transitive",
-        "resolved": "0.15.0",
-        "contentHash": "rYfFo6X1/y4UlTO8b0ANPfbCfd+KNaMT6zeAw0v2TGT2t6Pxqw7u0BtZhm5RWigFQbA0Oq3lvanN4uynSXU9pw==",
+        "resolved": "0.15.1",
+        "contentHash": "1a0orwCpxYBznwXDdb7eWfZewIlqqK6Vf9S9EGsw8yXxlUOiCk0oASFgPFYILrFh+/Oww3P8rbaxddm0uvZH5A==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
           "Newtonsoft.Json": "13.0.1",
@@ -850,11 +850,11 @@
       },
       "SlackNet.Extensions.DependencyInjection": {
         "type": "Transitive",
-        "resolved": "0.15.0",
-        "contentHash": "wQ+7XQPkH5rdAyIQIscnK0zLgBHIxMa36xiaD8O9G9RttA6YmLv2JbyKOeo70/9EUWdQYAfQGxTanqYhp+WeQw==",
+        "resolved": "0.15.1",
+        "contentHash": "+HjuSzaJWVGTOvxkWfWPoGiDQJ3+MXmO7r/vW1gZlFxHr2WmJ8TP/OZ6oR/SnmkvqC1dQKZGIRvnP62AFswxCA==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "2.2.0",
-          "SlackNet": "0.15.0"
+          "SlackNet": "0.15.1"
         }
       },
       "SuperSocket.ClientEngine.Core": {
@@ -1938,12 +1938,12 @@
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SecretsManager": "[3.7.400.42, )",
+          "AWSSDK.SecretsManager": "[3.7.400.45, )",
           "Dapper": "[2.1.35, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
           "Microsoft.Extensions.Configuration": "[8.0.0, )",
-          "SlackNet": "[0.15.0, )"
+          "SlackNet": "[0.15.1, )"
         }
       },
       "hippo.booking.infrastructure.ef": {
