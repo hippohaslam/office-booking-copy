@@ -36,3 +36,6 @@ updates:
     commit-message:
       prefix: "[nuget] "
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "AWSSDK.*"
+        update-types: ["version-update:semver-patch"]
