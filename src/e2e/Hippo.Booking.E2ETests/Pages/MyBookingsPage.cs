@@ -12,7 +12,7 @@ public class MyBookingsPage(IPage page)
     
     private ILocator BookingRow(DateOnly date, string bookableObjectName, string areaName, string locationName) =>
         BookingsForDateTable().GetByRole(AriaRole.Row).Filter(new LocatorFilterOptions
-            {HasText = date.ToString("dddd dd MMMM yyyy") + bookableObjectName + areaName + locationName});
+            {HasText = date.ToString("dddd d MMMM yyyy") + bookableObjectName + areaName + locationName});
 
     private ILocator
         CancelBookingButton(DateOnly date, string bookableObjectName, string areaName, string locationName) =>
