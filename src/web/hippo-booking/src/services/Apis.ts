@@ -165,6 +165,25 @@ const runReportAsync = (reportId: string, params = {}) => {
   return data;
 }
 
+// Admin only
+/**
+ * Get a list of all bookings for a given location and area in a given date range
+ * @param locationId 
+ * @param areaId 
+ * @param from Date from and including
+ * @param to Date up to and including
+ */
+const getAllBookingWithinAsync = async (locationId: number, areaId: number, from: Date, to: Date): Promise<AdminBooking[]> => {
+  const fromString = from.toISOString().split("T")[0];
+  const toString = to.toISOString().split("T")[0];
+  const response = await axiosInstance.get(`/admin/bookings?locationId=${locationId}&areaId=${areaId}&from=${fromString}&to=${toString}`);
+  return response.data;
+}
+
+const deleteBookingByAdminAsync = async (bookingId: number) => {
+  return await axiosInstance.delete(`/booking/${bookingId}`);
+}
+
 export {
   // Locations
   getLocationAsync,
@@ -193,5 +212,8 @@ export {
   // Reporting
   getReportDataAsync,
   getReportListAsync,
-  runReportAsync
+  runReportAsync,
+  // Admin
+  getAllBookingWithinAsync,
+  deleteBookingByAdminAsync
 };

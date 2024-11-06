@@ -108,4 +108,24 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
             ObjectName = "<Unknown>"
         };
     }
+
+    public async Task<List<BookingsWithinDatesResponse>> GetAllBookingsWithin(int locationId, int areaId, DateOnly from, DateOnly to)
+    {
+        var bookings = dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
+            .Include(i => i.BookableObject)
+            .ThenInclude(a => a.Area)
+            .ThenInclude(i => i.Location)
+            .Where(x => x.Date >= from && x.Date <= to && x.DeletedAt == null && x.BookableObject.Area.LocationId == locationId && x.BookableObject.AreaId == areaId)
+            .Select(x => new BookingsWithinDatesResponse
+            {
+                Id = x.Id,
+                Date = x.Date,
+                BookableObject = new IdName<int>(x.BookableObjectId, x.BookableObject.Name),
+                Area = new IdName<int>(x.BookableObject.AreaId, x.BookableObject.Area.Name),
+                Location = new IdName<int>(x.BookableObject.Area.LocationId, x.BookableObject.Area.Location.Name),
+                BookedBy = $"{x.User.FirstName} {x.User.LastName}"
+            });
+
+        return await bookings.ToListAsync();
+    }
 }

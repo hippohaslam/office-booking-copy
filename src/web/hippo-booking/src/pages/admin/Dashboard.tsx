@@ -28,7 +28,7 @@ const Admin = () => {
   const getAreas = (locationId: number) => {
     return locationDetailsQueries.flatMap((query) => query.data?.filter((x) => x && x.locationId === locationId) || []);
   };
-  
+
   if (error || locationDetailsQueries.some((query) => query.isError)) {
     return (
       <div>
@@ -53,14 +53,19 @@ const Admin = () => {
         <Link to='/admin/reporting'>Go to reporting dashboard</Link>
       </div>
       <br />
+      <div>
+        <h2>Bookings</h2>
+        <Link to='/admin/bookings'>Go to manage bookings</Link>
+      </div>
+      <br />
       <h2>Locations</h2>
       {locationData?.length === 0 && <p>No locations found. Create a your first location!</p>}
-      <ul className="admin-card-list">
+      <ul className='admin-card-list'>
         {locationData?.map((location) => (
           <li key={location.id} className='admin-card' data-testid='location-container'>
             <h3 className='admin-card__header'>{location.name}</h3>
             <Link to={`/admin/locations/${location.id}`}>View and edit location details</Link>
-            <br/>
+            <br />
             <h4>Areas</h4>
             {getAreas(location.id).length === 0 && <p>There are no areas yet for this location. &#128533;</p>}
             <ul>
@@ -71,8 +76,15 @@ const Admin = () => {
                 </li>
               ))}
             </ul>
-            <br/>
-            <IconLink title={`Add new area for ${location.name}`} color="navy" iconSrc={AddIcon} to={`/admin/locations/${location.id}/areas/new`} showBorder={true} showText={true}/>
+            <br />
+            <IconLink
+              title={`Add new area for ${location.name}`}
+              color='navy'
+              iconSrc={AddIcon}
+              to={`/admin/locations/${location.id}/areas/new`}
+              showBorder={true}
+              showText={true}
+            />
           </li>
         ))}
       </ul>

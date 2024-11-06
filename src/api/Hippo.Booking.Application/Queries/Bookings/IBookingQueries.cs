@@ -9,4 +9,8 @@ public interface IBookingQueries
     Task<BookingDayResponse?> GetAreaAndBookingsForTheDay(int locationId, int areaId, DateOnly date);
 
     Task<BookableObjectBookingStateResponse> GetBookedState(int bookableObjectId);
+    /// <summary>
+    /// Gets all bookings within a location and area between two dates. Only use for Admins and Reporting.
+    /// </summary>
+    Task<List<BookingsWithinDatesResponse>> GetAllBookingsWithin(int locationId, int areaId, DateOnly from, DateOnly to);
 }

@@ -261,7 +261,7 @@ public class BookingCommandsTests
     }
 
     [Test]
-    public async Task DeletingWithoutAValidUserIsForbidden()
+    public async Task DeletingBookingWithoutValidUserIsForbidden()
     {
         var existingBooking = await _dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.BookableObject)
@@ -288,7 +288,7 @@ public class BookingCommandsTests
     }
 
     [Test]
-    public async Task DeletingABookingThatIsNotUsersAsAStandardUserIsForbidden()
+    public async Task DeletingBookingAsNonOwnerIsForbidden()
     {
         var existingBooking = await _dataContext.Query<Core.Entities.Booking>()
             .Include(i => i.BookableObject)

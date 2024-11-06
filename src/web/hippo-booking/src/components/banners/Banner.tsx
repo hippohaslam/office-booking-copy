@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type bannerProps = {
   isShown: boolean;
@@ -9,14 +9,19 @@ type bannerProps = {
   allowClose: boolean;
 };
 
+// TODO: Add a close button to the banner so the parent manages the shown state instead of the banner itself
+
 const Banner = ({ isShown, title, descriptionElement, iconSrc, containerClass, allowClose }: bannerProps) => {
   const [isBannerShown, setIsBannerShown] = useState(isShown);
   const bannerRef = useRef<HTMLDivElement>(null);
 
   const handleClose = () => {
     setIsBannerShown(false);
-    isShown = false;
   };
+
+  useEffect(() => {
+    setIsBannerShown(isShown);
+  }, [isShown]);
 
   if (!isBannerShown) return null;
   return (

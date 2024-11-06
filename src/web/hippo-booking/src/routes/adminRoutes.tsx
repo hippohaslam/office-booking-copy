@@ -1,5 +1,16 @@
 import { Suspense } from "react";
-import { Dashboard, CreateLocation, CreateArea, SvgAreaEditor, FloorplanEditor, ReportingDashboard, Report, EditLocation } from "../imports";
+import {
+  Dashboard,
+  CreateLocation,
+  CreateArea,
+  SvgAreaEditor,
+  FloorplanEditor,
+  ReportingDashboard,
+  Report,
+  EditLocation,
+  AdminBookings,
+  DeleteBooking,
+} from "../imports";
 import { AdminProtectedRoute } from "../ProtectedRoute";
 
 const adminRoutes = [
@@ -9,6 +20,26 @@ const adminRoutes = [
       <Suspense fallback={<div>Loading...</div>}>
         <AdminProtectedRoute>
           <Dashboard />
+        </AdminProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/admin/bookings",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <AdminProtectedRoute>
+          <AdminBookings />
+        </AdminProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/admin/bookings/:bookingId/delete",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <AdminProtectedRoute>
+          <DeleteBooking />
         </AdminProtectedRoute>
       </Suspense>
     ),

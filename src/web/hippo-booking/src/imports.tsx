@@ -7,6 +7,8 @@ const CreateLocation = React.lazy(() => import("./pages/admin/locations/CreateLo
 const CreateArea = React.lazy(() => import("./pages/admin/area/CreateNewArea.tsx"));
 const ReportingDashboard = React.lazy(() => import("./pages/admin/reporting/Dashboard.tsx"));
 const Report = React.lazy(() => import("./pages/admin/reporting/Report.tsx"));
+const AdminBookings = React.lazy(() => import("./pages/admin/bookings/AdminBookings.tsx"));
+const DeleteBooking = React.lazy(() => import("./pages/admin/bookings/DeleteBooking.tsx"));
 
 // Location/booking
 const Booking = React.lazy(() => import("./pages/bookings/new-booking/NewBooking.tsx"));
@@ -30,4 +32,6 @@ export {
   CreateArea,
   ReportingDashboard,
   Report,
+  AdminBookings,
+  DeleteBooking,
 };

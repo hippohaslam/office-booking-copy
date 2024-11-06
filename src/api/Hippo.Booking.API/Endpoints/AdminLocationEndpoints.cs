@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hippo.Booking.API.Endpoints;
 
-public class LocationAdminEndpoints() : EndpointBase("admin/location", "Admin Locations", AccessLevelEnum.Admin)
+public class AdminLocationEndpoints() : EndpointBase("admin/location", "Admin Locations", AccessLevelEnum.Admin)
 {
     protected override void MapEndpoints(RouteGroupBuilder builder)
     {
