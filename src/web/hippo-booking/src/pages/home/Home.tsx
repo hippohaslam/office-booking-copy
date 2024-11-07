@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getUpcomingBookingsAsync } from "../../services/Apis.ts";
 import { ErrorBanner } from "../../components/banners/ErrorBanner.tsx";
-import BookingCardStacked from "../../components/booking/BookingCardStacked.tsx";
 import { InformationBanner } from "../../components/index";
 import "./Home.scss";
 
@@ -40,24 +39,42 @@ const Home = () => {
     } else if (isError) {
       return <ErrorBanner isShown={true} title='Error' errorMessage='Unable to get bookings, please refresh the page' allowClose={false} />;
     } else if (isSuccess && data) {
-      const nextBooking = data.at(0);
-      if (data.length === 0 || !nextBooking) {
+      const firstBooking = data.at(0);
+      if (data.length === 0 || !firstBooking) {
         return <p>You don't have any upcoming bookings.</p>;
       }
 
+      const bookingsToShow = firstBooking ? data.filter((booking) => booking.date === firstBooking.date) : [];
+
+      const formattedDateTime = new Date(firstBooking.date).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+      const bookingCardHtml = bookingsToShow.length <= 3 ?
+          bookingsToShow.map((booking, index) => {
+            return <li key={index} className="upcoming-booking-card">
+              <ul>
+                <li className='bookable-object-item' aria-label='space'>
+                  {booking.bookableObject.name}
+                </li>
+                <li aria-label='location'>{booking.location.name} - {booking.area.name}</li>
+              </ul>
+            </li>
+          }) :
+            <li className="upcoming-booking-card">
+              <ul>
+                <li className='bookable-object-item' aria-label='space'>
+                  {bookingsToShow.length} bookings
+                </li>
+                <li>View in my bookings</li>
+              </ul>
+            </li>;
+
       return (
-        <div>
-          <p>You have an upcoming booking:</p>
-          <BookingCardStacked
-            date={nextBooking.date}
-            bookableObjectName={nextBooking.bookableObject.name}
-            areaName={nextBooking.area.name}
-            locationName={nextBooking.location.name}
-          />
-          <Link className='with-arrow' to='/bookings'>
-            Manage this and other bookings
-          </Link>
-        </div>
+          <div>
+            <p>Your next booking is on <b>{formattedDateTime}</b>:</p>
+            <ul className="upcoming-booking-list">
+              {bookingCardHtml}
+            </ul>
+          </div>
       );
     } else {
       // This should never happen
@@ -74,6 +91,9 @@ const Home = () => {
             {isSuccess ? <div>{cardToShow()}</div> : null}
             <Link to='/locations' className='cta cta-pink with-arrow'>
               Make a new booking
+            </Link>
+            <Link to='/bookings' className='cta cta-pink-outline with-arrow'>
+              View my bookings
             </Link>
           </div>
           <img className='hero-graphic' alt='' src={graphicSrc} />

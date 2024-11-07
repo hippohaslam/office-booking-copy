@@ -86,6 +86,7 @@ gap: 5px;
     &.cta-pink {
         background-color: variables.$hippo-brand-pink;
         color: variables.$hippo-brand-navy;
+        border: 3px solid #ffa3b5;
 
         &.with-arrow::after {
         background-image: url(../../assets/cta-arrow-navy.svg);
@@ -94,6 +95,12 @@ gap: 5px;
         &:hover {
         background-color: #ffa3b5;
         }
+    }
+
+    &.cta-pink-outline {
+        border: 3px solid #ffa3b5;
+        color: #ffa3b5;
+        font-weight: 400;
     }
 
     &.cta-red {

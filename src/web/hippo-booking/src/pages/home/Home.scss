@@ -1,5 +1,40 @@
 @use "../../styles/variables.scss";
 
+.upcoming-booking-list {
+    display: grid;
+    grid-template-columns: repeat( 2, minmax(200px, 0.5fr) );
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-left: 0;
+}
+
+.upcoming-booking-card {
+    border-radius: 26px;
+    background-color: variables.$hippo-brand-light-grey;
+    padding: 20px;
+    color: variables.$hippo-brand-navy;
+    list-style: none;
+
+    ul {
+        padding-left: 0;
+    }
+    ul li {
+        list-style: none;
+    }
+
+    .bookable-object-item {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+}
+
+@media only screen and (max-width: 850px){
+    .upcoming-booking-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+
 .hero-container {
     display: flex;
     margin: 0 auto;
@@ -7,6 +42,7 @@
     justify-content: space-between;
     max-width: 1512px;
     padding: 50px 25px;
+    gap: 100px;
 
     // picked 'medium' but can change to anything
     .hero-container__medium-height {
@@ -21,6 +57,10 @@
 
 .hero-graphic{
     width: 550px;
+}
+
+.hero-content {
+    width: 60%;
 }
 
 @media only screen and (max-width: 1587px) {
@@ -38,14 +78,13 @@
     .hero-graphic {
         display: none;
     }
-}
-
-@media only screen and (max-width: 768px) {
 
     .hero-content {
         width: 100%;
     }
+}
 
+@media only screen and (max-width: 768px) {
     .hero-container{
         padding: 25px 25px;
     }
