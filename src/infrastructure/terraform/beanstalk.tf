@@ -161,6 +161,29 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
   }
 
   setting {
+    namespace = "aws:elasticbeanstalk:healthreporting:system"
+    name      = "ConfigDocument"
+    value = jsonencode({
+      "Rules" : {
+        "Environment" : {
+          "Application" : {
+            "ApplicationRequests4xx" : {
+              "Enabled" : false
+            }
+          },
+          "ELB" : {
+            "ELBRequests4xx" : {
+              "Enabled" : true
+            }
+          }
+        }
+      },
+      "Version" : 1
+    })
+    resource = ""
+  }
+
+  setting {
     namespace = "aws:ec2:vpc"
     name      = "AssociatePublicIpAddress"
     value     = "true"
