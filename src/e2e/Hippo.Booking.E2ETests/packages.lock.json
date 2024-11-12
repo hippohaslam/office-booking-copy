@@ -4,11 +4,11 @@
     "net8.0": {
       "AWSSDK.S3": {
         "type": "Direct",
-        "requested": "[3.7.405.11, )",
-        "resolved": "3.7.405.11",
-        "contentHash": "iDllwqtRIPVDEBDtRM60/qxWID8srJYUQsg+4IVTBD6TFsj5tdHlf5Be8RgWQJnacxmGsyJEW/xcIXYGBSbUVg==",
+        "requested": "[3.7.405.12, )",
+        "resolved": "3.7.405.12",
+        "contentHash": "njAQh67MHHgGgEHMmVJ3dw8XIIYd/gW+djH+EEblMW87cHNfPgHheLJlpaxtJ0BDGUZYbkWywx9U7gUDp2kg+g==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.400.47, 4.0.0)"
+          "AWSSDK.Core": "[3.7.400.48, 4.0.0)"
         }
       },
       "coverlet.collector": {
@@ -122,8 +122,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.400.47",
-        "contentHash": "1Twrreb+XofwuK5RfFbhPmiXmzYGmyZSQLPnHErHPSWKjLjOf5hLNOYvSJFa4icK6bWjVSHQspLK2OmBukU6oQ=="
+        "resolved": "3.7.400.48",
+        "contentHash": "YNGrlZNJh1VY8zLEQxo8BVq+QDXwLhCKcqcUd3jqzumT/OlvSzjx+Ca1WJ/HhjDd/2gUmVXOrvZceRavPcLB7Q=="
       },
       "FluentValidation": {
         "type": "Transitive",
