@@ -39,3 +39,5 @@ updates:
     ignore:
       - dependency-name: "AWSSDK.*"
         update-types: ["version-update:semver-patch"]
+      - dependency-name: "Microsoft.*"
+        update-types: ["version-update:semver-major"]
