@@ -17,7 +17,7 @@ public class Config
 
 #else
         .AddJsonFile("appsettings.Development.json", optional: false)
-        .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: false)
+        .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
 #endif
         .Build();
 
