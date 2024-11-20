@@ -1,12 +1,14 @@
 using FluentAssertions;
+using Hippo.Booking.Core.Entities;
+using Hippo.Booking.Core.Enums;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.Slack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using SlackNet;
 using SlackNet.Blocks;
 using SlackNet.Interaction;
+using User = SlackNet.User;
 
 namespace Hippo.Booking.Infrastructure.Tests.Slack;
 
@@ -29,8 +31,17 @@ public class InteractionEventTests
         {
             Id = 1,
             BookableObjectId = 1,
+            BookableObject = new()
+            {
+                Id = 1,
+                Name = "test",
+                Description = "test desc",
+                BookableObjectTypeId = BookableObjectTypeEnum.Standard,
+                AreaId = 0,
+                Bookings = [],
+            },
             Date = DateOnly.FromDateTime(DateTime.Now),
-            UserId = "123"
+            UserId = "123",
         });
 
         await _dataContext.Save();
@@ -87,10 +98,12 @@ public class InteractionEventTests
         await _sut.Handle(action, request);
         
         var booking = await _dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
+            .Include(x => x.BookableObject)
             .SingleOrDefaultAsync(x => x.Id == 1);
 
         booking.Should().NotBeNull();
         booking!.IsConfirmed.Should().BeTrue("booking should be confirmed as ID matches");
+        booking!.BookableObject.Should().NotBeNull();
     }
 
     [Test]
