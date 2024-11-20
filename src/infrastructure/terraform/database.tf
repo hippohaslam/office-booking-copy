@@ -1,5 +1,5 @@
 locals {
-  db_subnet_routing_table_id = aws_route_table.public_route_table.id
+  db_subnet_routing_table_id = var.enable_db_public_access ? aws_route_table.public_route_table.id : aws_route_table.private_route_table.id
 }
 
 resource "aws_db_instance" "hippo-booking-db" {
@@ -11,7 +11,7 @@ resource "aws_db_instance" "hippo-booking-db" {
   username                = "postgres"
   password                = random_password.db_password.result
   parameter_group_name    = "default.postgres16"
-  publicly_accessible     = true
+  publicly_accessible     = var.enable_db_public_access
   skip_final_snapshot     = true
   backup_retention_period = var.db_retention_period
   storage_encrypted       = true

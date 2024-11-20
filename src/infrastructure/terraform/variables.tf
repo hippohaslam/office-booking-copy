@@ -77,3 +77,9 @@ variable "slack_channel_email" {
   description = "Slack channel email to send AWS Alarm alerts to"
   type        = string
 }
+
+variable "enable_db_public_access" {
+  description = "Enable public access to the database"
+  type        = bool
+  default     = false
+}
