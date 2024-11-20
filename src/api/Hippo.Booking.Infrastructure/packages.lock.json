@@ -4,11 +4,11 @@
     "net8.0": {
       "AWSSDK.SecretsManager": {
         "type": "Direct",
-        "requested": "[3.7.400.53, )",
-        "resolved": "3.7.400.53",
-        "contentHash": "oClno3UGqNUspp/vVOF6Brj792FRZepwAtks1MhiXowMODOyW6pqZMuoe6Zmhoxvp5zcJ/apAbbJGV2gWfnqSg==",
+        "requested": "[3.7.400.54, )",
+        "resolved": "3.7.400.54",
+        "contentHash": "o3oZDdEIVkNQGo5/6L8EvXk+I6kTRfs9T3sUrCAM91B91g7uYcxLlsTpjutajSMvQ8xFFooG+nuZAFpNM4UmEg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.400.53, 4.0.0)"
+          "AWSSDK.Core": "[3.7.400.54, 4.0.0)"
         }
       },
       "Dapper": {
@@ -29,9 +29,9 @@
       },
       "SlackNet": {
         "type": "Direct",
-        "requested": "[0.15.1, )",
-        "resolved": "0.15.1",
-        "contentHash": "1a0orwCpxYBznwXDdb7eWfZewIlqqK6Vf9S9EGsw8yXxlUOiCk0oASFgPFYILrFh+/Oww3P8rbaxddm0uvZH5A==",
+        "requested": "[0.15.2, )",
+        "resolved": "0.15.2",
+        "contentHash": "HTJkjgcuwgVrhFUdSJ8tUwFw8krr8NFze76/E0pCpvxJu2x9uETOtUFdJGY5l9SpvXx+JimtQdoCbS8E8ZzPNQ==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
           "Newtonsoft.Json": "13.0.1",
@@ -43,8 +43,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.400.53",
-        "contentHash": "OwJTHfD3tXKLPiB/UUr6SSigFycQm6JNTReh5j2kYJP0CgcZmV+qeePEpIptxCVbq28esef/8hdzezkzNhN+fA=="
+        "resolved": "3.7.400.54",
+        "contentHash": "I14QFG89Cj8zCJk5IWFFoyBe85k2wlZfahkuWfeKvs1eCEM22UAP3qxfTvfZNH31Hj76iiwpE5prYB/howGfFA=="
       },
       "FluentValidation": {
         "type": "Transitive",

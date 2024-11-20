@@ -105,12 +105,12 @@
       },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
-        "requested": "[17.11.1, )",
-        "resolved": "17.11.1",
-        "contentHash": "U3Ty4BaGoEu+T2bwSko9tWqWUOU16WzSFkq6U8zve75oRBMSLTBdMAZrVNNz1Tq12aCdDom9fcOcM9QZaFHqFg==",
+        "requested": "[17.12.0, )",
+        "resolved": "17.12.0",
+        "contentHash": "kt/PKBZ91rFCWxVIJZSgVLk+YR+4KxTuHf799ho8WNiK5ZQpJNAEZCAWX86vcKrs+DiYjiibpYKdGZP6+/N17w==",
         "dependencies": {
-          "Microsoft.CodeCoverage": "17.11.1",
-          "Microsoft.TestPlatform.TestHost": "17.11.1"
+          "Microsoft.CodeCoverage": "17.12.0",
+          "Microsoft.TestPlatform.TestHost": "17.12.0"
         }
       },
       "NSubstitute": {
@@ -150,15 +150,15 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.400.53",
-        "contentHash": "OwJTHfD3tXKLPiB/UUr6SSigFycQm6JNTReh5j2kYJP0CgcZmV+qeePEpIptxCVbq28esef/8hdzezkzNhN+fA=="
+        "resolved": "3.7.400.54",
+        "contentHash": "I14QFG89Cj8zCJk5IWFFoyBe85k2wlZfahkuWfeKvs1eCEM22UAP3qxfTvfZNH31Hj76iiwpE5prYB/howGfFA=="
       },
       "AWSSDK.SecretsManager": {
         "type": "Transitive",
-        "resolved": "3.7.400.53",
-        "contentHash": "oClno3UGqNUspp/vVOF6Brj792FRZepwAtks1MhiXowMODOyW6pqZMuoe6Zmhoxvp5zcJ/apAbbJGV2gWfnqSg==",
+        "resolved": "3.7.400.54",
+        "contentHash": "o3oZDdEIVkNQGo5/6L8EvXk+I6kTRfs9T3sUrCAM91B91g7uYcxLlsTpjutajSMvQ8xFFooG+nuZAFpNM4UmEg==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.400.53, 4.0.0)"
+          "AWSSDK.Core": "[3.7.400.54, 4.0.0)"
         }
       },
       "Azure.Core": {
@@ -317,8 +317,8 @@
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
-        "resolved": "17.11.1",
-        "contentHash": "nPJqrcA5iX+Y0kqoT3a+pD/8lrW/V7ayqnEJQsTonSoPz59J8bmoQhcSN4G8+UJ64Hkuf0zuxnfuj2lkHOq4cA=="
+        "resolved": "17.12.0",
+        "contentHash": "4svMznBd5JM21JIG2xZKGNanAHNXplxf/kQDFfLHXQ3OnpJkayRK/TjacFjA+EYmoyuNXHo/sOETEfcYtAzIrA=="
       },
       "Microsoft.CSharp": {
         "type": "Transitive",
@@ -748,18 +748,18 @@
       },
       "Microsoft.TestPlatform.ObjectModel": {
         "type": "Transitive",
-        "resolved": "17.11.1",
-        "contentHash": "E2jZqAU6JeWEVsyOEOrSW1o1bpHLgb25ypvKNB/moBXPVsFYBPd/Jwi7OrYahG50J83LfHzezYI+GaEkpAotiA==",
+        "resolved": "17.12.0",
+        "contentHash": "TDqkTKLfQuAaPcEb3pDDWnh7b3SyZF+/W9OZvWFp6eJCIiiYFdSB6taE2I6tWrFw5ywhzOb6sreoGJTI6m3rSQ==",
         "dependencies": {
           "System.Reflection.Metadata": "1.6.0"
         }
       },
       "Microsoft.TestPlatform.TestHost": {
         "type": "Transitive",
-        "resolved": "17.11.1",
-        "contentHash": "DnG+GOqJXO/CkoqlJWeDFTgPhqD/V6VqUIL3vINizCWZ3X+HshCtbbyDdSHQQEjrc2Sl/K3yaxX6s+5LFEdYuw==",
+        "resolved": "17.12.0",
+        "contentHash": "MiPEJQNyADfwZ4pJNpQex+t9/jOClBGMiCiVVFuELCMSX2nmNfvUor3uFVxNNCg30uxDP8JDYfPnMXQzsfzYyg==",
         "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.11.1",
+          "Microsoft.TestPlatform.ObjectModel": "17.12.0",
           "Newtonsoft.Json": "13.0.1"
         }
       },
@@ -2211,12 +2211,12 @@
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SecretsManager": "[3.7.400.53, )",
+          "AWSSDK.SecretsManager": "[3.7.400.54, )",
           "Dapper": "[2.1.35, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
           "Microsoft.Extensions.Configuration": "[8.0.0, )",
-          "SlackNet": "[0.15.1, )"
+          "SlackNet": "[0.15.2, )"
         }
       },
       "hippo.booking.infrastructure.ef": {
