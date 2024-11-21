@@ -1,14 +1,8 @@
-locals {
-  bastion_public_key_path  = "${path.module}/bastion-key.pub"
-  bastion_private_key_path = "${path.module}/bastion-key.pem"
-  bastion_ingress_ip       = "0.0.0.0/0"
-}
-
 #https://towardsaws.com/creating-a-bastion-host-for-secure-access-to-your-aws-infrastructure-with-terraform-17ee287bb3d
 
 resource "aws_security_group" "ec2-bastion-sg" {
   description = "EC2 Bastion Host Security Group"
-  name        = "hippo-booking-ec2-bastion-sg-${var.environment}"
+  name        = "hippo-booking-ec2-bastion-sg-${var.env_suffix}"
   vpc_id      = aws_vpc.hippo-booking-vpc.id
 
   ingress {
@@ -44,7 +38,6 @@ resource "aws_eip" "bastion-host-eip" {
 resource "aws_subnet" "hippo-booking-subnet-bastion" {
   vpc_id     = aws_vpc.hippo-booking-vpc.id
   cidr_block = "10.0.6.0/24"
-  #  availability_zone = "eu-west-1a"
 }
 resource "aws_route_table_association" "hippo-booking-subnet-bastion-routing" {
   subnet_id      = aws_subnet.hippo-booking-subnet-bastion.id
