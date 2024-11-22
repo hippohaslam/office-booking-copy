@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import Loader from "../../assets/3-dots-loader.svg";
-import "./cta.scss";
+import Loader from "../../../assets/3-dots-loader.svg";
+import "./CtaButton.scss";
 
 type CtaButtonProps = {
   text: string;
@@ -37,4 +37,4 @@ const CtaButton = React.forwardRef<HTMLButtonElement, CtaButtonProps>(({ text, t
   );
 });
 
-export { CtaButton };
+export default CtaButton;

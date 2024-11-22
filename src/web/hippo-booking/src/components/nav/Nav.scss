@@ -33,12 +33,8 @@ header {
       text-decoration: underline;
     }
 
-    &:focus-visible {
-      background-image: none;
-      background-color: unset;
-      box-shadow: 0 0 0 5px #000;
-      outline: solid 3pt variables.$hippo-brand-yellow;
-      outline-offset: 5px;
+    &:focus {
+      text-decoration: none;
     }
   }
 

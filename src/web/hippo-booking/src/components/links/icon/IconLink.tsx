@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import "./IconButton.scss";
+import "./IconLink.scss";
 
 type IconLinkProps = {
     color: 'navy' | 'grey';

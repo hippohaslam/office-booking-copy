@@ -1,5 +1,6 @@
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { Helmet } from "react-helmet";
 import { ActionTile, ActionTileList, Breadcrumbs, ErrorBanner } from "../../components";
 import { Area } from "../../interfaces/Area";
 import OfficeIcon from "../../assets/office-icon.svg";
@@ -56,6 +57,9 @@ const BookingAreas = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{'Choose an area at ' + locationData.name +' | Make a new booking | Hippo Reserve'}</title>
+      </Helmet>
       <Breadcrumbs items={breadcrumbItems} />
       <h1>{locationData.name}</h1>
       <h2>What would you like to book?</h2>

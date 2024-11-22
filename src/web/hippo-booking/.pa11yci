@@ -1,0 +1,29 @@
+{
+    "defaults": {
+        "timeout": 10000,
+        "viewport": {
+            "width": 320,
+            "height": 480
+        },
+        "chromeLaunchConfig": {
+            "ignoreHTTPSErrors": true,
+            "args": ["--no-sandbox"]
+        }
+    },
+    "urls": [
+        "https://localhost:5173/",
+        "https://localhost:5173/locations",
+        "https://localhost:5173/location/1",
+        "https://localhost:5173/locations/1/areas",
+        "https://localhost:5173/locations/1/areas/1",
+        "https://localhost:5173/bookings/1/confirmed",
+        "https://localhost:5173/bookings",
+        "https://localhost:5173/admin",
+        "https://localhost:5173/admin/reporting",
+        "https://localhost:5173/admin/reporting/1",
+        "https://localhost:5173/admin/locations/new",
+        "https://localhost:5173/admin/locations/1/areas/new",
+        "https://localhost:5173/admin/locations/1",
+        "https://localhost:5173/admin/locations/1/area/1"
+    ]
+}

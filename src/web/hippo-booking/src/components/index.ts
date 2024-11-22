@@ -11,12 +11,14 @@ import WarningBanner from "./banners/WarningBanner";
 import InfoTile from "./tile/info-tile/InfoTile";
 import InfoTileList from "./tile/info-tile/InfoTileList";
 import { ActionTile, ActionTileList } from "./tile/action-tile/ActionTile";
-import { CtaButton } from "./buttons/CtaButton";
-import CtaLink from "./buttons/CtaLink";
+import CtaLink from "./links/cta/CtaLink";
 import Breadcrumbs from "./breadcrumbs/Breadcrumbs";
 import Table from "./table/Table";
-import IconButton from "./buttons/Icon/IconButton";
-import IconLink from "./buttons/Icon/IconLink";
+import IconButton from "./buttons/icon/IconButton";
+import IconLink from "./links/icon/IconLink";
+import SkipToContentLink from "./links/skip/SkipToContentLink";
+import TitleAnnouncer from "./accessibility/TitleAnnouncer/TitleAnnouncer";
+import CtaButton from "./buttons/cta/CtaButton";
 
 export {
   MultiErrorBanner,
@@ -40,5 +42,7 @@ export {
   Breadcrumbs,
   Table,
   IconButton,
-  IconLink
+  IconLink,
+  SkipToContentLink,
+  TitleAnnouncer
 };

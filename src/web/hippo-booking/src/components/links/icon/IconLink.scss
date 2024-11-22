@@ -1,8 +1,8 @@
 @use "../../../styles/variables.scss";
 
-button.icon-button, a.icon-link{
+a.icon-link{
     width: fit-content;
-    height: fit-content;
+    height: 40px;
     border: 2pt transparent solid;
     border-radius: 20px;
     padding: 5px;
@@ -11,31 +11,35 @@ button.icon-button, a.icon-link{
     align-items: center;
     text-decoration: none;
 
-    &.icon-button__navy, &.icon-link__navy{
-        &.icon-button__border, &.icon-link__border{
+    &.icon-link__navy:not([aria-disabled='true']){
+        &.icon-link__border:not([aria-disabled='true']){
             border: 2pt solid variables.$hippo-brand-navy;
         }
 
-        &:hover{
+        &:hover {
             background-color: variables.$hippo-brand-navy;
             border: 2pt solid variables.$hippo-brand-navy;
-            color: white;
 
             & img {
                 filter: brightness(0) saturate(100%) invert(100%);
             }
+            & span{
+                color: white;
+            }
         }
     }
     
-    &.icon-button__grey, &.icon-link__grey{
-        &.icon-button__border, &.icon-button__border{
+    &.icon-link__grey:not([aria-disabled='true']){
+        &.icon-button__border:not([aria-disabled='true']){
             border: 2pt solid variables.$hippo-brand-grey;
         }
 
-        &:not([aria-disabled='true']):hover{
+        &:hover {
             background-color: variables.$hippo-brand-grey;
             border: 2pt solid variables.$hippo-brand-grey;
+        }
 
+        &:hover, &:focus {
             & img {
                 // Bit of a hack as we can't use fill due to the icons not being inline SVGs
                 filter: brightness(0) saturate(100%) invert(12%) sepia(10%) saturate(6910%) hue-rotate(187deg) brightness(92%) contrast(98%);
@@ -68,5 +72,11 @@ button.icon-button, a.icon-link{
 
     span{
         margin: 0 5px;
+    }
+
+    &:focus{
+        background-color: variables.$hippo-brand-yellow;
+        border: 2pt solid variables.$hippo-brand-navy;
+        outline: 2px solid variables.$hippo-brand-yellow;
     }
 }

@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import { postNewLocationAsync } from "../../../services/Apis";
 import { Breadcrumbs, CtaButton, ErrorBanner } from "../../../components";
 import { useNavigate } from "react-router-dom";
@@ -41,6 +42,9 @@ const CreateLocation = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>Create a new location | Admin | Hippo Reserve</title>
+      </Helmet>
       <div>
         <Breadcrumbs items={breadcrumbItems} />
         <div className='spacer'></div>

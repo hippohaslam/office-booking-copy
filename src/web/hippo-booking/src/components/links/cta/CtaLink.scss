@@ -1,0 +1,197 @@
+@use "../../../styles/variables.scss";
+
+a.cta {
+    color: white;
+    padding: 17px 20px;
+    border-radius: 28px;
+    text-decoration: none;
+    font-size: 16px;
+    display: inline-flex;
+    border: none;
+    min-width: fit-content;
+    text-wrap: wrap;
+    max-width: 400px;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.25em;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    gap: 5px;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &:hover,
+    &:active {
+        text-decoration: underline;
+
+        &.cta-with-arrow::after {
+            margin-left: 20px;
+        }
+    }
+    &[aria-disabled='true'] {
+        opacity: 50%;
+        cursor: not-allowed;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    &.cta-green {
+        background-color: variables.$hippo-brand-green;
+
+        &:hover {
+            background-color: #013635;
+            color: white;
+        }
+    }
+
+    &.cta-navy {
+        background-color: variables.$hippo-brand-navy;
+
+        &:hover {
+        background-color: #02070d;
+        color: white;
+        }
+    }
+
+    &.cta-yellow {
+        background-color: variables.$hippo-brand-yellow;
+
+        &:hover {
+        background-color: #b57901;
+        color: variables.$hippo-brand-navy;
+        }
+    }
+
+    &.cta-violet {
+        background-color: variables.$hippo-brand-violet;
+
+        &:hover {
+        background-color: #383f77;
+        color: white;
+        }
+    }
+
+    &.cta-grey {
+        background-color: variables.$hippo-brand-dark-grey;
+        color: black;
+
+        &:hover {
+        background-color: #a5aaac;
+        color: variables.$hippo-brand-navy;
+        }
+    }
+
+    &.cta-pink {
+        background-color: variables.$hippo-brand-pink;
+        color: variables.$hippo-brand-navy;
+        border: 3px solid #ffa3b5;
+
+        &.with-arrow::after {
+            background-image: url(../../../assets/cta-arrow-navy.svg);
+        }
+
+        &:hover {
+            background-color: #f292a1;
+            color: variables.$hippo-brand-navy;
+        }
+    }
+
+    &.cta-pink-outline {
+        border: 3px solid #ffa3b5;
+        font-weight: 400;
+    }
+
+    &.cta-red {
+        background-color: #d20000;
+
+        &:hover {
+            background-color: #980202;
+            color: white;
+        }
+    }
+
+    &.cta-red-outline {
+        border: 3px solid #d20000;
+        color: #d20000;
+        font-weight: 400;
+    }
+
+    &.cta-compact {
+        padding: 10px 15px;
+    }
+
+    img {
+        height: 1.25em;
+    }
+
+    &:focus{
+        background-color: variables.$hippo-brand-yellow;
+        box-shadow: 0 0 0 3px #000;
+        outline: 4pt solid variables.$hippo-brand-yellow;
+        outline-offset: 3px;
+        color: variables.$hippo-brand-navy;
+    }
+
+    &.with-arrow {
+        display: flex;
+        
+        &::after {
+            content: "";
+            display: inline-block;
+            line-height: 500px;
+            width: 16px;
+            height: 16px;
+            margin-left: 15px;
+            margin-top: auto;
+            margin-bottom: auto;
+            position: relative;
+            background-image: url(../../../assets/cta-arrow-white.svg);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+    }
+}
+
+.cta-link-group{
+    display: flex;
+    gap: 10px;
+
+    &.cta-link-group__full-width{
+        flex-direction: row;
+        align-items: stretch;
+
+        a {
+            flex: 1;
+        }
+    }
+}
+
+@media only screen and (max-width: 768px){
+    a.cta {
+        width: 100%;
+        margin-top: 0;
+
+        &.with-arrow{
+            justify-content: space-between;
+        }
+    }
+
+    a.cta + a.cta {
+        margin-top: 0;
+        margin-left: 0;
+    }
+
+    .cta-link-group, .cta-link-group__full-width{
+        flex-direction: column;
+        gap: 15px;
+
+        a.cta {
+            margin-bottom: 0;
+        }
+      }
+}

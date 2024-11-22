@@ -4,14 +4,14 @@ import { v4 as uuidv4 } from "uuid";
 import { fabric } from "fabric";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import { getLocationAreaAsync, putObjectsAsync, putAreaAsync, postBookableObjectAsync, editObjectAsync } from "../../../../services/Apis";
 import { useWindowSize } from "../../../../hooks/WindowSizeHook";
 import { CustomCircle, CustomFabricObject, CustomGroup, CustomObject, CustomRect } from "../../../../shared/fabric/CustomObjects";
-import { Table, Breadcrumbs, ConfirmModal, IconButton, MultiErrorBanner, SuccessBanner } from "../../../../components";
+import { Table, Breadcrumbs, ConfirmModal, IconButton, MultiErrorBanner, SuccessBanner, CtaButton } from "../../../../components";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../../shared/fabric/Canvas";
 import { AccordionGroup, AccordionItem } from "../../../../components/accordion/Accordion";
 import { isNullOrEmpty } from "../../../../helpers/StringHelpers";
-import { CtaButton } from "../../../../components/buttons/CtaButton";
 import { Area } from "../../../../interfaces/Area";
 import type { BookableObject } from "../../../../interfaces/Desk";
 import { BookableObjectTypeEnum } from "../../../../enums/BookableObjectTypeEnum";
@@ -36,6 +36,7 @@ import {
   AddIcon,
   AssignIcon,
 } from "../../../../assets";
+
 
 const generateUniqueId = () => {
   return uuidv4();
@@ -680,6 +681,9 @@ const FloorplanEditor = () => {
   // Must always have a canvas element, adding conditional logic to hide the canvas if the location is not loaded will break the fabric.js canvas
   return (
     <>
+      <Helmet>
+        <title>Edit area | Admin | Hippo Reserve</title>
+      </Helmet>
       <SelectModal title='Add an image' isOpen={showSvgSelectModal} onClose={() => setShowSvgSelectModal(false)}>
         <>
           <h3>Common images</h3>

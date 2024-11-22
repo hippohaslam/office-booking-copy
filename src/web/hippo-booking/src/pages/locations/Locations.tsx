@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet";
 import { getLocationsAsync } from "../../services/Apis";
 import { ActionTile, ActionTileList, Breadcrumbs, ErrorBanner } from "../../components";
 import { compareAlphabeticallyByPropertyWithNumbers } from "../../helpers/ArrayHelpers";
@@ -40,6 +41,9 @@ const Locations = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Choose a location | Make a new booking | Hippo Reserve</title>
+      </Helmet>
       <Breadcrumbs items={breadcrumbItems}/>
       <h1>Choose a location</h1>
       {data?.length === 0 ? <p>Uh oh! no locations found...</p> : <ActionTileList listItems={listItems} />}

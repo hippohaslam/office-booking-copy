@@ -1,9 +1,9 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet";
 import { CtaLink, ErrorBanner, IconLink } from "../../components";
 import { getLocationAreasAsync, getLocationsAsync } from "../../services/Apis";
 import { Link } from "react-router-dom";
 import "./Dashboard.scss";
-
 import AddIcon from "../../assets/add-icon.svg";
 
 const Admin = () => {
@@ -47,6 +47,9 @@ const Admin = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>Admin | Hippo Reserve</title>
+      </Helmet>
       <h1>Admin</h1>
       <div>
         <h2>Reporting</h2>

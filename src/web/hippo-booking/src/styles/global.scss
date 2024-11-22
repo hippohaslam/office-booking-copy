@@ -31,6 +31,7 @@
 * {
   box-sizing: border-box;
   font-family: "DM Sans", serif;
+  color: var(--hippo-brand-navy);
 }
 
 html {
@@ -169,19 +170,17 @@ a {
   color: var(--hippo-dark-green);
   text-underline-offset: 7px;
   text-decoration-color: var(--hippo-brand-green);
+  line-height: 2;
+  width: fit-content;
 
   &:not(.cta):visited {
     color: var(--hippo-dark-green);
   }
-  &:hover,
-  &:active {
-    opacity: 90%;
-    text-decoration-color: var(--hippo-brand-light-grey);
-  }
 
   // External link styling
   &[href^="http://"]:not([href*="localhost"]),
-  &[href^="https://"]:not([href*="officebooking.hippodigital.co.uk"])
+  &[href^="https://"]:not([href*="reserve.internal.hippodigital.cloud"]),
+  &[href^="https://"]:not([href*="reservetest.internal.hippodigital.cloud"])
   {
     &::after {
       content: "";
@@ -194,6 +193,7 @@ a {
       background-repeat: no-repeat;
       background-size: contain;
     }
+
     &:hover {
       &::after {
         background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' %3F%3E%3Csvg height='48' viewBox='0 0 48 48' width='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h48v48h-48z' fill='none'/%3E%3Cpath d='M38 38h-28v-28h14v-4h-14c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-14h-4v14zm-10-32v4h7.17l-19.66 19.66 2.83 2.83 19.66-19.66v7.17h4v-14h-14z' fill='%233c1053'/%3E%3C/svg%3E");
@@ -204,6 +204,20 @@ a {
 
 p a {
   display: inline;
+}
+
+a:not(.cta):not(.icon-link){
+  &:focus {
+    outline: none;
+    background-image: linear-gradient(to top, variables.$hippo-brand-navy 5px, variables.$hippo-brand-yellow 5px, variables.$hippo-brand-yellow);
+    color: #000 !important;
+    text-decoration: none;
+    background-color: variables.$hippo-brand-yellow;
+  }
+
+  &:active{
+    background-color: variables.$hippo-brand-yellow;
+  }
 }
 
 /* Containers and sections */
@@ -227,6 +241,10 @@ section.full-width-navy {
   background-color: var(--hippo-brand-navy);
   color: white;
   width: 100%;
+
+  a:not(.cta):focus{
+    background-image: linear-gradient(to top, variables.$hippo-brand-grey 5px, variables.$hippo-brand-yellow 5px, variables.$hippo-brand-yellow);
+  }
 }
 
 .content-container {
@@ -312,7 +330,7 @@ textarea {
   textarea,
   select {
     display: block;
-    margin-bottom: 1em;
+    margin: 5px 0;
     background-color: variables.$hippo-brand-light-grey;
     border: solid 1px variables.$hippo-brand-dark-grey;
     border-radius: 12px;
@@ -321,8 +339,10 @@ textarea {
     max-width: 750px;
     font-size: 12pt;
 
-    &:has(+ p.hint){
-      margin-bottom: 1px;
+    &:focus{
+      box-shadow: 0 0 0 2px #000;
+      outline: 3px solid variables.$hippo-brand-yellow;
+      outline-offset: 2px;
     }
   }
 

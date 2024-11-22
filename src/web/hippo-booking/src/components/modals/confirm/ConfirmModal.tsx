@@ -1,5 +1,5 @@
+import { CtaButton } from "../..";
 import "./ConfirmModal.scss";
-import { CtaButton } from "../../buttons/CtaButton";
 import { useEffect, useRef } from "react";
 
 type BookingCancelModalProps = {
@@ -33,14 +33,14 @@ const BookingCancelModal = ({
   cancelButtonColor = "cta-red",
   cancelButtonDisabled = false
 }: BookingCancelModalProps) => {
-  const firstButtonRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
-      if (firstButtonRef.current) {
-        firstButtonRef.current.focus();
+      if (modalRef.current) {
+        modalRef.current.focus();
+        modalRef.current.setAttribute("tabindex", "-1");
       }
     }
   }, [isOpen]);
@@ -114,9 +114,9 @@ const BookingCancelModal = ({
         <div id="modal-content">
           <h2 id='cancel-modal-heading'>{title}</h2>
           {childElement}
-          <div className="button-group">
+          <div className="cta-button-group cta-button-group__full-width">
             {showConfirmButton ? (
-              <CtaButton ref={firstButtonRef} text={confirmButtonLabel ?? ""} color={confirmButtonColor} onClick={onConfirm} disabled={confirmButtonDisabled} isLoading={confirmButtonLoading}/>
+              <CtaButton text={confirmButtonLabel ?? ""} color={confirmButtonColor} onClick={onConfirm} disabled={confirmButtonDisabled} isLoading={confirmButtonLoading}/>
             ) : null}
             <CtaButton text={cancelButtonLabel} color={cancelButtonColor} onClick={handleCloseModalClick} disabled={cancelButtonDisabled}/>
           </div>

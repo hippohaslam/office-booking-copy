@@ -1,0 +1,22 @@
+@use "../../../styles/variables.scss";
+
+.skip-link-container{
+    background-color: variables.$hippo-brand-yellow;
+    width: 100%;
+}
+
+a.skip-link{
+    padding: 5px 10px;
+    display: block;
+
+    &:not(:focus):not(:active){
+        position: absolute;
+        top: -45px;
+        height: 0;
+    }
+
+    &:focus, &:active{
+        height: fit-content;
+        top: 0;
+    }
+}

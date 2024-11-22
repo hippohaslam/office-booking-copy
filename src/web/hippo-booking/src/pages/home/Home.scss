@@ -7,33 +7,28 @@
     margin-bottom: 20px;
     padding-left: 0;
 }
-
 .upcoming-booking-card {
     border-radius: 26px;
     background-color: variables.$hippo-brand-light-grey;
     padding: 20px;
     color: variables.$hippo-brand-navy;
     list-style: none;
-
     ul {
         padding-left: 0;
     }
     ul li {
         list-style: none;
     }
-
     .bookable-object-item {
         font-size: 2rem;
         font-weight: bold;
     }
 }
-
 @media only screen and (max-width: 850px){
     .upcoming-booking-list {
         grid-template-columns: 1fr;
     }
 }
-
 
 .hero-container {
     display: flex;
@@ -52,6 +47,10 @@
     .hero-content {
         margin: 30px 0;
         align-content: center;
+
+        h1,h2,p,b,span,.with-arrow:not(.cta){
+            color: white;
+        }
     }
 }
 

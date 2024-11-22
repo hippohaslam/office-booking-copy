@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import { Breadcrumbs, CtaButton, ErrorBanner } from "../../../components";
 import { getLocationAsync, postLocationAreaAsync } from "../../../services/Apis";
 import { AreaTypeEnum } from "../../../enums/AreaTypeEnum.ts";
@@ -55,6 +56,9 @@ const CreateArea = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>Create new area | Admin | Hippo Reserve</title>
+      </Helmet>
       {hasErrors && <ErrorBanner isShown={hasErrors} title='Error' errorMessage={createArea.error.message} allowClose={true} />}
       <Breadcrumbs items={breadcrumbItems} />
       <h1>Create a new area {locationData?.name}</h1>

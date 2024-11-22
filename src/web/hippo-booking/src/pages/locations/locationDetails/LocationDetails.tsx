@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { getLocationAsync } from "../../../services/Apis";
 import { useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet";
 import { Breadcrumbs, CtaLink, ErrorBanner, InfoTile, InfoTileList } from "../../../components";
 import { isNotNullOrEmpty } from "../../../helpers/StringHelpers";
 import "./LocationDetails.scss";
@@ -29,9 +30,12 @@ const LocationDetails = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{data?.name + " | Location details | Hippo Reserve"}</title>
+      </Helmet>
       <Breadcrumbs items={[{text: "Home", to: "/"}, {text: "Locations", to: "/locations"}, {text: data?.name ?? "Details", to: "{}"}]}/>
       <h1>{data?.name}</h1>
-      <iframe className="map" src={`https://maps.google.com/maps?q=${encodedAddress}&t=&z=16&ie=UTF8&iwloc=&output=embed`} width="100%" height="300" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+      <iframe title="Office location on Google Maps" className="map" src={`https://maps.google.com/maps?q=${encodedAddress}&t=&z=16&ie=UTF8&iwloc=&output=embed`} width="100%" height="300" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
       <InfoTileList>
         <InfoTile>
           <h2>Description</h2>

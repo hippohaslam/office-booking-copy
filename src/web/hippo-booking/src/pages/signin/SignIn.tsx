@@ -2,6 +2,7 @@ import "./SignIn.scss";
 import { useCallback, useEffect, useState } from "react";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import { useUser } from "../../contexts/UserContext";
 import { getSession, postSessionGoogle } from "../../services/Apis";
 import HippoSvg from "../../assets/hippo-navy.svg";
@@ -70,7 +71,10 @@ export default function SignIn() {
   if (showLogin) {
     return (
       <>
-        <img src={HippoSvg} className='hippo-watermark-logo'/>
+        <Helmet>
+          <title>Sign in | Hippo Reserve</title>
+        </Helmet>
+        <img alt='Hippo company logo' src={HippoSvg} className='hippo-watermark-logo'/>
         <ErrorBanner title='Uh oh!' errorMessage={errorMessage || ""} isShown={errorMessage !== null} allowClose={false} />
         <div className='login-container'>
           {/* <img src={HippoSvg} alt='Hippo Logo' /> */}

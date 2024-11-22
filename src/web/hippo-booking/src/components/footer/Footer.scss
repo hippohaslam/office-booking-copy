@@ -2,16 +2,31 @@
 
 footer {
   background-color: variables.$hippo-brand-navy;
-  color: white;
   display: flex;
 
   p {
     margin: 0;
+    color: white;
   }
 
   p,
-  a {
-    font-size: 16px;
+  a:not(.cta):not(.icon-link){
+      font-size: 16px;
+      color: white;
+      text-decoration-color: white;
+
+      &[href^="http://"]:not([href*="localhost"]),
+      &[href^="https://"]:not([href*="reserve.internal.hippodigital.cloud"]),
+      &[href^="https://"]:not([href*="reservetest.internal.hippodigital.cloud"])
+      {
+        &::after{
+          filter: brightness(0) saturate(100%) invert(99%) sepia(2%) saturate(0%) hue-rotate(223deg) brightness(110%) contrast(103%);;
+        }
+      }
+
+      &:focus{
+        background-image: linear-gradient(to top, white 5px, variables.$hippo-brand-yellow 5px, variables.$hippo-brand-yellow);
+      }
   }
 }
 

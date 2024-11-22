@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Helmet } from "react-helmet";
+import { AxiosError } from "axios";
 import { Table, CtaLink, ErrorBanner, IconButton, SuccessBanner } from "../../../components/index.ts";
 import BookingCardStacked from "../../../components/booking/BookingCardStacked.tsx";
 import { deleteBookingAsync, getUpcomingBookingsAsync } from "../../../services/Apis.ts";
 import ConfirmModal from "../../../components/modals/confirm/ConfirmModal.tsx";
-import { AxiosError } from "axios";
 import DeleteIcon from "../../../assets/delete-icon-navy.svg";
 
 const MyBookings = () => {
@@ -135,6 +136,9 @@ const MyBookings = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>My bookings | Hippo Reserve</title>
+      </Helmet>
       <SuccessBanner
         isShown={showSuccessBanner}
         title='Booking cancelled'

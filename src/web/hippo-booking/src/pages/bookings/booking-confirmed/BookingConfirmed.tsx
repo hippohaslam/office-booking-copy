@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import "./BookingConfirmed.scss";
 import Graphic from "../../../assets/big-tick-icon.svg";
 import BookingCardStacked from "../../../components/booking/BookingCardStacked";
@@ -41,6 +42,9 @@ const BookingConfirmed = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{'Booking confirmed | Hippo Reserve'}</title>
+      </Helmet>
       <Link to='/'>Back to home page</Link>
       <div className='confirmed-page-heading'>
         <img alt='' className='confirmed-page-tick-graphic' src={Graphic}></img>
@@ -60,7 +64,7 @@ const BookingConfirmed = () => {
           <div className='sub-section-grey'>
             <h2>Need another booking in {data?.location.name}?</h2>
             <p>Bookings can be placed up to 6 weeks in advance. You can also book spaces for guests and other Hippos under your name.</p>
-            <div className='button-group'>
+            <div className='cta-link-group'>
               {data.location.areas.map((area: Area) => {
                 return (
                   <CtaLink

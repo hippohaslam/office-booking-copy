@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { CtaButton } from "../../buttons/CtaButton";
+import { CtaButton } from "../..";
 
 type SelectModalProps = {
   title: string;
@@ -11,6 +11,15 @@ type SelectModalProps = {
 const SelectModal = ({ title, isOpen, onClose, children }: SelectModalProps) => {
   const overlayRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (modalRef.current) {
+        modalRef.current.setAttribute("tabindex", "-1");
+        modalRef.current.focus();
+      }
+    }
+  }, [isOpen]);
 
   const closeModal = () => {
     if (modalRef.current) {

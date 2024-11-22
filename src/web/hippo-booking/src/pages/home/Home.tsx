@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { useUser } from "../../contexts/UserContext.tsx";
 import RelaxingGraphic from "../../assets/relaxed-graphic.svg";
 import OfficeGraphic from "../../assets/in-the-office-graphic.svg";
@@ -47,7 +48,7 @@ const Home = () => {
       const bookingsToShow = firstBooking ? data.filter((booking) => booking.date === firstBooking.date) : [];
 
       const formattedDateTime = new Date(firstBooking.date).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-
+      
       const bookingCardHtml = bookingsToShow.length <= 3 ?
           bookingsToShow.map((booking, index) => {
             return <li key={index} className="upcoming-booking-card">
@@ -84,17 +85,22 @@ const Home = () => {
 
   return (
     <div className='page-container'>
+      <Helmet>
+        <title>Home | Hippo Reserve</title>
+      </Helmet>
       <section className='full-width-navy'>
         <div className='hero-container'>
           <div className='hero-content hero-container__medium-height'>
             <h1>Hi {userContext.user?.firstName}</h1>
             {isSuccess ? <div>{cardToShow()}</div> : null}
-            <Link to='/locations' className='cta cta-pink with-arrow'>
-              Make a new booking
-            </Link>
-            <Link to='/bookings' className='cta cta-pink-outline with-arrow'>
-              View my bookings
-            </Link>
+            <div className="cta-link-group">
+              <Link to='/locations' className='cta cta-pink with-arrow'>
+                Make a new booking
+              </Link>
+              <Link to='/bookings' className='cta cta-pink-outline with-arrow'>
+                View my bookings
+              </Link>
+            </div>
           </div>
           <img className='hero-graphic' alt='' src={graphicSrc} />
         </div>
@@ -106,7 +112,7 @@ const Home = () => {
           description='This site is currently in Development and liable to changes in features and data.'
           allowClose={false}
         />
-        <h3>About</h3>
+        <h2>About</h2>
         <p>You can book a desk or parking space, view your bookings, and cancel bookings.</p>
       </section>
     </div>

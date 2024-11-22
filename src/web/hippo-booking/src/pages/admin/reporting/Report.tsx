@@ -1,7 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { getReportDataAsync, runReportAsync } from "../../../services/Apis";
+import { Helmet } from "react-helmet";
 import { useState } from "react";
+import { getReportDataAsync, runReportAsync } from "../../../services/Apis";
 import { Table, Breadcrumbs, CtaButton } from "../../../components";
 
 // Use of any in this file is intentional because of the dynamic nature of the data
@@ -63,6 +64,9 @@ const Report = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{data?.name + ' - report | Hippo Reserve'}</title>
+      </Helmet>
       <Breadcrumbs items={breadcrumbItems}/>
       <h1>Report {reportId}</h1>
       <div>

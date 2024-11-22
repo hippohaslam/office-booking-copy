@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBookingsForDateAsync, getLocationAreaAsync, getLocationAsync, postBookingAsync } from "../../../services/Apis.ts";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet";
 import { fabric } from "fabric";
 import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas.ts";
 import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric/CustomObjects.ts";
@@ -470,6 +471,9 @@ const NewBooking = () => {
   // RENDERING STUFF
   return (
     <div>
+      <Helmet>
+        <title>{'Pick a space in ' + areaData?.name + ' at ' + locationData?.name + ' | Make a new booking | Hippo Reserve'}</title>
+      </Helmet>
       <Breadcrumbs items={breadcrumbItems} />
       {error !== null ? (
         <ErrorBanner
@@ -495,10 +499,10 @@ const NewBooking = () => {
           <div className='canvas__container'>
             <canvas height={800} width={600} ref={canvasElRef} />
             <div className='zoom-in-out-btns'>
-              <button onClick={handleZoomInBtn}>
+              <button aria-label='zoom in' onClick={handleZoomInBtn}>
                 <PlusIcon />
               </button>
-              <button onClick={handleZoomOutBtn}>
+              <button aria-label='zoom out' onClick={handleZoomOutBtn}>
                 <MinusIcon />
               </button>
             </div>

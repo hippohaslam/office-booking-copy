@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { editLocationAsync, getLocationAsync } from "../../../services/Apis";
 import { Breadcrumbs, CtaButton, ErrorBanner, SuccessBanner } from "../../../components";
 import { useParams } from "react-router-dom";
@@ -54,6 +55,9 @@ const EditLocation = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{'Edit ' + data?.name + ' | Admin | Hippo Reserve'}</title>
+      </Helmet>
       <div>
         <Breadcrumbs items={breadcrumbItems} />
         <div className='spacer'></div>
@@ -67,13 +71,13 @@ const EditLocation = () => {
           <label htmlFor='location-name' title='The name of the location'>
             Name
           </label>
-          <input type='text' name='name' value={location?.name} onChange={handleLocationUpdate} />
+          <input id='location-name' type='text' name='name' value={location?.name} onChange={handleLocationUpdate} />
         </div>
         <div className='standard-inputs'>
           <label htmlFor='description' title='The description of the location'>
             Description
           </label>
-          <textarea name='description' value={location?.description} onChange={handleLocationUpdate} />
+          <textarea id='description' name='description' value={location?.description} onChange={handleLocationUpdate} />
           <p className="hint">The first line will be shown on the Choose a location page.</p>
         </div>
         <div className='standard-inputs'>

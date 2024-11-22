@@ -1,0 +1,82 @@
+@use "../../../styles/variables.scss";
+
+button.icon-button{
+    width: fit-content;
+    height: 40px;
+    border: 2pt transparent solid;
+    border-radius: 20px;
+    padding: 5px;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+
+    &.icon-button__navy:not([aria-disabled='true']){
+        &.icon-button__border:not([aria-disabled='true']){
+            border: 2pt solid variables.$hippo-brand-navy;
+        }
+
+        &:hover {
+            background-color: variables.$hippo-brand-navy;
+            border: 2pt solid variables.$hippo-brand-navy;
+
+            & img {
+                filter: brightness(0) saturate(100%) invert(100%);
+            }
+            & span{
+                color: white;
+            }
+        }
+    }
+    
+    &.icon-button__grey:not([aria-disabled='true']){
+        &.icon-button__border:not([aria-disabled='true']){
+            border: 2pt solid variables.$hippo-brand-grey;
+        }
+
+        &:hover {
+            background-color: variables.$hippo-brand-grey;
+            border: 2pt solid variables.$hippo-brand-grey;
+        }
+
+        &:hover, &:focus {
+            & img {
+                // Bit of a hack as we can't use fill due to the icons not being inline SVGs
+                filter: brightness(0) saturate(100%) invert(12%) sepia(10%) saturate(6910%) hue-rotate(187deg) brightness(92%) contrast(98%);
+            }
+        }
+    }
+
+    & img{
+        height: 25px;
+        width: 25px;
+    }
+
+    &[aria-disabled="true"]{
+        img {
+            opacity: 50%;
+        }
+
+        border: 2pt transparent solid;
+  
+        &:hover{
+            cursor: not-allowed;
+
+            & img {
+                filter: unset;
+            }
+
+            border: 2pt solid transparent;
+        }
+    }
+
+    span{
+        margin: 0 5px;
+    }
+
+    &:focus{
+        background-color: variables.$hippo-brand-yellow;
+        border: 2pt solid variables.$hippo-brand-navy;
+        outline: 2px solid variables.$hippo-brand-yellow;
+    }
+}

@@ -21,6 +21,7 @@
 
   &.bookable-object-button__booked {
     background-color: variables.$hippo-brand-dark-grey;
+    color: black;
   }
 
   &.bookable-object-button__available {
