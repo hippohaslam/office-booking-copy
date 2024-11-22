@@ -66,20 +66,22 @@ const Admin = () => {
       <ul className='admin-card-list'>
         {locationData?.map((location) => (
           <li key={location.id} className='admin-card' data-testid='location-container'>
-            <h3 className='admin-card__header'>{location.name}</h3>
-            <Link to={`/admin/locations/${location.id}`}>View and edit location details</Link>
-            <br />
-            <h4>Areas</h4>
-            {getAreas(location.id).length === 0 && <p>There are no areas yet for this location. &#128533;</p>}
-            <ul>
-              {/* Get all the areas of this location */}
-              {getAreas(location.id).map((area) => (
-                <li key={area.id}>
-                  <Link to={`/admin/locations/${location.id}/area/${area.id}`}>{area.name}</Link>
-                </li>
-              ))}
-            </ul>
-            <br />
+            <div>
+              <h3 className='admin-card__header'>{location.name}</h3>
+              <Link to={`/admin/locations/${location.id}`}>View and edit location details</Link>
+            </div>
+            <div>
+              <h4>Areas</h4>
+              {getAreas(location.id).length === 0 && <p>There are no areas yet for this location. &#128533;</p>}
+              <ul>
+                {/* Get all the areas of this location */}
+                {getAreas(location.id).map((area) => (
+                  <li key={area.id}>
+                    <Link to={`/admin/locations/${location.id}/area/${area.id}`}>{area.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
             <IconLink
               title={`Add new area for ${location.name}`}
               color='navy'

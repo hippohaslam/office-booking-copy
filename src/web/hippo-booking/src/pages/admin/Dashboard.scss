@@ -9,14 +9,16 @@
 }
 
 .admin-card {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 3;
   border-radius: 12px;
   background-color: variables.$hippo-brand-light-grey;
-  padding: 10px 20px 20px 20px;
+  padding: 20px;
   list-style: none;
 
-  .admin-card__header {
-    padding: 10px 0;
-    margin: 0;
+  h3, h4 {
+    margin-bottom: 5px;
   }
 }
 
