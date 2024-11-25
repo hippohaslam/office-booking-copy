@@ -147,6 +147,10 @@ jobs:
           User__Id: ${{ secrets.AUTOMATION_USERID }}
         run: xvfb-run dotnet test --no-build --verbosity normal --configuration Release
 
+      - name: Run accessibility scans
+        working-directory: ./src/web/hippo-booking
+        run: npx pa11y-ci
+
   deploy-environment:
     name: 'Deploy Environment'
     runs-on: ubuntu-latest
