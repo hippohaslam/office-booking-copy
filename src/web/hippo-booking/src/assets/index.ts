@@ -12,3 +12,4 @@ export { default as ImageIcon } from "./image-icon.svg";
 export { default as EditIcon } from "./edit-icon.svg";
 export { default as AddIcon } from "./add-icon.svg";
 export { default as AssignIcon } from "./assign-icon.svg";
+export { default as TargetIcon } from "./target-icon.svg";

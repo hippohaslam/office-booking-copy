@@ -6,7 +6,7 @@ import { getBookingsForDateAsync, getLocationAreaAsync, getLocationAsync, postBo
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
 import { fabric } from "fabric";
-import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../shared/fabric/Canvas.ts";
+import * as sharedFabric from "../../../shared/fabric/Canvas.ts";
 import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric/CustomObjects.ts";
 import { isNullOrEmpty } from "../../../helpers/StringHelpers.ts";
 import { compareAlphabeticallyByPropertyWithNumbers } from "../../../helpers/ArrayHelpers.ts";
@@ -17,20 +17,27 @@ import BookingCardStacked from "../../../components/booking/BookingCardStacked.t
 import { AxiosError } from "axios";
 import { BookableObject } from "../../../interfaces/Desk";
 import { DaysEnum } from "../../../enums/DaysEnum.ts";
+import { getExistingBookingsFloorPlanIds, getNonExistingBookingsFloorPlanIds } from "../../../helpers/BookingHelpers.ts";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
 // Needs discussion with the team to see what's the best approach.
 
+const Constants = {
+  activeBookingTab: "activeBookingTab",
+  bookingDate: "bookingDate",
+};
+
 const loadActiveTab = () => {
-  const savedTab = localStorage.getItem("activeBookingTab");
+  const savedTab = localStorage.getItem(Constants.activeBookingTab);
   if (savedTab) {
     return Number(savedTab);
   }
+  return 0;
 };
 
 const initialDate = () => {
-  const sessionDate = sessionStorage.getItem("bookingDate");
+  const sessionDate = sessionStorage.getItem(Constants.bookingDate);
 
   if (sessionDate) {
     return new Date(sessionDate);
@@ -44,7 +51,7 @@ const NewBooking = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate());
   const [selectedObject, setSelectedObject] = useState<BookableObject | null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState<number>(loadActiveTab() ?? 0);
+  const [activeTab, setActiveTab] = useState<number>(loadActiveTab());
   const [showCanvas, setShowCanvas] = useState<boolean>(activeTab === 0);
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
@@ -91,7 +98,7 @@ const NewBooking = () => {
 
   useEffect(() => {
     if (selectedDate) {
-      sessionStorage.setItem("bookingDate", selectedDate.toISOString());
+      sessionStorage.setItem(Constants.bookingDate, selectedDate.toISOString());
       setDateDisplay(
         DaysEnum[selectedDate.getDay()] +
           " " +
@@ -101,74 +108,39 @@ const NewBooking = () => {
     }
   }, [refetch, selectedDate]);
 
-  const handleObjectColours = useCallback(
-    (objectId: string | null) => {
-      const setColours = (object: CustomFabricObject) => {
-        const getColorBasedOnBookingStatus = () => {
-          // Find if the object is bookable
-          const bookableObject = areaData?.bookableObjects.find((obj) => obj.floorPlanObjectId === object.id);
-          const isBookable = bookingsData?.bookableObjects.find((obj) => obj.id === bookableObject?.id);
-
-          // Determine the color based on booking status
-          if (!isBookable) {
-            return "white";
-          } else if (isBookable.existingBooking) {
-            return "grey"; // Booked
-          } else {
-            return "green"; // Not booked
-          }
-        };
-
-        // log out the type
-        // fill the colour of a group
-        if (object.type === "group") {
-          const group = object as fabric.Group;
-          group.getObjects().forEach((obj) => {
-            if (obj.type === "path" || obj.type === "rect") {
-              obj.set({
-                fill: getColorBasedOnBookingStatus(),
-              });
-            }
-          });
-        } else {
-          object.set("fill", getColorBasedOnBookingStatus());
-        }
-      };
-
-      if (objectId !== null) {
-        fabricCanvasRef.current?.forEachObject((object: CustomFabricObject) => {
-          if (isCustomFabricObject(object) && object.id !== objectId) {
-            setColours(object);
-          }
-        });
-        fabricCanvasRef.current?.renderAll();
-      } else {
-        fabricCanvasRef.current?.forEachObject((object: CustomFabricObject) => {
-          if (isCustomFabricObject(object)) {
-            setColours(object);
-          }
-        });
-        fabricCanvasRef.current?.renderAll();
-      }
-    },
-    [bookingsData?.bookableObjects, areaData?.bookableObjects],
-  );
+  const handleSetObjectColours = () => {
+    sharedFabric.resetObjectColoursToWhite(fabricCanvasRef.current);
+    sharedFabric.setObjectsFillAndStrokeById(
+      fabricCanvasRef.current,
+      getExistingBookingsFloorPlanIds(areaData?.bookableObjects ?? [], bookingsData?.bookableObjects ?? []),
+      "grey",
+      "black",
+    );
+    sharedFabric.setObjectsFillAndStrokeById(
+      fabricCanvasRef.current,
+      getNonExistingBookingsFloorPlanIds(areaData?.bookableObjects ?? [], bookingsData?.bookableObjects ?? []),
+      "green",
+      "black",
+    );
+  };
 
   const adjustCanvasSize = useCallback(() => {
     if (fabricCanvasRef.current) {
-      if (windowWidth < 1513 && showCanvas) {
-        fabricCanvasRef.current.setWidth(windowWidth - 60);
-      } else if (showCanvas) {
-        fabricCanvasRef.current.setWidth(1452); //(Max width - margins)
-      }
+      let height = 0;
+      let width = 0;
+      if (showCanvas) {
+        if (windowWidth < 1513) {
+          width = windowWidth - 60;
+        } else {
+          width = 1452;
+        }
 
-      fabricCanvasRef.current.setHeight(windowHeight - 300);
-
-      if (showCanvas === false) {
-        fabricCanvasRef.current.setWidth(1);
-        fabricCanvasRef.current.setHeight(1);
+        height = windowHeight - 300;
+      } else {
+        width = 1;
+        height = 1;
       }
-      fabricCanvasRef.current.renderAll();
+      sharedFabric.AdjustCanvasSize(fabricCanvasRef.current, width, height);
     }
   }, [windowWidth, showCanvas]);
 
@@ -182,55 +154,47 @@ const NewBooking = () => {
       // This is more of a guard as it should not expect a null value coming from the canvas objects
       if (isNullOrEmpty(floorplanObjectId)) {
         setSelectedObject(null);
-        handleObjectColours(null);
-        return;
-      }
-      const bookableObject = areaData?.bookableObjects.find((obj) => obj.floorPlanObjectId === floorplanObjectId);
-      if (bookableObject) {
-        setSelectedObject(bookableObject);
-        setModalVisible(true);
+        handleSetObjectColours();
+      } else {
+        const bookableObject = areaData?.bookableObjects.find((obj) => obj.floorPlanObjectId === floorplanObjectId);
+        if (bookableObject) {
+          sharedFabric.setObjectsFillAndStrokeById(fabricCanvasRef.current, [floorplanObjectId], "orange", "black");
+          setSelectedObject(bookableObject);
+          setModalVisible(true);
+        }
       }
     },
-    [handleObjectColours, areaData?.bookableObjects],
+    [areaData?.bookableObjects],
   );
 
   // All the canvas logic and state rendering
   const initializeCanvas = useCallback(() => {
     if (canvasElRef.current) {
-      const canvasOptions = {
+      const canvasOptions: sharedFabric.SharedCanvasOptions = {
         backgroundColor: "white",
         width: 800,
         height: 600,
+        selection: false,
+        allowTouchScrolling: true,
       };
-      const fabricCanvas = loadCanvas(areaData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
-      fabricCanvas.allowTouchScrolling = true;
+      const fabricCanvas = sharedFabric.loadCanvas(areaData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
       adjustCanvasSize();
-      fabricCanvas.selection = false;
 
       // Make all objects non-selectable (but still emits events when clicked on)
-      fabricCanvas.forEachObject((object: CustomFabricObject) => {
-        if (object) {
-          object.selectable = false;
-          object.lockMovementX = true;
-          object.lockMovementY = true;
-          object.hasControls = false;
-          object.hasBorders = false;
-          if (areaData?.bookableObjects.find((obj) => obj.floorPlanObjectId === object.id)) {
-            object.hoverCursor = "pointer";
-          } else {
-            object.hoverCursor = "default";
-          }
+      sharedFabric.setAllObjectsNonSelectable(fabricCanvas);
 
-          if (object.type === "text") {
-            object.selectable = false;
-            object.evented = false;
-          }
-          if (isCustomFabricObject(object)) {
-            handleObjectColours(null);
-          }
-        }
-      });
-      fabricCanvas.renderAll();
+      // find fabric object with the id of the bookableObject
+      if (areaData) {
+        const withIds = areaData.bookableObjects
+          .filter((bookableObject) => {
+            return !isNullOrEmpty(bookableObject.floorPlanObjectId);
+          })
+          .map((bookableObject) => {
+            return bookableObject.floorPlanObjectId!;
+          });
+
+        sharedFabric.setCurserToPointer(fabricCanvas, withIds);
+      }
 
       fabricCanvas.on("mouse:down", (e: fabric.IEvent<MouseEvent>) => {
         // So we can track if the user is panning the canvas
@@ -244,58 +208,43 @@ const NewBooking = () => {
 
       fabricCanvas.on("mouse:up", (e: fabric.IEvent<MouseEvent>) => {
         if (panningInfoRef.current) {
+          // Checking for touch screen events
           if (typeof TouchEvent !== "undefined" && e.e instanceof TouchEvent) {
             const touch = e.e.changedTouches[0];
-            if (panningInfoRef.current.x !== touch.clientX || panningInfoRef.current.y !== touch.clientY) {
-              panningInfoRef.current = null;
-            } else {
-              panningInfoRef.current = null;
-              handleFinalTouch(e.target as CustomFabricObject);
+            const canvasMoved = panningInfoRef.current.x !== touch.clientX || panningInfoRef.current.y !== touch.clientY;
+
+            if (canvasMoved === false) {
+              if (isCustomFabricObject(e.target as CustomFabricObject)) {
+                handleObjectSelected((e.target as CustomFabricObject).id ?? null);
+              } else {
+                handleObjectSelected(null);
+              }
             }
+            panningInfoRef.current = null;
           } else {
-            if (panningInfoRef.current.x !== e.e.clientX || panningInfoRef.current.y !== e.e.clientY) {
-              panningInfoRef.current = null;
-            } else {
-              panningInfoRef.current = null;
-              handleFinalTouch(e.target as CustomFabricObject);
+            const canvasMoved = panningInfoRef.current.x !== e.e.clientX || panningInfoRef.current.y !== e.e.clientY;
+            if (canvasMoved === false) {
+              if (isCustomFabricObject(e.target as CustomFabricObject)) {
+                handleObjectSelected((e.target as CustomFabricObject).id ?? null);
+              } else {
+                handleObjectSelected(null);
+              }
             }
+            panningInfoRef.current = null;
           }
         }
       });
 
-      initializeCanvasZoom(fabricCanvas);
-      initializeCanvasDragging(fabricCanvas);
-    }
-
-    function handleFinalTouch(target: CustomFabricObject) {
-      const selectedFabricObject = target as CustomFabricObject;
-      if (selectedFabricObject) {
-        // check if data contains an id matching the selected object
-
-        if (!isNullOrEmpty(selectedFabricObject.id)) {
-          const found = areaData?.bookableObjects.find((obj) => obj.floorPlanObjectId === selectedFabricObject.id);
-          if (found !== undefined) {
-            handleObjectSelected(selectedFabricObject.id);
-            if (isCustomFabricObject(selectedFabricObject)) {
-              selectedFabricObject.set("fill", "orange");
-              handleObjectColours(selectedFabricObject.id);
-            }
-          } else {
-            setSelectedObject(null);
-            handleObjectColours(null);
-          }
-        }
-      } else {
-        setSelectedObject(null);
-        handleObjectColours(null);
-      }
+      sharedFabric.initializeCanvasZoom(fabricCanvas);
+      sharedFabric.initializeCanvasDragging(fabricCanvas);
+      handleSetObjectColours();
     }
 
     return () => {
       fabricCanvasRef.current?.dispose();
       fabricCanvasRef.current = null;
     };
-  }, [adjustCanvasSize, bookingsData, handleObjectColours, handleObjectSelected, areaData?.bookableObjects, areaData?.floorPlanJson]);
+  }, [adjustCanvasSize, bookingsData, handleObjectSelected, areaData?.bookableObjects, areaData?.floorPlanJson]);
 
   useEffect(() => {
     if (activeTab === 0) {
@@ -312,7 +261,7 @@ const NewBooking = () => {
   const handleTabChange = (newIndex: number) => {
     setActiveTab(newIndex);
     newIndex === 0 ? setShowCanvas(true) : setShowCanvas(false);
-    localStorage.setItem("activeBookingTab", String(newIndex));
+    localStorage.setItem(Constants.activeBookingTab, String(newIndex));
   };
 
   const handleConfirmBooking = () => {
@@ -335,6 +284,7 @@ const NewBooking = () => {
     }
     setModalVisible(false);
     setSelectedObject(null);
+    handleSetObjectColours();
   };
 
   const getExistingBookingName = (bookableObject: BookableObject) => {
@@ -365,25 +315,13 @@ const NewBooking = () => {
 
   const handleZoomInBtn = () => {
     if (fabricCanvasRef.current) {
-      const canvas = fabricCanvasRef.current;
-      const zoom = canvas.getZoom();
-      const center = canvas.getCenter();
-
-      const newZoom = zoom * 1.2;
-
-      canvas.zoomToPoint(new fabric.Point(center.left, center.top), newZoom);
+      sharedFabric.zoomIn(fabricCanvasRef.current);
     }
   };
 
   const handleZoomOutBtn = () => {
     if (fabricCanvasRef.current) {
-      const canvas = fabricCanvasRef.current;
-      const zoom = canvas.getZoom();
-      const center = canvas.getCenter();
-
-      const newZoom = zoom / 1.2;
-
-      canvas.zoomToPoint(new fabric.Point(center.left, center.top), newZoom);
+      sharedFabric.zoomOut(fabricCanvasRef.current);
     }
   };
 
@@ -472,7 +410,7 @@ const NewBooking = () => {
   return (
     <div>
       <Helmet>
-        <title>{'Pick a space in ' + areaData?.name + ' at ' + locationData?.name + ' | Make a new booking | Hippo Reserve'}</title>
+        <title>{"Pick a space in " + areaData?.name + " at " + locationData?.name + " | Make a new booking | Hippo Reserve"}</title>
       </Helmet>
       <Breadcrumbs items={breadcrumbItems} />
       {error !== null ? (

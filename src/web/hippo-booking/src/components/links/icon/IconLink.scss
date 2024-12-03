@@ -1,5 +1,11 @@
 @use "../../../styles/variables.scss";
 
+.icon-link-group{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
 a.icon-link{
     width: fit-content;
     height: 40px;

@@ -1,46 +1,23 @@
 import "./AreaEditorFabric.scss";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { fabric } from "fabric";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { getLocationAreaAsync, putObjectsAsync, putAreaAsync, postBookableObjectAsync, editObjectAsync } from "../../../../services/Apis";
 import { useWindowSize } from "../../../../hooks/WindowSizeHook";
-import { CustomCircle, CustomFabricObject, CustomGroup, CustomObject, CustomRect } from "../../../../shared/fabric/CustomObjects";
+import { CustomFabricObject } from "../../../../shared/fabric/CustomObjects";
 import { Table, Breadcrumbs, ConfirmModal, IconButton, MultiErrorBanner, SuccessBanner, CtaButton } from "../../../../components";
-import { initializeCanvasZoom, initializeCanvasDragging, loadCanvas } from "../../../../shared/fabric/Canvas";
+import * as sharedFabric from "../../../../shared/fabric/Canvas";
 import { AccordionGroup, AccordionItem } from "../../../../components/accordion/Accordion";
 import { isNullOrEmpty } from "../../../../helpers/StringHelpers";
 import { Area } from "../../../../interfaces/Area";
 import type { BookableObject } from "../../../../interfaces/Desk";
 import { BookableObjectTypeEnum } from "../../../../enums/BookableObjectTypeEnum";
 import EnumSelect from "../../../../components/select/EnumSelect";
-
 import GetSvgEditorAssets, { SvgAsset } from "../../../../services/AssetFiles";
 import SelectModal from "../../../../components/modals/select/SelectModal";
-
-import {
-  CircleIcon,
-  SquareIcon,
-  AddLineIcon,
-  FreeDrawIcon,
-  FreeDrawOffIcon,
-  TextIcon,
-  DeleteIcon,
-  DuplicateIcon,
-  SendToBackIcon,
-  SendToFrontIcon,
-  ImageIcon,
-  EditIcon,
-  AddIcon,
-  AssignIcon,
-} from "../../../../assets";
-
-
-const generateUniqueId = () => {
-  return uuidv4();
-};
+import * as Assets from "../../../../assets";
 
 interface SelectedObject {
   id: string;
@@ -48,10 +25,12 @@ interface SelectedObject {
 }
 
 const errorKeys = {
+  canvasNull: "canvas-null",
   areaFetch: "area-fetch",
   areaSave: "area-save",
   saveFabricObjects: "save-fabric-objects",
   saveBookableObjects: "save-bookable-objects",
+  removeFabricObjects: "remove-fabric-objects",
 };
 
 const defaultNewBookableObject: BookableObject = {
@@ -190,9 +169,7 @@ const FloorplanEditor = () => {
   // Adjust canvas size based on window width
   useEffect(() => {
     if (fabricCanvasRef.current) {
-      // < 900 and your on mobile/tablet so adjust canvas size
-      fabricCanvasRef.current.setWidth(canvasWidth());
-      fabricCanvasRef.current.setHeight(600);
+      sharedFabric.AdjustCanvasSize(fabricCanvasRef.current, canvasWidth(), 600);
     }
   }, [windowWidth]);
 
@@ -221,6 +198,7 @@ const FloorplanEditor = () => {
           setDisableObjectTools(false);
 
           // If there is no id, then it is not a bookable object
+
           if (selectedFabricObject.id) {
             setSelectedObject({
               id: selectedFabricObject.id,
@@ -249,18 +227,17 @@ const FloorplanEditor = () => {
   // Initialize the canvas
   useEffect(() => {
     if (canvasElRef.current && locationData) {
-      const canvasOptions = {
+      const canvasOptions: sharedFabric.SharedCanvasOptions = {
         backgroundColor: "white",
         width: canvasWidth(),
         height: 600,
+        selection: true,
+        allowTouchScrolling: false,
       };
-      const fabricCanvas = loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
+      const fabricCanvas = sharedFabric.loadCanvas(locationData?.floorPlanJson ?? "", canvasElRef, fabricCanvasRef, canvasOptions);
 
-      // Make canvas interactive
-      fabricCanvas.selection = true;
-
-      initializeCanvasZoom(fabricCanvas);
-      initializeCanvasDragging(fabricCanvas, true);
+      sharedFabric.initializeCanvasZoom(fabricCanvas);
+      sharedFabric.initializeCanvasDragging(fabricCanvas, true);
     }
 
     // Cleanup function to dispose the canvas when component unmounts
@@ -269,41 +246,6 @@ const FloorplanEditor = () => {
       fabricCanvasRef.current = null;
     };
   }, [locationData]);
-
-  const addCircle = () => {
-    if (fabricCanvasRef.current) {
-      const circle = new CustomCircle({
-        radius: 50,
-        width: 50,
-        height: 50,
-        left: 100,
-        top: 100,
-        fill: "white",
-        stroke: "black",
-        strokeWidth: 2,
-        id: generateUniqueId(),
-      });
-      fabricCanvasRef.current.add(circle);
-      fabricCanvasRef.current.renderAll();
-    }
-  };
-
-  const addSquare = () => {
-    if (fabricCanvasRef.current) {
-      const square = new CustomRect({
-        width: 50,
-        height: 50,
-        left: 150,
-        top: 150,
-        fill: "white",
-        stroke: "black",
-        strokeWidth: 2,
-        id: generateUniqueId(),
-      });
-      fabricCanvasRef.current.add(square);
-      fabricCanvasRef.current.renderAll();
-    }
-  };
 
   const toggleFreeDraw = () => {
     if (fabricCanvasRef.current) {
@@ -323,19 +265,16 @@ const FloorplanEditor = () => {
       setArea({ ...area, bookableObjects: nextDesks });
 
       // change fill of object to green
-      const object: CustomFabricObject | undefined = fabricCanvasRef.current
-        ?.getObjects()
-        .find((obj: CustomFabricObject) => obj.id === selectedObject.id);
+      const object = sharedFabric.findObjectById(fabricCanvasRef.current, selectedObject.id);
       if (object) {
-        object.set("fill", "green");
-        fabricCanvasRef.current?.renderAll();
+        sharedFabric.setObjectsFillAndStrokeById(fabricCanvasRef.current, [selectedObject.id], "green", "black");
       }
     }
   };
 
   const unassignDesk = (deskId: number) => {
     if (area) {
-      let selectedObjectId: number = 0;
+      let selectedObjectId = "";
       const nextDesks = area.bookableObjects.map((desk) => {
         if (desk.id === deskId) {
           selectedObjectId = desk.floorPlanObjectId;
@@ -345,80 +284,51 @@ const FloorplanEditor = () => {
       });
       setArea({ ...area, bookableObjects: nextDesks });
       // change fill of object to white
-      const object: CustomFabricObject | undefined = fabricCanvasRef.current
-        ?.getObjects()
-        .find((obj: CustomFabricObject) => obj.id === selectedObjectId.toString());
+      const object = sharedFabric.findObjectById(fabricCanvasRef.current, selectedObjectId);
       if (object) {
-        object.set("fill", "white");
-        fabricCanvasRef.current?.renderAll();
+        sharedFabric.setObjectsFillAndStrokeById(fabricCanvasRef.current, [object.id!], "white", "black");
       }
     }
   };
 
   const saveLocation = async () => {
-    if (area && fabricCanvasRef.current) {
-      const nextLocation = {
-        ...area,
-        floorPlanJson: JSON.stringify(fabricCanvasRef.current.toJSON(["id"])),
-      };
-      Promise.all([areaMutation.mutateAsync(nextLocation), bookableObjectsMutation.mutateAsync(area.bookableObjects)]).finally(() => {
-        if (locationId) {
-          queryClient.invalidateQueries({
-            queryKey: ["area-edit", locationId, areaId],
-          });
-        }
-      });
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const removeObject = () => {
-    if (!disableObjectTools) {
-      if (fabricCanvasRef.current) {
-        const activeObject = fabricCanvasRef.current.getActiveObject() as CustomObject;
-
-        if (activeObject) {
-          if (!isNullOrEmpty(activeObject.id) && area) {
-            const nextDesks = area.bookableObjects.map((desk) => {
-              if (desk.floorPlanObjectId === activeObject.id) {
-                desk.floorPlanObjectId = undefined;
-              }
-              return desk;
+    if (area) {
+      const canvasString = sharedFabric.getCanvasJsonAsString(fabricCanvasRef.current);
+      if (canvasString !== null) {
+        const nextLocation = {
+          ...area,
+          floorPlanJson: canvasString,
+        };
+        Promise.all([areaMutation.mutateAsync(nextLocation), bookableObjectsMutation.mutateAsync(area.bookableObjects)]).finally(() => {
+          if (locationId) {
+            queryClient.invalidateQueries({
+              queryKey: ["area-edit", locationId, areaId],
             });
-            setArea({ ...area, bookableObjects: nextDesks });
           }
-
-          fabricCanvasRef.current.remove(activeObject);
-          setTextState({ hidden: true, text: "" });
-        }
+        });
+        handleRemoveError(errorKeys.canvasNull);
+        window.scrollTo(0, 0);
+      } else {
+        handleAddError(errorKeys.canvasNull, "Canvas is empty");
       }
     }
   };
 
-  const handleLineDraw = () => {
-    if (fabricCanvasRef.current) {
-      const line = new fabric.Line([100, 800, 100, 600], {
-        left: 170,
-        top: 150,
-        stroke: "black",
-        strokeWidth: 20,
-      });
-      fabricCanvasRef.current.add(line);
-      fabricCanvasRef.current.renderAll();
-    }
-  };
-
-  const handleAddText = () => {
-    if (fabricCanvasRef.current) {
-      const text = new fabric.Text("Hello, World!", {
-        left: 100,
-        top: 100,
-        fill: "black",
-        fontFamily: '"DM Sans","serif"',
-      });
-      text.bringForward();
-      fabricCanvasRef.current.add(text);
-      fabricCanvasRef.current.renderAll();
+  const removeObject = async () => {
+    if (!disableObjectTools && area) {
+      try {
+        const removedIds = await sharedFabric.removeActiveObjectsAsync(fabricCanvasRef.current);
+        const nextDesks = area.bookableObjects.map((desk) => {
+          if (removedIds.includes(desk.floorPlanObjectId)) {
+            desk.floorPlanObjectId = undefined;
+          }
+          return desk;
+        });
+        handleRemoveError(errorKeys.removeFabricObjects);
+        setArea({ ...area, bookableObjects: nextDesks });
+      } catch (error) {
+        handleAddError(errorKeys.removeFabricObjects, "Error removing object(s)");
+      }
     }
   };
 
@@ -447,35 +357,8 @@ const FloorplanEditor = () => {
   };
 
   const handleCopy = () => {
-    // This was a bit tricky to implement, but the idea is to clone the selected objects and add them to the canvas, then reselect because fabric...
-    // I had to discardActiveObject then setActiveObject to make the objects selectable again without losing left and top positions
     if (!disableObjectTools) {
-      if (fabricCanvasRef.current) {
-        const activeObjects = fabricCanvasRef.current.getActiveObjects();
-        fabricCanvasRef.current.discardActiveObject();
-        const forSelect: CustomFabricObject[] = [];
-        if (activeObjects && activeObjects.length > 0) {
-          activeObjects.forEach((activeObject: CustomFabricObject) => {
-            activeObject.clone((cloned: CustomFabricObject) => {
-              const newId = generateUniqueId();
-              // Only generate a new id if the original object has an id
-              if (!isNullOrEmpty(activeObject.id)) {
-                cloned.set("id", newId);
-              }
-              cloned.set("left", activeObject?.left ? activeObject.left + 10 : 150);
-              cloned.set("top", activeObject?.top ? activeObject.top + 10 : 150);
-              forSelect.push(cloned);
-              fabricCanvasRef.current?.add(cloned);
-            });
-          });
-          fabricCanvasRef.current.setActiveObject(
-            new fabric.ActiveSelection(forSelect, {
-              canvas: fabricCanvasRef.current,
-            }),
-          );
-        }
-        fabricCanvasRef.current.renderAll();
-      }
+      sharedFabric.copyActiveObject(fabricCanvasRef.current);
     }
   };
 
@@ -484,22 +367,8 @@ const FloorplanEditor = () => {
    * @param floorPlanObjectId The id of the object to select
    */
   const handleSelectCanvasObject = (floorPlanObjectId?: string): void => {
-    if (fabricCanvasRef.current && !isNullOrEmpty(floorPlanObjectId)) {
-      const object: CustomFabricObject | undefined = fabricCanvasRef.current
-        .getObjects()
-        .find((obj: CustomFabricObject) => obj.id === floorPlanObjectId);
-      if (object) {
-        fabricCanvasRef.current.setActiveObject(object as fabric.Object);
-        fabricCanvasRef.current.renderAll();
-        if (object.id) {
-          const hasAssignedDesk = area?.bookableObjects.some((desk) => desk.floorPlanObjectId === object.id);
-          setSelectedObject({ id: object.id, hasAssignedDesk: hasAssignedDesk ?? false });
-        }
-      }
-    } else if (fabricCanvasRef.current && isNullOrEmpty(floorPlanObjectId)) {
-      fabricCanvasRef.current.discardActiveObject();
-      fabricCanvasRef.current.renderAll();
-      setSelectedObject(null);
+    if (!isNullOrEmpty(floorPlanObjectId)) {
+      sharedFabric.findAndSetActiveObject(fabricCanvasRef.current, floorPlanObjectId);
     }
   };
 
@@ -508,34 +377,18 @@ const FloorplanEditor = () => {
 
   const handleSendToPosition = (position: "back" | "front") => {
     if (!disableObjectTools) {
-      if (fabricCanvasRef.current) {
-        const activeObject = fabricCanvasRef.current.getActiveObject();
-        if (activeObject) {
-          if (position === "back") {
-            fabricCanvasRef.current.sendToBack(activeObject);
-          } else if (position === "front") {
-            fabricCanvasRef.current.bringToFront(activeObject);
-          }
-          fabricCanvasRef.current.discardActiveObject();
-          fabricCanvasRef.current.renderAll();
-        }
-      }
+      sharedFabric.sendToPosition(fabricCanvasRef.current, position);
     }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (fabricCanvasRef.current && e.target.files) {
+    if (e.target.files) {
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onload = (event) => {
         const data = event.target?.result;
         if (data) {
-          fabric.loadSVGFromString(data as string, (objects) => {
-            const group = new fabric.Group(objects as CustomObject[]) as CustomGroup;
-            group.set("id", generateUniqueId());
-            fabricCanvasRef.current?.add(group);
-            fabricCanvasRef.current?.renderAll();
-          });
+          sharedFabric.addSvgFromString(fabricCanvasRef.current, data as string);
         }
       };
       reader.readAsText(file);
@@ -546,14 +399,7 @@ const FloorplanEditor = () => {
   };
 
   const handleSvgUrlUploadModal = (url: string) => {
-    if (fabricCanvasRef.current) {
-      fabric.loadSVGFromURL(url, (objects) => {
-        const group = new fabric.Group(objects as CustomObject[]) as CustomGroup;
-        group.set("id", generateUniqueId());
-        fabricCanvasRef.current?.add(group);
-        fabricCanvasRef.current?.renderAll();
-      });
-    }
+    sharedFabric.addSvgFromUrl(fabricCanvasRef.current, url);
     setShowSvgSelectModal(false);
   };
 
@@ -711,9 +557,10 @@ const FloorplanEditor = () => {
         </>
       </SelectModal>
 
+      <Breadcrumbs items={breadcrumbItems} />
       {errors.length > 0 && <MultiErrorBanner isShown={errors.length > 0} title='Error' errors={errors} allowClose={true} />}
       {hasSuccess && errors.length < 1 && <SuccessBanner isShown={hasSuccess} title='Saved successfully' />}
-      <Breadcrumbs items={breadcrumbItems} />
+
       <h1>Edit area</h1>
       <h2>Details</h2>
       <div className='standard-inputs'>
@@ -737,7 +584,7 @@ const FloorplanEditor = () => {
                     <td>
                       <IconButton
                         title='Edit bookable object'
-                        iconSrc={EditIcon}
+                        iconSrc={Assets.EditIcon}
                         onClick={() => setBookableObjectToEdit(object)}
                         color='navy'
                         showBorder={false}
@@ -759,7 +606,7 @@ const FloorplanEditor = () => {
         />
         <IconButton
           title='Create new bookable object'
-          iconSrc={AddIcon}
+          iconSrc={Assets.AddIcon}
           onClick={handleAddNewBookableObjectDisplay}
           color='navy'
           showBorder={true}
@@ -774,20 +621,41 @@ const FloorplanEditor = () => {
         <div className='floorplan__editor'>
           <div className='toolbar'>
             <div className='toolbar-button-group'>
-              <IconButton title='Add circle' iconSrc={CircleIcon} onClick={addCircle} color='grey' showBorder={false} showText={false} />
-              <IconButton title='Add square' iconSrc={SquareIcon} onClick={addSquare} color='grey' showBorder={false} showText={false} />
               <IconButton
-                title='Add line'
-                iconSrc={AddLineIcon}
-                onClick={handleLineDraw}
+                title='Add circle'
+                iconSrc={Assets.CircleIcon}
+                onClick={() => sharedFabric.addCircle(fabricCanvasRef.current)}
                 color='grey'
                 showBorder={false}
                 showText={false}
               />
-              <IconButton title='Add text' iconSrc={TextIcon} onClick={handleAddText} color='grey' showBorder={false} showText={false} />
+              <IconButton
+                title='Add square'
+                iconSrc={Assets.SquareIcon}
+                onClick={() => sharedFabric.addSquare(fabricCanvasRef.current)}
+                color='grey'
+                showBorder={false}
+                showText={false}
+              />
+              <IconButton
+                title='Add line'
+                iconSrc={Assets.AddLineIcon}
+                onClick={() => sharedFabric.addLine(fabricCanvasRef.current)}
+                color='grey'
+                showBorder={false}
+                showText={false}
+              />
+              <IconButton
+                title='Add text'
+                iconSrc={Assets.TextIcon}
+                onClick={() => sharedFabric.addText(fabricCanvasRef.current)}
+                color='grey'
+                showBorder={false}
+                showText={false}
+              />
               <IconButton
                 title='Add image'
-                iconSrc={ImageIcon}
+                iconSrc={Assets.ImageIcon}
                 onClick={() => setShowSvgSelectModal(true)}
                 color='grey'
                 showBorder={false}
@@ -797,7 +665,7 @@ const FloorplanEditor = () => {
             <div className='toolbar-button-group'>
               <IconButton
                 title={"Free draw mode: " + freeDrawMode.toString()}
-                iconSrc={freeDrawMode == true ? FreeDrawOffIcon : FreeDrawIcon}
+                iconSrc={freeDrawMode == true ? Assets.FreeDrawOffIcon : Assets.FreeDrawIcon}
                 onClick={toggleFreeDraw}
                 color='grey'
                 showBorder={false}
@@ -807,7 +675,7 @@ const FloorplanEditor = () => {
             <div className='toolbar-button-group' ref={objectToolsRef}>
               <IconButton
                 title='Duplicate object'
-                iconSrc={DuplicateIcon}
+                iconSrc={Assets.DuplicateIcon}
                 onClick={handleCopy}
                 color='grey'
                 showBorder={false}
@@ -815,7 +683,7 @@ const FloorplanEditor = () => {
               />
               <IconButton
                 title='Send to back'
-                iconSrc={SendToBackIcon}
+                iconSrc={Assets.SendToBackIcon}
                 onClick={() => handleSendToPosition("back")}
                 color='grey'
                 showBorder={false}
@@ -823,7 +691,7 @@ const FloorplanEditor = () => {
               />
               <IconButton
                 title='Bring to front'
-                iconSrc={SendToFrontIcon}
+                iconSrc={Assets.SendToFrontIcon}
                 onClick={() => handleSendToPosition("front")}
                 color='grey'
                 showBorder={false}
@@ -831,7 +699,7 @@ const FloorplanEditor = () => {
               />
               <IconButton
                 title='Remove object'
-                iconSrc={DeleteIcon}
+                iconSrc={Assets.DeleteIcon}
                 onClick={removeObject}
                 color='grey'
                 showBorder={false}
@@ -861,7 +729,7 @@ const FloorplanEditor = () => {
                   {area?.bookableObjects
                     .filter((desk) => isNullOrEmpty(desk.floorPlanObjectId))
                     .map((desk) => (
-                      <li key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
+                      <li key={desk.id}>
                         <div className='floorplan__desk-list-card'>
                           <strong>{desk.name}</strong>
                           <IconButton
@@ -871,7 +739,7 @@ const FloorplanEditor = () => {
                             onClick={() => assignDesk(desk.id)}
                             showBorder={false}
                             showText={true}
-                            iconSrc={AssignIcon}
+                            iconSrc={Assets.AssignIcon}
                             disabled={!selectedObject || selectedObject.hasAssignedDesk || !isNullOrEmpty(desk.floorPlanObjectId)}
                           />
                         </div>
@@ -888,15 +756,26 @@ const FloorplanEditor = () => {
                       <li key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
                         <div className='floorplan__desk-list-card'>
                           <strong>{desk.name}</strong>
-                          <IconButton
-                            title='Unassign'
-                            ariaLabel={"Unassign " + desk.name}
-                            color='navy'
-                            onClick={() => unassignDesk(desk.id)}
-                            showBorder={false}
-                            showText={true}
-                            iconSrc={AssignIcon}
-                          />
+                          <div className="icon-link-group">
+                            <IconButton
+                              title='Select object on floorplan'
+                              ariaLabel={"select " + desk.name + " on floorplan"}
+                              color='navy'
+                              onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}
+                              showBorder={false}
+                              showText={false}
+                              iconSrc={Assets.TargetIcon}
+                            />
+                            <IconButton
+                              title='Unassign'
+                              ariaLabel={"Unassign " + desk.name}
+                              color='navy'
+                              onClick={() => unassignDesk(desk.id)}
+                              showBorder={false}
+                              showText={true}
+                              iconSrc={Assets.AssignIcon}
+                            />
+                          </div>
                         </div>
                       </li>
                     ))}

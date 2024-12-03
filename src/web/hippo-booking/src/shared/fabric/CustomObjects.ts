@@ -4,6 +4,10 @@ interface CustomFabricObject extends fabric.Object {
   id?: string;
 }
 
+/**
+ * check if the object is a custom fabric object by checking if it has an id property
+ * @param object the object to check
+ */
 export function isCustomFabricObject(object: fabric.Object): object is CustomFabricObject {
   return object instanceof fabric.Object && "id" in object;
 }

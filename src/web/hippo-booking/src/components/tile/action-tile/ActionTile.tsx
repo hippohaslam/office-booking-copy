@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "./ActionTile.scss";
 import { isNullOrEmpty } from "../../../helpers/StringHelpers";
-import { CtaLink } from "../..";
+import CtaLink from "../../links/cta/CtaLink";
 
 type LinkDisplayProps = { show: true; text: string; to: string } | { show: false | undefined | null };
 
