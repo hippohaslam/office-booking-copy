@@ -25,7 +25,7 @@ const SkipToContentLink = ({skipToElementRef} : SkipToContentLinkProps) => {
 
     return (
         <div className='skip-link-container'>
-            <Link tabIndex={1} className='skip-link' to='#' onClick={handleSkip}>Skip to main content</Link>
+            <Link className='skip-link' to='#' onClick={handleSkip}>Skip to main content</Link>
         </div>
     )
 }

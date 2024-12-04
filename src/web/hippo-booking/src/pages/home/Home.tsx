@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getUpcomingBookingsAsync } from "../../services/Apis.ts";
 import { ErrorBanner } from "../../components/banners/ErrorBanner.tsx";
-import { InformationBanner } from "../../components/index";
 import "./Home.scss";
 
 const Home = () => {
@@ -106,14 +105,11 @@ const Home = () => {
         </div>
       </section>
       <section className='text-content-container'>
-        <InformationBanner
-          title='Information'
-          isShown
-          description='This site is currently in Development and liable to changes in features and data.'
-          allowClose={false}
-        />
-        <h2>About</h2>
-        <p>You can book a desk or parking space, view your bookings, and cancel bookings.</p>
+        <h2>Welcome to Hippo Reserve</h2>
+        <p>This app is for booking desks, car parking, and dog-of-the-day at the Hippo offices.</p>
+        <br/>
+        <h3>Need some help?</h3>
+        <p>Read the <Link to={"https://docs.google.com/document/d/1E4kAbMA1UscGbuJoytgoPxivgyZfM4sy3uCx4rTPreE/edit?usp=sharing"} target="none">user instructions on Google Drive</Link>.</p>
       </section>
     </div>
   );

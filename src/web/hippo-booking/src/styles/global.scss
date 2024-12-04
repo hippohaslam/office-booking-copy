@@ -50,7 +50,6 @@ body {
 main {
   min-height: calc(100dvh - (6rem + 4rem)); // = full height - (header height - footer height)
   background-color: var(--hippo-brand-grey);
-  padding-bottom: 20px
 }
 
 .login-page-container {
@@ -59,7 +58,6 @@ main {
   justify-content: center;
   max-width: 600px;
   margin: 0 auto;
-
   height: 100vh;
 }
 
@@ -253,13 +251,13 @@ section.full-width-navy {
   padding: 0 25px;
   display: flex;
   flex-direction: column;
+  padding-bottom: 20px;
 }
 
 .text-content-container {
   margin: 0 auto;
   max-width: 60rem;
-  padding: 25px 25px 75px 25px;
-  min-height: 400px;
+  padding: 40px 25px;
 }
 
 hr {
