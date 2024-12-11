@@ -29,7 +29,7 @@ public class CreateEditLocationPage(IPage page)
         await Assertions.Expect(SubmitButton).ToBeVisibleAsync();
     }
 
-    public async Task FillInAndSubmitLocationDetails(Location location)
+    public async Task FillInAndSubmitLocationDetails(Core.Entities.Location location)
     {
         await NameInput.FillAsync(location.Name);
         await DescriptionInput.FillAsync(location.Description);

@@ -150,15 +150,15 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.400.59",
-        "contentHash": "JpF1RLRti7AJsN3Y8kbmKhZ7Q0/6wujYrxYIF0A22CJB9ndYJ95TgKmcV/7KLmrG9AFH3cwJ1HEv6jsCpteveQ=="
+        "resolved": "3.7.400.61",
+        "contentHash": "cSmiBQYI612bzZBcrQCXu7w/H7uQBHcFH5oIzg8U+OOEiUjX3SROegrLSVdPKvPgcJvieE3z5FjCJDUvzaw/Hw=="
       },
       "AWSSDK.SecretsManager": {
         "type": "Transitive",
-        "resolved": "3.7.400.59",
-        "contentHash": "HNpVriR9BqGEaSM4sObyX03QqOQifb2X/4syHF9Ij2wqID9eWK5IGlUry2+68rQLnL56JRf4UME09anvDS3YQw==",
+        "resolved": "3.7.400.61",
+        "contentHash": "MiL0YpSyrcHvc/fDGx+ruiWSPFtkNC/TYcNdNg1lOVjItRyyuEa0bI1rcgEELp+0OThvlWrV0guiqfcbHRHKtw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.400.59, 4.0.0)"
+          "AWSSDK.Core": "[3.7.400.61, 4.0.0)"
         }
       },
       "Azure.Core": {
@@ -1134,35 +1134,35 @@
       },
       "Swashbuckle.AspNetCore": {
         "type": "Transitive",
-        "resolved": "7.1.0",
-        "contentHash": "PpKwEZNCciDPczWPnuqaTVuN5jR/fG2RubQYgKHVWY2KB+TpvKkOrQJoF51S1yMJxygaofCM3BXlLy4PK/o8WA==",
+        "resolved": "7.2.0",
+        "contentHash": "vJv19UpWm6OOgnS9QLDnWARNVasXUfj8SFvlG7UVALm4nBnfwRnEky7C0veSDqMUmBeMPC6Ec3d6G1ts/J04Uw==",
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "6.0.5",
-          "Swashbuckle.AspNetCore.Swagger": "7.1.0",
-          "Swashbuckle.AspNetCore.SwaggerGen": "7.1.0",
-          "Swashbuckle.AspNetCore.SwaggerUI": "7.1.0"
+          "Swashbuckle.AspNetCore.Swagger": "7.2.0",
+          "Swashbuckle.AspNetCore.SwaggerGen": "7.2.0",
+          "Swashbuckle.AspNetCore.SwaggerUI": "7.2.0"
         }
       },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
-        "resolved": "7.1.0",
-        "contentHash": "+vzt/nV82YVCJt7GIuRV9xe67dvzrVwqDgO8DiQPmUZwtvtjK4rrb+qnoXbcu90VVaz2xjEK/Ma5/3AVWifSHQ==",
+        "resolved": "7.2.0",
+        "contentHash": "y27fNDfIh1vGhJjXYynLcZjl7DLOW1bSO2MDsY9wB4Zm1fdxpPsuBSiR4U+0acWlAqLmnuOPKr/OeOgwRUkBlw==",
         "dependencies": {
           "Microsoft.OpenApi": "1.6.22"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerGen": {
         "type": "Transitive",
-        "resolved": "7.1.0",
-        "contentHash": "Nd1O1rVTpeX3U2fr+4FMjTD1BqnGBZcX5t0EkhVBdQWz/anf/68xTpJpAjZ9DS9CVDVKAm7qI6eJmq9psqFpVQ==",
+        "resolved": "7.2.0",
+        "contentHash": "pMrTxGVuXM7t4wqft5CNNU8A0++Yw5kTLmYhB6tbEcyBfO8xEF/Y8pkJhO6BZ/2MYONrRYoQTfPFJqu8fOf5WQ==",
         "dependencies": {
-          "Swashbuckle.AspNetCore.Swagger": "7.1.0"
+          "Swashbuckle.AspNetCore.Swagger": "7.2.0"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerUI": {
         "type": "Transitive",
-        "resolved": "7.1.0",
-        "contentHash": "Tn9+gbG2wGekFDcm1+XQXPZoSZWOHn3DiEGaEw3/SMCtKdhkYiejoKpmTzZueKOBQf0Lzgvxs6Lss0WObN0RPA=="
+        "resolved": "7.2.0",
+        "contentHash": "hgrXeKzyp5OGN8qVvL7A+vhmU7mDJTfGpiMBRL66IcfLOyna8UTLtn3cC3CghamXpRDufcc9ciklTszUGEQK0w=="
       },
       "System.AppContext": {
         "type": "Transitive",
@@ -2190,7 +2190,7 @@
           "Serilog.AspNetCore": "[8.0.3, )",
           "Serilog.Sinks.AwsCloudWatch": "[4.3.37, )",
           "SlackNet.AspNetCore": "[0.15.2, )",
-          "Swashbuckle.AspNetCore": "[7.1.0, )"
+          "Swashbuckle.AspNetCore": "[7.2.0, )"
         }
       },
       "hippo.booking.application": {
@@ -2211,7 +2211,7 @@
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SecretsManager": "[3.7.400.59, )",
+          "AWSSDK.SecretsManager": "[3.7.400.61, )",
           "Dapper": "[2.1.35, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
