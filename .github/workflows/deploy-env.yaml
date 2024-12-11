@@ -232,5 +232,11 @@ jobs:
         run: |
           while [[ "$(aws amplify get-job --app-id ${{ env.APP_ID }} --branch-name main --job-id ${{ env.JOB_ID }} | jq -r '.job.summary.status')" =~ ^(PENDING|RUNNING)$ ]]; do sleep 1; done
           JOB_STATUS="$(aws amplify get-job --app-id ${{ env.APP_ID }} --branch-name main --job-id ${{ env.JOB_ID }} | jq -r '.job.summary.status')"
+          
+          if [[ "$JOB_STATUS" == "FAILED" ]]; then
+            echo "Job failed"
+            exit 1
+          fi
+          
           echo "Job finished"
           echo "Job status is $JOB_STATUS"
