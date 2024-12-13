@@ -7,12 +7,18 @@ resource "aws_subnet" "hippo-booking-api-subnet-a" {
   vpc_id            = aws_vpc.hippo-booking-vpc.id
   cidr_block        = "10.0.4.0/24"
   availability_zone = "eu-west-1a"
+  tags = {
+    Name = "Beanstalk Subnet A"
+  }
 }
 
 resource "aws_subnet" "hippo-booking-api-subnet-b" {
   vpc_id            = aws_vpc.hippo-booking-vpc.id
   cidr_block        = "10.0.5.0/24"
   availability_zone = "eu-west-1b"
+  tags = {
+    Name = "Beanstalk Subnet B"
+  }
 }
 resource "aws_route_table_association" "hippo-booking-api-subnet-a-routing" {
   subnet_id      = aws_subnet.hippo-booking-api-subnet-a.id

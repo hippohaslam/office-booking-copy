@@ -38,6 +38,9 @@ resource "aws_eip" "bastion-host-eip" {
 resource "aws_subnet" "hippo-booking-subnet-bastion" {
   vpc_id     = aws_vpc.hippo-booking-vpc.id
   cidr_block = "10.0.6.0/24"
+  tags = {
+    Name = "Bastion Subnet"
+  }
 }
 resource "aws_route_table_association" "hippo-booking-subnet-bastion-routing" {
   subnet_id      = aws_subnet.hippo-booking-subnet-bastion.id
