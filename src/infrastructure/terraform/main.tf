@@ -81,3 +81,11 @@ resource "aws_acm_certificate_validation" "backend_cert_validation" {
   certificate_arn         = aws_acm_certificate.backend_certificate.arn
   validation_record_fqdns = [for record in aws_route53_record.backend_cert_route53_record : record.fqdn]
 }
+
+module "bastion" {
+  count          = 1
+  source         = "./bastion"
+  env_suffix     = var.env_suffix
+  vpc_id         = aws_vpc.hippo-booking-vpc.id
+  route_table_id = aws_route_table.public_route_table.id
+}
