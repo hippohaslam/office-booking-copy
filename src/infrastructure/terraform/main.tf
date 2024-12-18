@@ -83,7 +83,7 @@ resource "aws_acm_certificate_validation" "backend_cert_validation" {
 }
 
 module "bastion" {
-  count          = 1
+  count          = var.provision_bastion ? 1 : 0
   source         = "./bastion"
   env_suffix     = var.env_suffix
   vpc_id         = aws_vpc.hippo-booking-vpc.id

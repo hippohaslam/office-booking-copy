@@ -83,3 +83,9 @@ variable "enable_db_public_access" {
   type        = bool
   default     = false
 }
+
+variable "provision_bastion" {
+  description = "Whether to provision a bastion host"
+  type        = bool
+  default     = true
+}
