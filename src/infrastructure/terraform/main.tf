@@ -13,6 +13,10 @@ resource "aws_vpc" "hippo-booking-vpc" {
 
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.hippo-booking-vpc.id
+
+  tags = {
+    Name = "VPC Internet Gateway"
+  }
 }
 
 resource "aws_route_table" "public_route_table" {
