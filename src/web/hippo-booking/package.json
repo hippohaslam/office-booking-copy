@@ -25,7 +25,6 @@
     "@react-oauth/google": "^0.12.1",
     "@tanstack/react-query": "^5.62.7",
     "axios": "^1.7.9",
-    "esbuild": "0.24.0",
     "fabric": "^5.4.2",
     "jwt-decode": "^4.0.0",
     "pa11y-ci": "^3.1.0",
@@ -59,7 +58,7 @@
     "prettier": "3.4.2",
     "sass": "^1.82.0",
     "typescript": "^5.7.2",
-    "vite": "^6.0.3",
+    "vite": "5.4.10",
     "vite-plugin-mkcert": "^1.17.6",
     "vitest": "^2.1.8"
   }
