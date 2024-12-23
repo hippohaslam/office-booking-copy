@@ -1,4 +1,5 @@
 import "./InfoTile.scss";
+import type { JSX } from "react";
 
 type InfoTileListProps = {
   children: JSX.Element[];
@@ -7,7 +8,7 @@ type InfoTileListProps = {
 
 const InfoTileList: React.FC<InfoTileListProps> = ({ children, singleColumn = false }: InfoTileListProps) => {
   return (
-    <ul className={singleColumn ? 'info-tile-list single-column' : 'info-tile-list'}>
+    <ul className={singleColumn ? "info-tile-list single-column" : "info-tile-list"}>
       {children.map((listItem, index) => (
         <li className='info-tile-list-item' key={index}>
           {listItem}

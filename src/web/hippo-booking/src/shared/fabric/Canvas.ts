@@ -17,8 +17,8 @@ export type SharedCanvasOptions = {
 
 const loadCanvas = (
   canvasJson: string,
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  fabricCanvasRef: React.MutableRefObject<fabric.Canvas | null>,
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
+  fabricCanvasRef: React.RefObject<fabric.Canvas | null>,
   options: SharedCanvasOptions,
 ) => {
   if (isNullOrEmpty(canvasJson)) {
@@ -420,7 +420,6 @@ const resetObjectColoursToWhite = (canvas: fabric.Canvas | null) => {
 
     canvas.getObjects().forEach((object) => {
       const isText = object.type?.toLowerCase() === "text";
-      console.log(object.type)
       if (isText === false) {
         object.set("fill", "white");
         object.set("stroke", "black");

@@ -1,6 +1,6 @@
 import { CtaButton } from "../..";
 import "./ConfirmModal.scss";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type JSX } from "react";
 
 type BookingCancelModalProps = {
   title: string;

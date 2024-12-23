@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import "./SkipToContentLink.scss";
 
 type SkipToContentLinkProps = {
-    skipToElementRef: React.RefObject<HTMLElement>;
+    skipToElementRef: React.RefObject<HTMLElement | null>;
 }
 
 const SkipToContentLink = ({skipToElementRef} : SkipToContentLinkProps) => {

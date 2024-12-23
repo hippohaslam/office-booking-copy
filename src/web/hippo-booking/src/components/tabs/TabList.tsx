@@ -30,20 +30,13 @@ const TabList: React.FC<TabProps> = ({ activeTabIndex, children, onChange }) => 
     if (!isFocused) return;
 
     let newActiveTab = activeTab;
-    if (event.key === "ArrowLeft") 
-    {
+    if (event.key === "ArrowLeft") {
       newActiveTab = (activeTab - 1 + tabs.length) % tabs.length;
-    } 
-    else if (event.key === "ArrowRight") 
-    {
+    } else if (event.key === "ArrowRight") {
       newActiveTab = (activeTab + 1) % tabs.length;
-    }
-    else if (event.key === "Home") 
-    {
+    } else if (event.key === "Home") {
       newActiveTab = 0;
-    } 
-    else if (event.key === "End") 
-    {
+    } else if (event.key === "End") {
       newActiveTab = tabs.length - 1;
     }
 
@@ -64,14 +57,14 @@ const TabList: React.FC<TabProps> = ({ activeTabIndex, children, onChange }) => 
     };
   }, [isFocused, activeTab, tabs.length]);
 
-  const handleTabActivation = (newActiveTab : number) => {
+  const handleTabActivation = (newActiveTab: number) => {
     setActiveTab(newActiveTab);
     tabButtonRef.current[newActiveTab]?.focus();
     onChange(newActiveTab);
-  }
+  };
 
   return (
-    <div className='tabs'ref={tabListRef} tabIndex={-1}>
+    <div className='tabs' ref={tabListRef} tabIndex={-1}>
       <nav className='tab-list-wrapper' id='tab-nav' aria-label='tab'>
         <div
           className='tab-list'
@@ -84,7 +77,9 @@ const TabList: React.FC<TabProps> = ({ activeTabIndex, children, onChange }) => 
             <button
               key={`tab-button-${index}`}
               role='tab'
-              ref={el => tabButtonRef.current[index] = el}
+              ref={(el) => {
+                tabButtonRef.current[index] = el;
+              }}
               id={`tab-${sanitiseForId(tab.props.label)}`}
               aria-controls={`panel-${sanitiseForId(tab.props.label)}`}
               aria-selected={activeTab === index}
