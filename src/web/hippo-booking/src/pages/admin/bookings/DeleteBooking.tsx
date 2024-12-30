@@ -31,7 +31,7 @@ const EditBooking = () => {
       <p>Booking name: {booking.bookableObject.name}</p>
       <div className=''>
         <CtaButton text='Confirm delete' type='button' color='cta-green' onClick={() => handleDeleteBooking.mutate()}></CtaButton>
-        <CtaButton text='Cancel' type='button' color='cta-red' onClick={handleBack} />
+        <CtaButton text='Cancel' type='button' color='cta-red' onClick={() => handleBack()} />
       </div>
     </div>
   );
