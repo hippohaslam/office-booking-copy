@@ -29,7 +29,7 @@ public class MyBookingsPage(IPage page)
     
     public async Task AssertMyBookingsPage()
     {
-        await page.WaitForURLAsync(Config.BaseUrl + "bookings");
+        await Assertions.Expect(page).ToHaveURLAsync(Config.BaseUrl + "bookings");
         await Assertions.Expect(H1Heading).ToBeVisibleAsync();
     }
     

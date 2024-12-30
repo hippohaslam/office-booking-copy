@@ -30,7 +30,7 @@ public class BookingPage(IPage page)
 
     public async Task AssertBookingPage()
     {
-        await page.WaitForURLAsync(Config.BaseUrl + "locations/**/areas/**");
+        await Assertions.Expect(page).ToHaveURLRegexMatchAsync(@"locations\/\d*\/areas\/\d*");
         await Assertions.Expect(H1Heading).ToBeVisibleAsync();
 
         await Assertions.Expect(DateInput).ToBeVisibleAsync();

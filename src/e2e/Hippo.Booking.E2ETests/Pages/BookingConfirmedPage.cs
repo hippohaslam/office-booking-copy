@@ -15,7 +15,7 @@ public class BookingConfirmedPage(IPage page)
     
     public async Task AssertBookingConfirmedPage()
     {
-        await page.WaitForURLAsync(Config.BaseUrl + "bookings/**/confirmed");
+        await Assertions.Expect(page).ToHaveURLRegexMatchAsync(@"bookings\/\d*\/confirmed");
         await Assertions.Expect(H1Heading).ToBeVisibleAsync();
     }
     

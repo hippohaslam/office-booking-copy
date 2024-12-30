@@ -12,7 +12,7 @@ public class HomePage(IPage page)
     
     public async Task AssertPage()
     {
-        await page.WaitForURLAsync(Config.BaseUrl);
+        await Assertions.Expect(page).ToHaveURLAsync(Config.BaseUrl);
         await Assertions.Expect(H1Heading).ToHaveTextAsync("Hi Test");
     }
 

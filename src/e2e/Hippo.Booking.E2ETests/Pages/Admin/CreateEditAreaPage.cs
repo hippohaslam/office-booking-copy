@@ -17,7 +17,7 @@ public class CreateEditAreaPage(IPage page)
     
     public async Task AssertCreateEditAreaPage(StateHelper.CreateEditState state, string locationName)
     {
-        await page.WaitForURLAsync(Config.BaseUrl + "admin/locations/**/areas/" + state.ToString().ToLower());
+        await Assertions.Expect(page).ToHaveURLRegexMatchAsync(@"admin\/locations\/\d*\/areas\/" + state.ToString().ToLower());
         await Assertions.Expect(BackToLocationsLink).ToBeVisibleAsync();
         await Assertions.Expect(H1Heading(locationName)).ToBeVisibleAsync();
         await Assertions.Expect(AreaNameInput).ToBeVisibleAsync();

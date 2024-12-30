@@ -18,7 +18,7 @@ public class LocationsPage(IPage page)
 
     public async Task AssertLocationsPage()
     {
-        await page.WaitForURLAsync(Config.BaseUrl + "locations");
+        await Assertions.Expect(page).ToHaveURLAsync(Config.BaseUrl + "locations");
         await Assertions.Expect(H1Heading).ToBeVisibleAsync();
     }
     
@@ -30,6 +30,5 @@ public class LocationsPage(IPage page)
     public async Task ClickBookAtThisLocationLink(string locationName)
     {
         await BookAtThisLocationLink(locationName).ClickAsync();
-        await page.WaitForURLAsync(Config.BaseUrl + "locations/**/areas");
     }
 }

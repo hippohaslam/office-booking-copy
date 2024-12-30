@@ -37,7 +37,7 @@ public class EditAreaFloorPlanPage(IPage page)
     
     public async Task AssertEditAreaFloorPlanPage()
     {
-        await page.WaitForURLAsync(Config.BaseUrl + "admin/locations/**/area/**");
+        await Assertions.Expect(page).ToHaveURLRegexMatchAsync(@"admin\/locations\/\d*\/area\/\d*");
         await Assertions.Expect(H1Heading).ToBeVisibleAsync();
         await Assertions.Expect(AreaNameInput).ToBeVisibleAsync();
         await Assertions.Expect(SaveChangesButton).ToBeVisibleAsync();

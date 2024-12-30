@@ -17,8 +17,8 @@ public class CreateEditLocationPage(IPage page)
     
     public async Task AssertCreateEditLocationPage(StateHelper.CreateEditState state)
     {
-        await page.WaitForURLAsync(Config.BaseUrl + "admin/locations/" +
-                                   (state == StateHelper.CreateEditState.New ? "new" : "edit"));
+        await Assertions.Expect(page).ToHaveURLAsync(Config.BaseUrl + "admin/locations/" +
+                                                     (state == StateHelper.CreateEditState.New ? "new" : "edit"));
         await Assertions.Expect(BackToLocationsLink).ToBeVisibleAsync();
         await Assertions.Expect(H1Heading).ToBeVisibleAsync();
         await Assertions.Expect(NameInput).ToBeVisibleAsync();

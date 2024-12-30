@@ -25,7 +25,7 @@ public class AdminPage(IPage page)
 
     public async Task AssertAdminPage()
     {
-        await page.WaitForURLAsync(Config.BaseUrl + "admin");
+        await Assertions.Expect(page).ToHaveURLAsync(Config.BaseUrl + "admin");
         await Assertions.Expect(H1Heading).ToBeVisibleAsync();
         
         await Assertions.Expect(ReportingLink).ToBeVisibleAsync();
