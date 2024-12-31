@@ -4,9 +4,9 @@
     "net8.0": {
       "coverlet.collector": {
         "type": "Direct",
-        "requested": "[6.0.2, )",
-        "resolved": "6.0.2",
-        "contentHash": "bJShQ6uWRTQ100ZeyiMqcFlhP7WJ+bCuabUs885dJiBEzMsJMSFr7BOyeCw4rgvQokteGi5rKQTlkhfQPUXg2A=="
+        "requested": "[6.0.3, )",
+        "resolved": "6.0.3",
+        "contentHash": "SvLbRq7gjzE34BI90vP6ge812+PAjinNoKhdFZHwVEu/ozJgZY+0KyDh1K0teDeMeuzQJuF8OvleRBYXsZDz0A=="
       },
       "Dapper": {
         "type": "Direct",
@@ -124,15 +124,15 @@
       },
       "NUnit": {
         "type": "Direct",
-        "requested": "[4.2.2, )",
-        "resolved": "4.2.2",
-        "contentHash": "mon0OPko28yZ/foVXrhiUvq1LReaGsBdziumyyYGxV/pOE4q92fuYeN+AF+gEU5pCjzykcdBt5l7xobTaiBjsg=="
+        "requested": "[4.3.2, )",
+        "resolved": "4.3.2",
+        "contentHash": "puVXayXNmEu7MFQSUswGmUjOy3M3baprMbkLl5PAutpeDoGTr+jPv33qAYsqxywi2wJCq8l/O3EhHoLulPE1iQ=="
       },
       "NUnit.Analyzers": {
         "type": "Direct",
-        "requested": "[4.4.0, )",
-        "resolved": "4.4.0",
-        "contentHash": "VVl1CuQttXRZh52HRw5SIOut3qXw4pmuiTYk02jTELVWZ9uYRY8IVl2qF9Zs7W0ElPiLDUrAglFBzNLBCPzEcw=="
+        "requested": "[4.5.0, )",
+        "resolved": "4.5.0",
+        "contentHash": "GQysJCO0mi4bAW64DolpTcYLU3euxLiv7o3EYkp2RPGalUm4vgzX6ANiRAyIDWSSWmYUtFqBlmOUH6WkzxEADw=="
       },
       "NUnit3TestAdapter": {
         "type": "Direct",
@@ -150,15 +150,15 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.400.61",
-        "contentHash": "cSmiBQYI612bzZBcrQCXu7w/H7uQBHcFH5oIzg8U+OOEiUjX3SROegrLSVdPKvPgcJvieE3z5FjCJDUvzaw/Hw=="
+        "resolved": "3.7.400.70",
+        "contentHash": "S0mcK1Bqa8xVh9UU+Rg9VEdjHfD2B75WRtBmh4ANTelUcTThG7T/ujNjxLXhzZQKW2j1V+KHUEViW4+OLB4Vkg=="
       },
       "AWSSDK.SecretsManager": {
         "type": "Transitive",
-        "resolved": "3.7.400.61",
-        "contentHash": "MiL0YpSyrcHvc/fDGx+ruiWSPFtkNC/TYcNdNg1lOVjItRyyuEa0bI1rcgEELp+0OThvlWrV0guiqfcbHRHKtw==",
+        "resolved": "3.7.400.70",
+        "contentHash": "35RNWVmQ59ULsFo1Mqst44lUEJPeIWA/75gcv0/KVATGxUACUy3Da+kA05T6SxvJRc6vof+vrkVsg0OXE57hfQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.400.61, 4.0.0)"
+          "AWSSDK.Core": "[3.7.400.70, 4.0.0)"
         }
       },
       "Azure.Core": {
@@ -1081,8 +1081,8 @@
       },
       "SlackNet": {
         "type": "Transitive",
-        "resolved": "0.15.2",
-        "contentHash": "HTJkjgcuwgVrhFUdSJ8tUwFw8krr8NFze76/E0pCpvxJu2x9uETOtUFdJGY5l9SpvXx+JimtQdoCbS8E8ZzPNQ==",
+        "resolved": "0.15.3",
+        "contentHash": "ih6LKDeM2fp3PO5pl/5Lx88xNop+u3812iXloXkYVtOmdF3h1qHdV6pSkBeRzxT7WSy+cZXQM1CR0slub6Q8zw==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
           "Newtonsoft.Json": "13.0.1",
@@ -1094,8 +1094,8 @@
       },
       "SlackNet.AspNetCore": {
         "type": "Transitive",
-        "resolved": "0.15.2",
-        "contentHash": "xp7yTkFm8CRDICsBfx30J1rUzclXZwzWfkZKnorPzG6WmRZrYAJ/9O4m49bCwh3sx6ij5Lz8SJLRKzVBGnzBAA==",
+        "resolved": "0.15.3",
+        "contentHash": "TeUxVIoSlo3X0fsPUwAIhn2QUmTP4pg2Hu0ziV7znjtFGmjH6thQABriHp/0nRQGTIIb8wlg5VfxWtzIQ7cQNA==",
         "dependencies": {
           "Microsoft.AspNetCore.Http": "2.1.22",
           "Microsoft.AspNetCore.Http.Abstractions": "2.1.1",
@@ -1103,18 +1103,18 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "2.2.0",
           "Microsoft.Extensions.Hosting.Abstractions": "2.1.1",
           "Microsoft.Extensions.Logging.Abstractions": "2.2.0",
-          "SlackNet": "0.15.2",
-          "SlackNet.Extensions.DependencyInjection": "0.15.2",
+          "SlackNet": "0.15.3",
+          "SlackNet.Extensions.DependencyInjection": "0.15.3",
           "System.Text.Encodings.Web": "4.5.1"
         }
       },
       "SlackNet.Extensions.DependencyInjection": {
         "type": "Transitive",
-        "resolved": "0.15.2",
-        "contentHash": "/3htyNXMZPoUWgQ7FMpnkAnBn/nC+LJNwLiLMAQ2kaSJ3aBUQIOh1Pbg+LQx5EH1nM7yppGXlK7eZatv8+A1/A==",
+        "resolved": "0.15.3",
+        "contentHash": "Y6VyD9nlUY89VWvqmqahS0ruHc6eGMHkbzg+sM8jNldeg4eB0aoFFJIwzEFdcVVsuHA7rlnDtZeQ676+nhl3kg==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "2.2.0",
-          "SlackNet": "0.15.2"
+          "SlackNet": "0.15.3"
         }
       },
       "SuperSocket.ClientEngine.Core": {
@@ -2189,7 +2189,7 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "[1.1.0, )",
           "Serilog.AspNetCore": "[8.0.3, )",
           "Serilog.Sinks.AwsCloudWatch": "[4.3.37, )",
-          "SlackNet.AspNetCore": "[0.15.2, )",
+          "SlackNet.AspNetCore": "[0.15.3, )",
           "Swashbuckle.AspNetCore": "[7.2.0, )"
         }
       },
@@ -2211,12 +2211,12 @@
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SecretsManager": "[3.7.400.61, )",
+          "AWSSDK.SecretsManager": "[3.7.400.70, )",
           "Dapper": "[2.1.35, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
           "Microsoft.Extensions.Configuration": "[8.0.0, )",
-          "SlackNet": "[0.15.2, )"
+          "SlackNet": "[0.15.3, )"
         }
       },
       "hippo.booking.infrastructure.ef": {
