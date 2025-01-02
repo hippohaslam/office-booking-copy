@@ -115,3 +115,24 @@
 .canvas__container {
   position: relative;
 }
+
+#tooltip {
+  position: absolute;
+  display: none;
+  background: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 3px;
+  pointer-events: none;
+  opacity: 0;
+  padding: 5px;
+  font-weight: bold;
+  font-size: smaller;
+  z-index: 1000;
+
+}
+
+#tooltip.show {
+  display: block;
+  opacity: 1;
+}

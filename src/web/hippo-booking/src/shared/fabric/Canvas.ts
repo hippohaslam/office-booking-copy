@@ -487,6 +487,39 @@ const setCurserToPointer = (canvas: fabric.Canvas, ids: string[]) => {
   canvas.renderAll();
 }
 
+/**
+ * Controls the tooltip for objects on the canvas.
+ * Give the ids of the objects and the tooltip to display
+ * @param canvas 
+ * @param tooltipId 
+ * @param objects 
+ * @returns 
+ */
+const addTooltipToObjects = (canvas: fabric.Canvas, tooltipId: string, objects: { id: string, tooltip: string }[]) => {
+  const tooltip = document.getElementById(tooltipId);
+
+  if (!tooltip) return;
+
+  objects.forEach((obj) => {
+    const object = findObjectById(canvas, obj.id);
+    if (object) {
+      object.on('mouseover', (_) => {
+        tooltip.classList.add('show');
+        tooltip.innerHTML = obj.tooltip;
+      });
+
+      object.on('mousemove', (e) => {
+        tooltip.style.left = `${e.e.pageX + 10}px`;
+        tooltip.style.top = `${e.e.pageY + 10}px`;
+      });
+
+      object.on('mouseout', () => {
+        tooltip.classList.remove('show');
+      });
+    }
+  });
+};
+
 
 export {
 
@@ -514,6 +547,7 @@ export {
   resetObjectColoursToWhite,
   setAllObjectsNonSelectable,
   setCurserToPointer,
+  addTooltipToObjects,
   // General functions
   zoomIn,
   zoomOut

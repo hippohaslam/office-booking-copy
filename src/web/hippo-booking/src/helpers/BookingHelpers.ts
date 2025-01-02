@@ -16,6 +16,15 @@ export const getExistingBookingsFloorPlanIds = (bookableObjects: BookableObject[
     return existingBookings.map((obj) => obj.floorPlanObjectId!);
 };
 
+export const getExistingBookingsFloorPlanIdAndBookedBy = (bookableObjects: BookableObject[], bookedObjects: BookedObject[]): { id: string, text: string }[] => {
+
+    const existingBookings = filterWithFloorPlanObjectId(bookableObjects).filter((obj) =>
+        filterWithExistingBooking(bookedObjects).some((bookedObj) => bookedObj.id === obj.id),
+    );
+    // the text should be the name of the person who booked the object, that would come from the BookedObject
+    return existingBookings.map((obj) => ({ id: obj.floorPlanObjectId!, text: bookedObjects.find((bookedObj) => bookedObj.id === obj.id)?.existingBooking?.name! }));
+}
+
 export const getNonExistingBookingsFloorPlanIds = (bookableObjects: BookableObject[], bookedObjects: BookedObject[]): string[] => {
     const nonExistingBookings = filterWithFloorPlanObjectId(bookableObjects).filter(
         (obj) => !filterWithExistingBooking(bookedObjects).some((bookedObj) => bookedObj.id === obj.id),

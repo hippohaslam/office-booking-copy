@@ -1,11 +1,11 @@
 import "./NewBooking.scss";
 import "react-datepicker/dist/react-datepicker.css";
+import { Helmet } from "react-helmet";
+import { fabric } from "fabric";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBookingsForDateAsync, getLocationAreaAsync, getLocationAsync, postBookingAsync } from "../../../services/Apis.ts";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Helmet } from "react-helmet";
-import { fabric } from "fabric";
 import * as sharedFabric from "../../../shared/fabric/Canvas.ts";
 import { CustomFabricObject, isCustomFabricObject } from "../../../shared/fabric/CustomObjects.ts";
 import { isNullOrEmpty } from "../../../helpers/StringHelpers.ts";
@@ -17,7 +17,12 @@ import BookingCardStacked from "../../../components/booking/BookingCardStacked.t
 import { AxiosError } from "axios";
 import { BookableObject } from "../../../interfaces/Desk";
 import { DaysEnum } from "../../../enums/DaysEnum.ts";
-import { getExistingBookingsFloorPlanIds, getNonExistingBookingsFloorPlanIds } from "../../../helpers/BookingHelpers.ts";
+import {
+  getExistingBookingsFloorPlanIdAndBookedBy,
+  getExistingBookingsFloorPlanIds,
+  getNonExistingBookingsFloorPlanIds,
+} from "../../../helpers/BookingHelpers.ts";
+import * as localStorageApi from "../../../services/LocalStorage.ts";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
@@ -61,6 +66,7 @@ const NewBooking = () => {
   const [isModalLoading, setModalLoading] = useState(false);
   const panningInfoRef = useRef<{ x: number; y: number } | null>(null);
   const [dateDisplay, setDateDisplay] = useState<string>("");
+  const [tooltipEnabled, setTooltipEnabled] = useState<boolean>(localStorageApi.getAdditionalCanvasOptions().enableTooltip);
 
   const { data: areaData } = useQuery({
     queryKey: ["area", areaId],
@@ -167,6 +173,14 @@ const NewBooking = () => {
     [areaData?.bookableObjects],
   );
 
+  // For canvas options
+  useEffect(() => {
+    let options = localStorageApi.getAdditionalCanvasOptions();
+    options.enableTooltip = tooltipEnabled;
+    localStorageApi.setAdditionalCanvasOptions(options);
+    setTooltipEnabled(tooltipEnabled);
+  }, [tooltipEnabled]);
+
   // All the canvas logic and state rendering
   const initializeCanvas = useCallback(() => {
     if (canvasElRef.current) {
@@ -194,6 +208,23 @@ const NewBooking = () => {
           });
 
         sharedFabric.setCurserToPointer(fabricCanvas, withIds);
+      }
+
+      if (bookingsData?.bookableObjects) {
+        if (tooltipEnabled) {
+          const existing = getExistingBookingsFloorPlanIdAndBookedBy(
+            areaData?.bookableObjects ?? [],
+            bookingsData?.bookableObjects ?? [],
+          ).map((obj) => {
+            return {
+              id: obj.id,
+              tooltip: `Booked by: ${obj.text}`,
+            };
+          });
+          sharedFabric.addTooltipToObjects(fabricCanvas, "tooltip", existing);
+        } else {
+          sharedFabric.addTooltipToObjects(fabricCanvas, "tooltip", []);
+        }
       }
 
       fabricCanvas.on("mouse:down", (e: fabric.IEvent<MouseEvent>) => {
@@ -244,7 +275,7 @@ const NewBooking = () => {
       fabricCanvasRef.current?.dispose();
       fabricCanvasRef.current = null;
     };
-  }, [adjustCanvasSize, bookingsData, handleObjectSelected, areaData?.bookableObjects, areaData?.floorPlanJson]);
+  }, [adjustCanvasSize, bookingsData, handleObjectSelected, areaData?.bookableObjects, areaData?.floorPlanJson, tooltipEnabled]);
 
   useEffect(() => {
     if (activeTab === 0) {
@@ -421,7 +452,7 @@ const NewBooking = () => {
           errorMessage={error.response?.data as string}
         />
       ) : null}
-
+      <div id='tooltip'></div>
       <h1>Pick a space</h1>
       <CustomDatePicker
         adjustDate={adjustDate}
@@ -462,6 +493,21 @@ const NewBooking = () => {
             <div className='color-key'>
               <div className='color-block color-block__white'></div>
               <span>- not selectable</span>
+            </div>
+          </div>
+          <div className='spacer'></div>
+          <div className='canvas-options__container'>
+            <strong>Canvas options:</strong>
+            <div>
+              <label htmlFor='enable-tooltip'>Enable tooltip</label>
+              <input
+                type='checkbox'
+                id='enable-tooltip'
+                checked={tooltipEnabled}
+                onChange={() => {
+                  setTooltipEnabled(!tooltipEnabled);
+                }}
+              />
             </div>
           </div>
         </TabItem>
