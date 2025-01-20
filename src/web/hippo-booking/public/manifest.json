@@ -1,0 +1,14 @@
+{
+  "short_name": "Hippo Reserve",
+  "name": "Hippo Reserve",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#dde4e6",
+  "background_color": "#ffffff"
+}
