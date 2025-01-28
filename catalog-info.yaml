@@ -1,0 +1,20 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: office-booking
+  description: This is a Hippo internal project to manage desk and car park bookings in the office.
+  tags:
+    - hippo
+  links:
+    - url: https://reserve.internal.hippodigital.cloud/
+      title: Hippo Reserve
+      icon: dashboard
+  annotations:
+    github.com/project-slug: hippo-digital/office-booking
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: service
+  lifecycle: production
+  owner: office-bookings
+  system: office-booking

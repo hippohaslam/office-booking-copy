@@ -23,7 +23,7 @@ Recommended to use prettier formatter before submitting any changes. Having a on
 
 - For local development, because we use httpOnly cookies for authentication. You will need to create dev certificates, this is done automatically through the `vite-plugin-mkcert` package, you will just be asked your machine password to be able to create the certificates. They are then stored locally in the /certs directory which is git ignored.
 
-## Upgrading packages.
+## Upgrading packages
 
 We recommend to keep the local packages up to date with minor versions as frequency as possible.
 Major versions should be checked and updated when possible. All this to ensure security updates.

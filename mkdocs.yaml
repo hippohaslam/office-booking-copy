@@ -1,0 +1,20 @@
+site_name: Office Booking
+docs_dir: docs
+plugins:
+  - techdocs-core
+  - kroki:
+      ServerURL: !ENV [KROKI_SERVER_URL, "https://kroki.ms.hippodigital.cloud"]
+      FileTypes:
+        - png
+        - svg
+      FileTypeOverrides:
+        mermaid: png
+
+nav:
+  - Home: index.md
+  - AWS Architecture: "AWS Architecture.md"
+  - Database Access: "Database Access.md"
+  - Introduction: "Introduction.md"
+  - Manual Test Cases: "Manual Test Cases/index.md"
+  - Terraform: "Terraform.md"
+  - Useful Commands: "Useful Commands.md"

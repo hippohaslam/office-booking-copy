@@ -4,12 +4,15 @@ The Postgres database is hosted via AWS RDS but is not publicly accessible.
 If you require access, you will need to connect via the AWS Bastion Host.
 
 ## Obtaining Access
+
 You will need a tool to create an SSH Key Pair. If you are using Windows, you can use PuTTYgen. If you are using Linux or MacOS, you can use the `ssh-keygen` command.
 You should ensure you set a strong passphrase. Once you have created your key pair, you will need to provide the public key to a project admin who already has access.
 You must keep your private key secure and not share it with anyone.
 
 ## Connecting to the Bastion Host
+
 Once your public key has been to the Bastion Host, you can test your connection by running the following command:
+
 ```bash
 ssh -i /path/to/your/private/key <hostname>
 ```
@@ -17,7 +20,9 @@ ssh -i /path/to/your/private/key <hostname>
 The hostname will be provided to you by a project admin.
 
 ## SSH Tunneling with Datagrip
+
 To connect to the database using Datagrip, you will need to create an SSH tunnel. You can do this by following the steps below:
+
 1. Create a Postgres database source with the AWS RDS endpoint, username, and password as standard.
 2. In the SSH/SSL tab, select the 'Use SSH tunnel' checkbox.
 3. Click the button next to "SSH configuration" and add a new SSH configuration.

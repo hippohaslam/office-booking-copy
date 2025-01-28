@@ -3,11 +3,14 @@
 This is a basic representation of the AWS architecture for the project.
 
 The architecture is composed of the following services:
+
 - **Amplify** - Host the frontend react application
 - **Beanstalk** - Host the backend .NET application
 - **RDS** - Postgres database for the backend application
 
 All services are hosted in the hippo internal AWS account within a separate VPC.
-All resources are tracked by terraform which can be found in the [terraform](../src/infrastructure/terraform) folder.
+All resources are tracked by terraform which can be found in the [src/infrastructure/terraform](https://github.com/hippo-digital/office-booking/tree/main/src/infrastructure/terraform) folder.
+
 ***
-![AWS Architecture.png](.attachments%2FAWS%20Architecture.png)
+
+![AWS Architecture.png](./attachments/AWS Architecture.png)
