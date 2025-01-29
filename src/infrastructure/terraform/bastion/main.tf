@@ -13,6 +13,14 @@ resource "aws_security_group" "ec2-bastion-sg" {
     description = "Leeds Hippo Office"
   }
 
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["35.246.19.240/29"]
+    description = "Fivetran IP Range"
+  }
+
   egress {
     from_port        = 0
     to_port          = 0
