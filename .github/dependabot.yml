@@ -43,3 +43,5 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "Serilog.AspNetCore"
         update-types: [ "version-update:semver-major" ]
+      - dependency-name: "Npgsql.EntityFrameworkCore.PostgreSQL"
+        update-types: [ "version-update:semver-major" ]

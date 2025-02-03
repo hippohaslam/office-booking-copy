@@ -16,20 +16,17 @@
       },
       "FluentAssertions": {
         "type": "Direct",
-        "requested": "[7.0.0, )",
-        "resolved": "7.0.0",
-        "contentHash": "mTLbcU991EQ1SEmNbVBaGGGJy0YFzvGd1sYJGNZ07nlPKuyHSn1I22aeKzqQXgEiaKyRO6MSCto9eN9VxMwBdA==",
-        "dependencies": {
-          "System.Configuration.ConfigurationManager": "6.0.0"
-        }
+        "requested": "[8.0.1, )",
+        "resolved": "8.0.1",
+        "contentHash": "IW5CdXiD4BIijMkJsEajhkQr7HSgzoxZBHp77b4tm8isCKGaDH2AGugW6DLS0/EPhO/MCZ2JOGg6ObdlKISJMg=="
       },
       "Microsoft.AspNetCore.Mvc.Testing": {
         "type": "Direct",
-        "requested": "[8.0.11, )",
-        "resolved": "8.0.11",
-        "contentHash": "9Zz7qomkPGQ1wZMRH5XNqntnfGd7dhzO3FiqBblIMZrW4j6o4P5ObGllCUvGOvzqZkuCjUisDiAxVzZr18mT4w==",
+        "requested": "[8.0.12, )",
+        "resolved": "8.0.12",
+        "contentHash": "jgQBkTlEscQcSU9zetG9/fi56A2fNIa3YkEN3CawR9WVkThZhMZ5dsiaE8+X6a/XB2HDr0k6pHLT9PFxwjv+Ag==",
         "dependencies": {
-          "Microsoft.AspNetCore.TestHost": "8.0.11",
+          "Microsoft.AspNetCore.TestHost": "8.0.12",
           "Microsoft.Extensions.DependencyModel": "8.0.2",
           "Microsoft.Extensions.Hosting": "8.0.1"
         }
@@ -52,11 +49,11 @@
       },
       "Microsoft.EntityFrameworkCore.Relational": {
         "type": "Direct",
-        "requested": "[8.0.11, )",
-        "resolved": "8.0.11",
-        "contentHash": "3TuuW3i5I4Ro0yoaHmi2MqEDGObOVuhLaMEnd/heaLB1fcvm4fu4PevmC4BOWnI0vo176AIlV5o4rEQciLoohw==",
+        "requested": "[8.0.12, )",
+        "resolved": "8.0.12",
+        "contentHash": "HqW1fvgb4hbzY7/06k047eXG0YnoB3j8A5hU9nyL5b7sW7sNsPhn0yw63tV0QrSpWD9fCkaFGEy+tYkuLIPJyw==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "8.0.11",
+          "Microsoft.EntityFrameworkCore": "8.0.12",
           "Microsoft.Extensions.Configuration.Abstractions": "8.0.0"
         }
       },
@@ -150,15 +147,15 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.401.4",
-        "contentHash": "zM61ybD1Y1zVyXLMG18EOtqznZ9EaHbHMX9vgC9YAWrTx1EaxnrpFcXGWYWPKhm0QCkodSktZnrbEmaAq/I//w=="
+        "resolved": "3.7.401.6",
+        "contentHash": "KpiijwtkN+nhy4UX6rQqulP1UmRw8KsRER19yJd4JgqSqN7DLfPmGD/gM+Nyb4tS0f8YgNUeUI3vkLVrpPGgNQ=="
       },
       "AWSSDK.SecretsManager": {
         "type": "Transitive",
-        "resolved": "3.7.400.84",
-        "contentHash": "o+3RQvWsGOs7w5jpsseLBSIxlsCu8BW168YZ74LoVc9bXUT3JBNI7NwC25GsFek/XkoqcwP7NLLfG+z+M6gmcg==",
+        "resolved": "3.7.400.86",
+        "contentHash": "g4l26oMFCHFOMS2bg/PVUaNq3nuMbTuIBd5BFjElOqrjOvSdBVL2h7pzXkvv4U5gg6TSYMf/uy1JYRbMnc+fTw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.401.4, 4.0.0)"
+          "AWSSDK.Core": "[3.7.401.6, 4.0.0)"
         }
       },
       "Azure.Core": {
@@ -232,13 +229,13 @@
       },
       "Microsoft.AspNetCore.Authentication.Google": {
         "type": "Transitive",
-        "resolved": "8.0.11",
-        "contentHash": "XYjmQF9ggDnpXds7aH5CgW2SWVmubJ/F6NOnDwDseMYnEBZSwhstkY9qZszd6wsAhpW1HeT9yO9nZqFPRMiDAA=="
+        "resolved": "8.0.12",
+        "contentHash": "+ytq0YfuQ5K8YnvfglBvYxxchsPpedeYlg7gYZY6oFvPIWqA9BjIabexLKAYfL6MewKrOJbRIgWvfx0pONnmPQ=="
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "Transitive",
-        "resolved": "8.0.11",
-        "contentHash": "9KhRuywosM24BPf1R5erwsvIkpRUu1+btVyOPlM3JgrhFVP4pq5Fuzi3vjP01OHXfbCtNhWa+HGkZeqaWdcO5w==",
+        "resolved": "8.0.12",
+        "contentHash": "Th1bIoe3lgQCtkZRzYpU3YruTIaa/C5jI6yJ7djXihtvHGc6WFl823Uh01P2ESbn2eIpgiEbwRw/szlPSPowDA==",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.1.2"
         }
@@ -274,8 +271,8 @@
       },
       "Microsoft.AspNetCore.TestHost": {
         "type": "Transitive",
-        "resolved": "8.0.11",
-        "contentHash": "A+Thv9ygVYbHV7yRwgT431An4UmW7F0Sv6GfZRMF+4W7WH8GIXeEnidasT+Q+0tT+rwAkNka020HdsTZzfxdYA==",
+        "resolved": "8.0.12",
+        "contentHash": "uqfLGHXuTvY1B8akUnmnVUeVvpZnCP7N8+Y3LP+0B5R5rq5O6KwNZEjfMrcGJOLtPcjpJKS9t3xLyWfbC3mRVA==",
         "dependencies": {
           "System.IO.Pipelines": "8.0.0"
         }
@@ -306,24 +303,24 @@
       },
       "Microsoft.EntityFrameworkCore": {
         "type": "Transitive",
-        "resolved": "8.0.11",
-        "contentHash": "stbjWBTtpQ1HtqXMFyKnXFTr76PvaOHI2b2h85JqBi3eZr00nspvR/a90Zwh8CQ4rVawqLiTG0+0yZQWaav+sQ==",
+        "resolved": "8.0.12",
+        "contentHash": "oxZydJ7/1NdG2Tf6qHeTkcm2j2Nc+uHQy5mxrv2FmVFXt7MfkTMyCokcMeElrr7nAUAidrOdiZPVSpNMKkLbkQ==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.11",
-          "Microsoft.EntityFrameworkCore.Analyzers": "8.0.11",
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.12",
+          "Microsoft.EntityFrameworkCore.Analyzers": "8.0.12",
           "Microsoft.Extensions.Caching.Memory": "8.0.1",
           "Microsoft.Extensions.Logging": "8.0.1"
         }
       },
       "Microsoft.EntityFrameworkCore.Abstractions": {
         "type": "Transitive",
-        "resolved": "8.0.11",
-        "contentHash": "++zY0Ea724ku1jptWJmF7jm3I4IXTexfT4qi1ETcSFFF7qj+qm6rRgN7mTuKkwIETuXk0ikfzudryRjUGrrNKQ=="
+        "resolved": "8.0.12",
+        "contentHash": "A19COkZVUI3bNUdtWAgLvxzOXyW/gwJ1enmkHi0rgslPIAv9tFU0yEq4KNfmLoHf8kikYvC2DKYZo8vJvWzklA=="
       },
       "Microsoft.EntityFrameworkCore.Analyzers": {
         "type": "Transitive",
-        "resolved": "8.0.11",
-        "contentHash": "NI/AJQjtC7qgWM8Nr85sRkwlog2AnFer5RKP8xTUH0RuPF3nN0tGXBEeYJOLZWp+/+M/C6O7MMDRhKRE8bZwIA=="
+        "resolved": "8.0.12",
+        "contentHash": "irXnlkKHepepje6+ICaKpe/G4QnWi1G9Em9CmfqAEKb7OUTYaDQ2ieGps2Tl7/rblj5CKB0tDNI421f64x/Tqw=="
       },
       "Microsoft.EntityFrameworkCore.Relational.Design": {
         "type": "Transitive",
@@ -2076,8 +2073,8 @@
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
-          "Microsoft.AspNetCore.Authentication.Google": "[8.0.11, )",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[8.0.11, )",
+          "Microsoft.AspNetCore.Authentication.Google": "[8.0.12, )",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[8.0.12, )",
           "Microsoft.Extensions.Configuration.Binder": "[8.0.2, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.11, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "[1.1.0, )",
@@ -2092,20 +2089,20 @@
         "dependencies": {
           "FluentValidation": "[11.11.0, )",
           "Hippo.Booking.Core": "[1.0.0, )",
-          "Microsoft.EntityFrameworkCore": "[8.0.11, )",
+          "Microsoft.EntityFrameworkCore": "[8.0.12, )",
           "Microsoft.Extensions.DependencyInjection": "[8.0.1, )"
         }
       },
       "hippo.booking.core": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "[8.0.11, )"
+          "Microsoft.EntityFrameworkCore": "[8.0.12, )"
         }
       },
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SecretsManager": "[3.7.400.84, )",
+          "AWSSDK.SecretsManager": "[3.7.400.86, )",
           "Dapper": "[2.1.35, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
@@ -2118,7 +2115,7 @@
         "dependencies": {
           "Hippo.Booking.Application": "[1.0.0, )",
           "Hippo.Booking.Core": "[1.0.0, )",
-          "Microsoft.EntityFrameworkCore.Relational": "[8.0.11, )",
+          "Microsoft.EntityFrameworkCore.Relational": "[8.0.12, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.11, )"
         }
       }
