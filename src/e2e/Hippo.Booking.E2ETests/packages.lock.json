@@ -4,11 +4,11 @@
     "net8.0": {
       "AWSSDK.S3": {
         "type": "Direct",
-        "requested": "[3.7.413.1, )",
-        "resolved": "3.7.413.1",
-        "contentHash": "oyeNzai95MaUkjsnDzWYzGD/BqdsoFum84duKqf/SCtJkFMor/ZpmgHVXxX5KSwSbEKODWlGoXMN0GuwAZ2/nQ==",
+        "requested": "[3.7.415, )",
+        "resolved": "3.7.415",
+        "contentHash": "cTaCzHSS54YSCC07yxDa6tl8qkBnVRrM2qKM4ybqCZMVLwRPWpP31aOdsVjZAp/bluDI21HLtnDlpVviwhWW+Q==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.401.6, 4.0.0)"
+          "AWSSDK.Core": "[3.7.402.1, 4.0.0)"
         }
       },
       "coverlet.collector": {
@@ -81,23 +81,23 @@
       },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
-        "requested": "[17.12.0, )",
-        "resolved": "17.12.0",
-        "contentHash": "kt/PKBZ91rFCWxVIJZSgVLk+YR+4KxTuHf799ho8WNiK5ZQpJNAEZCAWX86vcKrs+DiYjiibpYKdGZP6+/N17w==",
+        "requested": "[17.13.0, )",
+        "resolved": "17.13.0",
+        "contentHash": "W19wCPizaIC9Zh47w8wWI/yxuqR7/dtABwOrc8r2jX/8mUNxM2vw4fXDh+DJTeogxV+KzKwg5jNNGQVwf3LXyA==",
         "dependencies": {
-          "Microsoft.CodeCoverage": "17.12.0",
-          "Microsoft.TestPlatform.TestHost": "17.12.0"
+          "Microsoft.CodeCoverage": "17.13.0",
+          "Microsoft.TestPlatform.TestHost": "17.13.0"
         }
       },
       "Microsoft.Playwright.NUnit": {
         "type": "Direct",
-        "requested": "[1.49.0, )",
-        "resolved": "1.49.0",
-        "contentHash": "+U307KdAgN24ngFhRSuaWMDi0g5ohydRdfTfyvXRkcpWlebB6Pp+6l8GQ9QPJoUGNmmhCWqYsMgQUTGty43ccA==",
+        "requested": "[1.50.0, )",
+        "resolved": "1.50.0",
+        "contentHash": "/Do9iZJ3rEVd9M5vJUoH0inHPGjJm2an7U3+H3Z4UYBqBF+hKu0tNNHLJ4APMdqsbcPcurdZKudV8t8FSjcnag==",
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "17.8.0",
-          "Microsoft.Playwright": "1.49.0",
-          "Microsoft.Playwright.TestAdapter": "1.49.0",
+          "Microsoft.Playwright": "1.50.0",
+          "Microsoft.Playwright.TestAdapter": "1.50.0",
           "NUnit": "3.13.2",
           "NUnit3TestAdapter": "4.0.0"
         }
@@ -122,8 +122,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.401.6",
-        "contentHash": "KpiijwtkN+nhy4UX6rQqulP1UmRw8KsRER19yJd4JgqSqN7DLfPmGD/gM+Nyb4tS0f8YgNUeUI3vkLVrpPGgNQ=="
+        "resolved": "3.7.402.1",
+        "contentHash": "P/ylF4uchHwD0x7M3HHu/K9hWhrq9bAyG8Alo/ZlxE6zqm30LbqIJKjITEB8n9y4I8Jax3aeVtHo2395fI3zvA=="
       },
       "FluentValidation": {
         "type": "Transitive",
@@ -137,36 +137,36 @@
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
-        "resolved": "17.12.0",
-        "contentHash": "4svMznBd5JM21JIG2xZKGNanAHNXplxf/kQDFfLHXQ3OnpJkayRK/TjacFjA+EYmoyuNXHo/sOETEfcYtAzIrA=="
+        "resolved": "17.13.0",
+        "contentHash": "9LIUy0y+DvUmEPtbRDw6Bay3rzwqFV8P4efTrK4CZhQle3M/QwLPjISghfcolmEGAPWxuJi6m98ZEfk4VR4Lfg=="
       },
       "Microsoft.EntityFrameworkCore": {
         "type": "Transitive",
-        "resolved": "8.0.12",
-        "contentHash": "oxZydJ7/1NdG2Tf6qHeTkcm2j2Nc+uHQy5mxrv2FmVFXt7MfkTMyCokcMeElrr7nAUAidrOdiZPVSpNMKkLbkQ==",
+        "resolved": "8.0.13",
+        "contentHash": "4wyLeg64sZgJcER83fkitlKuySY3OzwcOZSZcGV1TNskmThupfhcVlsQht7bNCfNpXTCZVNIOwAZChk6/OFdXQ==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.12",
-          "Microsoft.EntityFrameworkCore.Analyzers": "8.0.12",
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.13",
+          "Microsoft.EntityFrameworkCore.Analyzers": "8.0.13",
           "Microsoft.Extensions.Caching.Memory": "8.0.1",
           "Microsoft.Extensions.Logging": "8.0.1"
         }
       },
       "Microsoft.EntityFrameworkCore.Abstractions": {
         "type": "Transitive",
-        "resolved": "8.0.12",
-        "contentHash": "A19COkZVUI3bNUdtWAgLvxzOXyW/gwJ1enmkHi0rgslPIAv9tFU0yEq4KNfmLoHf8kikYvC2DKYZo8vJvWzklA=="
+        "resolved": "8.0.13",
+        "contentHash": "a6O+v8CMStumpVoQyN0aUpx5P3/qYZP+5791sGrzJhIM+QsniQdSaJVdUSneL40M+FpBgtiC8ggqzNo2x/gVlw=="
       },
       "Microsoft.EntityFrameworkCore.Analyzers": {
         "type": "Transitive",
-        "resolved": "8.0.12",
-        "contentHash": "irXnlkKHepepje6+ICaKpe/G4QnWi1G9Em9CmfqAEKb7OUTYaDQ2ieGps2Tl7/rblj5CKB0tDNI421f64x/Tqw=="
+        "resolved": "8.0.13",
+        "contentHash": "ENny33QADFiRxge5ikJBs2p7JB4MQx/ZSPKPNwt2eJPO0lVUGSjTiJeunGGggkVHiaUy0yY4f625LQtNlErIsw=="
       },
       "Microsoft.EntityFrameworkCore.Relational": {
         "type": "Transitive",
-        "resolved": "8.0.12",
-        "contentHash": "HqW1fvgb4hbzY7/06k047eXG0YnoB3j8A5hU9nyL5b7sW7sNsPhn0yw63tV0QrSpWD9fCkaFGEy+tYkuLIPJyw==",
+        "resolved": "8.0.13",
+        "contentHash": "uQR2iTar+6ZEjEHTwgH0/7ySSRme4R9sDiupfG3w/eBub3365fPw/MjhsuOMQkdq9YzLM7veH4Qt/K9OqL26Qg==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "8.0.12",
+          "Microsoft.EntityFrameworkCore": "8.0.13",
           "Microsoft.Extensions.Configuration.Abstractions": "8.0.0"
         }
       },
@@ -285,8 +285,8 @@
       },
       "Microsoft.Playwright": {
         "type": "Transitive",
-        "resolved": "1.49.0",
-        "contentHash": "90iiSlGcvHKyCy4wCPsmSoDb+/hY719cKrxosrCJzhbkY7iYityx62Ozuhpmjn6CGyrtGdiGDqYFQqS0EunoyA==",
+        "resolved": "1.50.0",
+        "contentHash": "Mq7Ro8vosaADFVU9plNbFvIzi+iVaoCY7y8umE+L9lUK+5DrBnKPHTwARYqi0koYsIikKkwNwoBEsceLdP4Udg==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
           "System.ComponentModel.Annotations": "5.0.0",
@@ -295,27 +295,27 @@
       },
       "Microsoft.Playwright.TestAdapter": {
         "type": "Transitive",
-        "resolved": "1.49.0",
-        "contentHash": "rmOYJjKWBYfNSSR10zwX4JdKp5jlGi6x7aQsUw0ZJmro3U4R3AV6kCp+EDF3yY2USMkz4FXxMt4oumDhc5yjFw==",
+        "resolved": "1.50.0",
+        "contentHash": "P8QZoijCb487BphwbcxAK7Gb03tafKzyWGdjCDeQbZs/B+hkO3RZS6QONAiJ0y/PDdBE/OmxYERaaDvXEP5lKw==",
         "dependencies": {
-          "Microsoft.Playwright": "1.49.0",
+          "Microsoft.Playwright": "1.50.0",
           "Microsoft.TestPlatform.ObjectModel": "17.3.0"
         }
       },
       "Microsoft.TestPlatform.ObjectModel": {
         "type": "Transitive",
-        "resolved": "17.12.0",
-        "contentHash": "TDqkTKLfQuAaPcEb3pDDWnh7b3SyZF+/W9OZvWFp6eJCIiiYFdSB6taE2I6tWrFw5ywhzOb6sreoGJTI6m3rSQ==",
+        "resolved": "17.13.0",
+        "contentHash": "bt0E0Dx+iqW97o4A59RCmUmz/5NarJ7LRL+jXbSHod72ibL5XdNm1Ke+UO5tFhBG4VwHLcSjqq9BUSblGNWamw==",
         "dependencies": {
           "System.Reflection.Metadata": "1.6.0"
         }
       },
       "Microsoft.TestPlatform.TestHost": {
         "type": "Transitive",
-        "resolved": "17.12.0",
-        "contentHash": "MiPEJQNyADfwZ4pJNpQex+t9/jOClBGMiCiVVFuELCMSX2nmNfvUor3uFVxNNCg30uxDP8JDYfPnMXQzsfzYyg==",
+        "resolved": "17.13.0",
+        "contentHash": "9GGw08Dc3AXspjekdyTdZ/wYWFlxbgcF0s7BKxzVX+hzAwpifDOdxM+ceVaaJSQOwqt3jtuNlHn3XTpKUS9x9Q==",
         "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.12.0",
+          "Microsoft.TestPlatform.ObjectModel": "17.13.0",
           "Newtonsoft.Json": "13.0.1"
         }
       },
@@ -388,14 +388,14 @@
         "dependencies": {
           "FluentValidation": "[11.11.0, )",
           "Hippo.Booking.Core": "[1.0.0, )",
-          "Microsoft.EntityFrameworkCore": "[8.0.12, )",
+          "Microsoft.EntityFrameworkCore": "[8.0.13, )",
           "Microsoft.Extensions.DependencyInjection": "[8.0.1, )"
         }
       },
       "hippo.booking.core": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "[8.0.12, )"
+          "Microsoft.EntityFrameworkCore": "[8.0.13, )"
         }
       },
       "hippo.booking.infrastructure.ef": {
@@ -403,7 +403,7 @@
         "dependencies": {
           "Hippo.Booking.Application": "[1.0.0, )",
           "Hippo.Booking.Core": "[1.0.0, )",
-          "Microsoft.EntityFrameworkCore.Relational": "[8.0.12, )",
+          "Microsoft.EntityFrameworkCore.Relational": "[8.0.13, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.11, )"
         }
       }
