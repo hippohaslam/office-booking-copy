@@ -61,7 +61,7 @@ jobs:
           zip -r ../${{github.run_id}}.zip .
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4.6.0
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: deploy-files
           path: ${{github.run_id}}.zip
@@ -206,7 +206,7 @@ jobs:
           echo "elastic_beanstalk_environment_name=$(terraform output elastic_beanstalk_environment_name)" >> $GITHUB_OUTPUT
           echo "amplify_app_name=$(terraform output amplify_app_name)" >> $GITHUB_OUTPUT
 
-      - uses: actions/download-artifact@v4.1.8
+      - uses: actions/download-artifact@v4.1.9
 
       - name: Get Amplify App Id
         run: |
