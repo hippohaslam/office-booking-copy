@@ -4,11 +4,11 @@
     "net8.0": {
       "AWSSDK.SecretsManager": {
         "type": "Direct",
-        "requested": "[3.7.400.95, )",
-        "resolved": "3.7.400.95",
-        "contentHash": "cf2TSPakNhxLxZH3NpI0xG2XRRuTSCHbS3Bav7kYvG0NYGF5pxARXdHAGqQty+NhlXHWkjeAuljYvTRTknTHhw==",
+        "requested": "[3.7.400.104, )",
+        "resolved": "3.7.400.104",
+        "contentHash": "5ulymGTUWY2ddrPWd2bLiX+W1uP/MCJEbti90o96gmlf3ToBlP8V5gdm9piyB1RTyd0H0Q2mI0QN3+V7eJVJrQ==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.402.1, 4.0.0)"
+          "AWSSDK.Core": "[3.7.402.10, 4.0.0)"
         }
       },
       "Dapper": {
@@ -43,8 +43,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.402.1",
-        "contentHash": "P/ylF4uchHwD0x7M3HHu/K9hWhrq9bAyG8Alo/ZlxE6zqm30LbqIJKjITEB8n9y4I8Jax3aeVtHo2395fI3zvA=="
+        "resolved": "3.7.402.10",
+        "contentHash": "YqwFZD2h6++mjPV9xCL/C27NMGnrihFcDcT68AjOazVO6Gi1jsVfxf2w7VwvGjiR20bIGIcHyRQXKxsU+nJ5SQ=="
       },
       "FluentValidation": {
         "type": "Transitive",
