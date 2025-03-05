@@ -47,7 +47,7 @@ public class Config
                 return db;
             }
             
-            await Task.Delay(5000);
+            await Task.Delay(10000);
         }
 
         throw new InvalidOperationException("Could not connect to database");
