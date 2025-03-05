@@ -19,6 +19,8 @@ import IconLink from "./links/icon/IconLink";
 import SkipToContentLink from "./links/skip/SkipToContentLink";
 import TitleAnnouncer from "./accessibility/TitleAnnouncer/TitleAnnouncer";
 import CtaButton from "./buttons/cta/CtaButton";
+import Calendar from "./calendar/Calendar";
+import BookingCardStacked from "./booking/BookingCardStacked.tsx";
 
 export {
   MultiErrorBanner,
@@ -44,5 +46,7 @@ export {
   IconButton,
   IconLink,
   SkipToContentLink,
-  TitleAnnouncer
+  TitleAnnouncer,
+  Calendar,
+  BookingCardStacked
 };

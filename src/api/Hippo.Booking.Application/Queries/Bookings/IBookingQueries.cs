@@ -5,6 +5,7 @@ public interface IBookingQueries
     Task<BookingResponse?> GetBookingById(int bookingId);
 
     Task<List<UserBookingsResponse>> GetUpcomingBookingsForUser(string userId);
+    Task<List<UserBookingsResponse>> GetAllBookingsForUserBetweenDates(string userId, DateOnly from, DateOnly to);
 
     Task<BookingDayResponse?> GetAreaAndBookingsForTheDay(int locationId, int areaId, DateOnly date);
 

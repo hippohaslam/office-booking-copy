@@ -52,6 +52,26 @@ public class BookingQueries(IDataContext dataContext, IDateTimeProvider dateTime
             })
             .ToListAsync();
     }
+    
+    public Task<List<UserBookingsResponse>> GetAllBookingsForUserBetweenDates(string userId, DateOnly startDate, DateOnly endDate)
+    {
+        return dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
+            .Include(i => i.BookableObject)
+            .ThenInclude(i => i.Area)
+            .ThenInclude(i => i.Location)
+            .Where(x => x.Date >= startDate && x.Date <= endDate && x.UserId == userId)
+            .OrderBy(x => x.Date)
+            .ThenBy(x => x.Id)
+            .Select(x => new UserBookingsResponse
+            {
+                Id = x.Id,
+                Date = x.Date,
+                BookableObject = new IdName<int>(x.BookableObjectId, x.BookableObject.Name),
+                Area = new IdName<int>(x.BookableObject.AreaId, x.BookableObject.Area.Name),
+                Location = new IdName<int>(x.BookableObject.Area.LocationId, x.BookableObject.Area.Location.Name)
+            })
+            .ToListAsync();
+    }
 
     public async Task<BookingDayResponse?> GetAreaAndBookingsForTheDay(int locationId, int areaId, DateOnly date)
     {

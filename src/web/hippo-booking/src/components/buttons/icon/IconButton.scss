@@ -1,5 +1,17 @@
 @use "../../../styles/variables.scss";
 
+.icon-button-group{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+    vertical-align: middle;
+
+    h3 {
+        margin-top: 0;
+    }
+}
+
 button.icon-button{
     width: fit-content;
     height: 40px;

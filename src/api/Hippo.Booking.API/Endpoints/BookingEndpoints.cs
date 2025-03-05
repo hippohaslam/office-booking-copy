@@ -38,6 +38,17 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings", AccessLeve
                 return TypedResults.Ok(bookings);
             });
 
+        builder.MapGet("",
+            async Task<Results<Ok<List<UserBookingsResponse>>, UnauthorizedHttpResult>> (IBookingQueries bookingQueries,
+                HttpContext httpContext, DateOnly from, DateOnly to) =>
+            {
+                var userId = httpContext.GetUserId();
+
+                var bookings = await bookingQueries.GetAllBookingsForUserBetweenDates(userId, from, to);
+
+                return TypedResults.Ok(bookings);
+            });
+
         builder.MapGet("location/{locationId:int}/area/{areaId:int}/{date}",
             async Task<Results<Ok<BookingDayResponse>, NotFound>> (IBookingQueries bookingQueries, int locationId, int areaId, DateOnly date) =>
             {
@@ -66,7 +77,6 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings", AccessLeve
 
         builder.MapDelete("{bookingId:int}",
             async Task<Results<NoContent, BadRequest<string>, ForbidHttpResult, ValidationProblem>> (
-                HttpContext httpContext,
                 IDeleteBookingCommand deleteBookingCommand,
                 int bookingId) =>
             {

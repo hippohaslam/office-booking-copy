@@ -1,0 +1,109 @@
+@use "../../styles/variables.scss";
+
+.calendar-container{
+    margin: 10px 0;
+    width: 100%;
+}
+
+table.calendar{
+    min-width: 300px;
+    width: 100%;
+    border-collapse: collapse;
+    border-style: hidden;
+    table-layout: fixed;
+
+    thead {
+        height: 50px;
+
+        th {
+            background-color: variables.$hippo-brand-navy;
+            color: white;
+        }
+
+        th:first-child{
+            border-top-left-radius: 10pt;
+        }
+
+        th:last-child{
+            border-top-right-radius: 10pt;
+        }
+    }
+
+    td, th{
+        border: 1px solid variables.$hippo-brand-dark-grey;
+    }
+
+    tbody {
+        td {
+            background-color: variables.$hippo-brand-bluey-grey;
+            vertical-align: top;
+
+            .calendar-day-content {
+                width: 100%;
+                min-height: 75px;
+                height: 100%;
+                display: grid;
+                grid-template-rows: 30px auto;
+                padding: 5px;
+                gap: 1px 10px;
+                align-content: start; 
+
+                div, p, a {
+                    width: 100%;
+                }
+            }
+
+            .calendar-day-date {
+                grid-row: 1/1;
+                margin: 0;
+                text-align: center;
+            }
+
+            &.current{
+                .calendar-day-content {
+                    justify-items: center;
+
+                    .calendar-day-date {
+                        background-color: variables.$hippo-brand-navy;
+                        color: white;
+                        border-radius: 30pt;
+                        width: 30px;
+                        height: 30px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+            }
+        }
+
+        tr:last-child{
+            td:first-child{
+                border-bottom-left-radius: 10pt;
+            }
+            
+            td:last-child{
+                border-bottom-right-radius: 10pt;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    table.calendar {
+        tbody {
+            td {
+                .calendar-day-content {
+                    justify-items: center;
+                    padding: 0;
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 375px) {
+    .calendar-container{
+        overflow-x: scroll;
+    }
+}

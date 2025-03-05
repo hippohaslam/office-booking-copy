@@ -16,10 +16,6 @@ table.standard-table {
     padding: 5px 15px;
     text-align: left;
     max-width: 700px;
-
-    button {
-      display: inline-block;
-    }
   }
   
   thead {
@@ -59,6 +55,32 @@ table.standard-table {
 
   button {
     margin: 0;
+  }
+
+  &.table-header-hidden {
+    thead{
+      position: absolute;
+      left: -10000px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    tbody {
+      tr:first-child{
+        td:first-child{
+          border-top-left-radius: 12px;
+        }
+        td:last-child{
+          border-top-right-radius: 12px;
+        }
+      }
+
+      tr td:first-child{
+        font-weight: 500;
+      }
+    }
   }
 }
 

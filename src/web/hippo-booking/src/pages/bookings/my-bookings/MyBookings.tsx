@@ -1,111 +1,135 @@
-import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { AxiosError } from "axios";
-import { Table, CtaLink, ErrorBanner, IconButton, SuccessBanner } from "../../../components/index.ts";
-import BookingCardStacked from "../../../components/booking/BookingCardStacked.tsx";
-import { deleteBookingAsync, getUpcomingBookingsAsync } from "../../../services/Apis.ts";
-import ConfirmModal from "../../../components/modals/confirm/ConfirmModal.tsx";
-import DeleteIcon from "../../../assets/delete-icon-navy.svg";
+import {
+  Calendar,
+  CtaLink,
+  ErrorBanner,
+  IconButton,
+  IconLink,
+  SuccessBanner,
+  TabItem,
+  Table,
+  TabList
+} from "../../../components/index.ts";
+import { getBookingsForUserBetweenDatesAsync, getUpcomingBookingsAsync } from "../../../services/Apis.ts";
+import { MoreIcon, GreenCircleIcon } from "../../../assets";
+
+const Constants = {
+  activeTab: "myBookingsActiveTab",
+  startDate: "myBookingsStartDate"
+};
+
+const loadActiveTab = () => {
+  const savedTab = localStorage.getItem(Constants.activeTab);
+  if (savedTab) {
+    return Number(savedTab);
+  }
+  return 0;
+};
 
 const MyBookings = () => {
-  const queryClient = useQueryClient();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const [cancelledBooking, setCancelledBooking] = useState<Booking | null>(null);
-  const [showSuccessBanner, setSuccessBannerVisibility] = useState(false);
-  const [deleteError, setDeleteError] = useState<AxiosError | null>(null);
-  const [isModalLoading, setModalLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [loadError, setLoadError] = useState<AxiosError | null>(null);
+  const [bookings, setBookings] = useState<Booking[] | null>(null);
+  const [calendarDates, setCalendarDates] = useState<{ from: Date, to: Date } | undefined>(undefined);
+  const [activeTab, setActiveTab] = useState<number>(loadActiveTab());
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+  const [cancelledBooking] = useState<Booking | null>(location.state?.cancelledBooking);
 
-  const { isFetching, data, isError } = useQuery({
-    queryKey: ["bookings"],
-    queryFn: getUpcomingBookingsAsync,
+  const { data: upcomingBookings, isLoading, error } = useQuery({
+    queryKey: ["upcomingBookings"],
+    queryFn: getUpcomingBookingsAsync
   });
 
-  const deleteBooking = useMutation({
-    mutationFn: async (booking: Booking) => {
-      if (booking) {
-        await deleteBookingAsync(booking.id);
-      } else {
-        throw new Error("No booking selected");
-      }
-    },
-    onSuccess: async () => {
-      await handleDeleteSuccess();
+  const fetchBookingsBetweenDates = useMutation({
+    mutationFn: (dates: { from: Date; to: Date }) => getBookingsForUserBetweenDatesAsync(dates.from, dates.to),
+    onSuccess: (data) => {
+      setBookings(data);
     },
     onError: (error) => {
-      setDeleteError(error as AxiosError);
-      handleCloseModal();
-      setModalLoading(false);
+      setLoadError(error as AxiosError);
     },
   });
 
-  const handleDeleteSuccess = async () => {
-    setSuccessBannerVisibility(true);
-    setCancelledBooking(selectedBooking);
-    handleCloseModal();
-    setModalLoading(false);
-    await queryClient.invalidateQueries({ queryKey: ["bookings"] });
+  const handleDateRangeChange = (from: Date, monthStartDate: Date, to: Date) => {
+    fetchBookingsBetweenDates.mutate({ from: from, to: to });
+    setCalendarDates({ from: from, to: to });
+    sessionStorage.setItem(Constants.startDate, `${monthStartDate}`);
   };
 
-  const handleCancelClick = (booking: Booking) => {
-    setSelectedBooking(booking);
-    setIsModalVisible(true);
+  const handleResize = () => {
+    setWindowWidth(window.innerWidth);
   };
 
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
-    setSelectedBooking(null);
-  };
-
-  const handleConfirmCancel = () => {
-    if (isModalLoading) {
-      return;
+  useEffect(() => {
+    if (activeTab == 0) {
+      window.addEventListener("resize", handleResize);
     }
-    if (selectedBooking) {
-      setModalLoading(true);
-      deleteBooking.mutate(selectedBooking);
-    } else {
-      console.error("No booking selected for cancellation");
-    }
-  };
+    else {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [activeTab]);
 
-  const bookingInfoElement = () => {
-    if (selectedBooking) {
-      return (
-        <div>
-          <BookingCardStacked
-            elementId='cancel-modal-booking-info'
-            date={selectedBooking.date}
-            bookableObjectName={selectedBooking.bookableObject.name}
-            areaName={selectedBooking.area.name}
-            locationName={selectedBooking.location.name}
-          />
-        </div>
-      );
-    } else {
-      return <span>Selected booking is null</span>;
+  function getInitialCalendarDate(): Date {
+    const date = sessionStorage.getItem(Constants.startDate);
+    if (date) {
+      return new Date(date);
     }
-  };
-
-  if (isError) {
-    return (
-      <ErrorBanner isShown={isError} title='Error' errorMessage='Unable to get locations, please refresh the page' allowClose={false} />
-    );
+    else {
+      return new Date();
+    }
   }
 
-  if (isFetching) {
+  const handleTabChange = (newIndex: number) => {
+    setActiveTab(newIndex);
+    localStorage.setItem(Constants.activeTab, String(newIndex));
+  };
+
+  const bookingCalendarDays = () => {
+    if (bookings) {
+      const groupedCells = new Map();
+
+      for (let index = 0; index < bookings.length; index++) {
+        const item = bookings[index];
+        const date = new Date(item.date).toISOString().split('T')[0];
+
+        if (!groupedCells.has(date)) {
+          groupedCells.set(date, []);
+        }
+
+        const linkFullLabel = item.bookableObject.name + " - " + item.area.name + " - " + item.location.name;
+        const linkLabel = windowWidth < 800 ? item.bookableObject.name : linkFullLabel;
+        const ariaLabel = linkFullLabel + " booking details";
+
+        groupedCells.get(date).push(
+          <IconLink key={index} label={linkLabel} title={ariaLabel} ariaLabel={ariaLabel} to={`${item.id}/details`} showText={true} showBorder={false} color="navy" iconSrc={GreenCircleIcon} size={windowWidth <= 1250 ? "small" : "regular"} />
+        );
+      }
+
+      return Array.from(groupedCells.entries()).map(([date, events]) => ({
+        date: new Date(date),
+        Children: events,
+      }));
+    } else {
+      return [];
+    }
+  };
+
+
+  if (loadError) {
     return (
-      <div>
-        <span>Fetching locations...</span>
-      </div>
+      <ErrorBanner isShown={fetchBookingsBetweenDates.isError} title='Error' errorMessage='Unable to get locations, please refresh the page' allowClose={false} />
     );
   }
 
   const UpcomingBookingsRows = () => {
     return (
       <>
-        {data?.map((booking, index) => (
+        {upcomingBookings?.map((booking, index) => (
           <tr key={index} className='booking-row'>
             <td>
               {new Date(booking.date).toLocaleDateString("en-GB", {
@@ -120,12 +144,12 @@ const MyBookings = () => {
             <td>{booking.location.name}</td>
             <td>
               <IconButton
-                title='Cancel booking'
-                onClick={() => handleCancelClick(booking)}
+                title='Manage booking'
+                onClick={() => { navigate(`${booking.id}/details`) }}
                 color='navy'
                 showBorder={false}
-                showText={false}
-                iconSrc={DeleteIcon}
+                showText={true}
+                iconSrc={MoreIcon}
               />
             </td>
           </tr>
@@ -139,58 +163,37 @@ const MyBookings = () => {
       <Helmet>
         <title>My bookings | Hippo Reserve</title>
       </Helmet>
-      <SuccessBanner
-        isShown={showSuccessBanner}
-        title='Booking cancelled'
-        description={
-          "Your booking of " +
-          cancelledBooking?.bookableObject.name +
-          " at " +
-          cancelledBooking?.area.name +
-          ", " +
-          cancelledBooking?.location.name +
-          " on " +
-          new Date(cancelledBooking?.date || "").toLocaleDateString("en-GB", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          }) +
-          " has been cancelled."
-        }
+
+      <SuccessBanner 
+        isShown={cancelledBooking != null} 
+        title={"Booking cancelled"} 
+        description={"Your booking of " + cancelledBooking?.bookableObject.name + " at " + cancelledBooking?.area.name + ", " + cancelledBooking?.location.name + " on " 
+          + new Date(cancelledBooking?.date!).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " has been cancelled."} 
       />
-      {deleteError !== null ? (
-        <ErrorBanner isShown={true} title='There is a problem' errorMessage={deleteError.message} allowClose={false} />
-      ) : null}
 
       <h1>My bookings</h1>
       <h2>Upcoming</h2>
-      {data?.length === 0 ? (
-        <p>You have no upcoming bookings.</p>
-      ) : (
-        <>
-          <Table
-            title='Bookings'
-            columnHeadings={["Date", "Bookable object", "Area", "Location", "Actions"]}
-            rows={UpcomingBookingsRows()}
-          ></Table>
-          <ConfirmModal
-            title='Are you sure you want to cancel this booking?'
-            isOpen={isModalVisible}
-            childElement={bookingInfoElement()}
-            showConfirmButton
-            confirmButtonLabel={isModalLoading ? "Cancelling booking" : "Yes. Cancel it"}
-            confirmButtonColor='cta-red'
-            confirmButtonDisabled={isModalLoading}
-            confirmButtonLoading={isModalLoading}
-            onConfirm={handleConfirmCancel}
-            cancelButtonLabel='No. Keep it'
-            cancelButtonColor='cta-green'
-            cancelButtonDisabled={isModalLoading}
-            onCancel={handleCloseModal}
-          />
-        </>
-      )}
+
+      <TabList activeTabIndex={activeTab} onChange={handleTabChange}>
+        <TabItem label="Calendar view">
+          <Calendar calendarCells={bookingCalendarDays()} onDateRangeChange={handleDateRangeChange} dateRange={calendarDates} initialMonthStartDate={getInitialCalendarDate()} />
+        </TabItem>
+        <TabItem label="Table view">
+          {isLoading ? <p>Loading bookings</p> :
+            error ? <ErrorBanner isShown title="Error" errorMessage={error.message} allowClose={false} /> :
+              upcomingBookings?.length === 0 ? (
+                <p>You have no upcoming bookings.</p>
+              ) : (
+                <>
+                  <Table
+                    title='Upcoming bookings'
+                    columnHeadings={["Date", "Bookable object", "Area", "Location", "Details and action"]}
+                    rows={UpcomingBookingsRows()}
+                  ></Table>
+                </>
+              )}
+        </TabItem>
+      </TabList>
       <CtaLink to='/locations' color='cta-green' withArrow={true} text='Make a new booking' />
     </div>
   );

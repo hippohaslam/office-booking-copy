@@ -17,6 +17,7 @@
         "https://localhost:5173/locations/1/areas",
         "https://localhost:5173/locations/1/areas/1",
         "https://localhost:5173/bookings/1/confirmed",
+        "https://localhost:5173/bookings/1/details",
         "https://localhost:5173/bookings",
         "https://localhost:5173/admin",
         "https://localhost:5173/admin/reporting",

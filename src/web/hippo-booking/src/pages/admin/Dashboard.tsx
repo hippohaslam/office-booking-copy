@@ -83,7 +83,7 @@ const Admin = () => {
               </ul>
             </div>
             <IconLink
-              title={`Add new area for ${location.name}`}
+              label={`Add new area for ${location.name}`}
               color='navy'
               iconSrc={AddIcon}
               to={`/admin/locations/${location.id}/areas/new`}

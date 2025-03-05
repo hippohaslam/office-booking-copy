@@ -7,8 +7,9 @@
 }
 
 a.icon-link{
-    width: fit-content;
-    height: 40px;
+    width: auto;
+    overflow-y: hidden;
+    height: auto;
     border: 2pt transparent solid;
     border-radius: 20px;
     padding: 5px;
@@ -84,5 +85,24 @@ a.icon-link{
         background-color: variables.$hippo-brand-yellow;
         border: 2pt solid variables.$hippo-brand-navy;
         outline: 2px solid variables.$hippo-brand-yellow;
+    }
+
+    &.icon-link__small{
+        padding: 5px 1px;
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+
+        span {
+            font-size: 11px;
+            padding: 0;
+            margin: 0;
+            padding-left: 3px;
+        }
+
+        img{
+            width: 12px;
+            height: 12px;
+        }
     }
 }

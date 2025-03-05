@@ -102,6 +102,13 @@ const getBookingAsync = async (bookingId: number): Promise<Booking> => {
   return response.data;
 };
 
+const getBookingsForUserBetweenDatesAsync = async (from: Date, to : Date) : Promise<Booking[]> => {
+  const fromString = from.toISOString().split("T")[0];
+  const toString = to.toISOString().split("T")[0];
+  const response = await axiosInstance.get(`/booking?from=${fromString}&to=${toString}`);
+  return response.data;
+}
+
 const getUpcomingBookingsAsync = async (): Promise<Booking[]> => {
   const response = await axiosInstance.get(`/booking/upcoming`);
   return response.data;
@@ -199,6 +206,7 @@ export {
   // BOOKINGS
   getBookingAsync,
   getUpcomingBookingsAsync,
+  getBookingsForUserBetweenDatesAsync,
   getBookingsForDateAsync,
   postBookingAsync,
   deleteBookingAsync,

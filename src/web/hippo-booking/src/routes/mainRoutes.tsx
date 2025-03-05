@@ -8,6 +8,7 @@ import { QueryClient } from "@tanstack/react-query";
 import MyBookings from "../pages/bookings/my-bookings/MyBookings";
 import BookingConfirmed from "../pages/bookings/booking-confirmed/BookingConfirmed";
 import LocationDetails from "../pages/locations/locationDetails/LocationDetails";
+import BookingDetails from "../pages/bookings/booking-details/BookingDetails";
 
 const locationRoutes = (queryClient: QueryClient) => [
   {
@@ -75,6 +76,16 @@ const locationRoutes = (queryClient: QueryClient) => [
       </Suspense>
     ),
   },
+  {
+    path: "/bookings/:bookingId/details",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProtectedRoute>
+          <BookingDetails />
+        </ProtectedRoute>
+      </Suspense>
+    )
+  }
 ];
 
 export default locationRoutes;

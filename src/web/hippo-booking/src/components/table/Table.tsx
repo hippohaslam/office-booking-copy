@@ -5,11 +5,12 @@ type TableProps = {
     title: string;
     columnHeadings: string[];
     rows: ReactNode;
+    headerVisuallyHidden? : boolean;
 };
 
-const Table = ({title, columnHeadings, rows}: TableProps) => {
+const Table = ({title, columnHeadings, rows, headerVisuallyHidden = false}: TableProps) => {
     return (
-        <table className="standard-table">
+        <table className={headerVisuallyHidden ? "standard-table table-header-hidden" : "standard-table"}>
             <caption>{title}</caption>
             <thead>
                 <tr>

@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
 using FluentAssertions;
 using Hippo.Booking.Application.Commands.Bookings;
 using Hippo.Booking.Application.Models;
@@ -92,7 +91,7 @@ public class BookingEndpointTests : IntegrationTestBase
         var location = await SetUpLocation();
         var area = await SetUpArea(location);
         var bookableObject = await SetUpBookableObject(area);
-        var booking = await SetUpBooking(bookableObject, DateOnly.FromDateTime(DateTime.Now));
+        await SetUpBooking(bookableObject, DateOnly.FromDateTime(DateTime.Now));
 
         var createBookingRequest = new CreateBookingRequest
         {
@@ -146,6 +145,7 @@ public class BookingEndpointTests : IntegrationTestBase
         var responseBookings = responseContent.FromJson<List<UserBookingsResponse>>();
 
         var dbBookings = DbContext.Query<Core.Entities.Booking>()
+            .Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Now))
             .OrderBy(x => x.Date)
             .ThenBy(x => x.Id)
             .Include(booking => booking.BookableObject)
@@ -268,6 +268,59 @@ public class BookingEndpointTests : IntegrationTestBase
             },
             UserId = "testuser"
         });
+    }
+
+    [Test]
+    public async Task GetBookingsForUserInDateRangeShouldReturnBookingsSuccessfully()
+    {
+        //Arrange
+        var client = GetClient();
+        var location = await SetUpLocation();
+        var area = await SetUpArea(location);
+        var bookableObjects = new List<BookableObject>
+        {
+            await SetUpBookableObject(area, "Booking Date Range Test Desk 1"),
+            await SetUpBookableObject(area, "Booking Date Range Test Desk 2")
+        };
+        var bookings = new List<Core.Entities.Booking>
+        {
+            await SetUpBooking(bookableObjects.First(), DateOnly.FromDateTime(new DateTime(2024, 1, 1))),
+            await SetUpBooking(bookableObjects.First(), DateOnly.FromDateTime(new DateTime(2024, 2, 2))),
+            await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(new DateTime(2024, 1, 31))),
+            await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(new DateTime(2023, 12, 31))),
+            await SetUpBooking(bookableObjects.Last(), DateOnly.FromDateTime(new DateTime(2024, 1, 15)),
+                x => x.DeletedAt = DateTime.UtcNow)
+        };
+        
+        //Act
+        var response =
+            await client.GetAsync(
+                $"/booking?from={new DateTime(2024, 1, 1).ToString("yyyy-MM-dd")}&to={new DateTime(2024, 1, 31).ToString("yyyy-MM-dd")}");
+        
+        // Assert
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var responseBookings = responseContent.FromJson<UserBookingsResponse[]>();
+        var expectedBookings = new List<Core.Entities.Booking>
+        {
+            bookings[0],
+            bookings[2]
+        };
+
+        responseBookings.Should().NotBeNullOrEmpty();
+        for (var index = 0; index < responseBookings!.Length; index++)
+        {
+            var responseBooking = responseBookings[index];
+            var expectedBooking = expectedBookings[index];
+            
+            responseBooking.Should().BeEquivalentTo(new UserBookingsResponse
+            {
+                Id = expectedBooking.Id,
+                Date = expectedBooking.Date,
+                BookableObject = new IdName<int>(expectedBooking.BookableObject.Id, expectedBooking.BookableObject.Name),
+                Location = new IdName<int>(location.Id, location.Name),
+                Area = new IdName<int>(area.Id, area.Name)
+            });
+        }
     }
     
     [Test]

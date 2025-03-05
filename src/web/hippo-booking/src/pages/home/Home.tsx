@@ -107,7 +107,6 @@ const Home = () => {
       <section className='text-content-container'>
         <h2>Welcome to Hippo Reserve</h2>
         <p>This app is for booking desks, car parking, and dog-of-the-day at the Hippo offices.</p>
-        <br/>
         <h3>Need some help?</h3>
         <p>Read the <Link to={"https://docs.google.com/document/d/1E4kAbMA1UscGbuJoytgoPxivgyZfM4sy3uCx4rTPreE/edit?usp=sharing"} target="none">user instructions on Google Drive</Link>.</p>
       </section>
