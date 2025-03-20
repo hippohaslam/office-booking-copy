@@ -1,4 +1,3 @@
-version: '3'
 name: 'hippo-booking'
 services:
   postgres:

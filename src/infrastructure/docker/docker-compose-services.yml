@@ -1,4 +1,3 @@
-version: '3'
 name: 'hippo-booking'
 services:
   booking-web:
@@ -14,7 +13,8 @@ services:
         context: ../../
         dockerfile: api/Hippo.Booking.API/Dockerfile
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
         - "7249:8080"
     environment:
