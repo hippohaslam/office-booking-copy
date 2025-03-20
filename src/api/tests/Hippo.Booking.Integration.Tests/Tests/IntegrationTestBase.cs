@@ -76,4 +76,25 @@ public class IntegrationTestBase
         await AddEntity(booking);
         return booking;
     }
+
+    protected async Task<User> SetUpUser(
+        string id = "testuser", 
+        string firstName = "Test", 
+        string lastName = "User", 
+        string email = "testuser@hippodigital.co.uk")
+    {
+        var user = new User
+        {
+            Id = id,
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email
+        };
+        var existingUser = DbContext.Users.Where(u => u.Id == "testuser");
+        if (!existingUser.Any())
+        {
+            await AddEntity(user);
+        }
+        return user;
+    }
 }

@@ -1,8 +1,5 @@
 using FluentAssertions;
-using Hippo.Booking.Application.Models;
-using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Application.Queries.Locations;
-using Hippo.Booking.Core;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Enums;
 

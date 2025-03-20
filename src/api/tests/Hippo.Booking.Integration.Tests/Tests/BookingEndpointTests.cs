@@ -17,13 +17,7 @@ public class BookingEndpointTests : IntegrationTestBase
     public async Task BookingEndpointTestsSetup()
     {
         GetClient();
-        await AddEntity(new User
-        {
-            Id = "testuser",
-            FirstName = "Test",
-            LastName = "User",
-            Email = "testuser@hippodigital.co.uk"
-        });
+        await SetUpUser();
     }
 
     [Test]

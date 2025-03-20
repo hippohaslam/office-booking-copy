@@ -14,7 +14,7 @@ public class ScreenEndpoints() : EndpointBase("screen", "Screen", AccessLevelEnu
             (
                 IBookingQueries bookingQueries,
                 int bookableObjectId,
-                [FromHeader(Name = "Auth-Key")] string authKey,
+                [FromHeader(Name = "Auth-Key")] string? authKey,
                 IConfiguration configuration
             ) =>
             {
@@ -26,6 +26,27 @@ public class ScreenEndpoints() : EndpointBase("screen", "Screen", AccessLevelEnu
                 var bookingState = await bookingQueries.GetBookedState(bookableObjectId);
 
                 return TypedResults.Ok(bookingState);
+            });
+
+        builder.MapGet("location/{locationId:int}/area/{areaId:int}/{date}",
+            async Task<Results<Ok<BookingDayResponse>, NotFound>> 
+                (
+                    IBookingQueries bookingQueries, 
+                    int locationId, 
+                    int areaId, 
+                    DateOnly date,
+                    [FromHeader(Name = "Auth-Key")] string? authKey,
+                    IConfiguration configuration
+                ) =>
+            {
+                if (authKey != configuration["Screen:AuthKey"])
+                {
+                    return TypedResults.NotFound();
+                }
+
+                var location = await bookingQueries.GetAreaAndBookingsForTheDay(locationId, areaId, date);
+
+                return TypedResults.Ok(location);
             });
     }
 }
