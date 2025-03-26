@@ -31,15 +31,16 @@ jobs:
           rm terraform-docs-v${{ env.TERRAFORM_DOCS_VERSION }}-linux-amd64.tar.gz
 
       - name: Generate TF Documentation
-        run: terraform-docs markdown table src/infrastructure/terraform --output-file ../../../docs/Terraform.md
+        run: terraform-docs markdown table src/infrastructure/terraform --output-file ../../../docs/architecture/Terraform.md
 
 #      - name: Dotnet Format
 #        working-directory: ./src
 #        run: dotnet format
 #
-#      - name: Terraform fmt
-#        id: fmt
-#        run: terraform fmt -recursive
+      - name: Terraform fmt
+        working-directory: ./src/infrastructure/terraform
+        id: fmt
+        run: terraform fmt -recursive
 
       - name: Commit changes
         run: |

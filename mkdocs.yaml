@@ -13,8 +13,8 @@ plugins:
 nav:
   - Home: index.md
   - AWS Architecture: "AWS Architecture.md"
-  - Database Access: "Database Access.md"
+  - Database Access: "Database-Access.md"
   - Introduction: "Introduction.md"
   - Manual Test Cases: "Manual Test Cases/index.md"
   - Terraform: "Terraform.md"
-  - Useful Commands: "Useful Commands.md"
+  - Useful Commands: "Useful-Commands.md"
