@@ -57,8 +57,8 @@
     "prettier": "3.5.3",
     "sass": "^1.86.0",
     "typescript": "^5.8.2",
-    "vite": "5.4.15",
+    "vite": "6.2.3",
     "vite-plugin-mkcert": "^1.17.8",
-    "vitest": "^2.1.9"
+    "vitest": "^3.0.9"
   }
 }
