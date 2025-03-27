@@ -2,10 +2,12 @@ using FluentValidation;
 using Hippo.Booking.Application.Commands.Areas;
 using Hippo.Booking.Application.Commands.BookableObject;
 using Hippo.Booking.Application.Commands.Bookings;
+using Hippo.Booking.Application.Commands.BookingWaitList;
 using Hippo.Booking.Application.Commands.Location;
 using Hippo.Booking.Application.Commands.Reports;
 using Hippo.Booking.Application.Commands.Users;
 using Hippo.Booking.Application.Queries.Bookings;
+using Hippo.Booking.Application.Queries.BookingWaitingList;
 using Hippo.Booking.Application.Queries.Locations;
 using Hippo.Booking.Application.Queries.Reports;
 using Hippo.Booking.Application.Queries.Users;
@@ -30,6 +32,10 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ICreateBookingCommand, BookingCommands>();
         services.AddScoped<IDeleteBookingCommand, BookingCommands>();
+        
+        services.AddTransient<IBookingWaitingListQueries, BookingWaitingListQueries>();
+        services.AddScoped<ICreateBookingWaitListCommands, BookingWaitListCommands>();
+        services.AddScoped<IDeleteBookingWaitListCommands, BookingWaitListCommands>();
 
         services.AddScoped<IRunReportCommand, ReportingCommands>();
 

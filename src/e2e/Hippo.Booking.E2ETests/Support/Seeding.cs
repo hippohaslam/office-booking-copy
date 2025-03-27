@@ -1,13 +1,13 @@
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Enums;
+using Hippo.Booking.Infrastructure.EF;
 
 namespace Hippo.Booking.E2ETests.Support;
 
-public class Seeding
+public class Seeding(HippoBookingDbContext db)
 {
     public async Task SeedOfficeData()
     {
-        var db = await Config.GetDbContext();
         var dataDirectory = AppDomain.CurrentDomain.BaseDirectory + "/Data";
 
         var location = new Location
@@ -85,7 +85,6 @@ public class Seeding
 
     public async Task SetUserAsAdmin()
     {
-        var db = await Config.GetDbContext();
         var user = db.Users.FirstOrDefault(u => u.Email == Config.UserEmail);
 
         if (user != null)

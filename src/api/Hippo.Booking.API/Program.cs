@@ -1,4 +1,5 @@
 using FluentValidation;
+using Hangfire;
 using Hippo.Booking.API.Endpoints;
 using Hippo.Booking.API.Extensions;
 using Hippo.Booking.API.HostedServices;
@@ -102,18 +103,20 @@ try
     });
 
     builder.Services.AddValidatorsFromAssemblyContaining(typeof(ClientException));
+    
+    var dbConnectionString = builder.Configuration.GetConnectionString("HippoBookingDbContext");
 
     builder.Services.AddDbContext<HippoBookingDbContext>(
         optionsBuilder =>
         {
-            optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("HippoBookingDbContext"));
+            optionsBuilder.UseNpgsql(dbConnectionString);
 
             if (builder.Environment.IsDevelopment())
             {
                 optionsBuilder.ConfigureWarnings(x => x.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
             }
         });
-
+    
     var slackSettings = builder.Configuration.GetSection("Slack").Get<SlackSettings>() ?? new SlackSettings();
 
     builder.Services.AddSlackNet(c => c
@@ -148,6 +151,7 @@ try
     builder.Services.AddHostedService<StartupTaskExecutor>();
 
     builder.Services.AddStartupTask<MigrateDatabaseStartupTask>();
+    builder.Services.AddStartupTask<HangfireStartupTask>();
 
     builder.Services.AddHippoBookingApplication();
 
@@ -180,21 +184,36 @@ try
     }
 
     builder.Services.AddAuthorization();
-
+    
     builder.Services.AddScheduledTask<SlackConfirmationScheduledTask>();
     builder.Services.AddScheduledTask<CancelUnconfirmedBookingsScheduledTask>();
+    builder.Services.AddTransient<ICancelTimedOutBookingWaitingLists, CancelTimedOutBookingWaitingLists>();
 
     builder.Services.AddSingleton<SchedulingService>();
     builder.Services.AddHostedService<SchedulingWorkerService>();
 
     builder.Services.AddHttpContextAccessor();
+    
+    // Setup Hangfire
+    var hangfireConnectionString = builder.Configuration.GetConnectionString("HangfireDbContext");
+    if (string.IsNullOrWhiteSpace(hangfireConnectionString))
+    {
+        throw new InvalidOperationException("Hangfire connection string not found");
+    }
+    builder.Services.AddCustomHangfire(hangfireConnectionString);
 
     var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseHangfireDashboard();
+    }
 
     new LocationEndpoints().Map(app);
     new AdminLocationEndpoints().Map(app);
     new AdminBookingsEndpoints().Map(app);
     new BookingEndpoints().Map(app);
+    new BookingWaitListEndpoints().Map(app);
     new SessionEndpoints().Map(app);
     new UserManagementEndpoints().Map(app);
     new ReportingEndpoints().Map(app);

@@ -65,6 +65,14 @@ public class HippoBookingDbContext(
             Set<TEntity>().Remove(entity);
         }
     }
+    
+    public void DeleteEntities<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+    {
+        foreach (var entity in entities)
+        {
+            DeleteEntity(entity);
+        }
+    }
 
     public DbSet<User> Users { get; set; } = null!;
 
@@ -81,6 +89,8 @@ public class HippoBookingDbContext(
     public DbSet<AreaType> AreaTypes { get; set; } = null!;
 
     public DbSet<ScheduledTask>? ScheduledTasks { get; set; }
+
+    public DbSet<BookingWaitList> BookingWaitLists { get; set; } = null!;
     
     public DbSet<Report> Reports { get; set; } = null!;
 

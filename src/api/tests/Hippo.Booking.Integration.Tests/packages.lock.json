@@ -180,6 +180,44 @@
           "Microsoft.Extensions.Dependencyinjection.Abstractions": "2.1.0"
         }
       },
+      "Hangfire.AspNetCore": {
+        "type": "Transitive",
+        "resolved": "1.8.18",
+        "contentHash": "5D6Do0qgoAnakvh4KnKwhIoUzFU84Z0sCYMB+Sit+ygkpL1P6JGYDcd/9vDBcfr5K3JqBxD4Zh2IK2LOXuuiaw==",
+        "dependencies": {
+          "Hangfire.NetCore": "[1.8.18]"
+        }
+      },
+      "Hangfire.Core": {
+        "type": "Transitive",
+        "resolved": "1.8.18",
+        "contentHash": "oNAkV8QQoYg5+vM2M024NBk49EhTO2BmKDLuQaKNew23RpH9OUGtKDl1KldBdDJrD8TMFzjhWCArol3igd2i2w==",
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.1"
+        }
+      },
+      "Hangfire.NetCore": {
+        "type": "Transitive",
+        "resolved": "1.8.18",
+        "contentHash": "3KAV9AZ1nqQHC54qR4buNEEKRmQJfq+lODtZxUk5cdi68lV8+9K2f4H1/mIfDlPpgjPFjEfCobNoi2+TIpKySw==",
+        "dependencies": {
+          "Hangfire.Core": "[1.8.18]",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.0.0",
+          "Microsoft.Extensions.Hosting.Abstractions": "3.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "3.0.0"
+        }
+      },
+      "Hangfire.PostgreSql": {
+        "type": "Transitive",
+        "resolved": "1.20.10",
+        "contentHash": "Nn/88KoBvmy/xyopC9s+lXkwxQ6VB+RKyM8tjX3EgfSARDFxl2sEsFu0lw7WrjFdosg+E3naGzM5MzyiiL5i6w==",
+        "dependencies": {
+          "Dapper": "2.0.123",
+          "Hangfire.Core": "1.8.0",
+          "Microsoft.CSharp": "4.7.0",
+          "Npgsql": "6.0.11"
+        }
+      },
       "Hellang.Authentication.JwtBearer.Google": {
         "type": "Transitive",
         "resolved": "3.0.0",
@@ -266,6 +304,11 @@
         "resolved": "17.13.0",
         "contentHash": "9LIUy0y+DvUmEPtbRDw6Bay3rzwqFV8P4efTrK4CZhQle3M/QwLPjISghfcolmEGAPWxuJi6m98ZEfk4VR4Lfg=="
       },
+      "Microsoft.CSharp": {
+        "type": "Transitive",
+        "resolved": "4.7.0",
+        "contentHash": "pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA=="
+      },
       "Microsoft.EntityFrameworkCore": {
         "type": "Transitive",
         "resolved": "8.0.13",
@@ -286,6 +329,14 @@
         "type": "Transitive",
         "resolved": "8.0.13",
         "contentHash": "ENny33QADFiRxge5ikJBs2p7JB4MQx/ZSPKPNwt2eJPO0lVUGSjTiJeunGGggkVHiaUy0yY4f625LQtNlErIsw=="
+      },
+      "Microsoft.EntityFrameworkCore.InMemory": {
+        "type": "Transitive",
+        "resolved": "8.0.13",
+        "contentHash": "0e/vEkQGJ7mwacknDbUsvntuoQYlSWHuYmFDSSlkuwUKf+cKu9sKCaNUA6eH/+OOH2eEyioKMMPS5yp1wN8L+Q==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "8.0.13"
+        }
       },
       "Microsoft.EntityFrameworkCore.Relational.Design": {
         "type": "Transitive",
@@ -2043,6 +2094,8 @@
         "dependencies": {
           "FluentValidation": "[11.11.0, )",
           "FluentValidation.AspNetCore": "[11.3.0, )",
+          "Hangfire.AspNetCore": "[1.8.18, )",
+          "Hangfire.PostgreSql": "[1.20.10, )",
           "Hellang.Authentication.JwtBearer.Google": "[3.0.0, )",
           "Hippo.Booking.Application": "[1.0.0, )",
           "Hippo.Booking.Core": "[1.0.0, )",
@@ -2063,6 +2116,7 @@
         "type": "Project",
         "dependencies": {
           "FluentValidation": "[11.11.0, )",
+          "Hangfire.NetCore": "[1.8.18, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[8.0.13, )",
           "Microsoft.Extensions.DependencyInjection": "[8.0.1, )"
@@ -2074,11 +2128,23 @@
           "Microsoft.EntityFrameworkCore": "[8.0.13, )"
         }
       },
+      "hippo.booking.core.tests": {
+        "type": "Project",
+        "dependencies": {
+          "FluentAssertions": "[7.2.0, )",
+          "Hippo.Booking.Core": "[1.0.0, )",
+          "Microsoft.EntityFrameworkCore.InMemory": "[8.0.13, )",
+          "Microsoft.NET.Test.Sdk": "[17.13.0, )",
+          "NUnit": "[4.3.2, )",
+          "NUnit3TestAdapter": "[5.0.0, )"
+        }
+      },
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
           "AWSSDK.SecretsManager": "[3.7.400.104, )",
           "Dapper": "[2.1.66, )",
+          "Hangfire.PostgreSql": "[1.20.10, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Hippo.Booking.Infrastructure.EF": "[1.0.0, )",
           "Microsoft.Extensions.Configuration": "[8.0.0, )",

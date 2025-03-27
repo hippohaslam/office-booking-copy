@@ -45,6 +45,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Hippo.Booking.API\Hippo.Booking.API.csproj" />
+      <ProjectReference Include="..\Hippo.Booking.Core.Tests\Hippo.Booking.Core.Tests.csproj" />
     </ItemGroup>
 
 </Project>

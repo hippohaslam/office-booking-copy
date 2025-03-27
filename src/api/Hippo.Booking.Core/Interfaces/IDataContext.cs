@@ -11,4 +11,6 @@ public interface IDataContext
     void AddEntity<TEntity>(TEntity entity) where TEntity : class;
 
     void DeleteEntity<TEntity>(TEntity entity) where TEntity : class;
+    
+    void DeleteEntities<TEntity>(IEnumerable<TEntity> entities) where TEntity : class;
 }

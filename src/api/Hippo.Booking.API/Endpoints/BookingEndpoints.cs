@@ -63,7 +63,7 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings", AccessLeve
             });
 
         builder.MapPost("",
-            async Task<Results<Created<BookingResponse>, BadRequest<string>, ForbidHttpResult, ValidationProblem>> (
+            async (
                 HttpContext httpContext,
                 ICreateBookingCommand createBookingCommand,
                 CreateBookingRequest request) =>

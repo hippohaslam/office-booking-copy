@@ -1,4 +1,6 @@
 using FluentValidation;
+using Hangfire;
+using Hippo.Booking.Application.Consumers;
 using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Core.Interfaces;
@@ -13,7 +15,8 @@ public class BookingCommands(
     IBookingQueries bookingQueries,
     IDateTimeProvider dateTimeProvider,
     IValidator<CreateBookingRequest> createBookingValidator,
-    IValidator<DeleteBookingRequest> deleteBookingValidator) : ICreateBookingCommand, IDeleteBookingCommand
+    IValidator<DeleteBookingRequest> deleteBookingValidator,
+    IBackgroundJobClient backgroundJobClient) : ICreateBookingCommand, IDeleteBookingCommand
 {
     public async Task<BookingResponse> Handle(CreateBookingRequest request)
     {
@@ -94,6 +97,14 @@ public class BookingCommands(
             
             await userNotifier.NotifyUser(booking.UserId,
                 $"Your booking for *{booking.BookableObject.Name}* on *{dateString}* has been cancelled.{forSomeBodyElse}");
+
+            backgroundJobClient.Enqueue<BookingConsumer>(
+                x => x.HandleAsync(new BookFromWaitListRequest
+            {
+                BookableObjectId = booking.BookableObjectId,
+                AreaId = booking.BookableObject.AreaId,
+                Date = booking.Date
+            }));
         }
     }
 }

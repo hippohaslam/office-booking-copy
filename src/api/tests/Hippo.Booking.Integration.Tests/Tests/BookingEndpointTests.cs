@@ -6,6 +6,7 @@ using Hippo.Booking.Application.Models;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Extensions;
+using Hippo.Booking.Core.Tests.Utility;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hippo.Booking.Integration.Tests.Tests;
@@ -342,4 +343,6 @@ public class BookingEndpointTests : IntegrationTestBase
             && x.BookableObjectId == bookableObject.Id);
         dbBookings.Should().HaveCount(1, "only 1 booking should exist that matches those details");
     }
+
+    
 }

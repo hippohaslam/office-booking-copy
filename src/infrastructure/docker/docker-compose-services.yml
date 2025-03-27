@@ -22,3 +22,4 @@ services:
         UseMockAuth: true
         AllowedOrigins: https://localhost:5173
         ConnectionStrings__HippoBookingDbContext: Host=postgres;Port=5432;Database=HippoBooking_EndToEnd;Username=postgres;Password=postgres
+        ConnectionStrings__HangfireDbContext: Host=postgres;Port=5432;Database=Hangfire_EndToEnd;Username=postgres;Password=postgres

@@ -14,10 +14,10 @@ public class LocationEndpointTests : IntegrationTestBase
         GetClient();
         await AddEntity(new User
         {
-            Id = "getlocationtestuser",
-            FirstName = "Location",
+            Id = "testuser",
+            FirstName = "Test",
             LastName = "User",
-            Email = "locationtestuser@hippodigital.co.uk"
+            Email = "testuser@hippodigital.co.uk"
         });
     }
 

@@ -1,6 +1,7 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentValidation;
+using Hangfire;
 using Hippo.Booking.Application.Commands.Bookings;
 using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Application.Models;
@@ -23,6 +24,7 @@ public class BookingCommandsTests
     private IBookingQueries _bookingQueries;
     private IValidator<CreateBookingRequest> _createBookingValidator;
     private IValidator<DeleteBookingRequest> _deleteBookingValidator;
+    private IBackgroundJobClient _backgroundJobClient;
 
     [OneTimeSetUp]
     public async Task Setup()
@@ -65,6 +67,7 @@ public class BookingCommandsTests
         _createBookingValidator = Substitute.For<IValidator<CreateBookingRequest>>();
         _deleteBookingValidator = Substitute.For<IValidator<DeleteBookingRequest>>();
         _bookingQueries = new BookingQueries(_dataContext, new SystemDateTimeProvider());
+        _backgroundJobClient = Substitute.For<IBackgroundJobClient>();
         
         _sut = new BookingCommands(
             _dataContext,
@@ -73,7 +76,8 @@ public class BookingCommandsTests
             _bookingQueries,
             new SystemDateTimeProvider(),
             _createBookingValidator,
-            _deleteBookingValidator);
+            _deleteBookingValidator,
+            _backgroundJobClient);
     }
 
     [Test]
@@ -277,7 +281,8 @@ public class BookingCommandsTests
             _bookingQueries,
             new SystemDateTimeProvider(),
             _createBookingValidator,
-            _deleteBookingValidator);
+            _deleteBookingValidator,
+            _backgroundJobClient);
 
         var request = new DeleteBookingRequest
         {
@@ -307,7 +312,8 @@ public class BookingCommandsTests
             _bookingQueries,
             new SystemDateTimeProvider(),
             _createBookingValidator,
-            _deleteBookingValidator);
+            _deleteBookingValidator,
+            _backgroundJobClient);
 
         var request = new DeleteBookingRequest
         {
@@ -344,7 +350,8 @@ public class BookingCommandsTests
             _bookingQueries,
             new SystemDateTimeProvider(),
             _createBookingValidator,
-            _deleteBookingValidator);
+            _deleteBookingValidator,
+            _backgroundJobClient);
 
         var request = new DeleteBookingRequest
         {

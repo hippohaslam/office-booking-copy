@@ -49,8 +49,8 @@ public class AdminLocationEndpoints() : EndpointBase("admin/location", "Admin Lo
                 : TypedResults.Ok(areas);
         });
 
-        builder.MapPost("{locationId:int}/area", async Task<Results<Created<int>, BadRequest<string>, ForbidHttpResult, ValidationProblem>>
-            (int locationId, ICreateAreaCommand command, CreateAreaRequest request) =>
+        builder.MapPost("{locationId:int}/area",
+            async (int locationId, ICreateAreaCommand command, CreateAreaRequest request) =>
         {
             var resp = await HandleCreatedResponse(
                 async () => await command.Handle(locationId, request),
@@ -80,7 +80,7 @@ public class AdminLocationEndpoints() : EndpointBase("admin/location", "Admin Lo
                 : TypedResults.Ok(location);
         });
 
-        builder.MapPost("", async Task<Results<Created<int>, BadRequest<string>, ForbidHttpResult, ValidationProblem>> (ICreateLocationCommmand command, CreateLocationRequest request) =>
+        builder.MapPost("", async (ICreateLocationCommmand command, CreateLocationRequest request) =>
         {
             var resp = await HandleCreatedResponse(
                 async () => await command.Handle(request),

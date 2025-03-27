@@ -3,6 +3,7 @@ using Hippo.Booking.Core;
 using Hippo.Booking.Infrastructure.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Hippo.Booking.E2ETests.Support;
 
@@ -46,10 +47,10 @@ public class Config
             {
                 return db;
             }
-            
+
             await Task.Delay(10000);
         }
 
-        throw new InvalidOperationException("Could not connect to database");
+        throw new InvalidOperationException($"Could not connect to database");
     }
 }

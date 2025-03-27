@@ -24,7 +24,7 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName, Ac
     
     protected abstract void MapEndpoints(RouteGroupBuilder builder);
 
-    protected async Task<Results<Created<TResponse>, BadRequest<string>, ForbidHttpResult, ValidationProblem>> HandleCreatedResponse<TResponse>(
+    protected async Task<Results<Created<TResponse>, BadRequest<string>, ForbidHttpResult, ValidationProblem, Conflict<string>>> HandleCreatedResponse<TResponse>(
         Func<Task<TResponse>> handle,
         Func<TResponse, string> createdUrl)
     {
@@ -36,11 +36,12 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName, Ac
             BadRequest<string> badRequest => badRequest,
             ForbidHttpResult forbid => forbid,
             ValidationProblem validationProblem => validationProblem,
+            Conflict<string> conflict => conflict,
             _ => throw new InvalidOperationException()
         };
     }
 
-    protected async Task<Results<Ok<TResponse>, BadRequest<string>, ValidationProblem>> HandleResponse<TResponse>(Func<Task<TResponse>> handle)
+    protected async Task<Results<Ok<TResponse>, BadRequest<string>, ValidationProblem, Conflict<string>>> HandleResponse<TResponse>(Func<Task<TResponse>> handle)
     {
         try
         {

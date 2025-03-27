@@ -20,7 +20,8 @@ public abstract class PlaywrightFixture
     [OneTimeSetUp]
     public async Task Setup()
     {
-        var seeding = new Seeding();
+        var db = await Config.GetDbContext();
+        var seeding = new Seeding(db);
         await seeding.SeedOfficeData();
         await seeding.SetUserAsAdmin();
         
