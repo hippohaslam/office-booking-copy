@@ -206,7 +206,7 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "AllowedOrigins"
-    value     = "https://${var.frontend_subdomain}.${var.hosted_zone_url}"
+    value     = "https://${var.frontend_subdomain}.${var.hosted_zone_url},http://localhost:3000"
     resource  = ""
   }
 }
