@@ -48,7 +48,7 @@ describe("Delete booking", () => {
       bookableObject: { name: "Object 1" },
     };
     renderWithProviders(<EditBooking />, [{ pathname: "/admin/bookings/1", state: { booking } }]);
-    fireEvent.click(screen.getByText("Confirm delete"));
+    fireEvent.click(screen.getByText("Yes. Cancel it"));
     await waitFor(() => {
       expect(Apis.deleteBookingByAdminAsync).toHaveBeenCalledWith(1);
     });

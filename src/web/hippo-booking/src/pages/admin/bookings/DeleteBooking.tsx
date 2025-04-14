@@ -30,8 +30,8 @@ const EditBooking = () => {
       <p>Booked by: {booking.bookedBy}</p>
       <p>Booking name: {booking.bookableObject.name}</p>
       <div className=''>
-        <CtaButton text='Confirm delete' type='button' color='cta-green' onClick={() => handleDeleteBooking.mutate()}></CtaButton>
-        <CtaButton text='Cancel' type='button' color='cta-red' onClick={() => handleBack()} />
+        <CtaButton text='Yes. Cancel it' type='button' color='cta-red' onClick={() => handleDeleteBooking.mutate()}></CtaButton>
+        <CtaButton text='No. Keep it' type='button' color='cta-green' onClick={() => handleBack()} />
       </div>
     </div>
   );

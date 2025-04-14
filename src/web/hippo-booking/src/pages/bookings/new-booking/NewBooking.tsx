@@ -373,8 +373,8 @@ const NewBooking = () => {
               </div>
             }
             showConfirmButton={false}
-            cancelButtonLabel='Cancel'
-            cancelButtonColor='cta-red'
+            cancelButtonLabel='Back'
+            cancelButtonColor='cta-violet'
             onCancel={handleCloseModal}
           />
         );

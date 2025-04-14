@@ -1,4 +1,5 @@
 import { CtaButton } from "../..";
+import type { CtaButtonProps } from "../../buttons/cta/CtaButton";
 import "./ConfirmModal.scss";
 import { useEffect, useRef, type JSX } from "react";
 
@@ -8,14 +9,14 @@ type BookingCancelModalProps = {
   childElement?: JSX.Element;
   showConfirmButton: boolean;
   onConfirm?: () => void;
-  confirmButtonLabel?: string;
-  confirmButtonColor?: "cta-green" | "cta-red";
-  confirmButtonDisabled?: boolean;
-  confirmButtonLoading?: boolean;
+  confirmButtonLabel?: CtaButtonProps["text"];
+  confirmButtonColor?: CtaButtonProps["color"];
+  confirmButtonDisabled?: CtaButtonProps["disabled"];
+  confirmButtonLoading?: CtaButtonProps["isLoading"];
   onCancel: () => void;
-  cancelButtonLabel: string;
-  cancelButtonColor?: "cta-green" | "cta-red";
-  cancelButtonDisabled?: boolean;
+  cancelButtonLabel: CtaButtonProps["text"];
+  cancelButtonColor?: CtaButtonProps["color"];
+  cancelButtonDisabled?: CtaButtonProps["disabled"];
 };
 
 const BookingCancelModal = ({

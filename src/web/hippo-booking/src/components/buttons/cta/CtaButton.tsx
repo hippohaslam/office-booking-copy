@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from "react";
 import Loader from "../../../assets/3-dots-loader.svg";
 import "./CtaButton.scss";
 
-type CtaButtonProps = {
+export type CtaButtonProps = {
   text: string;
   type?: "button" | "submit";
-  color: "cta-green" | "cta-pink" | "cta-navy" | "cta-yellow" | "cta-red" | "cta-grey";
+  color: "cta-green" | "cta-pink" | "cta-navy" | "cta-yellow" | "cta-red" | "cta-violet" | "cta-grey";
   onClick?: () => void;
   disabled?: boolean;
   isLoading?: boolean;
