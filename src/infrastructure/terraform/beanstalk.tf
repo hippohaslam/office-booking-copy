@@ -179,7 +179,7 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
           },
           "ELB" : {
             "ELBRequests4xx" : {
-              "Enabled" : true
+              "Enabled" : false
             }
           }
         }
