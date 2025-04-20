@@ -7,6 +7,19 @@ namespace Hippo.Booking.E2ETests.Tests;
 [Parallelizable(ParallelScope.Self)]
 public class BookingTests : PlaywrightFixture
 {
+    private DateTime TestBookingDate()
+    {
+        // Because we don't show the weekends on the calendar, we need to use weekday only bookings
+        var today = DateTime.Now;
+        var nextAvailableDate = today.DayOfWeek switch
+        {
+            DayOfWeek.Saturday => today.AddDays(2),
+            DayOfWeek.Sunday => today.AddDays(1),
+            _ => today
+        };
+        return nextAvailableDate;
+    }
+    
     [Test]
     public async Task CreateAndCancelANewBooking()
     {
@@ -23,6 +36,7 @@ public class BookingTests : PlaywrightFixture
 
         var bookingPage = new BookingPage(Page);
         await bookingPage.AssertBookingPage();
+        await bookingPage.EnsureWeekdayBooking(TestBookingDate());
         await bookingPage.OpenListTab();
         await bookingPage.ClickOnListedBookableObject("Desk 1");
         await bookingPage.AssertModalForAvailableSpace("Desk 1");
@@ -33,30 +47,30 @@ public class BookingTests : PlaywrightFixture
         
         var confirmationPage = new BookingConfirmedPage(Page);
         await confirmationPage.AssertBookingConfirmedPage();
-        await confirmationPage.AssertBookingDetails(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1",
+        await confirmationPage.AssertBookingDetails(DateOnly.FromDateTime(TestBookingDate()), "Desk 2", "Floor 1",
             "Leeds - e2e test");
         await confirmationPage.ClickOnMyBookingsCta();
         
         var myBookingsPage = new MyBookingsPage(Page);
         await myBookingsPage.AssertMyBookingsPage();
-        await myBookingsPage.AssertCalendar(DateTime.Today.ToString("MMMM") + " " + DateTime.Today.ToString("yyyy"));
+        await myBookingsPage.AssertCalendar(TestBookingDate().ToString("MMMM") + " " + DateTime.Today.ToString("yyyy"));
         await myBookingsPage.ClickCalendarBookingLink("Desk 2 - Floor 1 - Leeds - e2e test");
         
         var bookingDetailsPage = new BookingDetailsPage(Page);
         await bookingDetailsPage.AssertBookingDetailsPage();
-        await bookingDetailsPage.AssertBookingRow(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1",
+        await bookingDetailsPage.AssertBookingRow(DateOnly.FromDateTime(TestBookingDate()), "Desk 2", "Floor 1",
             "Leeds - e2e test");
         await bookingDetailsPage.ClickBackLink();
         
         await myBookingsPage.AssertMyBookingsPage();
         await myBookingsPage.OpenTableViewTab();
-        await myBookingsPage.AssertBookingRow(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1",
+        await myBookingsPage.AssertBookingRow(DateOnly.FromDateTime(TestBookingDate()), "Desk 2", "Floor 1",
             "Leeds - e2e test");
-        await myBookingsPage.ClickManageBookingLink(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1",
+        await myBookingsPage.ClickManageBookingLink(DateOnly.FromDateTime(TestBookingDate()), "Desk 2", "Floor 1",
             "Leeds - e2e test");
 
         await bookingDetailsPage.AssertBookingDetailsPage();
-        await bookingDetailsPage.AssertBookingRow(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1",
+        await bookingDetailsPage.AssertBookingRow(DateOnly.FromDateTime(TestBookingDate()), "Desk 2", "Floor 1",
             "Leeds - e2e test");
         await bookingDetailsPage.ClickDeleteBookingButton();
         await bookingDetailsPage.AssertConfirmationModal();
@@ -68,8 +82,8 @@ public class BookingTests : PlaywrightFixture
         await myBookingsPage.AssertMyBookingsPage();
         var banner = new BannerComponent(Page);
         await banner.AssertBanner("Booking cancelled",
-            "Your booking of Desk 2 at Floor 1, Leeds - e2e test on " + DateTime.Now.ToString("dddd d MMMM yyyy") +
+            "Your booking of Desk 2 at Floor 1, Leeds - e2e test on " + TestBookingDate().ToString("dddd d MMMM yyyy") +
             " has been cancelled.");
-        await myBookingsPage.AssertBookingRowNotShown(DateOnly.FromDateTime(DateTime.Now), "Desk 2", "Floor 1", "Leeds - e2e test");
+        await myBookingsPage.AssertBookingRowNotShown(DateOnly.FromDateTime(TestBookingDate()), "Desk 2", "Floor 1", "Leeds - e2e test");
     }
 }

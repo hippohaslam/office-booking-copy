@@ -26,8 +26,8 @@ public class BookingPage(IPage page)
         ConfirmationModal.GetByRole(AriaRole.Heading, new() {Name = headingText});
     
     private ILocator ConfirmBookingButton => ConfirmationModal.GetByRole(AriaRole.Button, new() {Name = "Yes. Book it"}); 
-    private ILocator CloseModalButton => ConfirmationModal.GetByRole(AriaRole.Button, new() {Name = "No. Cancel"}); 
-
+    private ILocator CloseModalButton => ConfirmationModal.GetByRole(AriaRole.Button, new() {Name = "No. Cancel"});
+    
     public async Task AssertBookingPage()
     {
         await Assertions.Expect(page).ToHaveURLRegexMatchAsync(@"locations\/\d*\/areas\/\d*");
@@ -63,6 +63,22 @@ public class BookingPage(IPage page)
     public async Task InputDate(DateOnly date)
     {
         await DateInput.FillAsync(date.ToString("dd/MM/yyyy"));
+    }
+
+    public async Task EnsureWeekdayBooking(DateTime useDate)
+    {
+        // use the next button
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var dateToGetTo = DateOnly.FromDateTime(useDate);
+        if (dateToGetTo > today)
+        {
+            var daysDifference = dateToGetTo.DayNumber - today.DayNumber;
+            for (int i = 0; i < daysDifference; i++)
+            {
+                await NextButton.ClickAsync();
+            }
+        }
+        
     }
 
     public async Task ClickOnListedBookableObject(string spaceName)
