@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { BookingAreas, Booking, Locations } from "../imports";
+import { Booking, Locations } from "../imports";
 import { BookingAreaParams, bookingAreasLoader } from "../loaders/BookingAreaLoader";
 import ErrorPage from "../pages/error/Error";
 import { ProtectedRoute } from "../ProtectedRoute";
@@ -9,6 +9,7 @@ import MyBookings from "../pages/bookings/my-bookings/MyBookings";
 import BookingConfirmed from "../pages/bookings/booking-confirmed/BookingConfirmed";
 import LocationDetails from "../pages/locations/locationDetails/LocationDetails";
 import BookingDetails from "../pages/bookings/booking-details/BookingDetails";
+import AreaRedirect from "../pages/areas/AreaRedirect";
 
 const locationRoutes = (queryClient: QueryClient) => [
   {
@@ -17,7 +18,7 @@ const locationRoutes = (queryClient: QueryClient) => [
     element: (
       <Suspense fallback={<div>Loading...</div>}>
         <ProtectedRoute>
-          <BookingAreas />
+          <AreaRedirect />
         </ProtectedRoute>
       </Suspense>
     ),

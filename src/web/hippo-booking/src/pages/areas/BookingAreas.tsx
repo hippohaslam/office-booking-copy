@@ -1,5 +1,4 @@
-import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, useLoaderData, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { ActionTile, ActionTileList, Breadcrumbs, ErrorBanner } from "../../components";
 import { Area } from "../../interfaces/Area";
@@ -10,16 +9,8 @@ import { BookingLocation } from "../../interfaces/Location";
 import { compareAlphabeticallyByPropertyWithNumbers } from "../../helpers/ArrayHelpers";
 
 const BookingAreas = () => {
-  // prefetch to see if we can skip this page. It works!! a bit abstracty but does the job
   const { areaData, locationData } = useLoaderData() as { areaData: Area[]; locationData: BookingLocation };
   const { locationId } = useParams();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (areaData && areaData.length === 1) {
-      navigate(`/locations/${locationId}/areas/${areaData[0].id}`);
-    }
-  }, [areaData, locationId, navigate]);
 
   if (areaData.length === 0) {
     return (
