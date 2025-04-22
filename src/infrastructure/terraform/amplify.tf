@@ -24,6 +24,7 @@ frontend:
       commands:
         - nvm use v20
         - cd src/web/hippo-booking
+        - corepack enable
         - yarn install
     build:
       commands:
