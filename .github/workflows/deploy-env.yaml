@@ -206,7 +206,7 @@ jobs:
           echo "elastic_beanstalk_environment_name=$(terraform output elastic_beanstalk_environment_name)" >> $GITHUB_OUTPUT
           echo "amplify_app_name=$(terraform output amplify_app_name)" >> $GITHUB_OUTPUT
 
-      - uses: actions/download-artifact@v4.2.1
+      - uses: actions/download-artifact@v4.3.0
 
       - name: Get Amplify App Id
         run: |

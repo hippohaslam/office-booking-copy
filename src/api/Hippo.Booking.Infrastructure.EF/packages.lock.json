@@ -26,8 +26,8 @@
       },
       "FluentValidation": {
         "type": "Transitive",
-        "resolved": "11.11.0",
-        "contentHash": "cyIVdQBwSipxWG8MA3Rqox7iNbUNUTK5bfJi9tIdm4CAfH71Oo5ABLP4/QyrUwuakqpUEPGtE43BDddvEehuYw=="
+        "resolved": "12.0.0",
+        "contentHash": "8NVLxtMUXynRHJIX3Hn1ACovaqZIJASufXIIFkD0EUbcd5PmMsL1xUD5h548gCezJ5BzlITaR9CAMrGe29aWpA=="
       },
       "Hangfire.Core": {
         "type": "Transitive",
@@ -177,7 +177,7 @@
       "hippo.booking.application": {
         "type": "Project",
         "dependencies": {
-          "FluentValidation": "[11.11.0, )",
+          "FluentValidation": "[12.0.0, )",
           "Hangfire.NetCore": "[1.8.18, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[8.0.15, )",

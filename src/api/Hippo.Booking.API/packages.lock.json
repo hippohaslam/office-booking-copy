@@ -4,9 +4,9 @@
     "net8.0": {
       "FluentValidation": {
         "type": "Direct",
-        "requested": "[11.11.0, )",
-        "resolved": "11.11.0",
-        "contentHash": "cyIVdQBwSipxWG8MA3Rqox7iNbUNUTK5bfJi9tIdm4CAfH71Oo5ABLP4/QyrUwuakqpUEPGtE43BDddvEehuYw=="
+        "requested": "[12.0.0, )",
+        "resolved": "12.0.0",
+        "contentHash": "8NVLxtMUXynRHJIX3Hn1ACovaqZIJASufXIIFkD0EUbcd5PmMsL1xUD5h548gCezJ5BzlITaR9CAMrGe29aWpA=="
       },
       "FluentValidation.AspNetCore": {
         "type": "Direct",
@@ -131,11 +131,11 @@
       },
       "Serilog.Sinks.AwsCloudWatch": {
         "type": "Direct",
-        "requested": "[4.3.37, )",
-        "resolved": "4.3.37",
-        "contentHash": "MolT7TiIYZzueEgyHknlKtnkTl9vAQKr6xap6ZJxARk7x55S2Cze1LYr/2Iyhm32527HkwQncujS5Fa8rqD9IA==",
+        "requested": "[4.4.42, )",
+        "resolved": "4.4.42",
+        "contentHash": "d/6tKXYCpHHVkqfK7D3jC1RpYUxo3Lh2KfjJJbbOw5cDh1v2kd8GiY8XSvdGTcys1ROj3yoGkTbnx1xFlA2WbQ==",
         "dependencies": {
-          "AWSSDK.CloudWatchLogs": "3.7.102.27",
+          "AWSSDK.CloudWatchLogs": "4.0.1",
           "Serilog": "3.0.0",
           "Serilog.Sinks.PeriodicBatching": "3.1.0"
         }
@@ -170,23 +170,23 @@
       },
       "AWSSDK.CloudWatchLogs": {
         "type": "Transitive",
-        "resolved": "3.7.102.27",
-        "contentHash": "A2GBbtLyFR4wLkbUL1/M48ylI17b9JnEuY+dBkwF9dmNqFHox+whjszrSdUnrsgr5lD8kT7TwFseFuEplb7aYQ==",
+        "resolved": "4.0.1",
+        "contentHash": "mltRf08Ftet7P4XK7wfoEBvf1+U8Q/D0RRmqDAZiJEAhayqA/P9PeFLrLVRUF/br0i8MW2zjeawIhzGPisceWw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.103.10, 4.0.0)"
+          "AWSSDK.Core": "[4.0.0.2, 5.0.0)"
         }
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.402.39",
-        "contentHash": "tfhDM14yy3P/Hrrq6pxmG+DojJcghnCYpuEAHPgTPAcMlffL3nVIHRtzsUTnCrR1B6qwGtxHd6f3IOhL6m+fSA=="
+        "resolved": "4.0.0.3",
+        "contentHash": "pqHRxwcL35Pq2BTkG2ebFBqP4MXNIv2lSV4LGDohYwqdZRYTy50ZIyRoi4psbbDfX98PbcndXAuhkt5USWExcQ=="
       },
       "AWSSDK.SecretsManager": {
         "type": "Transitive",
-        "resolved": "3.7.400.133",
-        "contentHash": "odxf9qCIvck6x1XzxQrbFbU5SYSnWKtUp/HFvnO7XPq7dwDlT3rYyyryJVJ9wIDI+mjoZF61XkUl1ZSbZMMiaw==",
+        "resolved": "4.0.0.2",
+        "contentHash": "VJ0aBTQZt61LcTnPD4jIHJWxi1o898zvZCWCEd0hGp1onw6pEAB/bxq/OrDVCwX4EZr6y15V84fNQiAEtiMbWw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.402.39, 4.0.0)"
+          "AWSSDK.Core": "[4.0.0.3, 5.0.0)"
         }
       },
       "Dapper": {
@@ -1861,7 +1861,7 @@
       "hippo.booking.application": {
         "type": "Project",
         "dependencies": {
-          "FluentValidation": "[11.11.0, )",
+          "FluentValidation": "[12.0.0, )",
           "Hangfire.NetCore": "[1.8.18, )",
           "Hippo.Booking.Core": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[8.0.15, )",
@@ -1877,7 +1877,7 @@
       "hippo.booking.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SecretsManager": "[3.7.400.133, )",
+          "AWSSDK.SecretsManager": "[4.0.0.2, )",
           "Dapper": "[2.1.66, )",
           "Hangfire.PostgreSql": "[1.20.12, )",
           "Hippo.Booking.Core": "[1.0.0, )",
