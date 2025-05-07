@@ -2,6 +2,7 @@ using Hippo.Booking.API.Extensions;
 using Hippo.Booking.Application.Commands.Bookings;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Core.Enums;
+using Hippo.Booking.Core.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hippo.Booking.API.Endpoints;
@@ -64,11 +65,19 @@ public class BookingEndpoints() : EndpointBase("booking", "Bookings", AccessLeve
 
         builder.MapPost("",
             async (
-                HttpContext httpContext,
                 ICreateBookingCommand createBookingCommand,
-                CreateBookingRequest request) =>
+                CreateBookingRequest request,
+                IUserProvider userProvider) =>
             {
-                request.UserId = httpContext.GetUserId();
+                var user = userProvider.GetCurrentUser();
+                
+                if (user == null)
+                {
+                    return TypedResults.Unauthorized();
+                }
+                
+                request.UserId = user.UserId;
+                request.UserEmail = user.Email;
                 
                 return await HandleCreatedResponse(
                     async () => await createBookingCommand.Handle(request),

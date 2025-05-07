@@ -12,8 +12,10 @@ using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Core.Extensions;
 using Hippo.Booking.Core;
 using Hippo.Booking.Core.Interfaces;
+using Hippo.Booking.Core.Mocks;
 using Hippo.Booking.Infrastructure.Configuration;
 using Hippo.Booking.Infrastructure.EF;
+using Hippo.Booking.Infrastructure.Google;
 using Hippo.Booking.Infrastructure.Reports;
 using Hippo.Booking.Infrastructure.Scheduling;
 using Hippo.Booking.Infrastructure.Slack;
@@ -132,7 +134,7 @@ try
 
     builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
     builder.Services.AddScoped<IDataContext, HippoBookingDbContext>();
-
+    
     builder.Services.AddScoped<IReportRunner, PostgresReportRunner>();
 
     var slackToken = builder.Configuration.GetValue<string>("Slack:Token");
@@ -144,6 +146,18 @@ try
     else
     {
         builder.Services.AddScoped<IUserNotifier, SlackUserNotifier>();
+    }
+
+    var googleCredsJson = builder.Configuration.GetValue<string>("Google:ServiceAccount:Credentials");
+    if (string.IsNullOrWhiteSpace(googleCredsJson))
+    {
+        Log.Logger.Warning("Google service account not found, Registering null user provider");
+        builder.Services.AddScoped<IBookingCalendar, NullBookingCalendar>();
+    }
+    else
+    {
+        builder.Services.AddOptions<GoogleServiceAccountOptions>().BindConfiguration("Google:ServiceAccount");
+        builder.Services.AddScoped<IBookingCalendar, GoogleBookingCalendar>();
     }
 
     builder.Services.AddScoped<IUserProvider, HttpUserProvider>();

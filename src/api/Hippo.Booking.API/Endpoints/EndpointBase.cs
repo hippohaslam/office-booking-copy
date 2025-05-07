@@ -24,7 +24,7 @@ public abstract class EndpointBase(string routePath, string swaggerGroupName, Ac
     
     protected abstract void MapEndpoints(RouteGroupBuilder builder);
 
-    protected async Task<Results<Created<TResponse>, BadRequest<string>, ForbidHttpResult, ValidationProblem, Conflict<string>>> HandleCreatedResponse<TResponse>(
+    protected async Task<Results<Created<TResponse>, BadRequest<string>, ForbidHttpResult, ValidationProblem, Conflict<string>, UnauthorizedHttpResult>> HandleCreatedResponse<TResponse>(
         Func<Task<TResponse>> handle,
         Func<TResponse, string> createdUrl)
     {

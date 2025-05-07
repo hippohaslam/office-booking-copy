@@ -89,3 +89,14 @@ variable "provision_bastion" {
   type        = bool
   default     = true
 }
+
+variable "google_credentials" {
+  description = "Google Credentials"
+  type        = string
+  sensitive   = true
+}
+
+variable "calendar_prefix" {
+  description = "Prefix for the calendar"
+  type        = string
+}

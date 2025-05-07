@@ -12,6 +12,8 @@ public class CreateBookingRequest
     public DateOnly Date { get; set; }
 
     public string UserId { get; set; } = string.Empty;
+
+    public string UserEmail { get; set; } = string.Empty;
 }
 
 public class CreateBookingRequestValidator : AbstractValidator<CreateBookingRequest>

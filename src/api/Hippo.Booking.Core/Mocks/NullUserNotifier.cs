@@ -1,6 +1,6 @@
 using Hippo.Booking.Core.Interfaces;
 
-namespace Hippo.Booking.Infrastructure.Slack;
+namespace Hippo.Booking.Core.Mocks;
 
 public class NullUserNotifier : IUserNotifier
 {

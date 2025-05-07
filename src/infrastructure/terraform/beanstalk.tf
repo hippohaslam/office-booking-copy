@@ -209,6 +209,13 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
     value     = "https://${var.frontend_subdomain}.${var.hosted_zone_url},http://localhost:3000"
     resource  = ""
   }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "Google:ServiceAccount:Prefix"
+    value     = var.calendar_prefix
+    resource  = ""
+  }
 }
 
 resource "aws_iam_instance_profile" "eb_instance_profile" {

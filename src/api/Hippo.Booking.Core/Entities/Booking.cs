@@ -23,4 +23,6 @@ public class Booking : BaseEntity<int>, ICreatedBy, ISoftDelete
     public string? DeletedBy { get; set; }
     
     public DateTime? DeletedAt { get; set; }
+    
+    public string? CalendarEventId { get; set; }
 }

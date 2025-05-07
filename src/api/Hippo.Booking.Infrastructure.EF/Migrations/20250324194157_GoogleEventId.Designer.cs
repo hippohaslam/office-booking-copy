@@ -3,6 +3,7 @@ using System;
 using Hippo.Booking.Infrastructure.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hippo.Booking.Infrastructure.EF.Migrations
 {
     [DbContext(typeof(HippoBookingDbContext))]
-    partial class HippoBookingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250324194157_GoogleEventId")]
+    partial class GoogleEventId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -205,36 +208,6 @@ namespace Hippo.Booking.Infrastructure.EF.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("Hippo.Booking.Core.Entities.BookingWaitList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AreaId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateOnly>("DateToBook")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime>("TimeQueued")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasAlternateKey("UserId", "AreaId", "DateToBook");
-
-                    b.HasIndex("AreaId");
-
-                    b.ToTable("BookingWaitLists");
-                });
-
             modelBuilder.Entity("Hippo.Booking.Core.Entities.Location", b =>
                 {
                     b.Property<int>("Id")
@@ -408,21 +381,6 @@ namespace Hippo.Booking.Infrastructure.EF.Migrations
                     b.Navigation("BookableObject");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Hippo.Booking.Core.Entities.BookingWaitList", b =>
-                {
-                    b.HasOne("Hippo.Booking.Core.Entities.Area", null)
-                        .WithMany()
-                        .HasForeignKey("AreaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hippo.Booking.Core.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Hippo.Booking.Core.Entities.Area", b =>

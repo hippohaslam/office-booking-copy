@@ -52,6 +52,7 @@ jobs:
           TF_VAR_slack_token: ${{ secrets.SLACK_TOKEN }}
           TF_VAR_slack_signing_secret: ${{ secrets.SLACK_SIGNING_SECRET }}
           TF_VAR_slack_channel_email: ${{ secrets.SLACK_CHANNEL_EMAIL }}
+          TF_VAR_google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
         continue-on-error: ${{ github.event_name == 'pull_request' }}
 
       - uses: actions/github-script@v7
