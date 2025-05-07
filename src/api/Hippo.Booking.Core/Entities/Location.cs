@@ -1,6 +1,8 @@
+using Hippo.Booking.Core.Interfaces;
+
 namespace Hippo.Booking.Core.Entities;
 
-public class Location : BaseEntity<int>
+public class Location : BaseEntity<int>, ISoftDelete
 {
     public string Name { get; set; } = string.Empty;
 
@@ -13,4 +15,8 @@ public class Location : BaseEntity<int>
     public string GuideLink { get; set; } = string.Empty;
 
     public List<Area> Areas { get; set; } = new();
+    
+    public string? DeletedBy { get; set; }
+    
+    public DateTime? DeletedAt { get; set; }
 }

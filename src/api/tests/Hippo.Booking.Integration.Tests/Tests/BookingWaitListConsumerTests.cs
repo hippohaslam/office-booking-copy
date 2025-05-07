@@ -72,23 +72,19 @@ public class BookingWaitListConsumerTests : IntegrationTestBase
         
         var result = await RetryUtility.WaitForAsync(() =>
         {
-            var userThreeHasBooking = DbContext.Bookings.AsNoTracking().Any(x => x.UserId == TestUserThreeId && x.Date == bookingDate);
-            var userThreeRemovedFromWaitList = !DbContext.BookingWaitLists.AsNoTracking().Any(x => x.UserId == TestUserThreeId && x.DateToBook == bookingDate);
-
-            EnsureEntitiesAreDetached();
-
+            var userThreeHasBooking = DbContext.Bookings.AsNoTracking().Any(x => 
+                x.UserId == TestUserThreeId && 
+                x.Date == bookingDate &&
+                x.DeletedAt == null);
+            
+            var userThreeRemovedFromWaitList = DbContext.BookingWaitLists.AsNoTracking().Any(x => 
+                x.UserId == TestUserThreeId && 
+                x.DateToBook == bookingDate &&
+                x.DeletedAt != null);
+            
             return userThreeHasBooking && userThreeRemovedFromWaitList;
         });
         
         result.Should().BeTrue("The wrong user was removed from the waitlist, suggesting incorrect user was booked");
-    }
-    
-    private void EnsureEntitiesAreDetached()
-    {
-        var trackedEntities = DbContext.ChangeTracker.Entries().ToList();
-        foreach (var entity in trackedEntities)
-        {
-            DbContext.Entry(entity.Entity).State = EntityState.Detached;
-        }
     }
 }

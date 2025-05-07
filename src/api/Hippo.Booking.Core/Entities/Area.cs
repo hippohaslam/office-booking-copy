@@ -1,8 +1,9 @@
 using Hippo.Booking.Core.Enums;
+using Hippo.Booking.Core.Interfaces;
 
 namespace Hippo.Booking.Core.Entities;
 
-public class Area : BaseEntity<int>
+public class Area : BaseEntity<int>, ISoftDelete
 {
     public string Name { get; set; } = string.Empty;
 
@@ -17,4 +18,8 @@ public class Area : BaseEntity<int>
     public AreaType AreaType { get; set; } = null!;
 
     public List<BookableObject> BookableObjects { get; set; } = new();
+    
+    public string? DeletedBy { get; set; }
+    
+    public DateTime? DeletedAt { get; set; }
 }
