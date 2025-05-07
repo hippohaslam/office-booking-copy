@@ -5,7 +5,6 @@ using Hippo.Booking.Application.Exceptions;
 using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Hippo.Booking.Application.Commands.Bookings;
 
@@ -15,11 +14,9 @@ public class BookingCommands(
     IUserProvider userProvider,
     IBookingQueries bookingQueries,
     IDateTimeProvider dateTimeProvider,
-    IBookingCalendar bookingCalendar,
     IValidator<CreateBookingRequest> createBookingValidator,
     IValidator<DeleteBookingRequest> deleteBookingValidator,
-    IBackgroundJobClient backgroundJobClient,
-    ILogger<BookingCommands> logger) : ICreateBookingCommand, IDeleteBookingCommand
+    IBackgroundJobClient backgroundJobClient) : ICreateBookingCommand, IDeleteBookingCommand
 {
     public async Task<BookingResponse> Handle(CreateBookingRequest request)
     {
@@ -53,20 +50,7 @@ public class BookingCommands(
             UserId = request.UserId,
             IsConfirmed = dateTimeProvider.Today >= request.Date
         };
-
-        try
-        {
-            var summary =
-                $"{bookableObject.Name} - {bookableObject.Area.Name} - {bookableObject.Area.Location.Name}";
-
-            var calendarEventId = await bookingCalendar.CreateBookingEvent(request.UserEmail, summary, request.Date);
-            booking.CalendarEventId = calendarEventId;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error creating booking event");
-        }
-
+        
         dataContext.AddEntity(booking);
 
         await dataContext.Save();
@@ -79,6 +63,12 @@ public class BookingCommands(
         await userNotifier.NotifyUser(request.UserId,
             $"Your new booking for *{bookingToReturn!.BookableObject.Name}* at *{bookingToReturn.Location.Name}* on *{dateString}* has been created");
 
+        backgroundJobClient.Enqueue<BookingConsumer>(
+            x => x.HandleAsync(new BookingCreatedRequest
+            {
+                BookingId = booking.Id
+            }));
+        
         return bookingToReturn;
     }
 
@@ -109,18 +99,6 @@ public class BookingCommands(
             dataContext.DeleteEntity(booking);
             await dataContext.Save();
 
-            if (booking.CalendarEventId != null)
-            {
-                try
-                {
-                    await bookingCalendar.DeleteBookingEvent(currentUser.Email, booking.CalendarEventId);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Error deleting booking event: " + booking.CalendarEventId);
-                }
-            }
-
             var forSomeBodyElse = currentUserId != booking.UserId ? $" by {currentUser.FullName}" : string.Empty;
 
             var dateString = booking.Date.ToString("dddd d MMMM yyyy");
@@ -129,11 +107,13 @@ public class BookingCommands(
                 $"Your booking for *{booking.BookableObject.Name}* on *{dateString}* has been cancelled.{forSomeBodyElse}");
 
             backgroundJobClient.Enqueue<BookingConsumer>(
-                x => x.HandleAsync(new BookFromWaitListRequest
+                x => x.HandleAsync(new BookingCancelledRequest
             {
                 BookableObjectId = booking.BookableObjectId,
                 AreaId = booking.BookableObject.AreaId,
-                Date = booking.Date
+                Date = booking.Date,
+                UserEmail = currentUser.Email,
+                CalendarEventId = booking.CalendarEventId
             }));
         }
     }

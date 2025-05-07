@@ -9,10 +9,8 @@ using Hippo.Booking.Application.Queries.Bookings;
 using Hippo.Booking.Core;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
-using Hippo.Booking.Core.Mocks;
 using Hippo.Booking.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
 namespace Hippo.Booking.Application.Tests.Commands;
@@ -24,7 +22,6 @@ public class BookingCommandsTests
     private IUserNotifier _userNotifier;
     private IUserProvider _userProvider;
     private IBookingQueries _bookingQueries;
-    private IBookingCalendar _bookingCalendar;
     private IValidator<CreateBookingRequest> _createBookingValidator;
     private IValidator<DeleteBookingRequest> _deleteBookingValidator;
     private IBackgroundJobClient _backgroundJobClient;
@@ -72,20 +69,15 @@ public class BookingCommandsTests
         _bookingQueries = new BookingQueries(_dataContext, new SystemDateTimeProvider());
         _backgroundJobClient = Substitute.For<IBackgroundJobClient>();
         
-        _bookingCalendar = Substitute.For<IBookingCalendar>();
-        _bookingCalendar.CreateBookingEvent("test@user.com", Arg.Any<string>(), Arg.Any<DateOnly>()).Returns("mocked");
-        
         _sut = new BookingCommands(
             _dataContext,
             _userNotifier,
             _userProvider,
             _bookingQueries,
             new SystemDateTimeProvider(),
-            _bookingCalendar,
             _createBookingValidator,
             _deleteBookingValidator,
-            _backgroundJobClient,
-            NullLogger<BookingCommands>.Instance);
+            _backgroundJobClient);
     }
 
     [Test]
@@ -130,10 +122,8 @@ public class BookingCommandsTests
             existingBooking.Date.Should().Be(request.Date);
             existingBooking.UserId.Should().Be(request.UserId);
             existingBooking.IsConfirmed.Should().BeFalse();
-            existingBooking.CalendarEventId.Should().Be("mocked");
         }
-
-        await _bookingCalendar.Received().CreateBookingEvent("test@user.com", Arg.Any<string>(), request.Date);
+        
         await TestHelpers.AssertValidatorCalled(_createBookingValidator, request);
     }
     
@@ -253,8 +243,7 @@ public class BookingCommandsTests
             .FirstOrDefaultAsync(x => x.Id == bookingToDelete.Id);
 
         deletedBooking.Should().BeNull("The booking should have been deleted");
-
-        await _bookingCalendar.Received().DeleteBookingEvent("test@user.com", bookingToDelete.CalendarEventId);
+        
         await TestHelpers.AssertValidatorCalled(_deleteBookingValidator, request);
     }
 
@@ -293,11 +282,9 @@ public class BookingCommandsTests
             userProvider,
             _bookingQueries,
             new SystemDateTimeProvider(),
-            new NullBookingCalendar(),
             _createBookingValidator,
             _deleteBookingValidator,
-            _backgroundJobClient,
-            NullLogger<BookingCommands>.Instance);
+            _backgroundJobClient);
 
         var request = new DeleteBookingRequest
         {
@@ -326,11 +313,9 @@ public class BookingCommandsTests
             userProvider,
             _bookingQueries,
             new SystemDateTimeProvider(),
-            new NullBookingCalendar(),
             _createBookingValidator,
             _deleteBookingValidator,
-            _backgroundJobClient,
-            NullLogger<BookingCommands>.Instance);
+            _backgroundJobClient);
 
         var request = new DeleteBookingRequest
         {
@@ -366,11 +351,9 @@ public class BookingCommandsTests
             userProvider,
             _bookingQueries,
             new SystemDateTimeProvider(),
-            new NullBookingCalendar(),
             _createBookingValidator,
             _deleteBookingValidator,
-            _backgroundJobClient,
-            NullLogger<BookingCommands>.Instance);
+            _backgroundJobClient);
 
         var request = new DeleteBookingRequest
         {

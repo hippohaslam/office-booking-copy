@@ -2,6 +2,8 @@
 using Hippo.Booking.Application.Commands.Bookings;
 using Hippo.Booking.Application.Commands.BookingWaitList;
 using Hippo.Booking.Application.Queries.BookingWaitingList;
+using Hippo.Booking.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Hippo.Booking.Application.Consumers;
@@ -10,10 +12,55 @@ public class BookingConsumer(
     ICreateBookingCommand bookingCommand, 
     IBookingWaitingListQueries bookingWaitingListQueries,
     IDeleteBookingWaitListCommands deleteBookingWaitListCommands,
-    ILogger<BookingConsumer> logger)
+    IBookingCalendar bookingCalendar,
+    ILogger<BookingConsumer> logger,
+    IDataContext dataContext)
 {
-    public async Task HandleAsync(BookFromWaitListRequest data)
+    public async Task HandleAsync(BookingCreatedRequest data)
+    {
+        try
+        {
+            var booking = await dataContext.Query<Core.Entities.Booking>()
+                .Include(i => i.BookableObject)
+                .ThenInclude(i => i.Area)
+                .ThenInclude(i => i.Location)
+                .Include(i => i.User)
+                .SingleOrDefaultAsync(x => x.Id == data.BookingId);
+            
+            if (booking == null)
+            {
+                logger.LogError("BookingConsumer booking not found for id {BookingId}", data.BookingId);
+                return;
+            }
+            
+            var summary =
+                $"{booking.BookableObject.Name} - {booking.BookableObject.Area.Name} - {booking.BookableObject.Area.Location.Name}";
+
+            var calendarEventId = await bookingCalendar.CreateBookingEvent(booking.User.Email, summary, booking.Date);
+            booking.CalendarEventId = calendarEventId;
+
+            await dataContext.Save();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error creating booking event");
+        }
+    }
+    
+    public async Task HandleAsync(BookingCancelledRequest data)
     {   
+        try
+        {
+            if (data.CalendarEventId != null)
+            {
+                await bookingCalendar.DeleteBookingEvent(data.UserEmail, data.CalendarEventId);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error deleting booking event: " + data.CalendarEventId);
+        }
+        
         var waitListUser = await bookingWaitingListQueries.GetNextOnWaitingListAsync(data.AreaId, data.Date);
 
         if (waitListUser is null)
