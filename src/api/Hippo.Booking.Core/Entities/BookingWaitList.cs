@@ -7,4 +7,7 @@ public class BookingWaitList
     public required int AreaId { get; init; }
     public required DateOnly DateToBook { get; init; }
     public DateTime TimeQueued { get; init; } = DateTime.UtcNow;
+    
+    // EF navigation properties
+    public Area Area { get; init; } = null!;
 }

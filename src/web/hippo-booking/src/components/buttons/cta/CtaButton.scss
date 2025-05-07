@@ -170,6 +170,22 @@ button.cta {
             flex: 1;
         }
     }
+
+    &.cta-button-group__half-width {
+        flex-direction: row;
+        align-items: stretch;
+        width: 50%;
+
+        button {
+            flex: 1;
+        }
+    }
+
+    @media only screen and (max-width: 768px) {
+        &.cta-button-group__half-width {
+            width: 100%;
+        }
+    }
 }
 
 @media only screen and (max-width: 768px){
@@ -187,7 +203,9 @@ button.cta {
         margin-left: 0;
     }
 
-    .cta-button-group, .cta-button-group.cta-button-group__full-width{
+    .cta-button-group, 
+    .cta-button-group.cta-button-group__full-width, 
+    .cta-button-group.cta-button-group__half-width{
         flex-direction: column;
 
         button.cta{

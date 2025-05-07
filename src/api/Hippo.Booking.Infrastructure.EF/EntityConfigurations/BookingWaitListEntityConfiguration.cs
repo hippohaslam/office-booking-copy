@@ -14,7 +14,7 @@ public class BookingWaitListEntityConfiguration : IEntityTypeConfiguration<Booki
             .WithMany()
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne<Area>()
+        builder.HasOne<Area>(x => x.Area)
             .WithMany()
             .HasForeignKey(x => x.AreaId)
             .OnDelete(DeleteBehavior.Cascade);

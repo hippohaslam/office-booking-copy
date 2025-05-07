@@ -52,7 +52,7 @@ public class BookingWaitListCommands(
     public async Task Handle()
     {
         var waitList = await dataContext.Query<Core.Entities.BookingWaitList>()
-            .Where(x => x.DateToBook == dateTimeProvider.Today).ToListAsync();
+            .Where(x => x.DateToBook <= dateTimeProvider.Today).ToListAsync();
         
         logger.LogInformation("Removing {Count} from waiting list", waitList.Count);
 

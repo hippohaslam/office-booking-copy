@@ -1,0 +1,52 @@
+@use "../../styles/variables.scss";
+
+.confirmed-page-heading {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px 0;
+  padding: 30px 25px;
+  border-radius: 12px;
+  align-items: center;
+  gap: 30px;
+  background-color: variables.$hippo-brand-light-green;
+
+  h1 {
+    margin-bottom: 0;
+  }
+}
+
+.confirmed-page-tick-graphic {
+  transform: scale(0);
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+.sub-section-grey {
+  padding: 10px 25px;
+  border: 2pt variables.$hippo-brand-dark-grey dotted;
+  border-radius: 12px;
+  margin: 40px 0;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+  }
+  90% {
+    transform: scale(1.1);
+  }
+  92% {
+    transform: scale(0.95);
+  }
+  94% {
+    transform: scale(1.05);
+  }
+  96% {
+    transform: scale(0.975);
+  }
+  98% {
+    transform: scale(1.025);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

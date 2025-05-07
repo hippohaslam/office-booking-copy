@@ -12,7 +12,7 @@ import { isNullOrEmpty } from "../../../helpers/StringHelpers.ts";
 import { compareAlphabeticallyByPropertyWithNumbers } from "../../../helpers/ArrayHelpers.ts";
 import { useWindowSize } from "../../../hooks/WindowSizeHook.tsx";
 import CustomDatePicker from "../../../components/date-picker/DatePicker.tsx";
-import { Breadcrumbs, ConfirmModal, ErrorBanner, TabItem, TabList } from "../../../components/index.ts";
+import { Breadcrumbs, ConfirmModal, ErrorBanner, TabItem, TabList, CtaLink } from "../../../components/index.ts";
 import BookingCardStacked from "../../../components/booking/BookingCardStacked.tsx";
 import { AxiosError } from "axios";
 import { BookableObject } from "../../../interfaces/Desk";
@@ -23,6 +23,10 @@ import {
   getNonExistingBookingsFloorPlanIds,
 } from "../../../helpers/BookingHelpers.ts";
 import * as localStorageApi from "../../../services/LocalStorage.ts";
+import { BookableObjectTypeEnum } from "../../../enums/BookableObjectTypeEnum.ts";
+import { PlusIcon, MinusIcon } from "../../../assets";
+import CanvasToolTip from "../../../components/canvas/CanvasToolTip.tsx";
+import { useFeatureFlags } from "../../../contexts/FeatureFlagsContext";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
@@ -35,23 +39,16 @@ const Constants = {
 
 const loadActiveTab = () => {
   const savedTab = localStorage.getItem(Constants.activeBookingTab);
-  if (savedTab) {
-    return Number(savedTab);
-  }
-  return 0;
+  return savedTab ? Number(savedTab) : 0;
 };
 
 const initialDate = () => {
   const sessionDate = sessionStorage.getItem(Constants.bookingDate);
-
-  if (sessionDate) {
-    return new Date(sessionDate);
-  }
-
-  return new Date();
+  return sessionDate ? new Date(sessionDate) : new Date();
 };
 
 const NewBooking = () => {
+  const navigate = useNavigate();
   const { locationId, areaId } = useParams();
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate());
   const [selectedObject, setSelectedObject] = useState<BookableObject | null>(null);
@@ -61,12 +58,12 @@ const NewBooking = () => {
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const { windowWidth, windowHeight } = useWindowSize();
-  const navigate = useNavigate();
   const [error, setError] = useState<AxiosError | null>(null);
   const [isModalLoading, setModalLoading] = useState(false);
   const panningInfoRef = useRef<{ x: number; y: number } | null>(null);
   const [dateDisplay, setDateDisplay] = useState<string>("");
   const [tooltipEnabled, setTooltipEnabled] = useState<boolean>(localStorageApi.getAdditionalCanvasOptions().enableTooltip);
+  const { waitingListFeature } = useFeatureFlags();
 
   const { data: areaData } = useQuery({
     queryKey: ["area", areaId],
@@ -415,27 +412,45 @@ const NewBooking = () => {
     { to: "/", text: "Home" },
     { to: "/locations", text: "Locations" },
     {
-      to: "/locations/" + locationData?.id! + `/areas`,
+      to: `/locations/${locationData?.id}/areas`,
       text: locationData?.name ?? "Location",
     },
+    ...(locationData?.areas.length && locationData.areas.length > 1 ? [{ to: "", text: areaData?.name ?? "Pick a space" }] : []),
   ];
 
-  if (locationData) {
-    if (locationData?.areas.length > 1) {
-      breadcrumbItems.push({ text: areaData?.name ?? "Pick a space", to: "" });
-    }
-  }
-  const PlusIcon: React.FC = () => (
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='currentColor'>
-      <path d='M19 11h-6V5a1 1 0 0 0-2 0v6H5a1 1 0 0 0 0 2h6v6a1 1 0 0 0 2 0v-6h6a1 1 0 0 0 0-2z' />
-    </svg>
-  );
+  const getStandardBookableObjectsStatus = (bookingsData: BookedObjects | null) => {
+    // Filter for Standard bookable objects
+    const standardObjects = areaData?.bookableObjects.filter((obj) => obj.bookableObjectTypeId === BookableObjectTypeEnum.Standard) || [];
 
-  const MinusIcon: React.FC = () => (
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='currentColor'>
-      <path d='M19 13H5a1 1 0 0 1 0-2h14a1 1 0 0 1 0 2z' />
-    </svg>
-  );
+    // Check if all Standard objects are booked
+    const allBooked = standardObjects.every((standardObj) =>
+      bookingsData?.bookableObjects.some((bookedObj) => bookedObj.id === standardObj.id && bookedObj.existingBooking !== null),
+    );
+
+    return { allBooked };
+  };
+
+  const BookableObjectListDisplay = ({
+    bookableObject,
+    existingBookingName,
+    onObjectSelected,
+  }: {
+    bookableObject: BookableObject;
+    existingBookingName: string | null;
+    onObjectSelected: (bookableObject: BookableObject) => void;
+  }) => {
+    return (
+      <button
+        className={
+          `bookable-object-button ` + (existingBookingName != null ? "bookable-object-button__booked" : "bookable-object-button__available")
+        }
+        key={bookableObject.id}
+        onClick={() => onObjectSelected(bookableObject)}
+      >
+        {bookableObject.name} {" - " + (existingBookingName != null ? "Booked by " + existingBookingName : "Available")}
+      </button>
+    );
+  };
 
   // RENDERING STUFF
   return (
@@ -461,7 +476,19 @@ const NewBooking = () => {
         minDate={new Date()}
         maxDate={new Date(new Date().setDate(new Date().getDate() + 42))}
       />
-      <div className='date-display'>{dateDisplay}</div>
+      <div className='display-with-actions'>
+        <div className='date-display'>{dateDisplay}</div>
+        <div>
+          {waitingListFeature && getStandardBookableObjectsStatus(bookingsData!)?.allBooked ? (
+            <CtaLink 
+              text='Join waiting list'
+              to={`/locations/${locationId}/areas/${areaId}/waiting-list/join?date=${selectedDate.toISOString().split("T")[0]}`}
+              color='cta-navy'
+              withArrow={true}
+            />
+          ) : null}
+        </div>
+      </div>
 
       <TabList activeTabIndex={activeTab} onChange={handleTabChange}>
         <TabItem label='Floorplan'>
@@ -469,47 +496,14 @@ const NewBooking = () => {
             <canvas height={800} width={600} ref={canvasElRef} />
             <div className='zoom-in-out-btns'>
               <button aria-label='zoom in' onClick={handleZoomInBtn}>
-                <PlusIcon />
+                <img src={PlusIcon} alt='Zoom in' />
               </button>
               <button aria-label='zoom out' onClick={handleZoomOutBtn}>
-                <MinusIcon />
+                <img src={MinusIcon} alt='Zoom out' />
               </button>
             </div>
           </div>
-          <div className='color-key__container'>
-            <strong>Key:</strong>
-            <div className='color-key'>
-              <div className='color-block color-block__green'></div>
-              <span>- available</span>
-            </div>
-            <div className='color-key'>
-              <div className='color-block color-block__grey'></div>
-              <span>- not available</span>
-            </div>
-            <div className='color-key'>
-              <div className='color-block color-block__orange'></div>
-              <span>- selected</span>
-            </div>
-            <div className='color-key'>
-              <div className='color-block color-block__white'></div>
-              <span>- not selectable</span>
-            </div>
-          </div>
-          <div className='spacer'></div>
-          <div className='canvas-options__container'>
-            <strong>Canvas options:</strong>
-            <div>
-              <label htmlFor='enable-tooltip'>Enable tooltip</label>
-              <input
-                type='checkbox'
-                id='enable-tooltip'
-                checked={tooltipEnabled}
-                onChange={() => {
-                  setTooltipEnabled(!tooltipEnabled);
-                }}
-              />
-            </div>
-          </div>
+          <CanvasToolTip tooltipEnabled={tooltipEnabled} setTooltipEnabled={setTooltipEnabled} />
         </TabItem>
 
         <TabItem label='List'>
@@ -534,28 +528,6 @@ const NewBooking = () => {
       {confirmBookingModal()}
       <br />
     </div>
-  );
-};
-
-const BookableObjectListDisplay = ({
-  bookableObject,
-  existingBookingName,
-  onObjectSelected,
-}: {
-  bookableObject: BookableObject;
-  existingBookingName: string | null;
-  onObjectSelected: (bookableObject: BookableObject) => void;
-}) => {
-  return (
-    <button
-      className={
-        `bookable-object-button ` + (existingBookingName != null ? "bookable-object-button__booked" : "bookable-object-button__available")
-      }
-      key={bookableObject.id}
-      onClick={() => onObjectSelected(bookableObject)}
-    >
-      {bookableObject.name} {" - " + (existingBookingName != null ? "Booked by " + existingBookingName : "Available")}
-    </button>
   );
 };
 

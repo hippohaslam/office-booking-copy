@@ -276,7 +276,7 @@ const FloorplanEditor = () => {
     if (area) {
       let selectedObjectId = "";
       const nextDesks = area.bookableObjects.map((desk) => {
-        if (desk.id === deskId) {
+        if (desk.id === deskId && desk.floorPlanObjectId) {
           selectedObjectId = desk.floorPlanObjectId;
           desk.floorPlanObjectId = undefined;
         }
@@ -319,7 +319,7 @@ const FloorplanEditor = () => {
       try {
         const removedIds = await sharedFabric.removeActiveObjectsAsync(fabricCanvasRef.current);
         const nextDesks = area.bookableObjects.map((desk) => {
-          if (removedIds.includes(desk.floorPlanObjectId)) {
+          if (desk.floorPlanObjectId && removedIds.includes(desk.floorPlanObjectId)) {
             desk.floorPlanObjectId = undefined;
           }
           return desk;
@@ -756,7 +756,7 @@ const FloorplanEditor = () => {
                       <li key={desk.id} onClick={() => handleSelectCanvasObject(desk.floorPlanObjectId)}>
                         <div className='floorplan__desk-list-card'>
                           <strong>{desk.name}</strong>
-                          <div className="icon-link-group">
+                          <div className='icon-link-group'>
                             <IconButton
                               title='Select object on floorplan'
                               ariaLabel={"select " + desk.name + " on floorplan"}

@@ -68,15 +68,15 @@
     width: 25px;
     border-radius: 12px;
     margin-right: 5px;
-    
+
     &.color-block__green {
       background-color: #138000;
     }
-  
+
     &.color-block__grey {
       background-color: #808080;
     }
-  
+
     &.color-block__orange {
       background-color: #fba501;
     }
@@ -86,9 +86,9 @@
       border: 1px solid black;
     }
   }
-  
+
   @media only screen and (max-width: 768px) {
-    .color-key{
+    .color-key {
       flex-direction: column;
       align-items: flex-start;
     }
@@ -135,4 +135,10 @@
 #tooltip.show {
   display: block;
   opacity: 1;
+}
+
+.display-with-actions {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
 }

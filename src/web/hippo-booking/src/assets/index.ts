@@ -20,3 +20,6 @@ export { default as OfficeIcon } from "./office-icon.svg";
 export { default as SquareIcon } from "./square-icon.svg";
 export { default as TargetIcon } from "./target-icon.svg";
 export { default as TextIcon } from "./text-icon.svg";
+export { default as PendingIcon } from "./pending-icon.svg";
+export { default as PlusIcon } from "./plus-icon.svg";
+export { default as MinusIcon } from "./minus-icon.svg";

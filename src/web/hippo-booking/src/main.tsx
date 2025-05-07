@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { UserProvider } from "./contexts/UserContext.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { FeatureFlagsProvider } from "./contexts/FeatureFlagsContext";
 import routes from "./routes";
 
 const queryClient = new QueryClient();
@@ -22,7 +23,9 @@ ReactDOM.createRoot(root).render(
     <GoogleOAuthProvider clientId={clientId}>
       <UserProvider>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
+          <FeatureFlagsProvider>
+            <RouterProvider router={router} />
+          </FeatureFlagsProvider>
         </QueryClientProvider>
       </UserProvider>
     </GoogleOAuthProvider>

@@ -9,6 +9,9 @@ import MyBookings from "../pages/bookings/my-bookings/MyBookings";
 import BookingConfirmed from "../pages/bookings/booking-confirmed/BookingConfirmed";
 import LocationDetails from "../pages/locations/locationDetails/LocationDetails";
 import BookingDetails from "../pages/bookings/booking-details/BookingDetails";
+import WaitingListJoin from "../pages/waiting-list/WaitingListJoin";
+import WaitingListConfirmed from "../pages/waiting-list/WaitingListConfirmed";
+import WaitingListBookingDetail from "../pages/waiting-list/WaitingListBookingDetail";
 import AreaRedirect from "../pages/areas/AreaRedirect";
 
 const locationRoutes = (queryClient: QueryClient) => [
@@ -33,6 +36,16 @@ const locationRoutes = (queryClient: QueryClient) => [
       <Suspense fallback={<div>Loading...</div>}>
         <ProtectedRoute>
           <Booking />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/locations/:locationId/areas/:areaId/waiting-list/join",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProtectedRoute>
+          <WaitingListJoin />
         </ProtectedRoute>
       </Suspense>
     ),
@@ -85,8 +98,28 @@ const locationRoutes = (queryClient: QueryClient) => [
           <BookingDetails />
         </ProtectedRoute>
       </Suspense>
-    )
-  }
+    ),
+  },
+  {
+    path: "/waiting-list/:waitingListId",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProtectedRoute>
+          <WaitingListBookingDetail />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/waiting-list/:waitingListId/confirmed",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProtectedRoute>
+          <WaitingListConfirmed />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
 ];
 
 export default locationRoutes;

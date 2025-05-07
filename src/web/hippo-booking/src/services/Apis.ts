@@ -102,7 +102,7 @@ const getBookingAsync = async (bookingId: number): Promise<Booking> => {
   return response.data;
 };
 
-const getBookingsForUserBetweenDatesAsync = async (from: Date, to : Date) : Promise<Booking[]> => {
+const getBookingsForUserBetweenDatesAsync = async (from: Date, to: Date): Promise<Booking[]> => {
   const fromString = from.toISOString().split("T")[0];
   const toString = to.toISOString().split("T")[0];
   const response = await axiosInstance.get(`/booking?from=${fromString}&to=${toString}`);
@@ -172,6 +172,39 @@ const runReportAsync = (reportId: string, params = {}) => {
   return data;
 }
 
+// WaitingList
+const addToWaitingListAsync = async (areaId: number, date: Date): Promise<number> => {
+  const dateOnly = date.toISOString().split("T")[0];
+  const result = await axiosInstance.post("booking/waitlist", { areaId, date: dateOnly });
+  return result.data;
+}
+
+export const getWaitListBookingsForUserAsync = async (): Promise<WaitingListBookingResponse[]> => {
+  const result = await axiosInstance.get("booking/waitlist");
+  return result.data;
+}
+
+const getWaitingListBookingAsync = async (waitListId: number): Promise<WaitingListBookingResponse> => {
+  const result = await axiosInstance.get(`booking/waitlist/${waitListId}`);
+  return result.data;
+}
+
+/**
+ * Get the waiting list for a given area and date. Includes users position in the queue.
+ * @param areaId 
+ * @param date 
+ * @returns 
+ */
+const getWaitingListAsync = async (areaId: number, date: Date): Promise<WaitingListAreaResponse> => {
+  const dateOnly = date.toISOString().split("T")[0];
+  const response = await axiosInstance.get(`/booking/waitlist/area/${areaId}/${dateOnly}`);
+  return response.data;
+}
+
+export const deleteWaitingListBookingAsync = async (waitListId: number): Promise<void> => {
+  return await axiosInstance.delete(`booking/waitlist/${waitListId}`);
+}
+
 // Admin only
 /**
  * Get a list of all bookings for a given location and area in a given date range
@@ -210,6 +243,12 @@ export {
   getBookingsForDateAsync,
   postBookingAsync,
   deleteBookingAsync,
+
+  // Waiting list
+  addToWaitingListAsync,
+  getWaitingListBookingAsync,
+  getWaitingListAsync,
+
   // BookableObjects
   postBookableObjectAsync,
   editObjectAsync,

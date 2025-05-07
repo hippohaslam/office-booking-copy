@@ -20,10 +20,7 @@ interface BookedObject {
   id: number;
   name: string;
   description?: string;
-  existingBooking?: {
-    id: number;
-    name: string;
-  };
+  existingBooking?: IdName;
 }
 
 interface BookedObjects {

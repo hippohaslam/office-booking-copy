@@ -1,4 +1,5 @@
 import { AreaTypeEnum } from "../enums/AreaTypeEnum.ts";
+import type { BookableObject } from "./Desk";
 
 interface Area {
   id: number;

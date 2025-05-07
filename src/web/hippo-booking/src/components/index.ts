@@ -21,6 +21,7 @@ import TitleAnnouncer from "./accessibility/TitleAnnouncer/TitleAnnouncer";
 import CtaButton from "./buttons/cta/CtaButton";
 import Calendar from "./calendar/Calendar";
 import BookingCardStacked from "./booking/BookingCardStacked.tsx";
+import ConfirmationInformation from "./booking/ConfirmationInformation.tsx";
 
 export {
   MultiErrorBanner,
@@ -40,7 +41,7 @@ export {
   ActionTile,
   ActionTileList,
   CtaButton,
-  CtaLink, 
+  CtaLink,
   Breadcrumbs,
   Table,
   IconButton,
@@ -48,5 +49,6 @@ export {
   SkipToContentLink,
   TitleAnnouncer,
   Calendar,
-  BookingCardStacked
+  BookingCardStacked,
+  ConfirmationInformation
 };
