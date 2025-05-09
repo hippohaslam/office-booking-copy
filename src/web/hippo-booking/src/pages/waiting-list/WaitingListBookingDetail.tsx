@@ -108,13 +108,13 @@ const WaitingListBookingDetail = () => {
 
   return (
     <div>
-      <title>Booking details | Hippo Reserve</title>
+      <title>Waiting list place details | Hippo Reserve</title>
       <Link to='/bookings'>Back to my bookings</Link>
       {cancelError !== null ? (
         <ErrorBanner isShown={true} title={"Error deleting this booking"} errorMessage={cancelError.message} allowClose={true} />
       ) : null}
       <br />
-      <h1>Waiting list booking details</h1>
+      <h1>Waiting list place details</h1>
 
       <Table
         title={"Details"}
@@ -147,7 +147,7 @@ const WaitingListBookingDetail = () => {
       />
       {new Date(data!.dateToBook).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0) ? (
         <>
-          <CtaButton text='Cancel' color='cta-red' onClick={handleCancelClick} />
+          <CtaButton text='Cancel place on waiting list' color='cta-red' onClick={handleCancelClick} />
           <ConfirmModal
             title='Are you sure you want to be removed from the waiting list?'
             isOpen={isModalVisible}

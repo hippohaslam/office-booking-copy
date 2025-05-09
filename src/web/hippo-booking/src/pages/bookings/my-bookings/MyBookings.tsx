@@ -146,7 +146,7 @@ const MyBookings = () => {
     return generateCalendarDays(waitingListData, (item, index) => {
       const linkFullLabel = `${item.area.name} - ${item.location.name}`;
       const linkLabel = windowWidth < 800 ? item.area.name : linkFullLabel;
-      const ariaLabel = `${linkFullLabel} pending booking details`;
+      const ariaLabel = `${linkFullLabel} - Waiting list place details`;
 
       return (
         <IconLink
@@ -239,7 +239,7 @@ const MyBookings = () => {
             <td>{waitingListRequest.location.name}</td>
             <td>
               <IconButton
-                title='Mange pending booking'
+                title='Mange waiting list place'
                 onClick={() => {
                   navigate(`/waiting-list/${waitingListRequest.id}`);
                 }}
@@ -314,7 +314,7 @@ const MyBookings = () => {
             <br />
             <br />
             <Table
-              title='Waiting list bookings'
+              title='Waiting list places'
               columnHeadings={["Date", "Area", "Location", "Details and action"]}
               rows={UpcomingWaitListRows()}
             />

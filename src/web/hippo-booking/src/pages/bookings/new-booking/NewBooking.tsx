@@ -27,6 +27,7 @@ import { BookableObjectTypeEnum } from "../../../enums/BookableObjectTypeEnum.ts
 import { PlusIcon, MinusIcon } from "../../../assets";
 import CanvasToolTip from "../../../components/canvas/CanvasToolTip.tsx";
 import { useFeatureFlags } from "../../../contexts/FeatureFlagsContext";
+import {InformationBanner} from "../../../components";
 
 // Seperate API endpoints just for the floorplan? then it can be cached for a long time on both server and client for optimal performance. If so change floorplan as well
 // Desk data can be fetched from the booking API and we can switch days without reloading the floorplan.
@@ -480,12 +481,20 @@ const NewBooking = () => {
         <div className='date-display'>{dateDisplay}</div>
         <div>
           {waitingListFeature && getStandardBookableObjectsStatus(bookingsData!)?.allBooked ? (
-            <CtaLink 
-              text='Join waiting list'
-              to={`/locations/${locationId}/areas/${areaId}/waiting-list/join?date=${selectedDate.toISOString().split("T")[0]}`}
-              color='cta-navy'
-              withArrow={true}
-            />
+              <InformationBanner
+                  title="All spaces are booked"
+                  isShown={true}
+                  allowClose={false}
+                  description="There are no bookable spaces available in this area on this date."
+                  cta={
+                    <CtaLink
+                        text='Join waiting list'
+                        to={`/locations/${locationId}/areas/${areaId}/waiting-list/join?date=${selectedDate.toISOString().split("T")[0]}`}
+                        color='cta-navy'
+                        withArrow={true}
+                    ></CtaLink>
+                  }
+              />
           ) : null}
         </div>
       </div>

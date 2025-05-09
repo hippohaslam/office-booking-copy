@@ -88,7 +88,7 @@ describe("WaitingListBookingDetail", () => {
     renderWaitingListBookingDetail();
 
     await waitFor(() => {
-      expect(screen.getByText(/Waiting list booking details/i)).toBeInTheDocument();
+      expect(screen.getByText(/Waiting list place details/i)).toBeInTheDocument();
       expect(screen.getByText(/Test Area/i)).toBeInTheDocument();
       expect(screen.getAllByText(/Test Location/i).length).toBeGreaterThan(0);
       expect(screen.getByText(/3 of 5/i)).toBeInTheDocument();
@@ -121,7 +121,7 @@ describe("WaitingListBookingDetail", () => {
     renderWaitingListBookingDetail();
 
     await waitFor(() => {
-      expect(screen.getByText(/Waiting list booking details/i)).toBeInTheDocument();
+      expect(screen.getByText(/Waiting list place details/i)).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByRole("button", { name: /Cancel/i }));
@@ -141,7 +141,7 @@ describe("WaitingListBookingDetail", () => {
     renderWaitingListBookingDetail();
 
     await waitFor(() => {
-      expect(screen.getByText(/Waiting list booking details/i)).toBeInTheDocument();
+      expect(screen.getByText(/Waiting list place details/i)).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByRole("button", { name: /Cancel/i }));
@@ -167,7 +167,7 @@ describe("WaitingListBookingDetail", () => {
     renderWaitingListBookingDetail();
 
     await waitFor(() => {
-      expect(screen.getByText(/Waiting list booking details/i)).toBeInTheDocument();
+      expect(screen.getByText(/Waiting list place details/i)).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByRole("button", { name: /Cancel/i }));

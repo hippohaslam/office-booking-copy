@@ -57,15 +57,15 @@ const WaitingListConfirmed = () => {
 
   return (
     <div>
-      <title>{"Join waiting list confirmed | Hippo Reserve"}</title>
+      <title>{"Place on waiting list confirmed | Hippo Reserve"}</title>
       <Link to='/'>Back to home page</Link>
       <div className='confirmed-page-heading'>
         <img alt='' className='confirmed-page-tick-graphic' src={Graphic}></img>
-        <h1>Join waiting list confirmed</h1>
+        <h1>Place on waiting list confirmed</h1>
       </div>
       {data && (
         <div>
-          <h2>Your wait list details:</h2>
+          <h2>Waiting list details:</h2>
           <BookingCardStacked
             date={data.dateToBook}
             bookableObjectName={""}

@@ -7,11 +7,12 @@ type bannerProps = {
   descriptionElement?: JSX.Element;
   iconSrc: string;
   allowClose: boolean;
+  cta?: JSX.Element;
 };
 
 // TODO: Add a close button to the banner so the parent manages the shown state instead of the banner itself
 
-const Banner = ({ isShown, title, descriptionElement, iconSrc, containerClass, allowClose }: bannerProps) => {
+const Banner = ({ isShown, title, descriptionElement, iconSrc, containerClass, allowClose, cta = undefined }: bannerProps) => {
   const [isBannerShown, setIsBannerShown] = useState(isShown);
   const bannerRef = useRef<HTMLDivElement>(null);
 
@@ -25,12 +26,19 @@ const Banner = ({ isShown, title, descriptionElement, iconSrc, containerClass, a
 
   if (!isBannerShown) return null;
   return (
-    <div role='alert' className={"alert-banner " + containerClass} ref={bannerRef}>
+    <div
+        role='alert'
+        className={"alert-banner " + containerClass  + (allowClose ? ' alert-banner__with-close' : "") + (cta != undefined ? " alert-banner__with-cta" : "")}
+        ref={bannerRef}
+    >
       <img src={iconSrc} alt='' />
       <div className='alert-content'>
         <strong className='alert-title'>{title}</strong>
         {descriptionElement}
       </div>
+      {cta != undefined && (
+          cta
+      )}
       {allowClose && (
         <button onClick={handleClose} className='banner-close-button' title='Close banner' aria-label='close banner'>
           <svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='#000000'>
@@ -38,6 +46,7 @@ const Banner = ({ isShown, title, descriptionElement, iconSrc, containerClass, a
           </svg>
         </button>
       )}
+
     </div>
   );
 };

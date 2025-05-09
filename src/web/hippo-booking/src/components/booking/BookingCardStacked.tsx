@@ -2,7 +2,7 @@ import "./BookingCard.scss";
 
 type BookingCardProps = {
   date: Date;
-  bookableObjectName: string;
+  bookableObjectName?: string;
   areaName: string;
   locationName: string;
   elementId?: string;
@@ -11,7 +11,7 @@ type BookingCardProps = {
 
 const BookingCardStacked = ({
   date,
-  bookableObjectName,
+  bookableObjectName = undefined,
   areaName,
   locationName,
   elementId,
@@ -27,9 +27,11 @@ const BookingCardStacked = ({
     <div className={"booking-card " + "booking-card-" + color} id={elementId}>
       <ul>
         <li aria-label='date'>{formattedDateTime}</li>
-        <li className='bookable-object-item' aria-label='space'>
-          {bookableObjectName}
-        </li>
+        {bookableObjectName != undefined && (
+            <li className='bookable-object-item' aria-label='space'>
+              {bookableObjectName}
+            </li>
+        )}
         <li aria-label='area'>{areaName}</li>
         <li aria-label='location'>{locationName}</li>
       </ul>

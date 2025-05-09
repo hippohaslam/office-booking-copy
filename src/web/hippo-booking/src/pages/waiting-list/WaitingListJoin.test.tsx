@@ -98,7 +98,7 @@ describe("WaitingListJoin", () => {
     renderWaitingListJoin();
 
     await waitFor(() => {
-      expect(screen.getByText(/There are currently 5 people on the waiting list/i)).toBeInTheDocument();
+      expect(screen.getByText(/There are currently 5 people on this waiting list/i)).toBeInTheDocument();
     });
   });
 
@@ -114,7 +114,7 @@ describe("WaitingListJoin", () => {
 
     await waitFor(() => {
       // Check for the message about being in the queue
-      expect(screen.getByText(/You are already in position 3 of 5 in the queue/i)).toBeInTheDocument();
+      expect(screen.getByText(/position 3 of 5/i)).toBeInTheDocument();
       
       // Verify only the back button is present
       expect(screen.getByRole("button", { name: /go back/i })).toBeInTheDocument();
@@ -137,7 +137,7 @@ describe("WaitingListJoin", () => {
     expect(await screen.findByText(/join waiting list for/i)).toBeInTheDocument();
 
     // Simulate confirm button click
-    const confirmButton = await screen.findByRole("button", { name: /Confirm/i });
+    const confirmButton = await screen.findByRole("button", { name: /Yes. Join waiting list/i });
     confirmButton.click();
 
     // Assert that addToWaitingListAsync was called
@@ -161,7 +161,7 @@ describe("WaitingListJoin", () => {
     expect(await screen.findByText(/join waiting list for/i)).toBeInTheDocument();
 
     // Simulate confirm button click
-    const confirmButton = await screen.findByRole("button", { name: /Confirm/i });
+    const confirmButton = await screen.findByRole("button", { name: /Yes. Join waiting list/i });
     confirmButton.click();
 
     // Assert that error banner is shown
@@ -218,7 +218,7 @@ describe("WaitingListJoin", () => {
     renderWaitingListJoin();
 
     await waitFor(() => {
-      expect(screen.getByText(/There are currently 0 people on the waiting list/i)).toBeInTheDocument();
+      expect(screen.getByText(/There are currently 0 people on this waiting list/i)).toBeInTheDocument();
     });
   });
 
@@ -236,7 +236,7 @@ describe("WaitingListJoin", () => {
     renderWaitingListJoin();
 
     await waitFor(() => {
-      expect(screen.getByText(/You are already in position 1 of 3 in the queue/i)).toBeInTheDocument();
+      expect(screen.getByText(/position 1 of 3/i)).toBeInTheDocument();
     });
   });
 
@@ -254,7 +254,7 @@ describe("WaitingListJoin", () => {
     renderWaitingListJoin();
 
     await waitFor(() => {
-      expect(screen.getByText(/You are already in position 3 of 3 in the queue/i)).toBeInTheDocument();
+      expect(screen.getByText(/position 3 of 3/i)).toBeInTheDocument();
     });
   });
 });
