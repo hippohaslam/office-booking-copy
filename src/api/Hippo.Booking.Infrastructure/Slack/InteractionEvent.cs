@@ -1,3 +1,6 @@
+using Hangfire;
+using Hippo.Booking.Application.Commands.Bookings;
+using Hippo.Booking.Application.Consumers;
 using Hippo.Booking.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,6 +13,7 @@ namespace Hippo.Booking.Infrastructure.Slack;
 public class InteractionEvent(
     ISlackClient slackClient,
     IDataContext dataContext,
+    IBackgroundJobClient backgroundJobClient,
     ILogger<InteractionEvent> logger) : IBlockActionHandler<ButtonAction>
 {
     public async Task Handle(ButtonAction action, BlockActionRequest request)
@@ -18,6 +22,7 @@ public class InteractionEvent(
 
         var booking = await dataContext.Query<Core.Entities.Booking>()
             .Include(x => x.BookableObject)
+            .Include(i => i.User)
             .SingleOrDefaultAsync(x => x.Id == bookingId);
 
         if (booking == null)
@@ -57,6 +62,16 @@ public class InteractionEvent(
             
                 dataContext.DeleteEntity(booking);
                 await dataContext.Save();
+                
+                backgroundJobClient.Enqueue<BookingConsumer>(
+                    x => x.HandleAsync(new BookingCancelledRequest
+                    {
+                        BookableObjectId = booking.BookableObjectId,
+                        AreaId = booking.BookableObject.AreaId,
+                        Date = booking.Date,
+                        UserEmail = booking.User.Email,
+                        CalendarEventId = booking.CalendarEventId
+                    }));
             
                 await slackClient.RespondToInteraction(request.ResponseUrl, new MessageResponse
                 {

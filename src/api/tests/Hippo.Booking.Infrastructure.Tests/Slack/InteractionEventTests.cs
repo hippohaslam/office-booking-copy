@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Hippo.Booking.Core.Entities;
+using Hangfire;
 using Hippo.Booking.Core.Enums;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Infrastructure.Slack;
@@ -17,6 +17,7 @@ public class InteractionEventTests
     private InteractionEvent _sut;
     private ISlackClient _slackClient;
     private IDataContext _dataContext;
+    private IBackgroundJobClient _backgroundJobClient;
     private ILogger<InteractionEvent> _logger;
 
     [SetUp]
@@ -24,6 +25,7 @@ public class InteractionEventTests
     {
         _slackClient = Substitute.For<ISlackClient>();
         _logger = Substitute.For<ILogger<InteractionEvent>>();
+        _backgroundJobClient = Substitute.For<IBackgroundJobClient>();
 
         _dataContext = TestHelpers.GetDbContext(nameof(InteractiveMessage) + Guid.NewGuid());
         
@@ -41,7 +43,11 @@ public class InteractionEventTests
                 Bookings = [],
             },
             Date = DateOnly.FromDateTime(DateTime.Now),
-            UserId = "123",
+            User = new Core.Entities.User()
+            {
+                Id = "123",
+                Email = "test@test.com"
+            }
         });
 
         await _dataContext.Save();
@@ -49,6 +55,7 @@ public class InteractionEventTests
         _sut = new InteractionEvent(
             _slackClient,
             _dataContext,
+            _backgroundJobClient,
             _logger);
     }
 
@@ -76,6 +83,8 @@ public class InteractionEventTests
         
         booking.Should().NotBeNull();
         booking!.IsConfirmed.Should().BeFalse("booking should not be confirmed as ID does not match");
+
+        _backgroundJobClient.DidNotReceiveWithAnyArgs();
     }
 
     [Test]
@@ -104,6 +113,8 @@ public class InteractionEventTests
         booking.Should().NotBeNull();
         booking!.IsConfirmed.Should().BeTrue("booking should be confirmed as ID matches");
         booking!.BookableObject.Should().NotBeNull();
+        
+        _backgroundJobClient.DidNotReceiveWithAnyArgs();
     }
 
     [Test]
@@ -129,6 +140,8 @@ public class InteractionEventTests
             .SingleOrDefaultAsync(x => x.Id == 1);
 
         booking.Should().BeNull();
+
+        _backgroundJobClient.ReceivedWithAnyArgs();
     }
 
     [Test]
