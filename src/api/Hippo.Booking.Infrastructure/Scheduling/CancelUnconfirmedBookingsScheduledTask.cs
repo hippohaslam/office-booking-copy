@@ -1,3 +1,6 @@
+using Hangfire;
+using Hippo.Booking.Application.Commands.Bookings;
+using Hippo.Booking.Application.Consumers;
 using Hippo.Booking.Core.Interfaces;
 using Hippo.Booking.Core.Models;
 using Hippo.Booking.Infrastructure.Slack;
@@ -11,6 +14,7 @@ public class CancelUnconfirmedBookingsScheduledTask(
     IDataContext dataContext,
     IDateTimeProvider dateTimeProvider,
     ISlackClient slackClient,
+    IBackgroundJobClient backgroundJobClient,
     ILogger<SlackConfirmationScheduledTask> logger) : IScheduledTask
 {
     public async Task RunTask(ScheduleContext scheduleContext)
@@ -45,6 +49,16 @@ public class CancelUnconfirmedBookingsScheduledTask(
                 
                 dataContext.DeleteEntity(booking);
                 await dataContext.Save();
+                
+                backgroundJobClient.Enqueue<BookingConsumer>(
+                    x => x.HandleAsync(new BookingCancelledRequest
+                    {
+                        BookableObjectId = booking.BookableObjectId,
+                        AreaId = booking.BookableObject.AreaId,
+                        Date = booking.Date,
+                        UserEmail = booking.User.Email,
+                        CalendarEventId = booking.CalendarEventId
+                    }));
 
                 var dateString = booking.Date.ToString("dddd d MMMM yyyy");
 

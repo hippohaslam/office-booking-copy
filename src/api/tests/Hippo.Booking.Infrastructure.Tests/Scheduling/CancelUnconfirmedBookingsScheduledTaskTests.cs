@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Hangfire;
 using Hippo.Booking.Core;
 using Hippo.Booking.Core.Entities;
 using Hippo.Booking.Core.Interfaces;
@@ -17,6 +18,7 @@ public class CancelUnconfirmedBookingsScheduledTaskTests
     private ISlackClient _slackClient;
     private ILogger<SlackConfirmationScheduledTask> _logger;
     private IDataContext _dataContext;
+    private IBackgroundJobClient _backgroundJobClient;
     
     [OneTimeSetUp]
     public async Task Setup()
@@ -24,6 +26,8 @@ public class CancelUnconfirmedBookingsScheduledTaskTests
         var dateTimeProvider = new SystemDateTimeProvider();
 
         _dataContext = TestHelpers.GetDbContext(nameof(CancelUnconfirmedBookingsScheduledTask));
+        
+        _backgroundJobClient = Substitute.For<IBackgroundJobClient>();
         
         _dataContext.AddEntity(new User
         {
@@ -92,7 +96,12 @@ public class CancelUnconfirmedBookingsScheduledTaskTests
         
         _logger = Substitute.For<ILogger<SlackConfirmationScheduledTask>>();
         
-        _sut = new CancelUnconfirmedBookingsScheduledTask(_dataContext, dateTimeProvider, _slackClient, _logger);
+        _sut = new CancelUnconfirmedBookingsScheduledTask(
+            _dataContext, 
+            dateTimeProvider,
+            _slackClient,
+            _backgroundJobClient,
+            _logger);
     }
 
     [Test]
@@ -117,5 +126,7 @@ public class CancelUnconfirmedBookingsScheduledTaskTests
         _dataContext.Query<Core.Entities.Booking>(x => x.WithNoTracking())
             .Should()
             .HaveCount(2, "it should have cancelled 2 bookings");
+        
+        _backgroundJobClient.ReceivedWithAnyArgs(2);
     }
 }
