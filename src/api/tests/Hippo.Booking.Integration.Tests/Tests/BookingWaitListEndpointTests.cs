@@ -82,6 +82,36 @@ public class BookingWaitListEndpointTests : IntegrationTestBase
     }
     
     [Test]
+    public async Task ShouldNotAddUserToBookingWaitList_WhenUserAlreadyInList()
+    {
+        // Arrange
+        var client = GetClient();
+        var location = await SetUpLocation();
+        var area = await SetUpArea(location);
+        var date = DateOnly.FromDateTime(DateTime.Today.AddDays(1));
+        
+        await client.PostAsJsonAsync($"{BookingRoot}", new
+        {
+            areaId = area.Id,
+            date = date
+        });
+        
+        // Act
+        var response = await client.PostAsJsonAsync($"{BookingRoot}", new
+        {
+            areaId = area.Id,
+            date = date
+        });
+        
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        
+        var responseBody = await response.Content.ReadAsStringAsync();
+        
+        responseBody.Should().Be("\"You are already on the waiting list for this date\"");
+    }
+    
+    [Test]
     public async Task ShouldFindUserInBookingWaitList_WhenRequested()
     {
         // Arrange

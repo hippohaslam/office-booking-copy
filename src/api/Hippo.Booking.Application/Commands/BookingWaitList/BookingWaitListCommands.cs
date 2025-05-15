@@ -12,6 +12,14 @@ public class BookingWaitListCommands(
 {
     public async Task<int> Handle(string userId, AddToWaitListRequest request)
     {
+        var alreadyOnWaitingList = await dataContext.Query<Core.Entities.BookingWaitList>(x => x.WithNoTracking())
+            .AnyAsync(x => x.UserId == userId && x.AreaId == request.AreaId && x.DateToBook == request.Date);
+        
+        if (alreadyOnWaitingList)
+        {
+            throw new ClientException("You are already on the waiting list for this date");
+        }
+        
         var waitList = new Core.Entities.BookingWaitList
         {
             UserId = userId,
