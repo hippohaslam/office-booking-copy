@@ -11,4 +11,4 @@ email_recipients_alarms = [
   "stuart.maskell@hippodigital.co.uk",
   "adam.clarkson@hippodigital.co.uk"
 ]
-calendar_prefix = ""
+calendar_prefix = "TEST SYSTEM"
