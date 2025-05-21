@@ -212,7 +212,7 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "Google:ServiceAccount:Prefix"
+    name      = "Google__ServiceAccount__Prefix"
     value     = var.calendar_prefix
     resource  = ""
   }
