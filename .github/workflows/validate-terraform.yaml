@@ -20,6 +20,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      id-token: write # Neccesary for connecting to AWS using OIDC
     defaults:
       run:
         working-directory: ./src/infrastructure/terraform
@@ -30,9 +31,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          role-to-assume: arn:aws:iam::757693031168:role/GithubDeploymentRoleHippoReserve
           aws-region: eu-west-1
-          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Terraform Init
         id: init

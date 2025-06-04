@@ -107,6 +107,9 @@ jobs:
   e2e-tests:
     name: 'Run End-to-End Tests'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Neccesary for connecting to AWS using OIDC
     defaults:
       run:
         working-directory: ./src
@@ -116,9 +119,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          role-to-assume: arn:aws:iam::757693031168:role/GithubDeploymentRoleHippoReserve
           aws-region: eu-west-1
-          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -154,6 +156,9 @@ jobs:
   deploy-environment:
     name: 'Deploy Environment'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Neccesary for connecting to AWS using OIDC
     needs: [build-backend, build-frontend, e2e-tests]
     environment:
       name: ${{ github.event.inputs.environment }}
@@ -167,9 +172,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          role-to-assume: arn:aws:iam::757693031168:role/GithubDeploymentRoleHippoReserve
           aws-region: eu-west-1
-          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Terraform Init
         id: init

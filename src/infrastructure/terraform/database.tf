@@ -6,7 +6,7 @@ resource "aws_db_instance" "hippo-booking-db" {
   identifier              = "hippo-booking-db-${var.env_suffix}"
   allocated_storage       = 20 # Minimum storage for RDS instances
   engine                  = "postgres"
-  engine_version          = "16.4"
+  engine_version          = "16.8"
   instance_class          = var.db_instance_size
   username                = "postgres"
   password                = random_password.db_password.result
