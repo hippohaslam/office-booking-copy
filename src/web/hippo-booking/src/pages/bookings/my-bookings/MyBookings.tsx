@@ -239,7 +239,7 @@ const MyBookings = () => {
             <td>{waitingListRequest.location.name}</td>
             <td>
               <IconButton
-                title='Mange waiting list place'
+                title='Manage waiting list place'
                 onClick={() => {
                   navigate(`/waiting-list/${waitingListRequest.id}`);
                 }}
