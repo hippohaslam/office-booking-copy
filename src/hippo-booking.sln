@@ -56,6 +56,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "terraform", "terraform", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hippo.Booking.Infrastructure.Tests", "api\tests\Hippo.Booking.Infrastructure.Tests\Hippo.Booking.Infrastructure.Tests.csproj", "{D7B94338-3B24-4EEC-9010-EDAB334A2D31}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "eink", "eink", "{FC50EE0C-E95F-4BD0-8ADC-1145C944D86B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
