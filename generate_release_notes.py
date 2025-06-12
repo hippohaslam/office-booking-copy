@@ -53,7 +53,7 @@ def generate_release_notes(
 
 
     genai.configure(api_key=gemini_api_key)
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-2.0-flash')
 
     prompt = f"""
     You are an expert technical writer for the project {repo.name}.
