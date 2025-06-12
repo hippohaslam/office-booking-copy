@@ -58,4 +58,4 @@ jobs:
         name: Release ${{ github.ref_name }}
         body_path: RELEASE_NOTES.md # This file will be created by generate_release_notes.py
         draft: true # Set to false for automatic publishing
-        prerelease: falsev
+        prerelease: false
