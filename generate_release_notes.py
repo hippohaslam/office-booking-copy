@@ -101,7 +101,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate release notes using Gemini AI.")
     parser.add_argument("--token", required=True, help="GitHub token")
     parser.add_argument("--gemini-api-key", required=True, help="Gemini API Key")
-    args = parser.parse_A()
+    args = parser.parse_args()
 
     repo_name = os.environ["GITHUB_REPOSITORY"]
     current_tag = os.environ["GITHUB_REF"].split("/")[-1]
