@@ -1,0 +1,97 @@
+name: Generate Release Notes
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  generate-release-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get previous tag
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          fallback: ${{ github.sha }}
+
+      - name: Get commit history
+        id: git-log
+        run: |
+          echo "COMMIT_LOG<<EOF" >> $GITHUB_ENV
+          git log --pretty=format:"- %s" ${{ steps.previoustag.outputs.tag }}..${{ github.ref_name }} >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Get merged pull requests
+        id: merged-prs
+        uses: "actions/github-script@v6"
+        with:
+          script: |
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed',
+              sort: 'updated',
+              direction: 'desc',
+              base: 'main' // Or your default branch
+            });
+            const mergedPRs = prs.filter(pr => pr.merged_at);
+            let pr_list = "";
+            for (const pr of mergedPRs) {
+              pr_list += `- **#${pr.number}** ${pr.title}\n`;
+            }
+            core.setOutput('pr_list', pr_list);
+
+      - name: Get closed issues
+        id: closed-issues
+        uses: "actions/github-script@v6"
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed',
+              since: '${{ steps.previoustag.outputs.tag }}'
+            });
+            let issue_list = "";
+            for (const issue of issues) {
+              if (!issue.pull_request) { // Filter out pull requests
+                issue_list += `- **#${issue.number}** ${issue.title}\n`;
+              }
+            }
+            core.setOutput('issue_list', issue_list);
+
+      - name: Generate release notes with Gemini
+        id: gemini-release-notes
+        uses: "google-gemini/gemini-api-action@v1"
+        with:
+          api-key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            Based on the following commit history, merged pull requests, and closed issues, generate a set of release notes.
+            The release notes should be well-structured, easy to read, and highlight the key changes in this release.
+            Categorize the changes into 'New Features', 'Bug Fixes', and 'Other Changes'.
+
+            **Commit History:**
+            ${{ env.COMMIT_LOG }}
+
+            **Merged Pull Requests:**
+            ${{ steps.merged-prs.outputs.pr_list }}
+
+            **Closed Issues:**
+            ${{ steps.closed-issues.outputs.issue_list }}
+
+      - name: Update release body
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: ${{ github.event.release.id }},
+              body: `${{ steps.gemini-release-notes.outputs.generated-text }}`
+            });
