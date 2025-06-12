@@ -1,61 +1,38 @@
-name: Generate Release Notes
+name: AI Release Notes Generator
 
 on:
   push:
     tags:
-      - 'v*' # Trigger on new tags like v1.0.0
+      - 'v*' # Trigger on tags like v1.0, v2.3.4, etc.
+
+permissions:
+  contents: write
+  pull-requests: read
 
 jobs:
-  generate_notes:
+  release-notes:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0 # Fetch all history for commit comparison
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # Fetch all history for all branches and tags
+          fetch-depth: 0
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: Install dependencies
-      run: pip install requests google-generativeai
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-generativeai pygithub
 
-    - name: Get latest release tag
-      id: get_tag
-      run: |
-        # Get the previous release tag to compare commits from
-        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 || echo "")
-        echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
-
-    - name: Get commits since last release
-      id: get_commits
-      run: |
-        PREVIOUS_TAG="${{ steps.get_tag.outputs.previous_tag }}"
-        if [ -z "$PREVIOUS_TAG" ]; then
-          # If no previous tag, get commits from the beginning (or last N commits)
-          COMMIT_MESSAGES=$(git log --pretty=format:"%s" --no-merges)
-        else
-          COMMIT_MESSAGES=$(git log --pretty=format:"%s" --no-merges "${PREVIOUS_TAG}..HEAD")
-        fi
-        # Pass commit messages as a multiline string
-        echo "commit_messages<<EOF" >> $GITHUB_OUTPUT
-        echo "$COMMIT_MESSAGES" >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
-
-    - name: Generate release notes with Gemini
-      id: gemini_notes
-      env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        COMMIT_MESSAGES: ${{ steps.get_commits.outputs.commit_messages }}
-      run: python generate_release_notes.py
-
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        tag_name: ${{ github.ref_name }}
-        name: Release ${{ github.ref_name }}
-        body_path: RELEASE_NOTES.md # This file will be created by generate_release_notes.py
-        draft: true # Set to false for automatic publishing 
-        prerelease: false
+      - name: Generate Release Notes
+        id: generate_release_notes
+        run: |
+          python generate_release_notes.py --token ${{ secrets.GITHUB_TOKEN }} --gemini-api-key ${{ secrets.GEMINI_API_KEY }}
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF: ${{ github.ref }}
