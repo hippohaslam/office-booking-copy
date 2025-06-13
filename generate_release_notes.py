@@ -76,30 +76,26 @@ def generate_release_notes(
 
     prompt = f"""
     You are an expert technical writer for the project {repo.name}.
-    Your goal is to generate insightful, human-readable release notes for version {current_tag}, based on changes since {previous_tag}.
-    Do not just list commit messages. Synthesize the information from the provided pull requests and issues into a coherent narrative.
+    Your goal is to generate insightful, human-readable release notes for version {current_tag}. Your response MUST be based *only* on the provided pull request and issue details.
 
-    First, write a high-level summary of the release in a paragraph or two. What was the main focus? What are the key takeaways for users?
+    **Core Task:** Synthesize the provided information into a coherent narrative. Start with a high-level summary paragraph, then provide categorized details.
 
-    Then, generate the detailed notes.
-
-    Here is the detailed information about pull requests and their linked issues. This is your primary source of information:
+    **Primary Data (Use this for all release note content):**
+    Here is the detailed information about pull requests and their linked issues. Every bullet point you generate must trace back to one of these items.
     {''.join(pr_and_issue_details) if pr_and_issue_details else "No pull request details found."}
 
-    Here is the raw commit log. Use this as a secondary source, primarily to identify breaking changes (look for "BREAKING CHANGE:" in footers) or to find changes not associated with a pull request.
+    **Secondary Data (Use this for context ONLY, e.g., identifying breaking changes. Do NOT quote from it or mention it):**
     {full_log}
 
-    **Output Format Rules:**
-    1.  Start with the high-level summary paragraph.
-    2.  After the summary, use the following markdown structure for the detailed changes. The order MUST be precise:
+    **Critical Output Rules:**
+    1.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
+    2.  **Strict Categories:** After the summary, use this exact markdown structure. Omit any empty sections:
         - ### 💥 Breaking Changes
         - ### 🚀 New Features
         - ### 🐛 Bug Fixes
         - ### 🛠️ Other Changes
-    3.  If a section has no relevant changes, omit the section and its header entirely.
-    4.  Each bullet point should be a user-friendly description of a change.
-    5.  **Crucially, end each bullet point with a markdown link to the relevant PR or Issue, like `(#123)` or `(PR #456)`. Prioritize linking to issues if they are available.**
-    6.  Do NOT include commit SHAs or any generic text like "various commits".
+    3.  **No Commit-Speak:** You are strictly forbidden from using the phrase "[various commits]" or mentioning commit SHAs. All output must be user-friendly and derived from the Primary Data.
+    4.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. Prioritize linking to Issues if they are available.
     """
 
     print("Generating release notes with Gemini...")
