@@ -1,5 +1,6 @@
 import os
 import argparse
+import re
 import subprocess
 import google.generativeai as genai
 from github import Github
@@ -21,7 +22,7 @@ def generate_release_notes(
     github_token, gemini_api_key, repo_name, current_tag, previous_tag
 ):
     """
-    Generates release notes using Gemini AI.
+    Generates release notes using Gemini AI by analyzing commits, PRs, and linked issues.
 
     Args:
         github_token: The GitHub token to use for API calls.
@@ -37,9 +38,9 @@ def generate_release_notes(
     repo = g.get_repo(repo_name)
 
     commits = get_commit_messages(previous_tag, current_tag)
+    pr_and_issue_details = []
 
-    pr_details = []
-    # A simple way to find PR numbers in commit messages
+    # Find PR numbers from commit messages
     for commit in commits.splitlines():
         if "Merge pull request #" in commit:
             pr_number_str = commit.split("#")[1].split(" ")[0]
@@ -47,7 +48,24 @@ def generate_release_notes(
                 pr_number = int(pr_number_str)
                 try:
                     pr = repo.get_pull(pr_number)
-                    pr_details.append(f"  - PR #{pr.number}: {pr.title}\n    {pr.body}\n")
+                    pr_body = pr.body if pr.body else ""
+                    
+                    # Start building details for this PR
+                    details_for_pr = f"  - PR #{pr.number}: {pr.title} ({pr.html_url})\n    Body: {pr_body}\n"
+                    
+                    # Find and fetch linked issues from the PR body
+                    issue_numbers = re.findall(r'(?:closes|fixes|resolves) #(\d+)', pr_body, re.IGNORECASE)
+                    if issue_numbers:
+                        details_for_pr += "    Linked Issues:\n"
+                        for issue_num_str in set(issue_numbers): # Use set to avoid duplicates
+                            issue_num = int(issue_num_str)
+                            try:
+                                issue = repo.get_issue(number=issue_num)
+                                details_for_pr += f"      - Issue #{issue.number}: {issue.title} ({issue.html_url})\n"
+                            except Exception as e:
+                                print(f"Could not fetch issue #{issue_num}: {e}")
+                    pr_and_issue_details.append(details_for_pr)
+
                 except Exception as e:
                     print(f"Could not fetch PR #{pr_number}: {e}")
 
@@ -57,18 +75,18 @@ def generate_release_notes(
 
     prompt = f"""
     You are an expert technical writer for the project {repo.name}.
-    Generate a set of release notes for the version {current_tag}.
-    The release is based on the changes between {previous_tag} and {current_tag}.
+    Your task is to generate release notes for version {current_tag}, based on changes since {previous_tag}.
 
     Here is a summary of the commits:
     {commits}
 
-    And here are the details of the pull requests that were merged:
-    {''.join(pr_details) if pr_details else "No pull request details found."}
+    Here are the details of the pull requests that were merged, including their titles, bodies, and any explicitly linked issues (e.g., "closes #123"):
+    {''.join(pr_and_issue_details) if pr_and_issue_details else "No pull request details found."}
 
-    Please generate the release notes in a clear and concise format.
-    Use markdown for formatting.
-    Categorize the changes into 'New Features', 'Bug Fixes', and 'Other Changes' if possible.
+    Please generate the release notes in a clear, concise, and well-structured markdown format.
+    - Categorize changes into sections like '🚀 New Features', '🐛 Bug Fixes', and '🛠️ Other Changes'.
+    - For each item, provide a brief description of the change.
+    - IMPORTANT: When a change is associated with a pull request or a linked issue, you MUST include a markdown link to it. For example, `(#123)`. Use the URLs provided in the details.
     """
 
     print("Generating release notes with Gemini...")
@@ -108,13 +126,13 @@ if __name__ == "__main__":
     tags = get_git_tags()
 
     if len(tags) > 1:
+        # The most recent tag is at index 0, so the previous one is at index 1
         previous_tag = tags[1]
     else:
-        # If there's only one tag, get all commits from the beginning
+        # If there's only one tag, get all commits from the beginning (initial commit)
         previous_tag = subprocess.check_output(
             ["git", "rev-list", "--max-parents=0", "HEAD"]
         ).decode("utf-8").strip()
-
 
     release_notes = generate_release_notes(
         args.token, args.gemini_api_key, repo_name, current_tag, previous_tag
