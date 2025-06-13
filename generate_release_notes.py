@@ -77,15 +77,24 @@ def generate_release_notes(
     You are an expert technical writer for the project {repo.name}.
     Your task is to generate release notes for version {current_tag}, based on changes since {previous_tag}.
 
-    Here is a summary of the commits:
-    {commits}
+    You will be provided with a raw list of commits and a more detailed list of pull requests and their linked issues.
+    Base the content of the release notes primarily on the pull request details. The raw commit list is for context.
 
-    Here are the details of the pull requests that were merged, including their titles, bodies, and any explicitly linked issues (e.g., "closes #123"):
+    Here is the detailed information about pull requests and linked issues:
     {''.join(pr_and_issue_details) if pr_and_issue_details else "No pull request details found."}
 
+    Here is the raw summary of commits. Use this to identify any breaking changes (look for "BREAKING CHANGE:" in footers) or other changes not captured in the pull requests:
+    {commits}
+
     Please generate the release notes in a clear, concise, and well-structured markdown format.
-    - Categorize changes into sections like '🚀 New Features', '🐛 Bug Fixes', and '🛠️ Other Changes'.
-    - For each item, provide a brief description of the change.
+    - The structure MUST be in this order:
+        1. 💥 Breaking Changes (if any)
+        2. 🚀 New Features
+        3. 🐛 Bug Fixes
+        4. 🛠️ Other Changes
+    - If a section has no relevant changes, omit that section completely.
+    - For each item, provide a brief, user-friendly description of the change.
+    - Do NOT include generic text like "various commits". Each release note item should describe a specific change.
     - IMPORTANT: When a change is associated with a pull request or a linked issue, you MUST include a markdown link to it. For example, `(#123)`. Use the URLs provided in the details.
     """
 
