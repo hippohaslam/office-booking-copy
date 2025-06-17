@@ -112,12 +112,13 @@ def generate_release_notes(
     **Critical Output Rules:**
     1.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
     2.  **Strict Categories:** After the summary, use this exact markdown structure. Omit any empty sections:
-        - ### 💥 Breaking Changes
-        - ### 🚀 New Features
-        - ### 🐛 Bug Fixes
-        - ### 🛠️ Other Changes
+        - ### Breaking Changes
+        - ### New Features
+        - ### Bug Fixes
+        - ### Other Changes
     3.  **No Commit-Speak:** You are strictly forbidden from using phrases like "[various commits]" or mentioning commit SHAs. All output must be user-friendly.
-    4.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. Prioritize linking to Issues if they are available.
+    4.  **Bullet Point Format:** Each bullet point MUST start with a bolded, concise summary of the change, followed by a more detailed explanation of the change and its impact. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
+    5.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. Prioritize linking to Issues if they are available.
     """
 
     # Log the full prompt being sent to the AI for debugging purposes
