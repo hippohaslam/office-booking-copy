@@ -58,13 +58,11 @@ def generate_release_notes(
     repo = g.get_repo(repo_name)
     handled_issue_numbers = set()
 
-    # --- 1. Get data from Pull Requests and their linked issues ---
-    # We still need the fuller log to find merge commits by their titles
+    # --- 1. Get data from Pull Requests and their linked issues from GitHub API ---
     full_log_with_merges = get_full_commit_messages(previous_tag, current_tag)
     pr_and_issue_details = []
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
     
-    # We search the full log text for PR merge commits
     for commit_message in full_log_with_merges:
         match = pr_merge_commit_pattern.search(commit_message)
         if match:
@@ -79,7 +77,7 @@ def generate_release_notes(
                     details_for_pr += "  Linked Issues:\n"
                     for issue_num_str in set(issue_numbers):
                         issue_num = int(issue_num_str)
-                        handled_issue_numbers.add(issue_num) # Mark issue as handled
+                        handled_issue_numbers.add(issue_num)
                         try:
                             issue = repo.get_issue(number=issue_num)
                             issue_body = issue.body if issue.body else ""
@@ -90,65 +88,46 @@ def generate_release_notes(
             except Exception as e:
                 print(f"Could not fetch PR #{pr_number}: {e}")
 
-    # --- 2. Get data from standalone commits linked to issues ---
-    direct_commit_issue_details = []
+    # --- 2. Get the raw commit log to use as a primary source for historical data ---
     non_merge_commit_log = get_full_commit_messages(previous_tag, current_tag, no_merges=True)
     
-    # Combine the text of non-merge commits to search for issue numbers
-    non_merge_text = "\n".join(non_merge_commit_log)
-    issue_numbers_in_commits = re.findall(r'#(\d+)', non_merge_text)
-    
-    unhandled_issue_nums = set(map(int, issue_numbers_in_commits)) - handled_issue_numbers
-    
-    if unhandled_issue_nums:
-        details_for_prompt = ""
-        for issue_num in unhandled_issue_nums:
-            try:
-                issue = repo.get_issue(number=issue_num)
-                issue_body = issue.body if issue.body else ""
-                details_for_prompt += f"- Standalone commit links to Issue #{issue.number}: {issue.title} ({issue.html_url})\n  Body: {issue_body}\n"
-            except Exception as e:
-                print(f"Could not fetch issue #{issue_num} from commit: {e}")
-        if details_for_prompt:
-             direct_commit_issue_details.append(details_for_prompt)
-
-
     # --- 3. Generate the prompt for the AI ---
     genai.configure(api_key=gemini_api_key)
     model = genai.GenerativeModel('gemini-2.0-flash')
 
-    # Format the raw commit log for better presentation to the AI
-    formatted_secondary_data = "\n---\n".join(non_merge_commit_log)
-
+    formatted_commit_data = "\n---\n".join(non_merge_commit_log)
 
     prompt = f"""
     You are an expert technical writer for the project {repo.name}.
     Your goal is to generate insightful, human-readable release notes for version {current_tag}.
 
-    **Core Task:** Synthesize all provided information into a coherent narrative. Start with a high-level summary paragraph, then provide categorized details.
+    **Core Task:** Synthesize ALL of the information provided below into a coherent narrative. Start with a high-level summary paragraph, then provide categorized details.
 
-    **Primary Data (from Pull Requests):**
-    {''.join(pr_and_issue_details) if pr_and_issue_details else "No data from pull requests."}
+    **Source of Information:**
+    Below is a comprehensive list of changes for this release. It includes detailed information for Pull Requests found on GitHub, as well as the raw commit log for historical changes that may not exist on the GitHub API. You should use BOTH sources to build the release notes.
 
-    **Primary Data (from Commits Linked to Issues):**
-    {''.join(direct_commit_issue_details) if direct_commit_issue_details else "No data from standalone commits."}
+    **Data from GitHub (Pull Requests & Linked Issues):**
+    {''.join(pr_and_issue_details) if pr_and_issue_details else "No pull requests with linked issues were found on GitHub."}
 
-    **Secondary Data (Raw log for context ONLY, e.g., identifying breaking changes. Do NOT quote from it):**
+    **Data from Git History (Raw Commit Messages):**
     --- START OF RAW COMMIT LOG ---
-    {formatted_secondary_data}
+    {formatted_commit_data}
     --- END OF RAW COMMIT LOG ---
 
     **Critical Output Rules:**
-    1.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
-    2.  **Strict Categories:** After the summary, create sections using the following markdown headers. The order MUST be precise:
+    1.  **Synthesize Everything:** Your main goal is to read and understand ALL the information provided above and synthesize it. Do not simply list the inputs. If a change is mentioned in a Pull Request, prioritize that description, but use the raw commit log to find changes that were not part of a Pull Request on this repository.
+    2.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
+    3.  **Strict Categories:** After the summary, create sections using the following markdown headers. The order MUST be precise:
         - ### 💥 Breaking Changes
         - ### 🚀 New Features
         - ### 🐛 Bug Fixes
         - ### 🛠️ Other Changes
-    3.  **IMPORTANT - Omit Empty Sections:** If you do not have any content for a specific category (e.g., there are no "Bug Fixes"), you MUST NOT include its header (e.g., `### 🐛 Bug Fixes`) in the output. The final response should only contain headers for categories that have at least one bullet point.
-    4.  **No Commit-Speak:** You are strictly forbidden from using phrases like "[various commits]" or mentioning commit SHAs. All output must be user-friendly.
-    5.  **Bullet Point Format:** Each bullet point MUST start with a bolded, concise summary of the change, followed by a more detailed explanation of the change and its impact. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
-    6.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. Prioritize linking to Issues if they are available.
+    4.  **IMPORTANT - Omit Empty Sections:** If you do not have any content for a specific category (e.g., there are no "Bug Fixes"), you MUST NOT include its header in the output.
+    5.  **Content and Linking:**
+        - Each bullet point MUST start with a bolded, concise summary of the change, followed by a more detailed explanation.
+        - If a change comes from a PR/Issue with a URL, end the bullet with a markdown link, like `(#123)`.
+        - If a change comes from the raw commit log and references an issue (e.g., "Fixes #456") but has no URL, **still include the number in plain text at the end of the bullet point**, like `(#456)`.
+    6.  **No Commit-Speak:** Do not use phrases like "[various commits]" or mention commit SHAs. All output must be user-friendly.
     """
 
     # Log the full prompt being sent to the AI for debugging purposes
