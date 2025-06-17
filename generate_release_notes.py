@@ -82,6 +82,15 @@ def generate_release_notes(
     repo = g.get_repo(repo_name)
     handled_issue_numbers = set()
 
+    # Define ignore patterns here so they can be used for PR titles as well
+    ignore_patterns = [
+        re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE),
+        re.compile(r'^Update dependency', re.IGNORECASE),
+        re.compile(r'^Bumps?\s', re.IGNORECASE),
+        re.compile(r'\[dependabot skip\]', re.IGNORECASE),
+        re.compile(r'^Merge branch', re.IGNORECASE)
+    ]
+
     # --- 1. Get data from Pull Requests and their linked issues from GitHub API ---
     full_log_with_merges = get_full_commit_messages(previous_tag, current_tag)
     pr_and_issue_details = []
@@ -94,6 +103,16 @@ def generate_release_notes(
             pr_number = int(match.group(1))
             try:
                 pr = repo.get_pull(pr_number)
+
+                # Check if the PR title indicates it's a trivial dependency bump
+                is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
+                if pr.body and 'BREAKING CHANGE' in pr.body:
+                    is_pr_ignorable = False # Never ignore breaking changes
+
+                if is_pr_ignorable:
+                    print(f"Ignoring trivial PR #{pr.number}: {pr.title}")
+                    continue
+
                 pr_body = pr.body if pr.body else ""
                 details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
                 
