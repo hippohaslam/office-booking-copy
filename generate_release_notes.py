@@ -42,8 +42,7 @@ def get_full_commit_messages(from_ref, to_ref, no_merges=False):
     ignore_patterns = [
         re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE), # Conventional commit for deps
         re.compile(r'^Update dependency', re.IGNORECASE),       # Common dep update message
-        re.compile(r'^(bump|bumps)\s', re.IGNORECASE),            # Catches "Bump" or "Bumps" at the start
-        re.compile(r'update actions/', re.IGNORECASE),           # GHA updates
+        re.compile(r'^Bumps?\s', re.IGNORECASE),                  # Catches "Bump" or "Bumps" at the start
         re.compile(r'\[dependabot skip\]', re.IGNORECASE),     # Dependabot skip flag
         re.compile(r'^Merge branch', re.IGNORECASE)              # Merge commits that aren't PRs
     ]
@@ -93,45 +92,47 @@ def generate_release_notes(
     ]
 
     # --- 1. Get data from Pull Requests and their linked issues from GitHub API ---
-    full_log_with_merges = get_full_commit_messages(previous_tag, current_tag)
+    # Get the raw log here just to find the PR numbers
+    full_log_text_for_pr_find = subprocess.check_output(["git", "log", f"{previous_tag}..{current_tag}", "--pretty=format:%B%x00"]).decode("utf-8")
+    
     pr_and_issue_details = []
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
     issue_link_pattern = re.compile(r'(?:closes|fixes|resolves)\s+#(\d+)', re.IGNORECASE)
     
-    for commit_message in full_log_with_merges:
-        match = pr_merge_commit_pattern.search(commit_message)
-        if match:
-            pr_number = int(match.group(1))
-            try:
-                pr = repo.get_pull(pr_number)
+    pr_numbers_in_log = set(pr_merge_commit_pattern.findall(full_log_text_for_pr_find))
 
-                # Check if the PR title indicates it's a trivial dependency bump
-                is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
-                if pr.body and 'BREAKING CHANGE' in pr.body:
-                    is_pr_ignorable = False # Never ignore breaking changes
+    for pr_number_str in pr_numbers_in_log:
+        pr_number = int(pr_number_str)
+        try:
+            pr = repo.get_pull(pr_number)
 
-                if is_pr_ignorable:
-                    print(f"Ignoring trivial PR #{pr.number}: {pr.title}")
-                    continue
+            # Check if the PR title indicates it's a trivial dependency bump
+            is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
+            if pr.body and 'BREAKING CHANGE' in pr.body:
+                is_pr_ignorable = False # Never ignore breaking changes
 
-                pr_body = pr.body if pr.body else ""
-                details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
-                
-                issue_matches = issue_link_pattern.finditer(pr_body)
-                if issue_matches:
-                    details_for_pr += "  Linked Issues:\n"
-                    for issue_match in issue_matches:
-                        issue_num = int(issue_match.group(1))
-                        handled_issue_numbers.add(issue_num)
-                        try:
-                            issue = repo.get_issue(number=issue_num)
-                            issue_body = issue.body if issue.body else ""
-                            details_for_pr += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n      Body: {issue_body}\n"
-                        except Exception as e:
-                            print(f"Could not fetch issue #{issue_num} from PR: {e}")
-                pr_and_issue_details.append(details_for_pr)
-            except Exception as e:
-                print(f"Could not fetch PR #{pr_number}: {e}")
+            if is_pr_ignorable:
+                print(f"Ignoring trivial PR #{pr.number}: {pr.title}")
+                continue
+
+            pr_body = pr.body if pr.body else ""
+            details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
+            
+            issue_matches = issue_link_pattern.finditer(pr_body)
+            if issue_matches:
+                details_for_pr += "  Linked Issues:\n"
+                for issue_match in issue_matches:
+                    issue_num = int(issue_match.group(1))
+                    handled_issue_numbers.add(issue_num)
+                    try:
+                        issue = repo.get_issue(number=issue_num)
+                        issue_body = issue.body if issue.body else ""
+                        details_for_pr += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n      Body: {issue_body}\n"
+                    except Exception as e:
+                        print(f"Could not fetch issue #{issue_num} from PR: {e}")
+            pr_and_issue_details.append(details_for_pr)
+        except Exception as e:
+            print(f"Could not fetch PR #{pr_number}: {e}")
 
     # --- 2. Get data from standalone commits linked to issues ---
     direct_commit_issue_details = []
@@ -139,19 +140,16 @@ def generate_release_notes(
     generic_issue_pattern = re.compile(r'#(\d+)')
 
     for commit_message in non_merge_commit_log:
-        # Find all issue numbers mentioned in the commit message
         issue_matches = generic_issue_pattern.finditer(commit_message)
         for match in issue_matches:
             issue_num = int(match.group(1))
             if issue_num not in handled_issue_numbers:
                 details = ""
                 try:
-                    # Try to fetch the issue from GitHub for rich details
                     issue = repo.get_issue(number=issue_num)
                     issue_body = issue.body if issue.body else ""
                     details = f"- Standalone commit links to Issue #{issue.number}: {issue.title} ({issue.html_url})\n  Commit Message: {commit_message.splitlines()[0]}\n  Issue Body: {issue_body}\n"
                 except Exception as e:
-                    # If issue can't be fetched (e.g., historical), use the commit message itself
                     print(f"Could not fetch issue #{issue_num} from GitHub (it may be historical): {e}")
                     details = f"- Standalone commit (unlinked) refers to issue #{issue_num}\n  Commit Message: {commit_message}\n"
                 
