@@ -62,7 +62,7 @@ def generate_release_notes(
     full_log_with_merges = get_full_commit_messages(previous_tag, current_tag)
     pr_and_issue_details = []
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
-    issue_link_pattern = re.compile(r'(?:closes|fixes|resolves) #(\d+)', re.IGNORECASE)
+    issue_link_pattern = re.compile(r'(?:closes|fixes|resolves)\s+#(\d+)', re.IGNORECASE)
     
     for commit_message in full_log_with_merges:
         match = pr_merge_commit_pattern.search(commit_message)
@@ -92,20 +92,27 @@ def generate_release_notes(
     # --- 2. Get data from standalone commits linked to issues ---
     direct_commit_issue_details = []
     non_merge_commit_log = get_full_commit_messages(previous_tag, current_tag, no_merges=True)
-    
+    generic_issue_pattern = re.compile(r'#(\d+)')
+
     for commit_message in non_merge_commit_log:
-        issue_matches = issue_link_pattern.finditer(commit_message)
+        # Find all issue numbers mentioned in the commit message
+        issue_matches = generic_issue_pattern.finditer(commit_message)
         for match in issue_matches:
             issue_num = int(match.group(1))
             if issue_num not in handled_issue_numbers:
+                details = ""
                 try:
+                    # Try to fetch the issue from GitHub for rich details
                     issue = repo.get_issue(number=issue_num)
                     issue_body = issue.body if issue.body else ""
                     details = f"- Standalone commit links to Issue #{issue.number}: {issue.title} ({issue.html_url})\n  Commit Message: {commit_message.splitlines()[0]}\n  Issue Body: {issue_body}\n"
-                    direct_commit_issue_details.append(details)
-                    handled_issue_numbers.add(issue_num) # Mark as handled
                 except Exception as e:
-                    print(f"Could not fetch issue #{issue_num} from commit: {e}")
+                    # If issue can't be fetched (e.g., historical), use the commit message itself
+                    print(f"Could not fetch issue #{issue_num} from GitHub (it may be historical): {e}")
+                    details = f"- Standalone commit (unlinked) refers to issue #{issue_num}\n  Commit Message: {commit_message}\n"
+                
+                direct_commit_issue_details.append(details)
+                handled_issue_numbers.add(issue_num) # Mark as handled
 
     # --- 3. Generate the prompt for the AI ---
     genai.configure(api_key=gemini_api_key)
@@ -120,21 +127,21 @@ def generate_release_notes(
     **Core Task:** Synthesize ALL of the information provided below into a coherent narrative. Start with a high-level summary paragraph, then provide categorized details.
 
     **Source of Information:**
-    Below is a comprehensive list of changes for this release. It includes detailed information for Pull Requests found on GitHub, as well as the raw commit log for historical changes that may not exist on the GitHub API. You should use BOTH sources to build the release notes.
+    Below is a comprehensive list of changes for this release. It includes detailed information for Pull Requests found on GitHub, as well as the raw commit log for historical changes that may not exist on the GitHub API. You should use ALL provided sources to build the release notes.
 
     **Data from GitHub (Pull Requests & Linked Issues):**
     {''.join(pr_and_issue_details) if pr_and_issue_details else "No pull requests with linked issues were found on GitHub."}
     
-    **Data from Commits Linked Directly to Issues:**
+    **Data from Commits Linked Directly to Issues (may be on GitHub or historical):**
     {''.join(direct_commit_issue_details) if direct_commit_issue_details else "No standalone commits linking to issues were found."}
 
-    **Data from Git History (Raw Commit Messages for additional context):**
+    **Data from Git History (Raw Commit Messages for additional context and changes without linked issues):**
     --- START OF RAW COMMIT LOG ---
     {formatted_commit_data}
     --- END OF RAW COMMIT LOG ---
 
     **Critical Output Rules:**
-    1.  **Synthesize Everything:** Your main goal is to read and understand ALL the information provided above and synthesize it. Do not simply list the inputs. If a change is mentioned in a Pull Request, prioritize that description, but use the raw commit log to find changes that were not part of a Pull Request on this repository.
+    1.  **Synthesize Everything:** Your main goal is to read and understand ALL the information provided above and synthesize it. Do not simply list the inputs. If a change is mentioned in a Pull Request, prioritize that description. Use the commit logs to describe changes that are not covered by PRs or linked issues.
     2.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
     3.  **Strict Categories:** After the summary, create sections using the following markdown headers. The order MUST be precise:
         - ### 💥 Breaking Changes
@@ -145,7 +152,7 @@ def generate_release_notes(
     5.  **Content and Linking:**
         - Each bullet point MUST start with a bolded, concise summary of the change, followed by a more detailed explanation.
         - If a change comes from a PR/Issue with a URL, end the bullet with a markdown link, like `(#123)`.
-        - If a change comes from the raw commit log and references an issue (e.g., "Fixes #456") but has no URL, **still include the number in plain text at the end of the bullet point**, like `(#456)`.
+        - If a change comes from a commit that refers to an issue that couldn't be linked (marked as 'unlinked'), **still include the number in plain text at the end of the bullet point**, like `(#456)`.
     6.  **No Commit-Speak:** Do not use phrases like "[various commits]" or mention commit SHAs. All output must be user-friendly.
     """
 
