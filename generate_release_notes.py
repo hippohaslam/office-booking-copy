@@ -27,7 +27,6 @@ def get_full_commit_messages(from_ref, to_ref, no_merges=False):
     """
     Returns a list of full git log messages between two git refs.
     Each message is a separate element in the list.
-    Routine dependency updates are filtered out unless they contain 'BREAKING CHANGE'.
     """
     # Use %B to get the full raw body of the commit.
     # Use %x00 (the null byte) as a unique, unambiguous separator.
@@ -36,31 +35,9 @@ def get_full_commit_messages(from_ref, to_ref, no_merges=False):
         command.append("--no-merges")
     
     output = subprocess.check_output(command).decode("utf-8")
-    all_messages = [msg.strip() for msg in output.split("\x00") if msg.strip()]
+    # Split the output by the null byte and filter out any empty strings.
+    return [msg.strip() for msg in output.split("\x00") if msg.strip()]
 
-    # Patterns for commits that are typically just noise in release notes.
-    ignore_patterns = [
-        re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE), # Conventional commit for deps
-        re.compile(r'^Update dependency', re.IGNORECASE),       # Common dep update message
-        re.compile(r'^Bumps?\s', re.IGNORECASE),                  # Catches "Bump" or "Bumps" at the start
-        re.compile(r'\[dependabot skip\]', re.IGNORECASE),     # Dependabot skip flag
-        re.compile(r'^Merge branch', re.IGNORECASE)              # Merge commits that aren't PRs
-    ]
-
-    filtered_messages = []
-    for msg in all_messages:
-        # If a message is a breaking change, always include it.
-        if 'BREAKING CHANGE' in msg:
-            filtered_messages.append(msg)
-            continue
-        
-        # Check if the message matches any of the ignore patterns.
-        is_ignorable = any(pattern.search(msg) for pattern in ignore_patterns)
-        
-        if not is_ignorable:
-            filtered_messages.append(msg)
-
-    return filtered_messages
 
 def generate_release_notes(
     github_token, gemini_api_key, repo_name, current_tag, previous_tag
@@ -82,7 +59,6 @@ def generate_release_notes(
     repo = g.get_repo(repo_name)
     handled_issue_numbers = set()
 
-    # Define ignore patterns here so they can be used for PR titles as well
     ignore_patterns = [
         re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE),
         re.compile(r'^Update dependency', re.IGNORECASE),
@@ -91,33 +67,32 @@ def generate_release_notes(
         re.compile(r'^Merge branch', re.IGNORECASE)
     ]
 
-    # --- 1. Get data from Pull Requests and their linked issues from GitHub API ---
-    # Get the raw log here just to find the PR numbers
+    # --- 1. Fetch all data and categorize it ---
+    all_pr_details = []
+    dependency_pr_details = []
+    
     full_log_text_for_pr_find = subprocess.check_output(["git", "log", f"{previous_tag}..{current_tag}", "--pretty=format:%B%x00"]).decode("utf-8")
-    
-    pr_and_issue_details = []
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
-    issue_link_pattern = re.compile(r'(?:closes|fixes|resolves)\s+#(\d+)', re.IGNORECASE)
-    
     pr_numbers_in_log = set(pr_merge_commit_pattern.findall(full_log_text_for_pr_find))
 
     for pr_number_str in pr_numbers_in_log:
         pr_number = int(pr_number_str)
         try:
             pr = repo.get_pull(pr_number)
-
-            # Check if the PR title indicates it's a trivial dependency bump
-            is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
-            if pr.body and 'BREAKING CHANGE' in pr.body:
-                is_pr_ignorable = False # Never ignore breaking changes
-
-            if is_pr_ignorable:
-                print(f"Ignoring trivial PR #{pr.number}: {pr.title}")
-                continue
-
             pr_body = pr.body if pr.body else ""
             details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
             
+            is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
+            if 'BREAKING CHANGE' in (pr_body or ""):
+                is_pr_ignorable = False
+
+            if is_pr_ignorable:
+                dependency_pr_details.append(details_for_pr)
+                continue
+
+            all_pr_details.append(details_for_pr)
+
+            issue_link_pattern = re.compile(r'(?:closes|fixes|resolves)\s+#(\d+)', re.IGNORECASE)
             issue_matches = issue_link_pattern.finditer(pr_body)
             if issue_matches:
                 details_for_pr += "  Linked Issues:\n"
@@ -130,16 +105,26 @@ def generate_release_notes(
                         details_for_pr += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n      Body: {issue_body}\n"
                     except Exception as e:
                         print(f"Could not fetch issue #{issue_num} from PR: {e}")
-            pr_and_issue_details.append(details_for_pr)
         except Exception as e:
             print(f"Could not fetch PR #{pr_number}: {e}")
 
-    # --- 2. Get data from standalone commits linked to issues ---
-    direct_commit_issue_details = []
-    non_merge_commit_log = get_full_commit_messages(previous_tag, current_tag, no_merges=True)
-    generic_issue_pattern = re.compile(r'#(\d+)')
+    all_standalone_commits = get_full_commit_messages(previous_tag, current_tag, no_merges=True)
+    meaningful_standalone_commits = []
+    dependency_standalone_commits = []
 
-    for commit_message in non_merge_commit_log:
+    for commit in all_standalone_commits:
+        is_ignorable = any(p.search(commit) for p in ignore_patterns)
+        if 'BREAKING CHANGE' in commit:
+            is_ignorable = False
+        
+        if is_ignorable:
+            dependency_standalone_commits.append(commit)
+        else:
+            meaningful_standalone_commits.append(commit)
+
+    direct_commit_issue_details = []
+    generic_issue_pattern = re.compile(r'#(\d+)')
+    for commit_message in meaningful_standalone_commits:
         issue_matches = generic_issue_pattern.finditer(commit_message)
         for match in issue_matches:
             issue_num = int(match.group(1))
@@ -150,21 +135,31 @@ def generate_release_notes(
                     issue_body = issue.body if issue.body else ""
                     details = f"- Standalone commit links to Issue #{issue.number}: {issue.title} ({issue.html_url})\n  Commit Message: {commit_message.splitlines()[0]}\n  Issue Body: {issue_body}\n"
                 except Exception as e:
-                    print(f"Could not fetch issue #{issue_num} from GitHub (it may be historical): {e}")
                     details = f"- Standalone commit (unlinked) refers to issue #{issue_num}\n  Commit Message: {commit_message}\n"
-                
                 direct_commit_issue_details.append(details)
-                handled_issue_numbers.add(issue_num) # Mark as handled
+                handled_issue_numbers.add(issue_num)
+
+    # --- 2. Decide what data to send to the AI ---
+    has_meaningful_changes = bool(all_pr_details) or bool(direct_commit_issue_details) or bool(meaningful_standalone_commits)
+    
+    if not has_meaningful_changes and (dependency_pr_details or dependency_standalone_commits):
+        print("No meaningful changes found. Including dependency updates in the release notes.")
+        pr_data_for_prompt = ''.join(all_pr_details + dependency_pr_details)
+        commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits + dependency_standalone_commits)
+        dependency_note = "\nThis release consists primarily of routine dependency updates."
+    else:
+        pr_data_for_prompt = ''.join(all_pr_details)
+        commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits)
+        dependency_note = ""
+
 
     # --- 3. Generate the prompt for the AI ---
     genai.configure(api_key=gemini_api_key)
     model = genai.GenerativeModel('gemini-2.0-flash')
 
-    formatted_commit_data = "\n---\n".join(non_merge_commit_log)
-
     prompt = f"""
     You are an expert technical writer for the project {repo.name}.
-    Your goal is to generate insightful, human-readable release notes for version {current_tag}.
+    Your goal is to generate insightful, human-readable release notes for version {current_tag}. {dependency_note}
 
     **Core Task:** Synthesize ALL of the information provided below into a coherent narrative. Start with a high-level summary paragraph, then provide categorized details.
 
@@ -172,20 +167,20 @@ def generate_release_notes(
     Below is a comprehensive list of changes for this release. It includes detailed information for Pull Requests found on GitHub, as well as the raw commit log for historical changes that may not exist on the GitHub API. You should use ALL provided sources to build the release notes.
 
     **Data from GitHub (Pull Requests & Linked Issues):**
-    {''.join(pr_and_issue_details) if pr_and_issue_details else "No pull requests with linked issues were found on GitHub."}
+    {pr_data_for_prompt if pr_data_for_prompt else "No pull requests with linked issues were found on GitHub."}
     
     **Data from Commits Linked Directly to Issues (may be on GitHub or historical):**
     {''.join(direct_commit_issue_details) if direct_commit_issue_details else "No standalone commits linking to issues were found."}
 
     **Data from Git History (Raw Commit Messages for additional context and changes without linked issues):**
     --- START OF RAW COMMIT LOG ---
-    {formatted_commit_data}
+    {commit_data_for_prompt}
     --- END OF RAW COMMIT LOG ---
 
     **Critical Output Rules:**
-    1.  **NO EMPTY SECTIONS:** This is the most important rule. If a category like "Bug Fixes" or "Breaking Changes" has no relevant items, you MUST NOT include its header in the final output. Your response should only contain headers for categories that have at least one bullet point.
-    2.  **IDENTIFYING BREAKING CHANGES:** A breaking change should only be identified if a commit message explicitly contains the text `BREAKING CHANGE:`. Do not invent breaking changes. If none exist, omit the "Breaking Changes" section entirely as per Rule #1.
-    3.  **IGNORE TRIVIAL UPDATES:** Do not include routine dependency updates (e.g., "chore(deps): update dependency...", "bump package from...") or merge commits in the release notes unless they are part of a significant `BREAKING CHANGE`.
+    1.  **NO UNWANTED SECTIONS OR DEPENDENCY UPDATES:** This is the most important rule. You are strictly forbidden from including routine dependency updates (e.g., "chore(deps): update dependency...", "bump package from...") in the release notes unless explicitly told they are the only content. Furthermore, you MUST ONLY use the section headers listed in Rule #6. Do not create any other sections.
+    2.  **NO EMPTY SECTIONS:** If a category like "Bug Fixes" or "Breaking Changes" has no relevant items, you MUST NOT include its header in the final output.
+    3.  **IDENTIFYING BREAKING CHANGES:** A breaking change should only be identified if a commit message explicitly contains the text `BREAKING CHANGE:`. Do not invent breaking changes.
     4.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
     5.  **Strict Categories:** After the summary, create sections using the following markdown headers. The order MUST be precise:
         - ### 💥 Breaking Changes
@@ -213,12 +208,6 @@ def generate_release_notes(
 def create_github_release(github_token, repo_name, tag, release_notes):
     """
     Creates a new release on GitHub.
-
-    Args:
-        github_token: The GitHub token to use for API calls.
-        repo_name: The name of the repository.
-        tag: The git tag to create the release for.
-        release_notes: The release notes to include in the release.
     """
     g = Github(github_token)
     repo = g.get_repo(repo_name)
@@ -240,21 +229,17 @@ if __name__ == "__main__":
     repo_name = os.environ["GITHUB_REPOSITORY"]
     current_tag = os.environ["GITHUB_REF"].split("/")[-1]
     
-    # Ignore pre-release tags for release note generation
     if any(prerelease in current_tag for prerelease in ["alpha", "beta", "rc"]):
         print(f"Current tag '{current_tag}' is a pre-release. Skipping release note generation.")
         exit(0)
 
-    # Get all stable tags sorted by version number
     tags = get_git_tags()
 
     previous_tag = None
     if len(tags) > 1:
-        # The most recent tag is at index 0, so the previous one is at index 1
         previous_tag = tags[1]
         print(f"Found previous stable tag: {previous_tag}")
     else:
-        # If there's only one stable tag, get all commits from the beginning (initial commit)
         print("No previous stable tag found. Assuming this is the first release.")
         previous_tag = subprocess.check_output(
             ["git", "rev-list", "--max-parents=0", "HEAD"]
