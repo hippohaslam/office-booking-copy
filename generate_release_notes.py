@@ -6,11 +6,22 @@ import google.generativeai as genai
 from github import Github
 
 def get_git_tags():
-    """Returns a list of all git tags, sorted by date."""
-    tags = subprocess.check_output(
-        ["git", "tag", "--sort=-creatordate"]
+    """
+    Returns a list of all git tags, sorted by version number in descending order.
+    Pre-release tags (e.g., alpha, beta, rc) are filtered out.
+    """
+    # Use --sort=-v:refname to sort by version number (e.g., v1.10.0 comes before v1.2.0)
+    all_tags = subprocess.check_output(
+        ["git", "tag", "--sort=-v:refname"]
     ).decode("utf-8").split()
-    return tags
+    
+    # Filter out pre-release tags (alpha, beta, rc, etc.)
+    stable_tags = [
+        tag for tag in all_tags 
+        if not any(prerelease in tag for prerelease in ["alpha", "beta", "rc"])
+    ]
+    
+    return stable_tags
 
 def get_full_commit_messages(from_ref, to_ref, no_merges=False):
     """
@@ -183,15 +194,22 @@ if __name__ == "__main__":
     repo_name = os.environ["GITHUB_REPOSITORY"]
     current_tag = os.environ["GITHUB_REF"].split("/")[-1]
     
+    # Ignore pre-release tags for release note generation
+    if any(prerelease in current_tag for prerelease in ["alpha", "beta", "rc"]):
+        print(f"Current tag '{current_tag}' is a pre-release. Skipping release note generation.")
+        exit(0)
+
+    # Get all stable tags sorted by version number
     tags = get_git_tags()
 
+    previous_tag = None
     if len(tags) > 1:
         # The most recent tag is at index 0, so the previous one is at index 1
         previous_tag = tags[1]
-        print(f"Found previous tag: {previous_tag}")
+        print(f"Found previous stable tag: {previous_tag}")
     else:
-        # If there's only one tag, get all commits from the beginning (initial commit)
-        print("No previous tag found. Assuming this is the first release.")
+        # If there's only one stable tag, get all commits from the beginning (initial commit)
+        print("No previous stable tag found. Assuming this is the first release.")
         previous_tag = subprocess.check_output(
             ["git", "rev-list", "--max-parents=0", "HEAD"]
         ).decode("utf-8").strip()
