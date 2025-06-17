@@ -40,8 +40,11 @@ def get_full_commit_messages(from_ref, to_ref, no_merges=False):
 
     # Patterns for commits that are typically just noise in release notes.
     ignore_patterns = [
-        re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE),
-        re.compile(r'^Update dependency', re.IGNORECASE)
+        re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE), # Conventional commit for deps
+        re.compile(r'^Update dependency', re.IGNORECASE),       # Common dep update message
+        re.compile(r'bump .* from', re.IGNORECASE),              # Dependabot/Renovate style
+        re.compile(r'\[dependabot skip\]', re.IGNORECASE),     # Dependabot skip flag
+        re.compile(r'^Merge branch', re.IGNORECASE)              # Merge commits that aren't PRs
     ]
 
     filtered_messages = []
@@ -162,9 +165,9 @@ def generate_release_notes(
     --- END OF RAW COMMIT LOG ---
 
     **Critical Output Rules:**
-    1.  **NO EMPTY SECTIONS:** This is the most important rule. If a category like "Bug Fixes" or "Breaking Changes" has no relevant items, you MUST NOT include its header in the final output. Your response should only contain headers for which you have generated content.
+    1.  **NO EMPTY SECTIONS:** This is the most important rule. If a category like "Bug Fixes" or "Breaking Changes" has no relevant items, you MUST NOT include its header in the final output. Your response should only contain headers for categories that have at least one bullet point.
     2.  **IDENTIFYING BREAKING CHANGES:** A breaking change should only be identified if a commit message explicitly contains the text `BREAKING CHANGE:`. Do not invent breaking changes. If none exist, omit the "Breaking Changes" section entirely as per Rule #1.
-    3.  **IGNORE DEPENDENCY UPDATES:** Do not include routine dependency updates (e.g., "chore(deps): update dependency...") in the release notes unless they are part of a breaking change.
+    3.  **IGNORE TRIVIAL UPDATES:** Do not include routine dependency updates (e.g., "chore(deps): update dependency...", "bump package from...") or merge commits in the release notes unless they are part of a significant `BREAKING CHANGE`.
     4.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
     5.  **Strict Categories:** After the summary, create sections using the following markdown headers. The order MUST be precise:
         - ### 💥 Breaking Changes
