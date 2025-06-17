@@ -27,6 +27,7 @@ def get_full_commit_messages(from_ref, to_ref, no_merges=False):
     """
     Returns a list of full git log messages between two git refs.
     Each message is a separate element in the list.
+    Routine dependency updates are filtered out unless they contain 'BREAKING CHANGE'.
     """
     # Use %B to get the full raw body of the commit.
     # Use %x00 (the null byte) as a unique, unambiguous separator.
@@ -35,8 +36,28 @@ def get_full_commit_messages(from_ref, to_ref, no_merges=False):
         command.append("--no-merges")
     
     output = subprocess.check_output(command).decode("utf-8")
-    # Split the output by the null byte and filter out any empty strings.
-    return [msg for msg in output.split("\x00") if msg.strip()]
+    all_messages = [msg.strip() for msg in output.split("\x00") if msg.strip()]
+
+    # Patterns for commits that are typically just noise in release notes.
+    ignore_patterns = [
+        re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE),
+        re.compile(r'^Update dependency', re.IGNORECASE)
+    ]
+
+    filtered_messages = []
+    for msg in all_messages:
+        # If a message is a breaking change, always include it.
+        if 'BREAKING CHANGE' in msg:
+            filtered_messages.append(msg)
+            continue
+        
+        # Check if the message matches any of the ignore patterns.
+        is_ignorable = any(pattern.search(msg) for pattern in ignore_patterns)
+        
+        if not is_ignorable:
+            filtered_messages.append(msg)
+
+    return filtered_messages
 
 def generate_release_notes(
     github_token, gemini_api_key, repo_name, current_tag, previous_tag
@@ -141,19 +162,18 @@ def generate_release_notes(
     --- END OF RAW COMMIT LOG ---
 
     **Critical Output Rules:**
-    1.  **Synthesize Everything:** Your main goal is to read and understand ALL the information provided above and synthesize it. Do not simply list the inputs. If a change is mentioned in a Pull Request, prioritize that description. Use the commit logs to describe changes that are not covered by PRs or linked issues.
-    2.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
-    3.  **Strict Categories:** After the summary, create sections using the following markdown headers. The order MUST be precise:
+    1.  **NO EMPTY SECTIONS:** This is the most important rule. If a category like "Bug Fixes" or "Breaking Changes" has no relevant items, you MUST NOT include its header in the final output. Your response should only contain headers for which you have generated content.
+    2.  **IDENTIFYING BREAKING CHANGES:** A breaking change should only be identified if a commit message explicitly contains the text `BREAKING CHANGE:`. Do not invent breaking changes. If none exist, omit the "Breaking Changes" section entirely as per Rule #1.
+    3.  **IGNORE DEPENDENCY UPDATES:** Do not include routine dependency updates (e.g., "chore(deps): update dependency...") in the release notes unless they are part of a breaking change.
+    4.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
+    5.  **Strict Categories:** After the summary, create sections using the following markdown headers. The order MUST be precise:
         - ### 💥 Breaking Changes
         - ### 🚀 New Features
         - ### 🐛 Bug Fixes
         - ### 🛠️ Other Changes
-    4.  **IMPORTANT - Omit Empty Sections:** If you do not have any content for a specific category (e.g., there are no "Bug Fixes"), you MUST NOT include its header in the output.
-    5.  **Content and Linking:**
-        - Each bullet point MUST start with a bolded, concise summary of the change, followed by a more detailed explanation.
-        - If a change comes from a PR/Issue with a URL, end the bullet with a markdown link, like `(#123)`.
-        - If a change comes from a commit that refers to an issue that couldn't be linked (marked as 'unlinked'), **still include the number in plain text at the end of the bullet point**, like `(#456)`.
-    6.  **No Commit-Speak:** Do not use phrases like "[various commits]" or mention commit SHAs. All output must be user-friendly.
+    6.  **Bullet Point Format:** Each bullet point MUST start with a bolded, concise summary of the change, followed by a more detailed explanation. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
+    7.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. If a change comes from a commit that refers to an issue that couldn't be linked, still include the number in plain text, like `(#456)`.
+    8.  **No Commit-Speak:** Do not use phrases like "[various commits]" or mention commit SHAs. All output must be user-friendly.
     """
 
     # Log the full prompt being sent to the AI for debugging purposes
