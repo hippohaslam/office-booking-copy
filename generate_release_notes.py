@@ -42,7 +42,8 @@ def get_full_commit_messages(from_ref, to_ref, no_merges=False):
     ignore_patterns = [
         re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE), # Conventional commit for deps
         re.compile(r'^Update dependency', re.IGNORECASE),       # Common dep update message
-        re.compile(r'^Bumps?\s', re.IGNORECASE),                  # Catches "Bump" or "Bumps" at the start
+        re.compile(r'^(bump|bumps)\s', re.IGNORECASE),            # Catches "Bump" or "Bumps" at the start
+        re.compile(r'update actions/', re.IGNORECASE),           # GHA updates
         re.compile(r'\[dependabot skip\]', re.IGNORECASE),     # Dependabot skip flag
         re.compile(r'^Merge branch', re.IGNORECASE)              # Merge commits that aren't PRs
     ]
@@ -86,7 +87,7 @@ def generate_release_notes(
     ignore_patterns = [
         re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE),
         re.compile(r'^Update dependency', re.IGNORECASE),
-        re.compile(r'^Bumps?\s', re.IGNORECASE),
+        re.compile(r'^(bump|bumps)\s', re.IGNORECASE),
         re.compile(r'\[dependabot skip\]', re.IGNORECASE),
         re.compile(r'^Merge branch', re.IGNORECASE)
     ]
