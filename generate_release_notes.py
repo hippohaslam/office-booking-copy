@@ -98,6 +98,14 @@ def generate_release_notes(
     4.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. Prioritize linking to Issues if they are available.
     """
 
+    # Log the full prompt being sent to the AI for debugging purposes
+    print("\n" + "="*80)
+    print("PROMPT BEING SENT TO GEMINI:")
+    print("="*80)
+    print(prompt)
+    print("="*80 + "\n")
+
+
     print("Generating release notes with Gemini...")
     response = model.generate_content(prompt)
     return response.text
