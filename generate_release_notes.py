@@ -12,12 +12,15 @@ def get_git_tags():
     ).decode("utf-8").split()
     return tags
 
-def get_full_commit_messages(from_ref, to_ref):
-    """Returns the full git log messages between two git refs."""
-    # Using --pretty=fuller to get the full message and author details
-    return subprocess.check_output(
-        ["git", "log", f"{from_ref}..{to_ref}", "--pretty=fuller"]
-    ).decode("utf-8")
+def get_full_commit_messages(from_ref, to_ref, no_merges=False):
+    """
+    Returns the full git log messages between two git refs.
+    Can optionally filter out merge commits.
+    """
+    command = ["git", "log", f"{from_ref}..{to_ref}", "--pretty=fuller"]
+    if no_merges:
+        command.append("--no-merges")
+    return subprocess.check_output(command).decode("utf-8")
 
 def generate_release_notes(
     github_token, gemini_api_key, repo_name, current_tag, previous_tag
@@ -37,54 +40,73 @@ def generate_release_notes(
     """
     g = Github(github_token)
     repo = g.get_repo(repo_name)
+    handled_issue_numbers = set()
 
-    # Get full commit messages for better context, especially for breaking changes
+    # --- 1. Get data from Pull Requests and their linked issues ---
     full_log = get_full_commit_messages(previous_tag, current_tag)
     pr_and_issue_details = []
-
-    # Regex to find "Merge pull request #<number>"
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
 
-    # Find PR numbers from the full log
     for commit_match in pr_merge_commit_pattern.finditer(full_log):
         pr_number = int(commit_match.group(1))
         try:
             pr = repo.get_pull(pr_number)
             pr_body = pr.body if pr.body else ""
-            
-            # Start building details for this PR
             details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
             
-            # Find and fetch linked issues from the PR body (e.g., "closes #123")
             issue_numbers = re.findall(r'(?:closes|fixes|resolves) #(\d+)', pr_body, re.IGNORECASE)
             if issue_numbers:
                 details_for_pr += "  Linked Issues:\n"
-                for issue_num_str in set(issue_numbers): # Use set to avoid duplicates
+                for issue_num_str in set(issue_numbers):
                     issue_num = int(issue_num_str)
+                    handled_issue_numbers.add(issue_num) # Mark issue as handled
                     try:
                         issue = repo.get_issue(number=issue_num)
-                        details_for_pr += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n"
+                        issue_body = issue.body if issue.body else ""
+                        details_for_pr += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n      Body: {issue_body}\n"
                     except Exception as e:
-                        print(f"Could not fetch issue #{issue_num}: {e}")
+                        print(f"Could not fetch issue #{issue_num} from PR: {e}")
             pr_and_issue_details.append(details_for_pr)
-
         except Exception as e:
             print(f"Could not fetch PR #{pr_number}: {e}")
 
+    # --- 2. Get data from standalone commits linked to issues ---
+    direct_commit_issue_details = []
+    non_merge_commit_log = get_full_commit_messages(previous_tag, current_tag, no_merges=True)
+    issue_numbers_in_commits = re.findall(r'#(\d+)', non_merge_commit_log)
+    
+    unhandled_issue_nums = set(map(int, issue_numbers_in_commits)) - handled_issue_numbers
+    
+    if unhandled_issue_nums:
+        details_for_prompt = ""
+        for issue_num in unhandled_issue_nums:
+            try:
+                issue = repo.get_issue(number=issue_num)
+                issue_body = issue.body if issue.body else ""
+                details_for_prompt += f"- Standalone commit links to Issue #{issue.number}: {issue.title} ({issue.html_url})\n  Body: {issue_body}\n"
+            except Exception as e:
+                print(f"Could not fetch issue #{issue_num} from commit: {e}")
+        if details_for_prompt:
+             direct_commit_issue_details.append(details_for_prompt)
+
+
+    # --- 3. Generate the prompt for the AI ---
     genai.configure(api_key=gemini_api_key)
     model = genai.GenerativeModel('gemini-2.0-flash')
 
     prompt = f"""
     You are an expert technical writer for the project {repo.name}.
-    Your goal is to generate insightful, human-readable release notes for version {current_tag}. Your response MUST be based *only* on the provided pull request and issue details.
+    Your goal is to generate insightful, human-readable release notes for version {current_tag}.
 
-    **Core Task:** Synthesize the provided information into a coherent narrative. Start with a high-level summary paragraph, then provide categorized details.
+    **Core Task:** Synthesize all provided information into a coherent narrative. Start with a high-level summary paragraph, then provide categorized details.
 
-    **Primary Data (Use this for all release note content):**
-    Here is the detailed information about pull requests and their linked issues. Every bullet point you generate must trace back to one of these items.
-    {''.join(pr_and_issue_details) if pr_and_issue_details else "No pull request details found."}
+    **Primary Data (from Pull Requests):**
+    {''.join(pr_and_issue_details) if pr_and_issue_details else "No data from pull requests."}
 
-    **Secondary Data (Use this for context ONLY, e.g., identifying breaking changes. Do NOT quote from it or mention it):**
+    **Primary Data (from Commits Linked to Issues):**
+    {''.join(direct_commit_issue_details) if direct_commit_issue_details else "No data from standalone commits."}
+
+    **Secondary Data (Raw log for context ONLY, e.g., identifying breaking changes. Do NOT quote from it):**
     {full_log}
 
     **Critical Output Rules:**
@@ -94,7 +116,7 @@ def generate_release_notes(
         - ### 🚀 New Features
         - ### 🐛 Bug Fixes
         - ### 🛠️ Other Changes
-    3.  **No Commit-Speak:** You are strictly forbidden from using the phrase "[various commits]" or mentioning commit SHAs. All output must be user-friendly and derived from the Primary Data.
+    3.  **No Commit-Speak:** You are strictly forbidden from using phrases like "[various commits]" or mentioning commit SHAs. All output must be user-friendly.
     4.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. Prioritize linking to Issues if they are available.
     """
 
