@@ -123,18 +123,21 @@ def generate_release_notes(
     {''.join(direct_commit_issue_details) if direct_commit_issue_details else "No data from standalone commits."}
 
     **Secondary Data (Raw log for context ONLY, e.g., identifying breaking changes. Do NOT quote from it):**
+    --- START OF RAW COMMIT LOG ---
     {formatted_secondary_data}
+    --- END OF RAW COMMIT LOG ---
 
     **Critical Output Rules:**
     1.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
-    2.  **Strict Categories:** After the summary, use this exact markdown structure. Omit any empty sections:
-        - ### Breaking Changes
-        - ### New Features
-        - ### Bug Fixes
-        - ### Other Changes
-    3.  **No Commit-Speak:** You are strictly forbidden from using phrases like "[various commits]" or mentioning commit SHAs. All output must be user-friendly.
-    4.  **Bullet Point Format:** Each bullet point MUST start with a bolded, concise summary of the change, followed by a more detailed explanation of the change and its impact. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
-    5.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. Prioritize linking to Issues if they are available.
+    2.  **Strict Categories:** After the summary, create sections using the following markdown headers. The order MUST be precise:
+        - ### 💥 Breaking Changes
+        - ### 🚀 New Features
+        - ### 🐛 Bug Fixes
+        - ### 🛠️ Other Changes
+    3.  **IMPORTANT - Omit Empty Sections:** If you do not have any content for a specific category (e.g., there are no "Bug Fixes"), you MUST NOT include its header (e.g., `### 🐛 Bug Fixes`) in the output. The final response should only contain headers for categories that have at least one bullet point.
+    4.  **No Commit-Speak:** You are strictly forbidden from using phrases like "[various commits]" or mentioning commit SHAs. All output must be user-friendly.
+    5.  **Bullet Point Format:** Each bullet point MUST start with a bolded, concise summary of the change, followed by a more detailed explanation of the change and its impact. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
+    6.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. Prioritize linking to Issues if they are available.
     """
 
     # Log the full prompt being sent to the AI for debugging purposes
