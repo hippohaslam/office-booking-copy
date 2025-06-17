@@ -183,33 +183,21 @@ if __name__ == "__main__":
     repo_name = os.environ["GITHUB_REPOSITORY"]
     current_tag = os.environ["GITHUB_REF"].split("/")[-1]
 
-    # Get all tags sorted by date, most recent first
-    all_tags = get_git_tags()
-    
-    previous_tag = None
     try:
-        # Find the index of the current tag in the list
-        current_index = all_tags.index(current_tag)
-        # The previous tag is the next one in the list (since it's sorted descending)
-        if current_index + 1 < len(all_tags):
-            previous_tag = all_tags[current_index + 1]
-            print(f"Found previous tag: {previous_tag}")
-        else:
-            # This is the oldest tag, so there's no previous tag
-            print("This appears to be the first tag. Analyzing history since the beginning.")
-            raise IndexError
-    except (ValueError, IndexError):
-        # ValueError: current_tag not found (shouldn't happen)
-        # IndexError: no previous tag exists
-        # In either case, fall back to the very first commit of the repository
-        try:
-            previous_tag = subprocess.check_output(
-                ["git", "rev-list", "--max-parents=0", "HEAD"]
-            ).decode("utf-8").strip()
-            print(f"Using initial commit as the starting point: {previous_tag}")
-        except subprocess.CalledProcessError:
-            print("Could not find the initial commit. This might be an empty repository.")
-            exit(1)
+        # Use 'git describe' to find the most recent tag before the current one.
+        # This is a more direct and robust way to find the previous release.
+        previous_tag = subprocess.check_output(
+            ["git", "describe", "--tags", "--abbrev=0", f"{current_tag}^"]
+        ).decode("utf-8").strip()
+        print(f"Found previous tag: {previous_tag}")
+    except subprocess.CalledProcessError:
+        # If 'git describe' fails, it's likely because there are no tags before this one.
+        # In this case, we fall back to finding the very first commit of the repository.
+        print("No previous tag found. Assuming this is the first release.")
+        previous_tag = subprocess.check_output(
+            ["git", "rev-list", "--max-parents=0", "HEAD"]
+        ).decode("utf-8").strip()
+        print(f"Using initial commit as the starting point: {previous_tag}")
 
     release_notes = generate_release_notes(
         args.token, args.gemini_api_key, repo_name, current_tag, previous_tag
