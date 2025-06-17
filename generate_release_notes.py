@@ -17,7 +17,7 @@ def get_full_commit_messages(from_ref, to_ref, no_merges=False):
     Returns the full git log messages between two git refs.
     Can optionally filter out merge commits.
     """
-    command = ["git", "log", f"{from_ref}..{to_ref}", "--pretty=fuller"]
+    command = ["git", "log", f"{from_ref}..{to_ref}", "--pretty=format:%B"]
     if no_merges:
         command.append("--no-merges")
     return subprocess.check_output(command).decode("utf-8")
