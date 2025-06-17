@@ -14,13 +14,18 @@ def get_git_tags():
 
 def get_full_commit_messages(from_ref, to_ref, no_merges=False):
     """
-    Returns the full git log messages between two git refs.
-    Can optionally filter out merge commits.
+    Returns a list of full git log messages between two git refs.
+    Each message is a separate element in the list.
     """
-    command = ["git", "log", f"{from_ref}..{to_ref}", "--pretty=fuller"]
+    # Use %B to get the full raw body of the commit.
+    # Use %x00 (the null byte) as a unique, unambiguous separator.
+    command = ["git", "log", f"{from_ref}..{to_ref}", "--pretty=format:%B%x00"]
     if no_merges:
         command.append("--no-merges")
-    return subprocess.check_output(command).decode("utf-8")
+    
+    output = subprocess.check_output(command).decode("utf-8")
+    # Split the output by the null byte and filter out any empty strings.
+    return [msg for msg in output.split("\x00") if msg.strip()]
 
 def generate_release_notes(
     github_token, gemini_api_key, repo_name, current_tag, previous_tag
@@ -43,37 +48,44 @@ def generate_release_notes(
     handled_issue_numbers = set()
 
     # --- 1. Get data from Pull Requests and their linked issues ---
-    full_log = get_full_commit_messages(previous_tag, current_tag)
+    # We still need the fuller log to find merge commits by their titles
+    full_log_with_merges = get_full_commit_messages(previous_tag, current_tag)
     pr_and_issue_details = []
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
-
-    for commit_match in pr_merge_commit_pattern.finditer(full_log):
-        pr_number = int(commit_match.group(1))
-        try:
-            pr = repo.get_pull(pr_number)
-            pr_body = pr.body if pr.body else ""
-            details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
-            
-            issue_numbers = re.findall(r'(?:closes|fixes|resolves) #(\d+)', pr_body, re.IGNORECASE)
-            if issue_numbers:
-                details_for_pr += "  Linked Issues:\n"
-                for issue_num_str in set(issue_numbers):
-                    issue_num = int(issue_num_str)
-                    handled_issue_numbers.add(issue_num) # Mark issue as handled
-                    try:
-                        issue = repo.get_issue(number=issue_num)
-                        issue_body = issue.body if issue.body else ""
-                        details_for_pr += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n      Body: {issue_body}\n"
-                    except Exception as e:
-                        print(f"Could not fetch issue #{issue_num} from PR: {e}")
-            pr_and_issue_details.append(details_for_pr)
-        except Exception as e:
-            print(f"Could not fetch PR #{pr_number}: {e}")
+    
+    # We search the full log text for PR merge commits
+    for commit_message in full_log_with_merges:
+        match = pr_merge_commit_pattern.search(commit_message)
+        if match:
+            pr_number = int(match.group(1))
+            try:
+                pr = repo.get_pull(pr_number)
+                pr_body = pr.body if pr.body else ""
+                details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
+                
+                issue_numbers = re.findall(r'(?:closes|fixes|resolves) #(\d+)', pr_body, re.IGNORECASE)
+                if issue_numbers:
+                    details_for_pr += "  Linked Issues:\n"
+                    for issue_num_str in set(issue_numbers):
+                        issue_num = int(issue_num_str)
+                        handled_issue_numbers.add(issue_num) # Mark issue as handled
+                        try:
+                            issue = repo.get_issue(number=issue_num)
+                            issue_body = issue.body if issue.body else ""
+                            details_for_pr += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n      Body: {issue_body}\n"
+                        except Exception as e:
+                            print(f"Could not fetch issue #{issue_num} from PR: {e}")
+                pr_and_issue_details.append(details_for_pr)
+            except Exception as e:
+                print(f"Could not fetch PR #{pr_number}: {e}")
 
     # --- 2. Get data from standalone commits linked to issues ---
     direct_commit_issue_details = []
     non_merge_commit_log = get_full_commit_messages(previous_tag, current_tag, no_merges=True)
-    issue_numbers_in_commits = re.findall(r'#(\d+)', non_merge_commit_log)
+    
+    # Combine the text of non-merge commits to search for issue numbers
+    non_merge_text = "\n".join(non_merge_commit_log)
+    issue_numbers_in_commits = re.findall(r'#(\d+)', non_merge_text)
     
     unhandled_issue_nums = set(map(int, issue_numbers_in_commits)) - handled_issue_numbers
     
@@ -94,6 +106,10 @@ def generate_release_notes(
     genai.configure(api_key=gemini_api_key)
     model = genai.GenerativeModel('gemini-2.0-flash')
 
+    # Format the raw commit log for better presentation to the AI
+    formatted_secondary_data = "\n---\n".join(non_merge_commit_log)
+
+
     prompt = f"""
     You are an expert technical writer for the project {repo.name}.
     Your goal is to generate insightful, human-readable release notes for version {current_tag}.
@@ -107,7 +123,7 @@ def generate_release_notes(
     {''.join(direct_commit_issue_details) if direct_commit_issue_details else "No data from standalone commits."}
 
     **Secondary Data (Raw log for context ONLY, e.g., identifying breaking changes. Do NOT quote from it):**
-    {full_log}
+    {formatted_secondary_data}
 
     **Critical Output Rules:**
     1.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
