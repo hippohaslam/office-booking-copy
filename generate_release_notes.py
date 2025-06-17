@@ -62,6 +62,7 @@ def generate_release_notes(
     full_log_with_merges = get_full_commit_messages(previous_tag, current_tag)
     pr_and_issue_details = []
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
+    issue_link_pattern = re.compile(r'(?:closes|fixes|resolves) #(\d+)', re.IGNORECASE)
     
     for commit_message in full_log_with_merges:
         match = pr_merge_commit_pattern.search(commit_message)
@@ -72,11 +73,11 @@ def generate_release_notes(
                 pr_body = pr.body if pr.body else ""
                 details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
                 
-                issue_numbers = re.findall(r'(?:closes|fixes|resolves) #(\d+)', pr_body, re.IGNORECASE)
-                if issue_numbers:
+                issue_matches = issue_link_pattern.finditer(pr_body)
+                if issue_matches:
                     details_for_pr += "  Linked Issues:\n"
-                    for issue_num_str in set(issue_numbers):
-                        issue_num = int(issue_num_str)
+                    for issue_match in issue_matches:
+                        issue_num = int(issue_match.group(1))
                         handled_issue_numbers.add(issue_num)
                         try:
                             issue = repo.get_issue(number=issue_num)
@@ -88,9 +89,24 @@ def generate_release_notes(
             except Exception as e:
                 print(f"Could not fetch PR #{pr_number}: {e}")
 
-    # --- 2. Get the raw commit log to use as a primary source for historical data ---
+    # --- 2. Get data from standalone commits linked to issues ---
+    direct_commit_issue_details = []
     non_merge_commit_log = get_full_commit_messages(previous_tag, current_tag, no_merges=True)
     
+    for commit_message in non_merge_commit_log:
+        issue_matches = issue_link_pattern.finditer(commit_message)
+        for match in issue_matches:
+            issue_num = int(match.group(1))
+            if issue_num not in handled_issue_numbers:
+                try:
+                    issue = repo.get_issue(number=issue_num)
+                    issue_body = issue.body if issue.body else ""
+                    details = f"- Standalone commit links to Issue #{issue.number}: {issue.title} ({issue.html_url})\n  Commit Message: {commit_message.splitlines()[0]}\n  Issue Body: {issue_body}\n"
+                    direct_commit_issue_details.append(details)
+                    handled_issue_numbers.add(issue_num) # Mark as handled
+                except Exception as e:
+                    print(f"Could not fetch issue #{issue_num} from commit: {e}")
+
     # --- 3. Generate the prompt for the AI ---
     genai.configure(api_key=gemini_api_key)
     model = genai.GenerativeModel('gemini-2.0-flash')
@@ -108,8 +124,11 @@ def generate_release_notes(
 
     **Data from GitHub (Pull Requests & Linked Issues):**
     {''.join(pr_and_issue_details) if pr_and_issue_details else "No pull requests with linked issues were found on GitHub."}
+    
+    **Data from Commits Linked Directly to Issues:**
+    {''.join(direct_commit_issue_details) if direct_commit_issue_details else "No standalone commits linking to issues were found."}
 
-    **Data from Git History (Raw Commit Messages):**
+    **Data from Git History (Raw Commit Messages for additional context):**
     --- START OF RAW COMMIT LOG ---
     {formatted_commit_data}
     --- END OF RAW COMMIT LOG ---
