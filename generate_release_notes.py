@@ -70,7 +70,7 @@ def generate_release_notes(
     ]
 
     # --- 1. Fetch all data and categorize it ---
-    dependency_pr_details = [] # PRs identified as dependency updates
+    dependency_pr_details = [] 
     
     full_log_text_for_pr_find = subprocess.check_output(["git", "log", f"{previous_tag}..{current_tag}", "--pretty=format:%B%x00"]).decode("utf-8")
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
@@ -85,9 +85,8 @@ def generate_release_notes(
             current_pr_detail_string = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
             
             is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
-            # A PR is NOT ignorable if it contains a breaking change, even if it matches an ignore pattern.
             if 'BREAKING CHANGE' in (pr_body or ""):
-                is_pr_ignorable = False # Force inclusion if breaking change
+                is_pr_ignorable = False 
 
             if is_pr_ignorable:
                 dependency_pr_details.append(current_pr_detail_string)
@@ -114,28 +113,27 @@ def generate_release_notes(
             print(f"Could not fetch PR #{pr_number}: {e}")
 
     all_standalone_commits = get_full_commit_messages(previous_tag, current_tag, no_merges=True)
-    meaningful_standalone_commits = [] # Commits that are not dependency updates or merge commits
-    dependency_standalone_commits = [] # Commits that ARE dependency updates
+    meaningful_standalone_commits = []
+    dependency_standalone_commits = []
 
     for commit in all_standalone_commits:
         is_ignorable = any(p.search(commit) for p in ignore_patterns)
         if 'BREAKING CHANGE' in commit:
-            is_ignorable = False # A breaking change commit is never ignorable
+            is_ignorable = False 
         
         if is_ignorable:
             dependency_standalone_commits.append(commit)
         else:
             meaningful_standalone_commits.append(commit)
 
-    direct_commit_issue_details = [] # Standalone commits that link to an issue not covered by a PR
+    direct_commit_issue_details = []
     generic_issue_pattern = re.compile(r'#(\d+)')
     
-    final_standalone_commits_for_prompt = [] # Remaining meaningful standalone commits for the raw log section
+    final_standalone_commits_for_prompt = [] 
     
     for commit_message in meaningful_standalone_commits:
         found_unhandled_issue_in_commit = False
         
-        # Check if the commit links to any *unhandled* issues.
         for match in generic_issue_pattern.finditer(commit_message):
             issue_num = int(match.group(1))
             if issue_num not in handled_issue_numbers:
@@ -155,33 +153,23 @@ def generate_release_notes(
                     found_unhandled_issue_in_commit = True
                     break
         
-        # Only add to final_standalone_commits_for_prompt if it's not linking to an unhandled issue
-        # AND it's not an ignorable (e.g., dependency) commit.
-        # The 'meaningful_standalone_commits' list *already* ensures it's not a dependency update
-        # unless it contains 'BREAKING CHANGE'.
-        if not found_unhandled_issue_in_commit:
+        if not found_unhandled_issue_in_commit and not any(p.search(commit_message) for p in ignore_patterns):
              final_standalone_commits_for_prompt.append(commit_message)
 
 
     # --- 2. Decide what data to send to the AI ---
-    # `pr_details_for_prompt`: Meaningful PRs with integrated linked issue data.
-    # `direct_commit_issue_details`: Standalone commits linking to issues not covered by PRs.
-    # `final_standalone_commits_for_prompt`: Meaningful standalone commits that don't link to *new* unhandled issues.
-
     has_meaningful_changes = bool(pr_details_for_prompt) or bool(direct_commit_issue_details) or bool(final_standalone_commits_for_prompt)
     
     pr_data_for_prompt_str = ""
     commit_data_for_prompt = ""
     dependency_note = ""
 
-    # If there are NO meaningful changes, and there ARE dependency updates, then include them.
     if not has_meaningful_changes and (dependency_pr_details or dependency_standalone_commits):
         print("No meaningful changes found. Including dependency updates in the release notes.")
         pr_data_for_prompt_str = ''.join(pr_details_for_prompt + dependency_pr_details) 
         commit_data_for_prompt = "\n---\n".join(final_standalone_commits_for_prompt + dependency_standalone_commits) 
         dependency_note = "\nThis release consists primarily of routine dependency updates. No other significant changes were detected."
     else:
-        # If there ARE meaningful changes, we explicitly exclude all routine dependency updates from the prompt data.
         pr_data_for_prompt_str = ''.join(pr_details_for_prompt)
         commit_data_for_prompt = "\n---\n".join(final_standalone_commits_for_prompt) 
 
@@ -220,7 +208,7 @@ def generate_release_notes(
         - ### 🚀 New Features
         - ### 🐛 Bug Fixes
         - ### 🛠️ Other Changes
-    6.  **Bullet Point Format:** Each bullet point MUST start with a **bolded, concise, and human-readable summary** of the change. This summary should not be a direct copy of a commit message prefix (e.g., "fix:", "feat:"). Instead, it should be a meaningful description of the improvement or fix. Follow this with a more detailed explanation. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
+    6.  **Bullet Point Format:** Each bullet point MUST start with a **bolded, concise, and highly synthesized human-readable summary** of the change. This summary **must not be a direct copy** of any commit message prefix (e.g., "fix:", "feat:", "chore:", "docs:"). Instead, it **must be a new, descriptive phrase** that accurately captures the essence of the change, drawing information from the PR title, PR body, linked issue title, issue body, and commit messages. Aim for clarity and user-friendliness. Follow this bolded summary with a more detailed explanation. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
     7.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. If a change comes from a commit that refers to an issue that couldn't be linked, still include the number in plain text, like `(#456)`.
     8.  **No Commit-Speak:** Do not use phrases like "[various commits]" or mention commit SHAs. All output must be user-friendly.
     9.  **Synthesize Related Information:** If a Pull Request (PR) explicitly links to an issue (e.g., "closes #123"), the PR's details (title and body) should be prioritized as the primary source of information for that feature or fix. The content of the linked issue or any standalone commits that *also* refer to that same issue should be seen as supplementary context and **must be synthesized into the PR's main bullet point**, not presented as a separate entry. Avoid creating multiple distinct bullet points for what is clearly a single, cohesive change described across a PR and its linked issues/commits. If a standalone commit clearly belongs to a feature already described by a PR/Issue, integrate its message into that existing description rather than making a new entry.
