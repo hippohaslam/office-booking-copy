@@ -57,7 +57,13 @@ def generate_release_notes(
     """
     g = Github(github_token)
     repo = g.get_repo(repo_name)
-    handled_issue_numbers = set()
+    
+    # Use this set to track all issue numbers that have been fully handled
+    # by a PR or a standalone commit whose details are now comprehensive.
+    handled_issue_numbers = set() 
+    
+    # This list will store details for PRs, including their linked issues' titles/bodies
+    pr_details_for_prompt = [] 
 
     ignore_patterns = [
         re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE),
@@ -68,7 +74,6 @@ def generate_release_notes(
     ]
 
     # --- 1. Fetch all data and categorize it ---
-    all_pr_details = []
     dependency_pr_details = []
     
     full_log_text_for_pr_find = subprocess.check_output(["git", "log", f"{previous_tag}..{current_tag}", "--pretty=format:%B%x00"]).decode("utf-8")
@@ -80,7 +85,9 @@ def generate_release_notes(
         try:
             pr = repo.get_pull(pr_number)
             pr_body = pr.body if pr.body else ""
-            details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
+            
+            # Start building the comprehensive PR detail string
+            current_pr_detail_string = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
             
             is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
             # A PR is not ignorable if it contains a breaking change, even if it matches an ignore pattern.
@@ -88,24 +95,29 @@ def generate_release_notes(
                 is_pr_ignorable = False
 
             if is_pr_ignorable:
-                dependency_pr_details.append(details_for_pr)
+                dependency_pr_details.append(current_pr_detail_string)
                 continue
-
-            all_pr_details.append(details_for_pr)
 
             issue_link_pattern = re.compile(r'(?:closes|fixes|resolves)\s+#(\d+)', re.IGNORECASE)
             issue_matches = issue_link_pattern.finditer(pr_body)
+            linked_issues_in_pr = []
+            
             if issue_matches:
-                details_for_pr += "  Linked Issues:\n"
+                current_pr_detail_string += "  Linked Issues:\n"
                 for issue_match in issue_matches:
                     issue_num = int(issue_match.group(1))
-                    handled_issue_numbers.add(issue_num)
+                    linked_issues_in_pr.append(issue_num) # Track issues linked by this PR
+                    handled_issue_numbers.add(issue_num) # Mark as handled by a PR
                     try:
                         issue = repo.get_issue(number=issue_num)
                         issue_body = issue.body if issue.body else ""
-                        details_for_pr += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n      Body: {issue_body}\n"
+                        current_pr_detail_string += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n      Body: {issue_body}\n"
                     except Exception as e:
                         print(f"Could not fetch issue #{issue_num} from PR: {e}")
+            
+            # Add the full PR detail string (including linked issues' info) to the main list
+            pr_details_for_prompt.append(current_pr_detail_string)
+
         except Exception as e:
             print(f"Could not fetch PR #{pr_number}: {e}")
 
@@ -115,7 +127,6 @@ def generate_release_notes(
 
     for commit in all_standalone_commits:
         is_ignorable = any(p.search(commit) for p in ignore_patterns)
-        # A commit is not ignorable if it contains a breaking change, even if it matches an ignore pattern.
         if 'BREAKING CHANGE' in commit:
             is_ignorable = False
         
@@ -126,9 +137,28 @@ def generate_release_notes(
 
     direct_commit_issue_details = []
     generic_issue_pattern = re.compile(r'#(\d+)')
+    
+    # Process meaningful standalone commits, being careful not to duplicate issues
     for commit_message in meaningful_standalone_commits:
         issue_matches = generic_issue_pattern.finditer(commit_message)
+        commit_links_to_handled_issue = False
+        
         for match in issue_matches:
+            issue_num = int(match.group(1))
+            if issue_num in handled_issue_numbers:
+                # This issue has already been fully covered by a PR. Skip it for this commit.
+                commit_links_to_handled_issue = True
+                break # No need to check other issues in this commit, if one is handled, the commit's relevance is diminished
+
+        if commit_links_to_handled_issue:
+            continue # Skip this commit entirely as its linked issue is already handled by a PR
+
+        # If we reach here, this commit either links to an unhandled issue, or has no issue link.
+        # We will add it to direct_commit_issue_details if it links to an unhandled issue,
+        # or it will remain in meaningful_standalone_commits if it's just a general change.
+        
+        found_unhandled_issue_in_commit = False
+        for match in generic_issue_pattern.finditer(commit_message):
             issue_num = int(match.group(1))
             if issue_num not in handled_issue_numbers:
                 details = ""
@@ -136,26 +166,42 @@ def generate_release_notes(
                     issue = repo.get_issue(number=issue_num)
                     issue_body = issue.body if issue.body else ""
                     details = f"- Standalone commit links to Issue #{issue.number}: {issue.title} ({issue.html_url})\n  Commit Message: {commit_message.splitlines()[0]}\n  Issue Body: {issue_body}\n"
+                    direct_commit_issue_details.append(details)
+                    handled_issue_numbers.add(issue_num) # Mark this issue as handled now
+                    found_unhandled_issue_in_commit = True
+                    break # Only take the first unhandled issue linked by a commit to represent it
                 except Exception as e:
-                    details = f"- Standalone commit (unlinked) refers to issue #{issue_num}\n  Commit Message: {commit_message}\n"
-                direct_commit_issue_details.append(details)
-                handled_issue_numbers.add(issue_num)
+                    # If issue fetch fails, still add a note about the commit linking to an issue
+                    details = f"- Standalone commit (unlinked) refers to issue #{issue_num}\n  Commit Message: {commit_message.splitlines()[0]}\n"
+                    direct_commit_issue_details.append(details)
+                    handled_issue_numbers.add(issue_num) # Mark as handled to prevent further processing
+                    found_unhandled_issue_in_commit = True
+                    break
+
+        # If a meaningful standalone commit does NOT link to any unhandled issues,
+        # its content will be processed from the `commit_data_for_prompt` section.
+        # We don't need to explicitly add it to direct_commit_issue_details unless it links to an *unhandled* issue.
+
 
     # --- 2. Decide what data to send to the AI ---
-    has_meaningful_changes = bool(all_pr_details) or bool(direct_commit_issue_details) or bool(meaningful_standalone_commits)
+    # `pr_details_for_prompt` now contains only meaningful PRs with their integrated linked issue data.
+    # `direct_commit_issue_details` contains only standalone commits linking to issues not covered by PRs.
+    # `meaningful_standalone_commits` still contains commits not merged via PRs and not linking to *new* unhandled issues.
+
+    has_meaningful_changes = bool(pr_details_for_prompt) or bool(direct_commit_issue_details) or bool(meaningful_standalone_commits)
     
-    pr_data_for_prompt = ""
+    pr_data_for_prompt_str = ""
     commit_data_for_prompt = ""
     dependency_note = ""
 
     if not has_meaningful_changes and (dependency_pr_details or dependency_standalone_commits):
         print("No meaningful changes found. Including dependency updates in the release notes.")
-        pr_data_for_prompt = ''.join(all_pr_details + dependency_pr_details)
-        commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits + dependency_standalone_commits)
+        pr_data_for_prompt_str = ''.join(pr_details_for_prompt + dependency_pr_details) # Still include if they are the ONLY changes
+        commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits + dependency_standalone_commits) # Same here
         dependency_note = "\nThis release consists primarily of routine dependency updates. No other significant changes were detected."
     else:
-        pr_data_for_prompt = ''.join(all_pr_details)
-        commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits)
+        pr_data_for_prompt_str = ''.join(pr_details_for_prompt) # Only meaningful PRs
+        commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits) # Only meaningful standalone commits
         # If there are meaningful changes, we do not want the AI to include dependency notes.
         # The prompt will explicitly forbid it unless dependency_note is present.
 
@@ -174,7 +220,7 @@ def generate_release_notes(
     Below is a comprehensive list of changes for this release. It includes detailed information for Pull Requests found on GitHub, as well as the raw commit log for historical changes that may not exist on the GitHub API. You should use ALL provided sources to build the release notes.
 
     **Data from GitHub (Pull Requests & Linked Issues):**
-    {pr_data_for_prompt if pr_data_for_prompt else "No pull requests with linked issues were found on GitHub."}
+    {pr_data_for_prompt_str if pr_data_for_prompt_str else "No pull requests with linked issues were found on GitHub."}
     
     **Data from Commits Linked Directly to Issues (may be on GitHub or historical):**
     {''.join(direct_commit_issue_details) if direct_commit_issue_details else "No standalone commits linking to issues were found."}
