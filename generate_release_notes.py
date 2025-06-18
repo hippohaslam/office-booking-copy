@@ -58,11 +58,7 @@ def generate_release_notes(
     g = Github(github_token)
     repo = g.get_repo(repo_name)
     
-    # Use this set to track all issue numbers that have been fully handled
-    # by a PR or a standalone commit whose details are now comprehensive.
     handled_issue_numbers = set() 
-    
-    # This list will store details for PRs, including their linked issues' titles/bodies
     pr_details_for_prompt = [] 
 
     ignore_patterns = [
@@ -86,11 +82,9 @@ def generate_release_notes(
             pr = repo.get_pull(pr_number)
             pr_body = pr.body if pr.body else ""
             
-            # Start building the comprehensive PR detail string
             current_pr_detail_string = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
             
             is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
-            # A PR is not ignorable if it contains a breaking change, even if it matches an ignore pattern.
             if 'BREAKING CHANGE' in (pr_body or ""):
                 is_pr_ignorable = False
 
@@ -100,14 +94,12 @@ def generate_release_notes(
 
             issue_link_pattern = re.compile(r'(?:closes|fixes|resolves)\s+#(\d+)', re.IGNORECASE)
             issue_matches = issue_link_pattern.finditer(pr_body)
-            linked_issues_in_pr = []
             
             if issue_matches:
                 current_pr_detail_string += "  Linked Issues:\n"
                 for issue_match in issue_matches:
                     issue_num = int(issue_match.group(1))
-                    linked_issues_in_pr.append(issue_num) # Track issues linked by this PR
-                    handled_issue_numbers.add(issue_num) # Mark as handled by a PR
+                    handled_issue_numbers.add(issue_num) 
                     try:
                         issue = repo.get_issue(number=issue_num)
                         issue_body = issue.body if issue.body else ""
@@ -115,7 +107,6 @@ def generate_release_notes(
                     except Exception as e:
                         print(f"Could not fetch issue #{issue_num} from PR: {e}")
             
-            # Add the full PR detail string (including linked issues' info) to the main list
             pr_details_for_prompt.append(current_pr_detail_string)
 
         except Exception as e:
@@ -138,16 +129,14 @@ def generate_release_notes(
     direct_commit_issue_details = []
     generic_issue_pattern = re.compile(r'#(\d+)')
     
-    # Process meaningful standalone commits, being careful not to duplicate issues
-    final_standalone_commits_for_prompt = [] # This will hold commits not covered by PRs or direct issue links
+    final_standalone_commits_for_prompt = [] 
     
     for commit_message in meaningful_standalone_commits:
         found_unhandled_issue_in_commit = False
-        commit_has_issue_link = False
-
+        
+        # Check if the commit links to any *unhandled* issues.
         for match in generic_issue_pattern.finditer(commit_message):
             issue_num = int(match.group(1))
-            commit_has_issue_link = True
             if issue_num not in handled_issue_numbers:
                 details = ""
                 try:
@@ -155,30 +144,25 @@ def generate_release_notes(
                     issue_body = issue.body if issue.body else ""
                     details = f"- Standalone commit links to Issue #{issue.number}: {issue.title} ({issue.html_url})\n  Commit Message: {commit_message.splitlines()[0]}\n  Issue Body: {issue_body}\n"
                     direct_commit_issue_details.append(details)
-                    handled_issue_numbers.add(issue_num) # Mark this issue as handled now
+                    handled_issue_numbers.add(issue_num) 
                     found_unhandled_issue_in_commit = True
-                    break # Only take the first unhandled issue linked by a commit to represent it
+                    break 
                 except Exception as e:
-                    # If issue fetch fails, still add a note about the commit linking to an issue
                     details = f"- Standalone commit (unlinked) refers to issue #{issue_num}\n  Commit Message: {commit_message.splitlines()[0]}\n"
                     direct_commit_issue_details.append(details)
-                    handled_issue_numbers.add(issue_num) # Mark as handled to prevent further processing
+                    handled_issue_numbers.add(issue_num) 
                     found_unhandled_issue_in_commit = True
                     break
         
-        # If the commit doesn't link to any unhandled issues OR doesn't link to any issues at all,
-        # its raw message might still be valuable for the "Other Changes" or general context.
-        # We add it to a separate list for the raw commit log section.
-        if not found_unhandled_issue_in_commit: # Only add if its issue wasn't handled by this commit or a PR
+        # Only add to final_standalone_commits_for_prompt if it's not linking to an unhandled issue
+        # AND it's not an ignorable (e.g., dependency) commit.
+        # The 'meaningful_standalone_commits' list already excludes ignorable commits,
+        # but we re-verify just in case, and exclude those already handled via direct_commit_issue_details
+        if not found_unhandled_issue_in_commit and not any(p.search(commit_message) for p in ignore_patterns):
              final_standalone_commits_for_prompt.append(commit_message)
 
 
     # --- 2. Decide what data to send to the AI ---
-    # `pr_details_for_prompt` now contains only meaningful PRs with their integrated linked issue data.
-    # `direct_commit_issue_details` contains only standalone commits linking to issues not covered by PRs.
-    # `final_standalone_commits_for_prompt` contains meaningful standalone commits that don't link to *new* unhandled issues
-    # (i.e., they are either general changes, or link to issues already handled by PRs).
-
     has_meaningful_changes = bool(pr_details_for_prompt) or bool(direct_commit_issue_details) or bool(final_standalone_commits_for_prompt)
     
     pr_data_for_prompt_str = ""
@@ -187,14 +171,12 @@ def generate_release_notes(
 
     if not has_meaningful_changes and (dependency_pr_details or dependency_standalone_commits):
         print("No meaningful changes found. Including dependency updates in the release notes.")
-        pr_data_for_prompt_str = ''.join(pr_details_for_prompt + dependency_pr_details) # Still include if they are the ONLY changes
-        commit_data_for_prompt = "\n---\n".join(final_standalone_commits_for_prompt + dependency_standalone_commits) # Same here
+        pr_data_for_prompt_str = ''.join(pr_details_for_prompt + dependency_pr_details) 
+        commit_data_for_prompt = "\n---\n".join(final_standalone_commits_for_prompt + dependency_standalone_commits) 
         dependency_note = "\nThis release consists primarily of routine dependency updates. No other significant changes were detected."
     else:
-        pr_data_for_prompt_str = ''.join(pr_details_for_prompt) # Only meaningful PRs
-        commit_data_for_prompt = "\n---\n".join(final_standalone_commits_for_prompt) # Only meaningful standalone commits
-        # If there are meaningful changes, we do not want the AI to include dependency notes.
-        # The prompt will explicitly forbid it unless dependency_note is present.
+        pr_data_for_prompt_str = ''.join(pr_details_for_prompt)
+        commit_data_for_prompt = "\n---\n".join(final_standalone_commits_for_prompt) 
 
 
     # --- 3. Generate the prompt for the AI ---
@@ -231,10 +213,10 @@ def generate_release_notes(
         - ### 🚀 New Features
         - ### 🐛 Bug Fixes
         - ### 🛠️ Other Changes
-    6.  **Bullet Point Format:** Each bullet point MUST start with a bolded, concise summary of the change, followed by a more detailed explanation. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
+    6.  **Bullet Point Format:** Each bullet point MUST start with a **bolded, concise, and human-readable summary** of the change. This summary should not be a direct copy of a commit message prefix (e.g., "fix:", "feat:"). Instead, it should be a meaningful description of the improvement or fix. Follow this with a more detailed explanation. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
     7.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. If a change comes from a commit that refers to an issue that couldn't be linked, still include the number in plain text, like `(#456)`.
     8.  **No Commit-Speak:** Do not use phrases like "[various commits]" or mention commit SHAs. All output must be user-friendly.
-    9. **Synthesize Related Information:** If a Pull Request (PR) explicitly links to an issue (e.g., "closes #123"), the PR's details (title and body) should be prioritized as the primary source of information for that feature or fix. The content of the linked issue or any standalone commits that *also* refer to that same issue should be seen as supplementary context and **must be synthesized into the PR's main bullet point**, not presented as a separate entry. Avoid creating multiple distinct bullet points for what is clearly a single, cohesive change described across a PR and its linked issues/commits. If a standalone commit clearly belongs to a feature already described by a PR/Issue, integrate its message into that existing description rather than making a new entry.
+    9.  **Synthesize Related Information:** If a Pull Request (PR) explicitly links to an issue (e.g., "closes #123"), the PR's details (title and body) should be prioritized as the primary source of information for that feature or fix. The content of the linked issue or any standalone commits that *also* refer to that same issue should be seen as supplementary context and **must be synthesized into the PR's main bullet point**, not presented as a separate entry. Avoid creating multiple distinct bullet points for what is clearly a single, cohesive change described across a PR and its linked issues/commits. If a standalone commit clearly belongs to a feature already described by a PR/Issue, integrate its message into that existing description rather than making a new entry.
     """
 
     # Log the full prompt being sent to the AI for debugging purposes
