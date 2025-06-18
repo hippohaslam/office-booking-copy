@@ -83,6 +83,7 @@ def generate_release_notes(
             details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
             
             is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
+            # A PR is not ignorable if it contains a breaking change, even if it matches an ignore pattern.
             if 'BREAKING CHANGE' in (pr_body or ""):
                 is_pr_ignorable = False
 
@@ -114,6 +115,7 @@ def generate_release_notes(
 
     for commit in all_standalone_commits:
         is_ignorable = any(p.search(commit) for p in ignore_patterns)
+        # A commit is not ignorable if it contains a breaking change, even if it matches an ignore pattern.
         if 'BREAKING CHANGE' in commit:
             is_ignorable = False
         
@@ -142,15 +144,20 @@ def generate_release_notes(
     # --- 2. Decide what data to send to the AI ---
     has_meaningful_changes = bool(all_pr_details) or bool(direct_commit_issue_details) or bool(meaningful_standalone_commits)
     
+    pr_data_for_prompt = ""
+    commit_data_for_prompt = ""
+    dependency_note = ""
+
     if not has_meaningful_changes and (dependency_pr_details or dependency_standalone_commits):
         print("No meaningful changes found. Including dependency updates in the release notes.")
         pr_data_for_prompt = ''.join(all_pr_details + dependency_pr_details)
         commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits + dependency_standalone_commits)
-        dependency_note = "\nThis release consists primarily of routine dependency updates."
+        dependency_note = "\nThis release consists primarily of routine dependency updates. No other significant changes were detected."
     else:
         pr_data_for_prompt = ''.join(all_pr_details)
         commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits)
-        dependency_note = ""
+        # If there are meaningful changes, we do not want the AI to include dependency notes.
+        # The prompt will explicitly forbid it unless dependency_note is present.
 
 
     # --- 3. Generate the prompt for the AI ---
@@ -178,9 +185,9 @@ def generate_release_notes(
     --- END OF RAW COMMIT LOG ---
 
     **Critical Output Rules:**
-    1.  **NO UNWANTED SECTIONS OR DEPENDENCY UPDATES:** This is the most important rule. You are strictly forbidden from including routine dependency updates (e.g., "chore(deps): update dependency...", "bump package from...") in the release notes unless explicitly told they are the only content. Furthermore, you MUST ONLY use the section headers listed in Rule #6. Do not create any other sections.
+    1.  **NO UNWANTED SECTIONS OR DEPENDENCY UPDATES:** This is the most important rule. You are strictly forbidden from including routine dependency updates (e.g., "chore(deps): update dependency...", "bump package from...", or similar) in the release notes. Only include a note about dependency updates if the provided "dependency_note" in the prompt explicitly mentions it, indicating there are no other significant changes. Furthermore, you MUST ONLY use the section headers listed in Rule #5. Do not create any other sections.
     2.  **NO EMPTY SECTIONS:** If a category like "Bug Fixes" or "Breaking Changes" has no relevant items, you MUST NOT include its header in the final output.
-    3.  **IDENTIFYING BREAKING CHANGES:** A breaking change should only be identified if a commit message explicitly contains the text `BREAKING CHANGE:`. Do not invent breaking changes.
+    3.  **IDENTIFYING BREAKING CHANGES:** A breaking change should only be identified if a commit message or PR body explicitly contains the text `BREAKING CHANGE:`. Do not invent breaking changes.
     4.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
     5.  **Strict Categories:** After the summary, create sections using the following markdown headers. The order MUST be precise:
         - ### 💥 Breaking Changes
