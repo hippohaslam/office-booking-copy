@@ -70,7 +70,7 @@ def generate_release_notes(
     ]
 
     # --- 1. Fetch all data and categorize it ---
-    dependency_pr_details = []
+    dependency_pr_details = [] # PRs identified as dependency updates
     
     full_log_text_for_pr_find = subprocess.check_output(["git", "log", f"{previous_tag}..{current_tag}", "--pretty=format:%B%x00"]).decode("utf-8")
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
@@ -85,8 +85,9 @@ def generate_release_notes(
             current_pr_detail_string = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
             
             is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
+            # A PR is NOT ignorable if it contains a breaking change, even if it matches an ignore pattern.
             if 'BREAKING CHANGE' in (pr_body or ""):
-                is_pr_ignorable = False
+                is_pr_ignorable = False # Force inclusion if breaking change
 
             if is_pr_ignorable:
                 dependency_pr_details.append(current_pr_detail_string)
@@ -113,23 +114,23 @@ def generate_release_notes(
             print(f"Could not fetch PR #{pr_number}: {e}")
 
     all_standalone_commits = get_full_commit_messages(previous_tag, current_tag, no_merges=True)
-    meaningful_standalone_commits = []
-    dependency_standalone_commits = []
+    meaningful_standalone_commits = [] # Commits that are not dependency updates or merge commits
+    dependency_standalone_commits = [] # Commits that ARE dependency updates
 
     for commit in all_standalone_commits:
         is_ignorable = any(p.search(commit) for p in ignore_patterns)
         if 'BREAKING CHANGE' in commit:
-            is_ignorable = False
+            is_ignorable = False # A breaking change commit is never ignorable
         
         if is_ignorable:
             dependency_standalone_commits.append(commit)
         else:
             meaningful_standalone_commits.append(commit)
 
-    direct_commit_issue_details = []
+    direct_commit_issue_details = [] # Standalone commits that link to an issue not covered by a PR
     generic_issue_pattern = re.compile(r'#(\d+)')
     
-    final_standalone_commits_for_prompt = [] 
+    final_standalone_commits_for_prompt = [] # Remaining meaningful standalone commits for the raw log section
     
     for commit_message in meaningful_standalone_commits:
         found_unhandled_issue_in_commit = False
@@ -156,25 +157,31 @@ def generate_release_notes(
         
         # Only add to final_standalone_commits_for_prompt if it's not linking to an unhandled issue
         # AND it's not an ignorable (e.g., dependency) commit.
-        # The 'meaningful_standalone_commits' list already excludes ignorable commits,
-        # but we re-verify just in case, and exclude those already handled via direct_commit_issue_details
-        if not found_unhandled_issue_in_commit and not any(p.search(commit_message) for p in ignore_patterns):
+        # The 'meaningful_standalone_commits' list *already* ensures it's not a dependency update
+        # unless it contains 'BREAKING CHANGE'.
+        if not found_unhandled_issue_in_commit:
              final_standalone_commits_for_prompt.append(commit_message)
 
 
     # --- 2. Decide what data to send to the AI ---
+    # `pr_details_for_prompt`: Meaningful PRs with integrated linked issue data.
+    # `direct_commit_issue_details`: Standalone commits linking to issues not covered by PRs.
+    # `final_standalone_commits_for_prompt`: Meaningful standalone commits that don't link to *new* unhandled issues.
+
     has_meaningful_changes = bool(pr_details_for_prompt) or bool(direct_commit_issue_details) or bool(final_standalone_commits_for_prompt)
     
     pr_data_for_prompt_str = ""
     commit_data_for_prompt = ""
     dependency_note = ""
 
+    # If there are NO meaningful changes, and there ARE dependency updates, then include them.
     if not has_meaningful_changes and (dependency_pr_details or dependency_standalone_commits):
         print("No meaningful changes found. Including dependency updates in the release notes.")
         pr_data_for_prompt_str = ''.join(pr_details_for_prompt + dependency_pr_details) 
         commit_data_for_prompt = "\n---\n".join(final_standalone_commits_for_prompt + dependency_standalone_commits) 
         dependency_note = "\nThis release consists primarily of routine dependency updates. No other significant changes were detected."
     else:
+        # If there ARE meaningful changes, we explicitly exclude all routine dependency updates from the prompt data.
         pr_data_for_prompt_str = ''.join(pr_details_for_prompt)
         commit_data_for_prompt = "\n---\n".join(final_standalone_commits_for_prompt) 
 
@@ -204,7 +211,7 @@ def generate_release_notes(
     --- END OF RAW COMMIT LOG ---
 
     **Critical Output Rules:**
-    1.  **NO UNWANTED SECTIONS OR DEPENDENCY UPDATES:** This is the most important rule. You are strictly forbidden from including routine dependency updates (e.g., "chore(deps): update dependency...", "bump package from...", or similar) in the release notes. Only include a note about dependency updates if the provided "dependency_note" in the prompt explicitly mentions it, indicating there are no other significant changes. Furthermore, you MUST ONLY use the section headers listed in Rule #5. Do not create any other sections.
+    1.  **NO UNWANTED SECTIONS OR DEPENDENCY UPDATES:** This is the most important rule. You are strictly forbidden from including routine dependency updates (e.g., "chore(deps):", "build(deps):", "Update dependency", "bump", "bumps", "[dependabot skip]", "Merge branch" unless it's a specific feature branch merge) in the release notes. **These types of changes should only be mentioned if they explicitly contain 'BREAKING CHANGE:' in their message/body.** Otherwise, completely omit them from the release notes. Only include a general note about dependency updates if the provided "dependency_note" in the prompt explicitly mentions it, indicating there are no other significant changes in the release. Furthermore, you MUST ONLY use the section headers listed in Rule #5. Do not create any other sections.
     2.  **NO EMPTY SECTIONS:** If a category like "Bug Fixes" or "Breaking Changes" has no relevant items, you MUST NOT include its header in the final output.
     3.  **IDENTIFYING BREAKING CHANGES:** A breaking change should only be identified if a commit message or PR body explicitly contains the text `BREAKING CHANGE:`. Do not invent breaking changes.
     4.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
