@@ -5,23 +5,24 @@ import subprocess
 import google.generativeai as genai
 from github import Github
 
+
 def get_git_tags():
     """
     Returns a list of all git tags, sorted by version number in descending order.
-    Pre-release tags (e.g., alpha, beta, rc) are filtered out.
+    Pre-release tags are filtered out.
     """
-    # Use --sort=-v:refname to sort by version number (e.g., v1.10.0 comes before v1.2.0)
     all_tags = subprocess.check_output(
         ["git", "tag", "--sort=-v:refname"]
     ).decode("utf-8").split()
-    
-    # Filter out pre-release tags (alpha, beta, rc, etc.)
+
+    # Filter out pre-release tags
     stable_tags = [
-        tag for tag in all_tags 
+        tag for tag in all_tags
         if not any(prerelease in tag for prerelease in ["alpha", "beta", "rc"])
     ]
-    
+
     return stable_tags
+
 
 def get_full_commit_messages(from_ref, to_ref, no_merges=False):
     """
@@ -29,11 +30,11 @@ def get_full_commit_messages(from_ref, to_ref, no_merges=False):
     Each message is a separate element in the list.
     """
     # Use %B to get the full raw body of the commit.
-    # Use %x00 (the null byte) as a unique, unambiguous separator.
+    # Use %x00 (null byte) as a unique, unambiguous separator.
     command = ["git", "log", f"{from_ref}..{to_ref}", "--pretty=format:%B%x00"]
     if no_merges:
         command.append("--no-merges")
-    
+
     output = subprocess.check_output(command).decode("utf-8")
     # Split the output by the null byte and filter out any empty strings.
     return [msg.strip() for msg in output.split("\x00") if msg.strip()]
@@ -70,8 +71,10 @@ def generate_release_notes(
     # --- 1. Fetch all data and categorize it ---
     all_pr_details = []
     dependency_pr_details = []
-    
-    full_log_text_for_pr_find = subprocess.check_output(["git", "log", f"{previous_tag}..{current_tag}", "--pretty=format:%B%x00"]).decode("utf-8")
+
+    full_log_text_for_pr_find = subprocess.check_output(
+        ["git", "log", f"{previous_tag}..{current_tag}", "--pretty=format:%B%x00"]
+    ).decode("utf-8")
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
     pr_numbers_in_log = set(pr_merge_commit_pattern.findall(full_log_text_for_pr_find))
 
@@ -81,7 +84,7 @@ def generate_release_notes(
             pr = repo.get_pull(pr_number)
             pr_body = pr.body if pr.body else ""
             details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
-            
+
             is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
             # A PR is not ignorable if it contains a breaking change, even if it matches an ignore pattern.
             if 'BREAKING CHANGE' in (pr_body or ""):
@@ -118,7 +121,7 @@ def generate_release_notes(
         # A commit is not ignorable if it contains a breaking change, even if it matches an ignore pattern.
         if 'BREAKING CHANGE' in commit:
             is_ignorable = False
-        
+
         if is_ignorable:
             dependency_standalone_commits.append(commit)
         else:
@@ -143,7 +146,7 @@ def generate_release_notes(
 
     # --- 2. Decide what data to send to the AI ---
     has_meaningful_changes = bool(all_pr_details) or bool(direct_commit_issue_details) or bool(meaningful_standalone_commits)
-    
+
     pr_data_for_prompt = ""
     commit_data_for_prompt = ""
     dependency_note = ""
@@ -158,7 +161,6 @@ def generate_release_notes(
         commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits)
         # If there are meaningful changes, we do not want the AI to include dependency notes.
         # The prompt will explicitly forbid it unless dependency_note is present.
-
 
     # --- 3. Generate the prompt for the AI ---
     genai.configure(api_key=gemini_api_key)
@@ -175,7 +177,7 @@ def generate_release_notes(
 
     **Data from GitHub (Pull Requests & Linked Issues):**
     {pr_data_for_prompt if pr_data_for_prompt else "No pull requests with linked issues were found on GitHub."}
-    
+
     **Data from Commits Linked Directly to Issues (may be on GitHub or historical):**
     {''.join(direct_commit_issue_details) if direct_commit_issue_details else "No standalone commits linking to issues were found."}
 
@@ -199,13 +201,12 @@ def generate_release_notes(
     8.  **No Commit-Speak:** Do not use phrases like "[various commits]" or mention commit SHAs. All output must be user-friendly.
     """
 
-    # Log the full prompt being sent to the AI for debugging purposes
-    print("\n" + "="*80)
-    print("PROMPT BEING SENT TO GEMINI:")
-    print("="*80)
+    # Log the full prompt being sent to the AI for debugging purposes.
+    print("\n" + "=" * 80)
+    print("GEMINI PROMPT")
+    print("=" * 80)
     print(prompt)
-    print("="*80 + "\n")
-
+    print("=" * 80 + "\n")
 
     print("Generating release notes with Gemini...")
     response = model.generate_content(prompt)
@@ -224,7 +225,7 @@ def create_github_release(github_token, repo_name, tag, release_notes):
         message=release_notes,
         prerelease=False
     )
-    print(f"Successfully created release for tag {tag}")
+    print(f"Successfully created release for tag {tag}.")
 
 
 if __name__ == "__main__":
@@ -235,7 +236,7 @@ if __name__ == "__main__":
 
     repo_name = os.environ["GITHUB_REPOSITORY"]
     current_tag = os.environ["GITHUB_REF"].split("/")[-1]
-    
+
     if any(prerelease in current_tag for prerelease in ["alpha", "beta", "rc"]):
         print(f"Current tag '{current_tag}' is a pre-release. Skipping release note generation.")
         exit(0)
@@ -253,12 +254,13 @@ if __name__ == "__main__":
         ).decode("utf-8").strip()
         print(f"Using initial commit as the starting point: {previous_tag}")
 
-
     release_notes = generate_release_notes(
         args.token, args.gemini_api_key, repo_name, current_tag, previous_tag
     )
-    print("\n--- Generated Release Notes ---\n")
+    print("\n" + "=" * 80)
+    print("GENERATED RELEASE NOTES")
+    print("=" * 80)
     print(release_notes)
-    print("\n-------------------------------\n")
+    print("=" * 80 + "\n")
 
     create_github_release(args.token, repo_name, current_tag, release_notes)
