@@ -57,9 +57,7 @@ def generate_release_notes(
     """
     g = Github(github_token)
     repo = g.get_repo(repo_name)
-    
-    handled_issue_numbers = set() 
-    pr_details_for_prompt = [] 
+    handled_issue_numbers = set()
 
     ignore_patterns = [
         re.compile(r'^(chore|ci|build)\(deps\):', re.IGNORECASE),
@@ -70,7 +68,8 @@ def generate_release_notes(
     ]
 
     # --- 1. Fetch all data and categorize it ---
-    dependency_pr_details = [] 
+    all_pr_details = []
+    dependency_pr_details = []
     
     full_log_text_for_pr_find = subprocess.check_output(["git", "log", f"{previous_tag}..{current_tag}", "--pretty=format:%B%x00"]).decode("utf-8")
     pr_merge_commit_pattern = re.compile(r'Merge pull request #(\d+)')
@@ -81,34 +80,32 @@ def generate_release_notes(
         try:
             pr = repo.get_pull(pr_number)
             pr_body = pr.body if pr.body else ""
-            
-            current_pr_detail_string = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
+            details_for_pr = f"- PR #{pr.number}: {pr.title} ({pr.html_url})\n  Body: {pr_body}\n"
             
             is_pr_ignorable = any(pattern.search(pr.title) for pattern in ignore_patterns)
+            # A PR is not ignorable if it contains a breaking change, even if it matches an ignore pattern.
             if 'BREAKING CHANGE' in (pr_body or ""):
-                is_pr_ignorable = False 
+                is_pr_ignorable = False
 
             if is_pr_ignorable:
-                dependency_pr_details.append(current_pr_detail_string)
+                dependency_pr_details.append(details_for_pr)
                 continue
+
+            all_pr_details.append(details_for_pr)
 
             issue_link_pattern = re.compile(r'(?:closes|fixes|resolves)\s+#(\d+)', re.IGNORECASE)
             issue_matches = issue_link_pattern.finditer(pr_body)
-            
             if issue_matches:
-                current_pr_detail_string += "  Linked Issues:\n"
+                details_for_pr += "  Linked Issues:\n"
                 for issue_match in issue_matches:
                     issue_num = int(issue_match.group(1))
-                    handled_issue_numbers.add(issue_num) 
+                    handled_issue_numbers.add(issue_num)
                     try:
                         issue = repo.get_issue(number=issue_num)
                         issue_body = issue.body if issue.body else ""
-                        current_pr_detail_string += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n      Body: {issue_body}\n"
+                        details_for_pr += f"    - Issue #{issue.number}: {issue.title} ({issue.html_url})\n      Body: {issue_body}\n"
                     except Exception as e:
                         print(f"Could not fetch issue #{issue_num} from PR: {e}")
-            
-            pr_details_for_prompt.append(current_pr_detail_string)
-
         except Exception as e:
             print(f"Could not fetch PR #{pr_number}: {e}")
 
@@ -118,8 +115,9 @@ def generate_release_notes(
 
     for commit in all_standalone_commits:
         is_ignorable = any(p.search(commit) for p in ignore_patterns)
+        # A commit is not ignorable if it contains a breaking change, even if it matches an ignore pattern.
         if 'BREAKING CHANGE' in commit:
-            is_ignorable = False 
+            is_ignorable = False
         
         if is_ignorable:
             dependency_standalone_commits.append(commit)
@@ -128,13 +126,9 @@ def generate_release_notes(
 
     direct_commit_issue_details = []
     generic_issue_pattern = re.compile(r'#(\d+)')
-    
-    final_standalone_commits_for_prompt = [] 
-    
     for commit_message in meaningful_standalone_commits:
-        found_unhandled_issue_in_commit = False
-        
-        for match in generic_issue_pattern.finditer(commit_message):
+        issue_matches = generic_issue_pattern.finditer(commit_message)
+        for match in issue_matches:
             issue_num = int(match.group(1))
             if issue_num not in handled_issue_numbers:
                 details = ""
@@ -142,36 +136,28 @@ def generate_release_notes(
                     issue = repo.get_issue(number=issue_num)
                     issue_body = issue.body if issue.body else ""
                     details = f"- Standalone commit links to Issue #{issue.number}: {issue.title} ({issue.html_url})\n  Commit Message: {commit_message.splitlines()[0]}\n  Issue Body: {issue_body}\n"
-                    direct_commit_issue_details.append(details)
-                    handled_issue_numbers.add(issue_num) 
-                    found_unhandled_issue_in_commit = True
-                    break 
                 except Exception as e:
-                    details = f"- Standalone commit (unlinked) refers to issue #{issue_num}\n  Commit Message: {commit_message.splitlines()[0]}\n"
-                    direct_commit_issue_details.append(details)
-                    handled_issue_numbers.add(issue_num) 
-                    found_unhandled_issue_in_commit = True
-                    break
-        
-        if not found_unhandled_issue_in_commit and not any(p.search(commit_message) for p in ignore_patterns):
-             final_standalone_commits_for_prompt.append(commit_message)
-
+                    details = f"- Standalone commit (unlinked) refers to issue #{issue_num}\n  Commit Message: {commit_message}\n"
+                direct_commit_issue_details.append(details)
+                handled_issue_numbers.add(issue_num)
 
     # --- 2. Decide what data to send to the AI ---
-    has_meaningful_changes = bool(pr_details_for_prompt) or bool(direct_commit_issue_details) or bool(final_standalone_commits_for_prompt)
+    has_meaningful_changes = bool(all_pr_details) or bool(direct_commit_issue_details) or bool(meaningful_standalone_commits)
     
-    pr_data_for_prompt_str = ""
+    pr_data_for_prompt = ""
     commit_data_for_prompt = ""
     dependency_note = ""
 
     if not has_meaningful_changes and (dependency_pr_details or dependency_standalone_commits):
         print("No meaningful changes found. Including dependency updates in the release notes.")
-        pr_data_for_prompt_str = ''.join(pr_details_for_prompt + dependency_pr_details) 
-        commit_data_for_prompt = "\n---\n".join(final_standalone_commits_for_prompt + dependency_standalone_commits) 
+        pr_data_for_prompt = ''.join(all_pr_details + dependency_pr_details)
+        commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits + dependency_standalone_commits)
         dependency_note = "\nThis release consists primarily of routine dependency updates. No other significant changes were detected."
     else:
-        pr_data_for_prompt_str = ''.join(pr_details_for_prompt)
-        commit_data_for_prompt = "\n---\n".join(final_standalone_commits_for_prompt) 
+        pr_data_for_prompt = ''.join(all_pr_details)
+        commit_data_for_prompt = "\n---\n".join(meaningful_standalone_commits)
+        # If there are meaningful changes, we do not want the AI to include dependency notes.
+        # The prompt will explicitly forbid it unless dependency_note is present.
 
 
     # --- 3. Generate the prompt for the AI ---
@@ -188,7 +174,7 @@ def generate_release_notes(
     Below is a comprehensive list of changes for this release. It includes detailed information for Pull Requests found on GitHub, as well as the raw commit log for historical changes that may not exist on the GitHub API. You should use ALL provided sources to build the release notes.
 
     **Data from GitHub (Pull Requests & Linked Issues):**
-    {pr_data_for_prompt_str if pr_data_for_prompt_str else "No pull requests with linked issues were found on GitHub."}
+    {pr_data_for_prompt if pr_data_for_prompt else "No pull requests with linked issues were found on GitHub."}
     
     **Data from Commits Linked Directly to Issues (may be on GitHub or historical):**
     {''.join(direct_commit_issue_details) if direct_commit_issue_details else "No standalone commits linking to issues were found."}
@@ -199,7 +185,7 @@ def generate_release_notes(
     --- END OF RAW COMMIT LOG ---
 
     **Critical Output Rules:**
-    1.  **NO UNWANTED SECTIONS OR DEPENDENCY UPDATES:** This is the most important rule. You are strictly forbidden from including routine dependency updates (e.g., "chore(deps):", "build(deps):", "Update dependency", "bump", "bumps", "[dependabot skip]", "Merge branch" unless it's a specific feature branch merge) in the release notes. **These types of changes should only be mentioned if they explicitly contain 'BREAKING CHANGE:' in their message/body.** Otherwise, completely omit them from the release notes. Only include a general note about dependency updates if the provided "dependency_note" in the prompt explicitly mentions it, indicating there are no other significant changes in the release. Furthermore, you MUST ONLY use the section headers listed in Rule #5. Do not create any other sections.
+    1.  **NO UNWANTED SECTIONS OR DEPENDENCY UPDATES:** This is the most important rule. You are strictly forbidden from including routine dependency updates (e.g., "chore(deps): update dependency...", "bump package from...", or similar) in the release notes. Only include a note about dependency updates if the provided "dependency_note" in the prompt explicitly mentions it, indicating there are no other significant changes. Furthermore, you MUST ONLY use the section headers listed in Rule #5. Do not create any other sections.
     2.  **NO EMPTY SECTIONS:** If a category like "Bug Fixes" or "Breaking Changes" has no relevant items, you MUST NOT include its header in the final output.
     3.  **IDENTIFYING BREAKING CHANGES:** A breaking change should only be identified if a commit message or PR body explicitly contains the text `BREAKING CHANGE:`. Do not invent breaking changes.
     4.  **Summary First:** Begin with a high-level summary of the release in one or two paragraphs.
@@ -208,10 +194,9 @@ def generate_release_notes(
         - ### 🚀 New Features
         - ### 🐛 Bug Fixes
         - ### 🛠️ Other Changes
-    6.  **Bullet Point Format:** Each bullet point MUST start with a **bolded, concise, and highly synthesized human-readable summary** of the change. This summary **must not be a direct copy** of any commit message prefix (e.g., "fix:", "feat:", "chore:", "docs:"). Instead, it **must be a new, descriptive phrase** that accurately captures the essence of the change, drawing information from the PR title, PR body, linked issue title, issue body, and commit messages. Aim for clarity and user-friendliness. Follow this bolded summary with a more detailed explanation. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
+    6.  **Bullet Point Format:** Each bullet point MUST start with a bolded, concise summary of the change, followed by a more detailed explanation. For example: `* **Improved User Onboarding:** The sign-up process has been streamlined to require fewer steps, making it easier for new users to get started. (#123)`
     7.  **Link Everything:** Every bullet point MUST end with a markdown link to the relevant Issue or Pull Request, like `(#123)`. If a change comes from a commit that refers to an issue that couldn't be linked, still include the number in plain text, like `(#456)`.
     8.  **No Commit-Speak:** Do not use phrases like "[various commits]" or mention commit SHAs. All output must be user-friendly.
-    9.  **Synthesize Related Information:** If a Pull Request (PR) explicitly links to an issue (e.g., "closes #123"), the PR's details (title and body) should be prioritized as the primary source of information for that feature or fix. The content of the linked issue or any standalone commits that *also* refer to that same issue should be seen as supplementary context and **must be synthesized into the PR's main bullet point**, not presented as a separate entry. Avoid creating multiple distinct bullet points for what is clearly a single, cohesive change described across a PR and its linked issues/commits. If a standalone commit clearly belongs to a feature already described by a PR/Issue, integrate its message into that existing description rather than making a new entry.
     """
 
     # Log the full prompt being sent to the AI for debugging purposes
