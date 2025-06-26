@@ -1,27 +1,96 @@
-name: Generate Folder Tree
+# .github/workflows/analyze-source.yml
 
+name: 'Analyze and Display Source Files'
+
+# Controls when the action will run. 
+# It can be triggered manually via the GitHub Actions UI (workflow_dispatch)
+# or automatically on every push to the main branch.
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-  workflow_dispatch:
+    paths:
+      - 'src/**'
 
 jobs:
-  generate-tree:
+  analyze-and-display-files:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # A sequence of tasks that will be executed as part of the job
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      # Step 1: Check out the repository's code
+      # This allows the workflow to access the files in your repository.
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
 
-    - name: Generate folder tree
-      run: |
-        mkdir -p .github/output
-        find . -type d | sed 's|^\./||' | grep -v '^\.git' > .github/output/folder_tree.txt
-        cat .github/output/folder_tree.txt
+      # Step 2: Find specific files, display their content, and list directories
+      # This step uses shell commands to perform the core logic.
+      - name: 'Scan src directory and Redact Secrets'
+        run: |
+          echo "## Starting analysis of the 'src' directory..."
+          echo "------------------------------------------------"
+          
+          # Define the target directory
+          SEARCH_DIR="src"
 
-    - name: Upload folder tree as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: folder-tree
-        path: .github/output/folder_tree.txt
+          # Check if the 'src' directory exists
+          if [ ! -d "$SEARCH_DIR" ]; then
+            echo "Error: The '$SEARCH_DIR' directory was not found in the repository."
+            exit 1
+          fi
+
+          # --- File Content Output with Redaction ---
+          echo ""
+          echo "### Searching for specified file types... ###"
+          
+          find $SEARCH_DIR -type f \( \
+            -name "*.sln" -o \
+            -name "*.csproj" -o \
+            -name "*.vbproj" -o \
+            -name "Dockerfile" -o \
+            -name "package.json" -o \
+            -name "appsettings.json" -o \
+            -name "docker-compose*.yml" -o \
+            -name "docker-compose*.yaml" -o \
+            -name "*.tf" -o \
+            -name "*.tfvars" \
+          \) | while read -r file; do
+            if [ -f "$file" ]; then
+              echo ""
+              echo "=================================================="
+              echo "==> File: $file"
+              echo "=================================================="
+              
+              # Redact common secret patterns before printing.
+              # This sed command looks for common keywords (password, secret, token, etc.)
+              # and replaces the value that follows with [REDACTED].
+              # It is a best-effort sanitation and may not catch all secrets.
+              sed -E \
+                -e 's/("?password"?|"userpassword"|"adminpassword"|"?secret"?|"?token"?|"?key"?|"access_key"|"secret_key"|"sas_token"|"auth_token"|"client_secret"|"connectionstring")([ ]*[:=][ ]*["'"'"']?)([^"'"'"',\n\r]+)/\1\2[REDACTED]/ig' \
+                -e 's/(<add key="ConnectionString" value=")([^"]+)/\1[REDACTED]/ig' \
+                "$file"
+
+              echo ""
+              echo "==> End of File: $file"
+              echo "=================================================="
+              echo ""
+            fi
+          done
+
+          echo "### File search complete. ###"
+          echo ""
+          echo "------------------------------------------------"
+          
+          # --- Directory Listing ---
+          echo ""
+          echo "### Generating list of all directories in '$SEARCH_DIR'... ###"
+          
+          find $SEARCH_DIR -type d
+          
+          echo ""
+          echo "### Directory listing complete. ###"
+          echo "------------------------------------------------"
+          echo "## Analysis finished."
+
