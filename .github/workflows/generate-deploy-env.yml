@@ -1,0 +1,27 @@
+name: Generate Folder Tree
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  generate-tree:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Generate folder tree
+      run: |
+        mkdir -p .github/output
+        find . -type d | sed 's|^\./||' | grep -v '^\.git' > .github/output/folder_tree.txt
+        cat .github/output/folder_tree.txt
+
+    - name: Upload folder tree as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: folder-tree
+        path: .github/output/folder_tree.txt
