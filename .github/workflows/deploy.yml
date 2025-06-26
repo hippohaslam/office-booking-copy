@@ -1,0 +1,177 @@
+# .github/workflows/deploy.yml
+
+name: Build, Test, and Deploy to AWS
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: 'Environment to deploy to'
+        required: true
+        default: 'Test'
+        options:
+          - 'Test'
+          - 'Production'
+
+permissions:
+  id-token: write # Required for OIDC authentication with AWS
+  contents: read
+
+# Environment variables available to all jobs
+env:
+  DOTNET_VERSION: '8.0.x'
+  NODE_VERSION: '20.x'
+  API_PROJECT_PATH: 'src/api/Hippo.Booking.API/Hippo.Booking.API.csproj'
+  API_OUTPUT_PATH: 'api-publish'
+  WEB_PROJECT_PATH: 'src/web/hippo-booking'
+  TF_WORKING_DIR: 'src/infrastructure/terraform'
+
+jobs:
+  build_and_test:
+    name: Build & Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Restore .NET dependencies
+        run: dotnet restore src/hippo-booking.sln
+
+      - name: Build .NET Solution
+        run: dotnet build src/hippo-booking.sln --configuration Release --no-restore
+
+      - name: Run .NET Tests
+        run: dotnet test src/hippo-booking.sln --configuration Release --no-build
+
+      - name: Install Frontend Dependencies
+        working-directory: ${{ env.WEB_PROJECT_PATH }}
+        run: |
+          corepack enable
+          yarn install --immutable
+
+      - name: Lint Frontend
+        working-directory: ${{ env.WEB_PROJECT_PATH }}
+        run: yarn lint
+      
+      - name: Create API Deployment Package
+        run: |
+          dotnet publish ${{ env.API_PROJECT_PATH }} -c Release --output ${{ env.API_OUTPUT_PATH }}
+          cd ${{ env.API_OUTPUT_PATH }}
+          zip -r ../api-deployment-package.zip .
+          cd ..
+          
+      - name: Upload API Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-deployment-package
+          path: api-deployment-package.zip
+          retention-days: 1
+
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment || 'Test' }}
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    # When triggered by a push, github.event.inputs.environment is null. Default to 'Test'.
+    # On manual dispatch, it will use the selected input.
+    environment:
+      name: ${{ github.event.inputs.environment || 'Test' }}
+      url: ${{ steps.get_frontend_url.outputs.url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set Environment Variables
+        id: set_vars
+        run: |
+          # If triggered by push, default to 'Test'. Otherwise, use the user's choice.
+          ENV_NAME="${{ github.event.inputs.environment || 'Test' }}"
+          
+          if [ "$ENV_NAME" == "Production" ]; then
+            echo "tfvars_file=Production.tfvars" >> $GITHUB_OUTPUT
+            echo "aws_role=${{ secrets.AWS_ROLE_PROD }}" >> $GITHUB_OUTPUT
+            echo "amplify_app_name=hippo-booking-front-end-prod" >> $GITHUB_OUTPUT
+            echo "beanstalk_app_name=hippo-booking-api-prod" >> $GITHUB_OUTPUT
+            echo "beanstalk_env_name=hippo-booking-api-env-prod" >> $GITHUB_OUTPUT
+          else
+            echo "tfvars_file=Test.tfvars" >> $GITHUB_OUTPUT
+            echo "aws_role=${{ secrets.AWS_ROLE_TEST }}" >> $GITHUB_OUTPUT
+            echo "amplify_app_name=hippo-booking-front-end-test" >> $GITHUB_OUTPUT
+            echo "beanstalk_app_name=hippo-booking-api-test" >> $GITHUB_OUTPUT
+            echo "beanstalk_env_name=hippo-booking-api-env-test" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ steps.set_vars.outputs.aws_role }}
+          aws-region: eu-west-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        id: init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.TF_STATE_S3_BUCKET }}" \
+            -backend-config="key=tfstate/${{ steps.set_vars.outputs.tfvars_file }}.tfstate" \
+            -backend-config="region=eu-west-1"
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          terraform plan -var-file="${{ steps.set_vars.outputs.tfvars_file }}" -out=tfplan -no-color \
+            -var "github_repo=${{ github.repository }}" \
+            -var "github_access_token=${{ secrets.GITHUB_TOKEN }}" \
+            -var "google_credentials=${{ secrets.GOOGLE_CREDENTIALS }}" \
+            -var "google_client_secret=${{ secrets.GOOGLE_CLIENT_SECRET }}" \
+            -var "slack_token=${{ secrets.SLACK_TOKEN }}" \
+            -var "slack_signing_secret=${{ secrets.SLACK_SIGNING_SECRET }}"
+
+      - name: Terraform Apply
+        id: apply
+        if: github.ref == 'refs/heads/main'
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform apply -auto-approve tfplan
+        
+      - name: Download API Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: api-deployment-package
+
+      - name: Deploy API to Elastic Beanstalk
+        uses: aws-actions/beanstalk-deploy-app@v1
+        with:
+          aws-region: eu-west-1
+          application_name: ${{ steps.set_vars.outputs.beanstalk_app_name }}
+          environment_name: ${{ steps.set_vars.outputs.beanstalk_env_name }}
+          version_label: "v${{ github.run_number }}"
+          deployment_package: api-deployment-package.zip
+          wait_for_environment_stability: true
+
+      - name: Deploy Frontend to AWS Amplify
+        run: |
+          aws amplify start-job \
+            --app-id $(aws amplify list-apps --query "apps[?name=='${{ steps.set_vars.outputs.amplify_app_name }}'].appId" --output text) \
+            --branch-name main \
+            --job-type 'MANUAL'
+
+      - name: Get Frontend URL
+        id: get_frontend_url
+        run: |
+          AMPLIFY_URL=$(aws amplify get-app --app-id $(aws amplify list-apps --query "apps[?name=='${{ steps.set_vars.outputs.amplify_app_name }}'].appId" --output text) --query "app.defaultDomain" --output text)
+          echo "url=https://${AMPLIFY_URL}" >> $GITHUB_OUTPUT
