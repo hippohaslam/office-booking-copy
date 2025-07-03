@@ -18,7 +18,9 @@ $FilePatterns = @(
     "Dockerfile",
     "docker*.yml",
     "*.tf",
-    "*.tfvars"
+    "*.tfvars",
+    "Startup.cs",
+    "Program.cs"
 )
 
 try {
@@ -31,18 +33,34 @@ try {
     $PromptBuilder = New-Object -TypeName System.Text.StringBuilder
 
     # Add the main instruction to the prompt.
-    [void]$PromptBuilder.AppendLine("Use the following content and structure from a GitHub repository to generate a GitHub Action that deploys to either a test or production environment (specified by the user).")
-    [void]$PromptBuilder.AppendLine("The 'name' of the workflow at the top of the YAML file must be exactly 'Deploy Environment (AI)'.")
-    [void]$PromptBuilder.AppendLine("The action should be manually triggered using 'workflow_dispatch' with an 'environment' input ('test' or 'prod').")
-    [void]$PromptBuilder.AppendLine("Where possible, jobs should be run in parallel to increase efficiency.")
-    [void]$PromptBuilder.AppendLine("The final output should be only the YAML content for the GitHub workflow file, without any markdown formatting like `yaml`.")
-    [void]$PromptBuilder.AppendLine("---")
+    [void]$PromptBuilder.AppendLine("You are an expert in GitHub Actions and .NET CI/CD. Your task is to generate a comprehensive GitHub Actions workflow file (.yaml) for building, testing, and deploying a .NET application. You will infer all other application components (e.g., frontend technologies), containerization strategies, testing methodologies (unit, integration, end-to-end), database requirements, and cloud infrastructure definitions (e.g., specific cloud provider, infrastructure-as-code tools) solely from the project context provided after this prompt.")
+    [void]$PromptBuilder.AppendLine("Please note: The provided files represent only a subset of the full project repository. Your analysis and generated workflow must rely exclusively on the information contained within these provided files and the directory listing.")
+    [void]$PromptBuilder.AppendLine("Based on the full set of provided files and directory structure, generate a robust, adaptable CI/CD pipeline that includes:")
+    [void]$PromptBuilder.AppendLine("Workflow Trigger and Permissions:")
+    [void]$PromptBuilder.AppendLine("A manual workflow_dispatch trigger allowing for environment selection (e.g., 'Test', 'Production').")
+    [void]$PromptBuilder.AppendLine("Appropriate GitHub Actions permissions to interact with version control and identified cloud services.")
+    [void]$PromptBuilder.AppendLine("Define common environment variables for versions and reusable paths as appropriate.")
+    [void]$PromptBuilder.AppendLine("Build and Test Strategy:")
+    [void]$PromptBuilder.AppendLine("Component Identification: Automatically identify and define build and test steps for all detected application components (e.g., .NET backend, any discovered frontend).")
+    [void]$PromptBuilder.AppendLine("Test Orchestration: If various types of tests are identified within the project (e.g., unit tests, integration tests, end-to-end tests), structure their execution logically. Ensure proper dependencies are met.")
+    [void]$PromptBuilder.AppendLine("External Service Dependencies for Tests: If any tests require external services (such as a database or a running application stack), identify how these services are configured (e.g., via container orchestration files, connection strings) within the provided context. Crucially, include steps to properly bring up these services and ensure they are accessible before running the dependent tests. This should also include handling any specific host building requirements for integration tests and dynamically configuring test connection strings as needed.")
+    [void]$PromptBuilder.AppendLine("Artifact Generation: Implement steps to build deployable artifacts from the application components and ensure they are made available for subsequent deployment stages.")
+    [void]$PromptBuilder.AppendLine("Cloud Deployment:")
+    [void]$PromptBuilder.AppendLine("Environment-Specific Configuration: Dynamically select deployment settings (e.g., configuration files, credentials, application names) based on the chosen environment.")
+    [void]$PromptBuilder.AppendLine("Infrastructure Provisioning: If infrastructure-as-code definitions are identified, include steps for their initialization, planning, and application.")
+    [void]$PromptBuilder.AppendLine("Application Deployment: Handle the deployment of the built artifacts to the identified cloud services.")
+    [void]$PromptBuilder.AppendLine("Status and Outputs: Monitor deployment status and output relevant URLs or identifiers.")
+    [void]$PromptBuilder.AppendLine("Flexibility and Maintainability:")
+    [void]$PromptBuilder.AppendLine("The generated workflow should be modular and clear, allowing for easy understanding and adaptation by a human, even if a similar project had different components or test setups.")
+    [void]$PromptBuilder.AppendLine("Adhere to GitHub Actions best practices for structure, readability, and variable usage.")
+    [void]$PromptBuilder.AppendLine("Please provide only the complete YAML content for the GitHub Actions workflow file.")
+    [void]$PromptBuilder.AppendLine("===")
     [void]$PromptBuilder.AppendLine("")
 
     # Generate and append the directory structure list.
     Write-Host "Analyzing directory structure in '$SourceDirectory'..."
     [void]$PromptBuilder.AppendLine("Repository Directory Structure:")
-    [void]$PromptBuilder.AppendLine("==============================")
+    [void]$PromptBuilder.AppendLine("===============================")
     
     Get-ChildItem -Path $SourceDirectory -Recurse -Directory | ForEach-Object {
         $relativePath = $_.FullName.Substring($SourceDirectory.Length)
