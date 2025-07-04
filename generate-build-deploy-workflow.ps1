@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param()
 
-$GeminiApiKey = "AIzaSyCqTiLlW8gpxvasPyt3ozBENggjiAxq9jE"
+$GeminiApiKey = ""
 
 $RepoRoot = $PSScriptRoot
 $SourceDirectory = Join-Path -Path $RepoRoot -ChildPath "src"
