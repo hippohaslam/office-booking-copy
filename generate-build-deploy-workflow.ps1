@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param()
 
-$GeminiApiKey = ""
+$GeminiApiKey = "AIzaSyCqTiLlW8gpxvasPyt3ozBENggjiAxq9jE"
 
 $RepoRoot = $PSScriptRoot
 $SourceDirectory = Join-Path -Path $RepoRoot -ChildPath "src"
@@ -45,7 +45,7 @@ try {
     [void]$PromptBuilder.AppendLine("    * **Workflow Inputs and Environment Variables**: Define a `workflow_dispatch` trigger with `inputs` for environment selection. Utilize workflow-level `env` for common versioning and path variables. Employ job-level or step-level `env` variables, particularly for sensitive data or dynamic configurations (e.g., connection strings), leveraging GitHub Secrets (`secrets.YOUR_SECRET_NAME`) for sensitive values.")
     [void]$PromptBuilder.AppendLine("")
     [void]$PromptBuilder.AppendLine("* Build and Test Strategy:")
-    [void]$PromptBuilder.AppendLine("    * **Component Identification and Initial Build**: Automatically identify all application components (e.g., .NET backend, any discovered frontend). For each identified component, ensure a dedicated build step is performed successfully before any subsequent testing or publishing operations. This guarantees that tests run against up-to-date, compiled code. Specifically, if a frontend project's configuration (e.g., `package.json`) indicates the use of Corepack or a specific Yarn version via the `packageManager` field, ensure that a `corepack enable` command is executed before any `yarn` commands.")
+    [void]$PromptBuilder.AppendLine("    * **Component Identification and Initial Build**: Automatically identify all application components (e.g., .NET backend, any discovered frontend). For each identified component, ensure a dedicated build step is performed successfully before any subsequent testing or publishing operations. This guarantees that tests run against up-to-date, compiled code. **Crucially, if a frontend project's configuration (e.g., `package.json`) indicates the use of Corepack or a specific Yarn version via the `packageManager` field, ensure that a `corepack enable` command is executed *before any and all subsequent `yarn` commands within that job*. This step must always precede `yarn install` or `yarn build` operations.**")
     [void]$PromptBuilder.AppendLine("    * **Dependency Caching**: Implement caching for both .NET and Node.js dependencies to optimize build times, using appropriate cache keys for each. For .NET, use `cache-dependency-path: | src/**/packages.lock.json`.")
     [void]$PromptBuilder.AppendLine("    * **Pathing for .NET Commands**: When executing `dotnet` commands that reference project files (e.g., `dotnet build`, `dotnet test`, `dotnet publish`), ensure the paths to these project files are correctly specified relative to the repository's root, or set the `working-directory` appropriately for the step. For `dotnet restore`, ensure `--locked-mode` is used.")
     [void]$PromptBuilder.AppendLine("    * **Pathing for Docker Compose Commands**: When executing `docker compose` commands (e.g., `docker compose up`, `docker compose ps`), ensure the paths to the `docker-compose` files are correctly specified relative to the repository's root, or that the `working-directory` for the step is set to the directory containing these files.")
