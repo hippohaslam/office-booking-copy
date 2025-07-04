@@ -20,7 +20,8 @@ $FilePatterns = @(
     "*.tf",
     "*.tfvars",
     "Startup.cs",
-    "Program.cs"
+    "Program.cs",
+    "eslint.config.*"
 )
 
 try {
