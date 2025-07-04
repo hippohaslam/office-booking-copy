@@ -20,8 +20,7 @@ $FilePatterns = @(
     "*.tf",
     "*.tfvars",
     "Startup.cs",
-    "Program.cs",
-    "eslint.config.*"
+    "Program.cs"
 )
 
 try {
@@ -51,6 +50,7 @@ try {
     [void]$PromptBuilder.AppendLine("    * Unit Test Execution: Identify and execute unit tests (e.g., Core, Application, Infrastructure tests) in a dedicated step or job. These tests should generally not require external services.")
     [void]$PromptBuilder.AppendLine("    * Integration Test Execution: If integration tests are identified, create a separate stage or job for them. Before running integration tests, identified external services (like the PostgreSQL database from Docker Compose files) must be brought up and verified as ready. Configure integration tests to connect to these running services, adjusting connection strings as necessary.")
     [void]$PromptBuilder.AppendLine("    * End-to-End Test Execution: If end-to-end tests are identified, create a dedicated job for them. This job must first bring up the full application stack (e.g., backend, frontend, database) using identified Docker Compose configurations. Once the stack is ready, execute the E2E tests, ensuring appropriate environment variables (e.g., user credentials, base URLs) are passed.")
+    [void]$PromptBuilder.AppendLine("    * Frontend Testing without Linting: Identify and execute unit/CI tests for the frontend. Do not include a separate linting step for the frontend in the generated workflow, even if a `lint` script is present in `package.json`.")
     [void]$PromptBuilder.AppendLine("    * Artifact Generation: Implement steps to build deployable artifacts from the application components and ensure they are made available for subsequent deployment stages.")
     [void]$PromptBuilder.AppendLine("")
     [void]$PromptBuilder.AppendLine("* Cloud Deployment:")
