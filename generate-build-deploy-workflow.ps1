@@ -20,7 +20,8 @@ $FilePatterns = @(
     "*.tf",
     "*.tfvars",
     "Startup.cs",
-    "Program.cs"
+    "Program.cs",
+    "Readme.md"
 )
 
 try {
@@ -57,11 +58,12 @@ try {
     [void]$PromptBuilder.AppendLine("")
     [void]$PromptBuilder.AppendLine("* Cloud Deployment:")
     [void]$PromptBuilder.AppendLine("    * **Environment-Specific Configuration**: Dynamically select deployment settings (e.g., configuration files, credentials, application names) based on the chosen environment.")
-    [void]$PromptBuilder.AppendLine("    * **Infrastructure Provisioning**: If infrastructure-as-code definitions are identified, include steps for their initialization, planning, and application. When initializing Terraform, ensure the backend configuration (`-backend-config`) for remote state (e.g., S3 bucket, key, region) is correctly set up, varying the `key` based on the deployment environment using the `github.event.inputs.environment` variable directly without explicit casing functions.")
+    [void]$PromptBuilder.AppendLine("    * **Infrastructure Provisioning**: If infrastructure-as-code definitions are identified, include steps for their initialization, planning, and application. When initializing Terraform, ensure the backend configuration (`-backend-config`) for remote state (e.g., S3 bucket, key, region) is correctly set up. The `key` must be varied based on the deployment environment by adhering to the 'Strict Variable Usage' rule, using the `github.event.inputs.environment` variable directly.")
     [void]$PromptBuilder.AppendLine("    * **Application Deployment**: Handle the deployment of the built artifacts to the identified cloud services.")
     [void]$PromptBuilder.AppendLine("    * **Status and Outputs**: Monitor deployment status and output relevant URLs or identifiers.")
     [void]$PromptBuilder.AppendLine("")
     [void]$PromptBuilder.AppendLine("* Flexibility and Maintainability:")
+    [void]$PromptBuilder.AppendLine("    * **Strict Variable Usage**: When using workflow input variables such as `github.event.inputs.environment`, they **must** be used directly in expressions without any modifying functions. The workflow must be generated to work correctly with the exact string value provided in the input. For example, always use `${{ github.event.inputs.environment }}`, and **never** use `toLower(`${{ github.event.inputs.environment }})` or any variation.")
     [void]$PromptBuilder.AppendLine("    * The generated workflow should be modular and clear, allowing for easy understanding and adaptation by a human, even if a similar project had different components or test setups. Clearly define job dependencies using the `needs` keyword to ensure sequential execution of stages (e.g., tests run after build). Employ `if` conditions for jobs or steps that should only run under specific circumstances, such as deploying to a particular environment.")
     [void]$PromptBuilder.AppendLine("    * Adhere strictly to GitHub Actions YAML syntax rules, expressions, and built-in functions (e.g., for string manipulation, context access). Ensure that expressions, particularly in `if:` conditions and `run:` blocks, are correctly formatted without unnecessary quotes around the entire expression.")
     [void]$PromptBuilder.AppendLine("    * Always utilize the latest stable and officially supported versions of GitHub Actions (e.g., `actions/checkout@v4`, `actions/setup-dotnet@v4`, `actions/setup-node@v4`) and integrate with cloud providers using their recommended, up-to-date methods (e.g., `aws-actions/configure-aws-credentials` paired with direct AWS CLI commands for Elastic Beanstalk and Amplify deployments).")
@@ -86,7 +88,7 @@ try {
     [void]$PromptBuilder.AppendLine("")
 
     # Find all key files and append their content to the prompt.
-    Write-Host "Searching for key files..."
+    Write-Host "Searching for key files in '$SourceDirectory'..."
     [void]$PromptBuilder.AppendLine("Repository File Contents:")
     [void]$PromptBuilder.AppendLine("===============================")
 
@@ -104,6 +106,16 @@ try {
     }
     else {
         [void]$PromptBuilder.AppendLine("No matching files were found in the '$SourceDirectory' directory.")
+    }
+    
+    $readmeFile = Get-ChildItem -Path $RepoRoot -Filter "README.md" -ErrorAction SilentlyContinue
+    if ($null -ne $readmeFile) {
+        $relativePath = $readmeFile.Name
+        Write-Host "Processing file: $relativePath"
+        [void]$PromptBuilder.AppendLine("--- FILE: $relativePath ---")
+        [void]$PromptBuilder.AppendLine((Get-Content -Path $readmeFile.FullName -Raw))
+        [void]$PromptBuilder.AppendLine("--- END FILE ---")
+        [void]$PromptBuilder.AppendLine("")
     }
 
     # Call the Gemini API to generate the workflow
