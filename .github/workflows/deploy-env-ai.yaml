@@ -1,6 +1,7 @@
-# Comprehensive CI/CD Workflow for Hippo Booking (.NET & React)
-# This workflow builds, tests, and deploys the .NET API and React frontend
-# to AWS Elastic Beanstalk and AWS Amplify respectively, using Terraform for infrastructure.
+# Comprehensive GitHub Actions workflow for building, testing, and deploying a .NET and React application to AWS.
+# This workflow is generated based on the provided project structure and file contents.
+# It includes jobs for building, unit testing, integration testing, E2E testing, infrastructure provisioning with Terraform,
+# and application deployment to AWS Elastic Beanstalk and AWS Amplify.
 
 name: Build, Test, and Deploy Hippo Booking
 
@@ -12,42 +13,29 @@ on:
         required: true
         type: choice
         options:
-          - Test
-          - Production
-        default: 'Test'
+          - 'Test'
+          - 'Production'
 
-# Global environment variables accessible in all jobs
 env:
   DOTNET_VERSION: '8.0.x'
   NODE_VERSION: '20.x'
-  API_SOLUTION_PATH: 'hippo-booking.sln'
-  API_PROJECT_PATH: 'api/Hippo.Booking.API/Hippo.Booking.API.csproj'
-  WEB_APP_PATH: 'web/hippo-booking'
-  INFRA_PATH: 'infrastructure/terraform'
+  API_PROJECT_PATH: 'src/api/Hippo.Booking.API/Hippo.Booking.API.csproj'
+  API_OUTPUT_PATH: 'api-publish'
+  FRONTEND_PROJECT_PATH: 'src/web/hippo-booking'
+  SOLUTION_PATH: 'src/hippo-booking.sln'
 
-# Permissions required for the workflow
 permissions:
-  id-token: write # Required for AWS OIDC authentication
-  contents: read  # Required to checkout the repository
+  id-token: write
+  contents: read
 
 jobs:
-  ####################################################################################
-  # 1. BUILD & PACKAGE: Compiles code, runs frontend tests, and creates artifacts.
-  ####################################################################################
-  build:
-    name: Build & Package
+  build-dotnet:
+    name: Build .NET API
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Generate version number
-        id: version
-        run: echo "version=$(date +'%Y.%m.%d').${{ github.run_number }}" >> $GITHUB_OUTPUT
-
-      # --- .NET Backend Build ---
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -62,81 +50,63 @@ jobs:
             ${{ runner.os }}-dotnet-
 
       - name: Restore .NET dependencies
-        run: dotnet restore ${{ env.API_SOLUTION_PATH }} --locked-mode
+        run: dotnet restore ${{ env.SOLUTION_PATH }} --locked-mode
 
-      - name: Build .NET solution
-        run: dotnet build ${{ env.API_SOLUTION_PATH }} --configuration Release --no-restore
+      - name: Build .NET application
+        run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
 
-      # --- React Frontend Build & Test ---
+      - name: Publish .NET API
+        run: dotnet publish ${{ env.API_PROJECT_PATH }} --configuration Release --output ${{ env.API_OUTPUT_PATH }}
+
+      - name: Zip API artifact
+        run: zip -r api-artifact.zip ./${{ env.API_OUTPUT_PATH }}
+
+      - name: Upload API artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-artifact
+          path: api-artifact.zip
+
+  build-frontend:
+    name: Build Frontend Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Cache Node modules
+      - name: Cache Node.js modules
         uses: actions/cache@v4
         with:
-          path: ${{ env.WEB_APP_PATH }}/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles(format('{0}/yarn.lock', env.WEB_APP_PATH)) }}
+          path: ${{ env.FRONTEND_PROJECT_PATH }}/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('${{ env.FRONTEND_PROJECT_PATH }}/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Enable Corepack
-        # This is critical as package.json specifies a yarn version
         run: corepack enable
-        working-directory: ${{ env.WEB_APP_PATH }}
 
-      - name: Install Node dependencies
+      - name: Install frontend dependencies
         run: yarn install --immutable
-        working-directory: ${{ env.WEB_APP_PATH }}
+        working-directory: ${{ env.FRONTEND_PROJECT_PATH }}
 
-      - name: Run Frontend Tests
-        run: yarn ci-test
-        working-directory: ${{ env.WEB_APP_PATH }}
+      - name: Build frontend application
+        run: yarn build
+        working-directory: ${{ env.FRONTEND_PROJECT_PATH }}
 
-      - name: Build Frontend for Test
-        if: github.event.inputs.environment == 'Test'
-        run: yarn build:test
-        working-directory: ${{ env.WEB_APP_PATH }}
-
-      - name: Build Frontend for Production
-        if: github.event.inputs.environment == 'Production'
-        run: yarn build:prod
-        working-directory: ${{ env.WEB_APP_PATH }}
-
-      # --- Create & Upload Artifacts ---
-      - name: Publish .NET API
-        run: dotnet publish ${{ env.API_PROJECT_PATH }} --configuration Release --no-build -o ${{ runner.temp }}/api-publish
-
-      - name: Zip API artifact
-        run: |
-          cd ${{ runner.temp }}/api-publish
-          zip -r ../api-artifact.zip .
-      
-      - name: Zip Web artifact
-        run: |
-          cd ${{ env.WEB_APP_PATH }}/dist
-          zip -r ${{ runner.temp }}/web-artifact.zip .
-
-      - name: Upload API Artifact
+      - name: Upload frontend artifact
         uses: actions/upload-artifact@v4
         with:
-          name: api-artifact
-          path: ${{ runner.temp }}/api-artifact.zip
+          name: frontend-artifact
+          path: ${{ env.FRONTEND_PROJECT_PATH }}/dist
 
-      - name: Upload Web Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-artifact
-          path: ${{ runner.temp }}/web-artifact.zip
-
-  ####################################################################################
-  # 2. UNIT TESTS: Runs .NET unit tests that require no external services.
-  ####################################################################################
-  unit-test:
+  unit-tests:
     name: Run .NET Unit Tests
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -155,33 +125,78 @@ jobs:
             ${{ runner.os }}-dotnet-
 
       - name: Restore .NET dependencies
-        run: dotnet restore ${{ env.API_SOLUTION_PATH }} --locked-mode
-      
-      - name: Build .NET solution
-        run: dotnet build ${{ env.API_SOLUTION_PATH }} --configuration Release --no-restore
+        run: dotnet restore ${{ env.SOLUTION_PATH }} --locked-mode
 
-      - name: Run Core Unit Tests
-        run: dotnet test api/tests/Hippo.Booking.Core.Tests/Hippo.Booking.Core.Tests.csproj --configuration Release
+      - name: Build .NET projects for testing
+        run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
 
-      - name: Run Application Unit Tests
-        run: dotnet test api/tests/Hippo.Booking.Application.Tests/Hippo.Booking.Application.Tests.csproj --configuration Release
+      - name: Run Core unit tests
+        run: dotnet test src/api/tests/Hippo.Booking.Core.Tests/Hippo.Booking.Core.Tests.csproj --configuration Release
 
-      - name: Run Infrastructure Unit Tests
-        run: dotnet test api/tests/Hippo.Booking.Infrastructure.Tests/Hippo.Booking.Infrastructure.Tests.csproj --configuration Release
+      - name: Run Application unit tests
+        run: dotnet test src/api/tests/Hippo.Booking.Application.Tests/Hippo.Booking.Application.Tests.csproj --configuration Release
 
-  ####################################################################################
-  # 3. INTEGRATION TESTS: Runs .NET integration tests against a live DB.
-  ####################################################################################
-  integration-test:
+      - name: Run Infrastructure unit tests
+        run: dotnet test src/api/tests/Hippo.Booking.Infrastructure.Tests/Hippo.Booking.Infrastructure.Tests.csproj --configuration Release
+
+  frontend-tests:
+    name: Run Frontend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Canvas dependencies
+        # These are required by the canvas package for vitest, as noted in src/web/hippo-booking/README.md
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.FRONTEND_PROJECT_PATH }}/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('${{ env.FRONTEND_PROJECT_PATH }}/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Enable Corepack
+        # Required as per package.json packageManager field
+        run: corepack enable
+
+      - name: Install frontend dependencies
+        run: yarn install --immutable
+        working-directory: ${{ env.FRONTEND_PROJECT_PATH }}
+
+      - name: Run frontend unit/CI tests
+        run: yarn ci-test
+        working-directory: ${{ env.FRONTEND_PROJECT_PATH }}
+
+  integration-tests:
     name: Run .NET Integration Tests
     runs-on: ubuntu-latest
-    needs: build
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: HippoBooking_Integration
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d HippoBooking_Integration"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Start PostgreSQL container
-        run: docker compose -f infrastructure/docker/docker-compose-ci.yml up -d --wait
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -197,35 +212,22 @@ jobs:
             ${{ runner.os }}-dotnet-
 
       - name: Restore .NET dependencies
-        run: dotnet restore ${{ env.API_SOLUTION_PATH }} --locked-mode
-      
-      - name: Build .NET solution
-        run: dotnet build ${{ env.API_SOLUTION_PATH }} --configuration Release --no-restore
+        run: dotnet restore ${{ env.SOLUTION_PATH }} --locked-mode
 
-      - name: Run Integration Tests
-        # The connection string is read from the appsettings.json in the test project
-        run: dotnet test api/tests/Hippo.Booking.Integration.Tests/Hippo.Booking.Integration.Tests.csproj --configuration Release
+      - name: Build .NET projects for testing
+        run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
 
-      - name: Stop containers
-        if: always()
-        run: docker compose -f infrastructure/docker/docker-compose-ci.yml down
+      - name: Run integration tests
+        run: dotnet test src/api/tests/Hippo.Booking.Integration.Tests/Hippo.Booking.Integration.Tests.csproj --configuration Release
+        env:
+          ConnectionStrings__HippoBookingDbContext: "Server=localhost;Port=5432;Database=HippoBooking_Integration;User Id=postgres;Password=postgres;"
 
-  ####################################################################################
-  # 4. E2E TESTS: Runs Playwright E2E tests against the full application stack.
-  ####################################################################################
-  e2e-test:
+  e2e-tests:
     name: Run E2E Tests
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Start Application Stack
-        # NOTE: For 'docker compose up --wait' to function correctly, the 'booking-api'
-        # service in 'docker-compose-services.yml' and the 'postgres' service in
-        # 'docker-compose-ci.yml' MUST have a 'healthcheck' defined.
-        run: docker compose -f infrastructure/docker/docker-compose-ci.yml -f infrastructure/docker/docker-compose-services.yml up -d --wait
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -239,28 +241,32 @@ jobs:
           key: ${{ runner.os }}-dotnet-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
             ${{ runner.os }}-dotnet-
+      
+      - name: Start services with Docker Compose
+        # The --wait flag is critical. It requires that the services being waited on
+        # (booking-api, which depends on postgres) have a healthcheck defined in their respective docker-compose files.
+        run: docker compose -f src/infrastructure/docker/docker-compose-ci.yml -f src/infrastructure/docker/docker-compose-services.yml up --build -d --wait
+
+      - name: Verify running containers
+        run: docker compose -f src/infrastructure/docker/docker-compose-ci.yml -f src/infrastructure/docker/docker-compose-services.yml ps
 
       - name: Restore .NET dependencies
-        run: dotnet restore ${{ env.API_SOLUTION_PATH }} --locked-mode
+        run: dotnet restore ${{ env.SOLUTION_PATH }} --locked-mode
       
-      - name: Build .NET solution
-        run: dotnet build ${{ env.API_SOLUTION_PATH }} --configuration Release --no-restore
+      - name: Install Playwright browsers
+        # Build the E2E test project to trigger the automatic download of Playwright browsers.
+        run: dotnet build src/e2e/Hippo.Booking.E2ETests/Hippo.Booking.E2ETests.csproj
 
-      - name: Run E2E Tests
-        run: dotnet test e2e/Hippo.Booking.E2ETests/Hippo.Booking.E2ETests.csproj --configuration Release
+      - name: Run E2E tests
+        run: dotnet test src/e2e/Hippo.Booking.E2ETests/Hippo.Booking.E2ETests.csproj --configuration Release
 
-      - name: Stop containers
-        if: always()
-        run: docker compose -f infrastructure/docker/docker-compose-ci.yml -f infrastructure/docker/docker-compose-services.yml down
-
-  ####################################################################################
-  # 5. DEPLOY INFRASTRUCTURE: Deploys cloud infrastructure using Terraform.
-  ####################################################################################
-  deploy-infrastructure:
-    name: Deploy Infrastructure
+  provision-and-deploy:
+    name: Provision Infrastructure and Deploy
     runs-on: ubuntu-latest
-    needs: [unit-test, integration-test, e2e-test]
+    needs: [build-dotnet, build-frontend, unit-tests, frontend-tests, integration-tests, e2e-tests]
+    if: github.event.inputs.environment == 'Test' || github.event.inputs.environment == 'Production'
     environment: ${{ github.event.inputs.environment }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -268,127 +274,88 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: eu-west-1
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         id: init
-        run: >
-          terraform init
-          -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}"
-          -backend-config="key=terraform.${{ github.event.inputs.environment }}.tfstate"
-          -backend-config="region=${{ secrets.AWS_REGION }}"
-        working-directory: ${{ env.INFRA_PATH }}
+        run: terraform init
+        working-directory: src/infrastructure/terraform
+        env:
+          AWS_BUCKET_NAME: 'hippo-booking-terraform'
+          AWS_BUCKET_KEY: 'terraform.${{ github.event.inputs.environment }}.tfstate'
+          AWS_REGION: 'eu-west-1'
+          TF_INPUT: false
+          # Override backend config with environment variables
+          TF_CLI_ARGS_init: >
+            -backend-config="bucket=${AWS_BUCKET_NAME}"
+            -backend-config="key=${AWS_BUCKET_KEY}"
+            -backend-config="region=${AWS_REGION}"
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+        working-directory: src/infrastructure/terraform
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color -var-file="${{ github.event.inputs.environment }}.tfvars"
-        working-directory: ${{ env.INFRA_PATH }}
+        run: terraform plan -no-color -var-file="${{ github.event.inputs.environment }}.tfvars" -out=tfplan
+        working-directory: src/infrastructure/terraform
         env:
           TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           TF_VAR_slack_token: ${{ secrets.SLACK_TOKEN }}
           TF_VAR_slack_signing_secret: ${{ secrets.SLACK_SIGNING_SECRET }}
-          TF_VAR_github_repo: ${{ github.repositoryUrl }}
-          TF_VAR_github_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          TF_VAR_slack_channel_email: ${{ secrets.SLACK_CHANNEL_EMAIL }}
+          TF_VAR_github_repo: ${{ github.repository }}
+          TF_VAR_github_access_token: ${{ secrets.AMPLIFY_GITHUB_TOKEN }}
           TF_VAR_google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
+          TF_VAR_slack_channel_email: ${{ secrets.SLACK_CHANNEL_EMAIL }}
+          TF_INPUT: false
 
       - name: Terraform Apply
         id: apply
-        run: terraform apply -auto-approve -var-file="${{ github.event.inputs.environment }}.tfvars"
-        working-directory: ${{ env.INFRA_PATH }}
-        env:
-          TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          TF_VAR_slack_token: ${{ secrets.SLACK_TOKEN }}
-          TF_VAR_slack_signing_secret: ${{ secrets.SLACK_SIGNING_SECRET }}
-          TF_VAR_github_repo: ${{ github.repositoryUrl }}
-          TF_VAR_github_access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          TF_VAR_slack_channel_email: ${{ secrets.SLACK_CHANNEL_EMAIL }}
-          TF_VAR_google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
+        run: terraform apply -auto-approve tfplan
+        working-directory: src/infrastructure/terraform
 
-  ####################################################################################
-  # 6. DEPLOY APPLICATION: Deploys the built artifacts to the provisioned infra.
-  ####################################################################################
-  deploy-application:
-    name: Deploy Application
-    runs-on: ubuntu-latest
-    needs: [build, deploy-infrastructure]
-    environment: ${{ github.event.inputs.environment }}
-    steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Get Terraform Outputs
+        id: tf-outputs
+        run: terraform output -json > tf-outputs.json
+        working-directory: src/infrastructure/terraform
 
-      - name: Install Utilities
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Parse Terraform Outputs
+        id: parse-outputs
         run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli jq
+          echo "EB_APP_NAME=$(jq -r '.elastic_beanstalk_application_name.value' src/infrastructure/terraform/tf-outputs.json)" >> $GITHUB_ENV
+          echo "EB_ENV_NAME=$(jq -r '.elastic_beanstalk_environment_name.value' src/infrastructure/terraform/tf-outputs.json)" >> $GITHUB_ENV
+          echo "AMPLIFY_APP_NAME=$(jq -r '.amplify_app_name.value' src/infrastructure/terraform/tf-outputs.json)" >> $GITHUB_ENV
+          echo "AMPLIFY_APP_ID=$(aws amplify list-apps --query "apps[?name=='$(jq -r '.amplify_app_name.value' src/infrastructure/terraform/tf-outputs.json)'].appId" --output text)" >> $GITHUB_ENV
 
-      - name: Download API Artifact
+      - name: Download API artifact
         uses: actions/download-artifact@v4
         with:
           name: api-artifact
-          path: ${{ runner.temp }}/api
+          path: .
 
-      - name: Download Web Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: web-artifact
-          path: ${{ runner.temp }}/web
+      - name: Unzip API artifact
+        run: unzip api-artifact.zip
 
-      - name: Set Environment Suffix
-        id: set-suffix
+      - name: Deploy to AWS Elastic Beanstalk
+        id: deploy-eb
         run: |
-          if [ "${{ github.event.inputs.environment }}" == "Test" ]; then
-            echo "env_suffix=test" >> $GITHUB_ENV
-          elif [ "${{ github.event.inputs.environment }}" == "Production" ]; then
-            echo "env_suffix=prod" >> $GITHUB_ENV
-          fi
+          VERSION_LABEL="v-${{ github.sha }}-${{ github.run_id }}"
+          aws elasticbeanstalk create-application-version --application-name "${{ env.EB_APP_NAME }}" --version-label "${VERSION_LABEL}" --source-bundle S3Bucket="${{ env.EB_APP_NAME }}-codepipeline-artifacts",S3Key="api-artifact.zip"
+          aws s3 cp api-artifact.zip s3://${{ env.EB_APP_NAME }}-codepipeline-artifacts/api-artifact.zip
+          aws elasticbeanstalk update-environment --application-name "${{ env.EB_APP_NAME }}" --environment-name "${{ env.EB_ENV_NAME }}" --version-label "${VERSION_LABEL}"
+          echo "Waiting for Elastic Beanstalk deployment to complete..."
+          aws elasticbeanstalk wait environment-updated --application-name "${{ env.EB_APP_NAME }}" --environment-name "${{ env.EB_ENV_NAME }}"
 
-      # --- Deploy .NET API to Elastic Beanstalk ---
-      - name: Deploy API to Elastic Beanstalk
+      - name: Deploy to AWS Amplify
+        id: deploy-amplify
         run: |
-          VERSION_LABEL="${{ needs.build.outputs.version }}-${{ github.sha }}"
-          S3_BUCKET="elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ secrets.AWS_ACCOUNT_ID }}"
-          S3_KEY="hippo-booking-api/api-artifact-${VERSION_LABEL}.zip"
-          EB_APP_NAME="hippo-booking-api-${{ env.env_suffix }}"
-          EB_ENV_NAME="hippo-booking-api-env-${{ env.env_suffix }}"
-
-          echo "Uploading to s3://${S3_BUCKET}/${S3_KEY}"
-          aws s3 cp ${{ runner.temp }}/api/api-artifact.zip s3://${S3_BUCKET}/${S3_KEY}
-
-          echo "Creating Elastic Beanstalk application version ${VERSION_LABEL}"
-          aws elasticbeanstalk create-application-version \
-            --application-name "${EB_APP_NAME}" \
-            --version-label "${VERSION_LABEL}" \
-            --source-bundle S3Bucket="${S3_BUCKET}",S3Key="${S3_KEY}"
-
-          echo "Updating Elastic Beanstalk environment ${EB_ENV_NAME}"
-          aws elasticbeanstalk update-environment \
-            --environment-name "${EB_ENV_NAME}" \
-            --version-label "${VERSION_LABEL}"
-
-          echo "Waiting for environment update to complete..."
-          aws elasticbeanstalk wait environment-updated --environment-name "${EB_ENV_NAME}"
-          echo "Deployment to Elastic Beanstalk successful."
-
-      # --- Deploy React App to Amplify ---
-      - name: Deploy Web to Amplify
-        run: |
-          AMPLIFY_APP_NAME="hippo-booking-front-end-${{ env.env_suffix }}"
-          AMPLIFY_APP_ID=$(aws amplify list-apps --query "apps[?name=='${AMPLIFY_APP_NAME}'].appId" --output text)
-
-          if [ -z "$AMPLIFY_APP_ID" ]; then
-            echo "Amplify App ID for '${AMPLIFY_APP_NAME}' not found."
-            exit 1
-          fi
-
-          echo "Starting Amplify deployment for app ID ${AMPLIFY_APP_ID}"
-          aws amplify start-deployment --app-id ${AMPLIFY_APP_ID} --branch-name main
-
-          echo "Deployment to Amplify triggered successfully."
+          aws amplify start-job --app-id ${{ env.AMPLIFY_APP_ID }} --branch-name main --job-type RELEASE
+          echo "Amplify deployment started. Check the AWS Amplify console for status."
