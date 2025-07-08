@@ -1,3 +1,8 @@
+data "aws_elastic_beanstalk_solution_stack" "dotnet" {
+  most_recent = true
+  name_regex  = "^64bit Amazon Linux 2023 v.* running .NET 8$"
+}
+
 resource "aws_elastic_beanstalk_application" "hippo-booking-api" {
   name        = "hippo-booking-api-${var.env_suffix}"
   description = "Elastic Beanstalk application for .NET API"
@@ -59,7 +64,7 @@ resource "aws_security_group" "beanstalk_sg" {
 resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
   name                = local.beanstalk-api-name
   application         = aws_elastic_beanstalk_application.hippo-booking-api.name
-  solution_stack_name = "64bit Amazon Linux 2023 v4.2.2 running .NET 8"
+  solution_stack_name = data.aws_elastic_beanstalk_solution_stack.dotnet.name
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
