@@ -266,7 +266,7 @@ jobs:
       - name: Terraform Init
         id: init
         working-directory: ${{ env.INFRA_PATH }}/terraform
-        run: terraform init -backend-config="bucket=hippo-booking-terraform" -backend-config="key=terraform.${{ github.event.inputs.environment }}.tfstate" -backend-config="region=${{ env.AWS_REGION }}"
+        run: terraform init -backend-config="bucket=office-booking-terraform-state-bucket" -backend-config="key=terraform.${{ github.event.inputs.environment }}.tfstate" -backend-config="region=${{ env.AWS_REGION }}"
 
       - name: Terraform Plan
         id: plan
@@ -313,7 +313,7 @@ jobs:
         id: tf-outputs
         working-directory: ${{ env.INFRA_PATH }}/terraform
         run: |
-          terraform init -backend-config="bucket=hippo-booking-terraform" -backend-config="key=terraform.${{ github.event.inputs.environment }}.tfstate" -backend-config="region=${{ env.AWS_REGION }}"
+          terraform init -backend-config="bucket=office-booking-terraform-state-bucket" -backend-config="key=terraform.${{ github.event.inputs.environment }}.tfstate" -backend-config="region=${{ env.AWS_REGION }}"
           terraform output -json > tf_outputs.json
           echo "eb_app_name=$(jq -r .elastic_beanstalk_application_name.value tf_outputs.json)" >> $GITHUB_ENV
           echo "eb_env_name=$(jq -r .elastic_beanstalk_environment_name.value tf_outputs.json)" >> $GITHUB_ENV
