@@ -20,7 +20,7 @@ permissions:
 env:
   DOTNET_VERSION: '8.0.x'
   NODE_VERSION: '20.x'
-  AWS_REGION: 'eu-west-1'
+  AWS_REGION: 'eu-west-2'
   API_PROJECT_PATH: 'src/api/Hippo.Booking.API/Hippo.Booking.API.csproj'
   SOLUTION_FILE_PATH: 'src/hippo-booking.sln'
   WEB_PROJECT_PATH: 'src/web/hippo-booking'
