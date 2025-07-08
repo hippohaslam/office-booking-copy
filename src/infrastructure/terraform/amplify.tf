@@ -55,7 +55,7 @@ resource "aws_amplify_branch" "main_branch" {
   }
 }
 
-resource "aws_amplify_domain_association" "example" {
+# resource "aws_amplify_domain_association" "example" {
 #   app_id      = aws_amplify_app.frontend_app.id
 #   domain_name = "${var.frontend_subdomain}.${var.hosted_zone_url}"
 # 
