@@ -56,19 +56,19 @@ resource "aws_amplify_branch" "main_branch" {
 }
 
 resource "aws_amplify_domain_association" "example" {
-  app_id      = aws_amplify_app.frontend_app.id
-  domain_name = "${var.frontend_subdomain}.${var.hosted_zone_url}"
-
-  sub_domain {
-    branch_name = aws_amplify_branch.main_branch.branch_name
-    prefix      = ""
-  }
-
-  lifecycle {
-    # Hack to fix until this PR is merged on AWS provider - https://github.com/hashicorp/terraform-provider-aws/pull/38410
-    ignore_changes = [certificate_settings]
-  }
-}
+#   app_id      = aws_amplify_app.frontend_app.id
+#   domain_name = "${var.frontend_subdomain}.${var.hosted_zone_url}"
+# 
+#   sub_domain {
+#     branch_name = aws_amplify_branch.main_branch.branch_name
+#     prefix      = ""
+#   }
+# 
+#   lifecycle {
+#     # Hack to fix until this PR is merged on AWS provider - https://github.com/hashicorp/terraform-provider-aws/pull/38410
+#     ignore_changes = [certificate_settings]
+#   }
+# }
 
 output "amplify_app_name" {
   value = aws_amplify_app.frontend_app.name
