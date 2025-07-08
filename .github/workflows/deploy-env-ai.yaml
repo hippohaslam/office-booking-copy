@@ -20,7 +20,7 @@ permissions:
 env:
   DOTNET_VERSION: '8.0.x'
   NODE_VERSION: '20.x'
-  AWS_REGION: 'eu-west-2'
+  AWS_REGION: 'eu-west-1'
   API_PROJECT_PATH: 'src/api/Hippo.Booking.API/Hippo.Booking.API.csproj'
   SOLUTION_FILE_PATH: 'src/hippo-booking.sln'
   WEB_PROJECT_PATH: 'src/web/hippo-booking'
@@ -269,7 +269,7 @@ jobs:
       - name: Terraform Init
         id: init
         working-directory: ${{ env.INFRA_PATH }}/terraform
-        run: terraform init -backend-config="bucket=office-booking-terraform-state-bucket" -backend-config="key=terraform.${{ github.event.inputs.environment }}.tfstate" -backend-config="region=${{ env.AWS_REGION }}"
+        run: terraform init -backend-config="bucket=office-booking-tf-state-eu-west-1" -backend-config="key=terraform.${{ github.event.inputs.environment }}.tfstate" -backend-config="region=${{ env.AWS_REGION }}"
 
       - name: Terraform Plan
         id: plan
