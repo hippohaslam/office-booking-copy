@@ -2,17 +2,17 @@ locals {
   region = "eu-west-1"
 }
 
-resource "aws_vpc" "office-booking-vpc" {
+resource "aws_vpc" "hippo-booking-vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
 
   tags = {
-    Name = "Office Booking ${var.environment} VPC"
+    Name = "Hippo Booking ${var.environment} VPC"
   }
 }
 
 resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.office-booking-vpc.id
+  vpc_id = aws_vpc.hippo-booking-vpc.id
 
   tags = {
     Name = "VPC Internet Gateway"
@@ -20,7 +20,7 @@ resource "aws_internet_gateway" "gw" {
 }
 
 resource "aws_route_table" "public_route_table" {
-  vpc_id = aws_vpc.office-booking-vpc.id
+  vpc_id = aws_vpc.hippo-booking-vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -33,7 +33,7 @@ resource "aws_route_table" "public_route_table" {
 }
 
 resource "aws_route_table" "private_route_table" {
-  vpc_id = aws_vpc.office-booking-vpc.id
+  vpc_id = aws_vpc.hippo-booking-vpc.id
 
   tags = {
     Name = "Private Route Table"
@@ -50,10 +50,9 @@ data "aws_elastic_beanstalk_hosted_zone" "current" {}
 #  zone_id = data.aws_route53_zone.hippo-internal-zone.zone_id
 #  name    = "${var.backend_subdomain}.${var.hosted_zone_url}"
 #  type    = "A"
-#  #records = [aws_elastic_beanstalk_environment.office-booking-api-env.cname]
 #
 #  alias {
-#    name                   = aws_elastic_beanstalk_environment.office-booking-api-env.cname
+#    name                   = aws_elastic_beanstalk_environment.hippo-booking-api-env.cname
 #    zone_id                = data.aws_elastic_beanstalk_hosted_zone.current.id
 #    evaluate_target_health = true
 #  }
@@ -90,6 +89,6 @@ module "bastion" {
   count        = var.provision_bastion ? 1 : 0
   source       = "./bastion"
   env_suffix   = var.env_suffix
-  vpc_id       = aws_vpc.office-booking-vpc.id
+  vpc_id       = aws_vpc.hippo-booking-vpc.id
   route_table_id = aws_route_table.public_route_table.id
 }
