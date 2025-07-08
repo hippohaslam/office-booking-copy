@@ -76,6 +76,7 @@ variable "email_recipients_alarms" {
 variable "slack_channel_email" {
   description = "Slack channel email to send AWS Alarm alerts to"
   type        = string
+  default = "chris.haslam@hippodigital.co.uk"
 }
 
 variable "enable_db_public_access" {

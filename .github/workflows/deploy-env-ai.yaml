@@ -278,7 +278,7 @@ jobs:
           TF_VAR_slack_signing_secret: ${{ secrets.SLACK_SIGNING_SECRET }}
           TF_VAR_github_access_token: ${{ secrets.GH_ACCESS_TOKEN_FOR_AMPLIFY }}
           TF_VAR_google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
-          TF_VAR_github_repo: ${{ github.repositoryUrl }}
+          TF_VAR_github_repo: 'https://github.com/${{ github.repository }}.git'
           TF_VAR_slack_channel_email: ${{ secrets.SLACK_CHANNEL_EMAIL }}
 
       - name: Terraform Apply
