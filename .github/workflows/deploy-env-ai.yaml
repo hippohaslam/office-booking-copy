@@ -311,10 +311,12 @@ jobs:
           name: ${{ env.API_ARTIFACT_NAME }}
 
       - name: Deploy API to Elastic Beanstalk
+        env:
+          EB_BUCKET: elasticbeanstalk-${{ env.AWS_REGION }}-${{ secrets.AWS_ACCOUNT_ID }}
         run: |
           VERSION_LABEL="${{ needs.build-and-package.outputs.version }}"
-          aws s3 cp ${{ env.API_ARTIFACT_NAME }}.zip s3://${{ env.eb_bucket }}/${{ env.eb_app_name }}/${VERSION_LABEL}.zip
-          aws elasticbeanstalk create-application-version --application-name "${{ env.eb_app_name }}" --version-label "${VERSION_LABEL}" --source-bundle S3Bucket="${{ env.eb_bucket }}",S3Key="${{ env.eb_app_name }}/${VERSION_LABEL}.zip"
+          aws s3 cp ${{ env.API_ARTIFACT_NAME }}.zip s3://${EB_BUCKET}/${{ env.eb_app_name }}/${VERSION_LABEL}.zip
+          aws elasticbeanstalk create-application-version --application-name "${{ env.eb_app_name }}" --version-label "${VERSION_LABEL}" --source-bundle S3Bucket="${EB_BUCKET}",S3Key="${{ env.eb_app_name }}/${VERSION_LABEL}.zip"
           aws elasticbeanstalk update-environment --environment-name "${{ env.eb_env_name }}" --version-label "${VERSION_LABEL}"
 
       - name: Trigger Frontend deployment on Amplify
