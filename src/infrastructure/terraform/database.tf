@@ -27,7 +27,7 @@ resource "random_password" "db_password" {
 }
 
 resource "aws_db_subnet_group" "db-subnet" {
-  name       = "booking-db-subnet-group-${var.env_suffix}"
+  name       = "booking-db-subnet-group-${var.env_suffix}-v2"
   subnet_ids = [aws_subnet.hippo-booking-subnet-db-a.id, aws_subnet.hippo-booking-subnet-db-b.id, aws_subnet.hippo-booking-subnet-db-c.id]
 }
 
