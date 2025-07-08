@@ -245,9 +245,9 @@ jobs:
       - name: Run E2E tests
         run: dotnet test src/e2e/Hippo.Booking.E2ETests/Hippo.Booking.E2ETests.csproj --configuration Release
 
-  provision-infrastructure:
-    name: Provision Infrastructure
-    needs: [unit-tests, integration-tests, frontend-tests, e2e-tests]
+  provision-and-deploy:
+    name: Provision and Deploy
+    needs: [unit-tests, integration-tests, frontend-tests, e2e-tests, build-and-package]
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     steps:
@@ -262,6 +262,9 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+
+      - name: Install required tools
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Terraform Init
         id: init
@@ -286,48 +289,32 @@ jobs:
         working-directory: ${{ env.INFRA_PATH }}/terraform
         run: terraform apply -auto-approve tfplan
 
-  deploy-applications:
-    name: Deploy Applications
-    needs: [provision-infrastructure, build-and-package]
-    runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Download API artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.API_ARTIFACT_NAME }}
-
-      - name: Install required tools
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
       - name: Get Terraform Outputs
         id: tf-outputs
         working-directory: ${{ env.INFRA_PATH }}/terraform
         run: |
-          terraform init -backend-config="bucket=office-booking-terraform-state-bucket" -backend-config="key=terraform.${{ github.event.inputs.environment }}.tfstate" -backend-config="region=${{ env.AWS_REGION }}"
           terraform output -json > tf_outputs.json
           echo "eb_app_name=$(jq -r .elastic_beanstalk_application_name.value tf_outputs.json)" >> $GITHUB_ENV
           echo "eb_env_name=$(jq -r .elastic_beanstalk_environment_name.value tf_outputs.json)" >> $GITHUB_ENV
           echo "amplify_app_name=$(jq -r .amplify_app_name.value tf_outputs.json)" >> $GITHUB_ENV
+          echo "eb_bucket=$(jq -r .elastic_beanstalk_bucket.value tf_outputs.json)" >> $GITHUB_ENV
+
+      - name: Wait for Elastic Beanstalk Environment to be Ready
+        run: |
+          aws elasticbeanstalk wait environment-updated \
+            --environment-name ${{ env.eb_env_name }} \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Download API Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.API_ARTIFACT_NAME }}
 
       - name: Deploy API to Elastic Beanstalk
         run: |
           VERSION_LABEL="${{ needs.build-and-package.outputs.version }}"
-          EB_BUCKET="elasticbeanstalk-${{ env.AWS_REGION }}-${{ secrets.AWS_ACCOUNT_ID }}"
-          aws s3 cp ${{ env.API_ARTIFACT_NAME }}.zip s3://${EB_BUCKET}/${{ env.eb_app_name }}/${VERSION_LABEL}.zip
-          aws elasticbeanstalk create-application-version --application-name "${{ env.eb_app_name }}" --version-label "${VERSION_LABEL}" --source-bundle S3Bucket="${EB_BUCKET}",S3Key="${{ env.eb_app_name }}/${VERSION_LABEL}.zip"
+          aws s3 cp ${{ env.API_ARTIFACT_NAME }}.zip s3://${{ env.eb_bucket }}/${{ env.eb_app_name }}/${VERSION_LABEL}.zip
+          aws elasticbeanstalk create-application-version --application-name "${{ env.eb_app_name }}" --version-label "${VERSION_LABEL}" --source-bundle S3Bucket="${{ env.eb_bucket }}",S3Key="${{ env.eb_app_name }}/${VERSION_LABEL}.zip"
           aws elasticbeanstalk update-environment --environment-name "${{ env.eb_env_name }}" --version-label "${VERSION_LABEL}"
 
       - name: Trigger Frontend deployment on Amplify
