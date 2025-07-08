@@ -104,27 +104,6 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
   }
 
   setting {
-    namespace = "aws:elbv2:listener:443"
-    name      = "ListenerEnabled"
-    value     = "true"
-    resource  = ""
-  }
-
-  setting {
-    namespace = "aws:elbv2:listener:443"
-    name      = "Protocol"
-    value     = "HTTPS"
-    resource  = ""
-  }
-
-  setting {
-    namespace = "aws:elbv2:listener:443"
-    name      = "SSLCertificateArns"
-    value     = aws_acm_certificate.backend_certificate.arn
-    resource  = ""
-  }
-
-  setting {
     namespace = "aws:autoscaling:asg"
     name      = "MinSize"
     value     = "1"
