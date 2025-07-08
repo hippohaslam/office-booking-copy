@@ -3,7 +3,7 @@ locals {
 }
 
 resource "aws_db_instance" "hippo-booking-db" {
-  identifier              = "hippo-booking-db-${var.env_suffix}"
+  identifier              = "hippo-booking-db-${var.env_suffix}-v2"
   allocated_storage       = 20 # Minimum storage for RDS instances
   engine                  = "postgres"
   engine_version          = "16.8"
