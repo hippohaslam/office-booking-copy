@@ -336,4 +336,4 @@ jobs:
             exit 1
           fi
 
-          aws amplify start-job --app-id $APP_ID --branch-name main --job-type MANUAL
+          aws amplify start-job --app-id $APP_ID --branch-name main --job-type RELEASE --job-reason "CI-CD deployment"
