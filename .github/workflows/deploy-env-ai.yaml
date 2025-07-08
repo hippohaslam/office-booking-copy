@@ -61,7 +61,7 @@ jobs:
         run: dotnet publish ${{ env.API_PROJECT_PATH }} --configuration Release --output ./api-publish
 
       - name: Generate deployment package for API
-        run: zip -r ${{ env.API_ARTIFACT_NAME }}.zip ./api-publish
+        run: cd ./api-publish && zip -r ../${{ env.API_ARTIFACT_NAME }}.zip .
 
       - name: Upload API artifact
         uses: actions/upload-artifact@v4
