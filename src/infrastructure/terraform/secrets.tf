@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "dotnet_secrets" {
-  name = "booking-api-secrets-${lower(var.environment)}-v2"
+  name = "booking-api-secrets-${lower(var.environment)}"
 }
 
 resource "aws_secretsmanager_secret_version" "dotnet_secrets_version" {
