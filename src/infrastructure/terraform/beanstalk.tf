@@ -36,28 +36,24 @@ resource "aws_route_table_association" "hippo-booking-api-subnet-b-routing" {
 
 resource "aws_security_group" "beanstalk_sg" {
   name        = "beanstalk-sg-${var.env_suffix}"
-  description = "Security group for Elastic Beanstalk"
+  description = "Security group for Elastic Beanstalk instances"
   vpc_id      = aws_vpc.hippo-booking-vpc.id
 
+  # Allow inbound traffic from the load balancer on the application port (5000)
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 5000
+    to_port     = 5000
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]
+    # This allows any resource inside your VPC (like the load balancer) to connect.
+    cidr_blocks = [aws_vpc.hippo-booking-vpc.cidr_block]
   }
 
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]
-  }
-
+  # Allow all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["10.0.0.0/16"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
