@@ -199,8 +199,7 @@ setting {
 }
 
 resource "aws_iam_instance_profile" "eb_instance_profile" {
-  name = "hippo-booking-api-eb-instance-profile-${var.env_suffix}-v2"
-
+  name = "hippo-booking-api-eb-instance-profile-${var.env_suffix}-v3"
   role = aws_iam_role.eb_instance_role.name
 }
 
