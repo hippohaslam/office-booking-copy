@@ -190,7 +190,7 @@ resource "aws_elastic_beanstalk_environment" "hippo-booking-api-env" {
 setting {
   namespace = "aws:elasticbeanstalk:application:environment"
   name      = "AllowedOrigins"
-  value     = "http://localhost:3000" # Only allow local development for now
+  value     = "https://main.d2xmcnp4mmz81t.amplifyapp.com,http://localhost:3000"
   resource  = ""
 }
 
