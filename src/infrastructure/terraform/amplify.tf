@@ -3,11 +3,11 @@ resource "aws_amplify_app" "frontend_app" {
   repository   = var.github_repo
   access_token = var.github_access_token
 
-  #  environment_variables = {
-  #    #Get these values from the output of the Beanstalk module
-  #    VITE_API_BASE_URL     = aws_elastic_beanstalk_environment.hippo-booking-api-env.cname
-  #    VITE_GOOGLE_CLIENT_ID = var.google_client_id
-  #  }
+    environment_variables = {
+      #Get these values from the output of the Beanstalk module
+      VITE_API_BASE_URL     = aws_elastic_beanstalk_environment.hippo-booking-api-env.cname
+      VITE_GOOGLE_CLIENT_ID = var.google_client_id
+    }
 
   custom_rule {
     source = "/<*>"

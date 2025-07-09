@@ -1,3 +1,9 @@
+variable "google_client_id" {
+  description = "The Google OAuth Client ID for the frontend."
+  type        = string
+  sensitive   = true
+}
+
 variable "google_client_secret" {
   description = "Google Client Secret"
   type        = string
